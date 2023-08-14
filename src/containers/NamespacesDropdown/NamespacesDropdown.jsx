@@ -16,7 +16,7 @@ import { useIntl } from 'react-intl';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
-import { useNamespaces, useTenantNamespace } from '../../api';
+import { useNamespaces, useTenantNamespaces } from '../../api';
 
 const NamespacesDropdown = ({
   allNamespacesLabel,
@@ -51,20 +51,20 @@ const NamespacesDropdown = ({
       defaultMessage: 'All Namespaces'
     });
 
-  const tenantNamespace = useTenantNamespace();
+  const tenantNamespaces = useTenantNamespaces();
   const { data: namespaces = [], isFetching } = useNamespaces({
     disableWebSocket: true
   });
 
-  const selectedItem = { ...originalSelectedItem };
+  let selectedItem = { ...originalSelectedItem };
   if (selectedItem && selectedItem.id === ALL_NAMESPACES) {
     selectedItem.text = allNamespacesString;
   }
 
-  const items = tenantNamespace
-    ? [tenantNamespace]
+  const items = tenantNamespaces.length
+    ? tenantNamespaces
     : namespaces.map(namespace => namespace.metadata.name).sort();
-  if (!tenantNamespace && showAllNamespaces) {
+  if (!tenantNamespaces.length && showAllNamespaces) {
     items.unshift({ id: ALL_NAMESPACES, text: allNamespacesString });
   }
 

@@ -30,7 +30,7 @@ describe('App', () => {
   });
 
   it('renders successfully in full cluster mode', async () => {
-    vi.spyOn(API, 'useTenantNamespace').mockImplementation(() => undefined);
+    vi.spyOn(API, 'useTenantNamespaces').mockImplementation(() => []);
     const { findAllByText, queryAllByText, queryByText } = render(
       <App lang="en" />
     );
@@ -43,8 +43,8 @@ describe('App', () => {
     expect(queryByText('Tasks')).toBeTruthy();
   });
 
-  it('renders successfully in single namespace mode', async () => {
-    vi.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
+  it('renders successfully in tenant namespace mode', async () => {
+    vi.spyOn(API, 'useTenantNamespaces').mockImplementation(() => ['fake']);
     const { findAllByText, queryAllByText, queryByText } = render(
       <App lang="en" />
     );
@@ -57,9 +57,9 @@ describe('App', () => {
     expect(queryByText('Tasks')).toBeTruthy();
   });
 
-  it('does not call namespaces API in single namespace mode', async () => {
+  it('does not call namespaces API in tenant namespace mode', async () => {
     vi.spyOn(API, 'getNamespaces');
-    vi.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
+    vi.spyOn(API, 'useTenantNamespaces').mockImplementation(() => ['fake']);
     const { queryByText } = render(<App />);
 
     await waitFor(() => queryByText('Tekton resources'));
@@ -70,7 +70,7 @@ describe('App', () => {
 
   it('calls namespaces API in full cluster mode', async () => {
     vi.spyOn(API, 'getNamespaces').mockImplementation(() => {});
-    vi.spyOn(API, 'useTenantNamespace').mockImplementation(() => undefined);
+    vi.spyOn(API, 'useTenantNamespaces').mockImplementation(() => []);
     const { queryByText } = render(<App />);
 
     await waitFor(() => queryByText('Tekton resources'));

@@ -83,12 +83,32 @@ Congratulations! You have successfully installed Tekton Dashboard on your Kubern
 
 You can refer to the dev docs for more info on [how to use the installer](./dev/installer.md).
 
-For example, to install the latest release in read/write mode:
+For example:
 
-```bash
-curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/main/scripts/release-installer | \
-   bash -s -- install latest --read-write
-```
+- to install the latest release in read/write mode:
+
+  ```bash
+  curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/main/scripts/release-installer | \
+    bash -s -- install latest --read-write
+  ```
+
+- to install with access to a subset of namespaces instead of full cluster access:
+
+  ```bash
+  curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/main/scripts/release-installer | \
+    bash -s -- install latest --read-write --tenant-namespaces tenant-namespace1,tenant-namespace2
+  ```
+
+  This will add the `--namespaces` arg to the Dashboard deployment and create a RoleBinding in each of the specified namespaces with role `tekton-dashboard-tenant` granted to the Dashboard ServiceAccount.
+
+- to install with support for loading logs from an external source:
+
+  ```bash
+  curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/main/scripts/release-installer | \
+    bash -s -- install latest --read-write --external-logs <logs-provider-url>
+  ```
+
+  See [Tekton Dashboard walk-through - Logs persistence](/docs/walkthrough/walkthrough-logs.md) for details
 
 ## Accessing the Dashboard
 

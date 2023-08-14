@@ -35,7 +35,7 @@ import {
   useIsReadOnly,
   useIsTriggersInstalled,
   useSelectedNamespace,
-  useTenantNamespace
+  useTenantNamespaces
 } from '../../api';
 
 import { ReactComponent as KubernetesIcon } from '../../images/kubernetes.svg';
@@ -50,10 +50,10 @@ function SideNav({ expanded, showKubernetesResources = false }) {
   const location = useLocation();
 
   const { selectedNamespace } = useSelectedNamespace();
-  const tenantNamespace = useTenantNamespace();
+  const tenantNamespaces = useTenantNamespaces();
   const { data: extensions = [] } = useExtensions(
     {
-      namespace: tenantNamespace || ALL_NAMESPACES
+      namespace: tenantNamespaces[0] || ALL_NAMESPACES
     },
     { disableWebSocket: true }
   );

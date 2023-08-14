@@ -22,17 +22,18 @@ import (
 
 // Properties : properties we want to be able to retrieve via REST
 type Properties struct {
-	DashboardNamespace string `json:"dashboardNamespace"`
-	DashboardVersion   string `json:"dashboardVersion"`
-	ExternalLogsURL    string `json:"externalLogsURL"`
-	LogoutURL          string `json:"logoutURL,omitempty"`
-	PipelineNamespace  string `json:"pipelinesNamespace"`
-	PipelineVersion    string `json:"pipelinesVersion"`
-	ReadOnly           bool   `json:"isReadOnly"`
-	StreamLogs         bool   `json:"streamLogs"`
-	TenantNamespace    string `json:"tenantNamespace,omitempty"`
-	TriggersNamespace  string `json:"triggersNamespace,omitempty"`
-	TriggersVersion    string `json:"triggersVersion,omitempty"`
+	DashboardNamespace string   `json:"dashboardNamespace"`
+	DashboardVersion   string   `json:"dashboardVersion"`
+	ExternalLogsURL    string   `json:"externalLogsURL"`
+	LogoutURL          string   `json:"logoutURL,omitempty"`
+	PipelineNamespace  string   `json:"pipelinesNamespace"`
+	PipelineVersion    string   `json:"pipelinesVersion"`
+	ReadOnly           bool     `json:"isReadOnly"`
+	StreamLogs         bool     `json:"streamLogs"`
+	TenantNamespace    string   `json:"tenantNamespace,omitempty"`
+	TenantNamespaces   []string `json:"tenantNamespaces,omitEmpty"`
+	TriggersNamespace  string   `json:"triggersNamespace,omitempty"`
+	TriggersVersion    string   `json:"triggersVersion,omitempty"`
 }
 
 // GetProperties is used to get the installed namespace for the Dashboard,
@@ -52,6 +53,7 @@ func (r Resource) GetProperties(response http.ResponseWriter, _ *http.Request) {
 		ReadOnly:           r.Options.ReadOnly,
 		LogoutURL:          r.Options.LogoutURL,
 		TenantNamespace:    r.Options.TenantNamespace,
+		TenantNamespaces:   r.Options.TenantNamespaces,
 		StreamLogs:         r.Options.StreamLogs,
 	}
 

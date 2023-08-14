@@ -584,12 +584,12 @@ it('other hooks that depend on useProperties', async () => {
   expect(isLogStreamingEnabledResult.current).toEqual(streamLogs);
 
   const { result: tenantNamespaceResult } = renderHook(
-    () => API.useTenantNamespace(),
+    () => API.useTenantNamespaces(),
     {
       wrapper: getAPIWrapper({ queryClient })
     }
   );
-  expect(tenantNamespaceResult.current).toEqual(tenantNamespace);
+  expect(tenantNamespaceResult.current).toEqual([tenantNamespace]);
 
   const { result: isTriggersInstalledResult } = renderHook(
     () => API.useIsTriggersInstalled(),
@@ -598,4 +598,29 @@ it('other hooks that depend on useProperties', async () => {
     }
   );
   expect(isTriggersInstalledResult.current).toEqual(true);
+});
+
+it('useTenantNamespaces', async () => {
+  const queryClient = getQueryClient();
+
+  const tenantNamespaces = ['fake_tenantNamespace1', 'fake_tenantNamespace2'];
+
+  const properties = { tenantNamespaces };
+  server.use(
+    rest.get(/\/properties$/, (req, res, ctx) => res(ctx.json(properties)))
+  );
+  const { result, waitFor } = renderHook(() => API.useProperties(), {
+    wrapper: getAPIWrapper({ queryClient })
+  });
+  await waitFor(() => result.current.isFetching);
+  await waitFor(() => !result.current.isFetching);
+  expect(result.current.data).toEqual(properties);
+
+  const { result: tenantNamespacesResult } = renderHook(
+    () => API.useTenantNamespaces(),
+    {
+      wrapper: getAPIWrapper({ queryClient })
+    }
+  );
+  expect(tenantNamespacesResult.current).toEqual(tenantNamespaces);
 });

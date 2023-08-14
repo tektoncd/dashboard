@@ -81,7 +81,7 @@ import {
   useLogoutURL,
   useNamespaces,
   useProperties,
-  useTenantNamespace
+  useTenantNamespaces
 } from '../../api';
 import { defaultLocale } from '../../utils';
 
@@ -137,17 +137,17 @@ function HeaderNameLink(props) {
 
 /* istanbul ignore next */
 export function App({ lang }) {
-  const [isSideNavExpanded, setIsSideNavExpanded] = useState(true);
-  const [selectedNamespace, setSelectedNamespace] = useState(ALL_NAMESPACES);
-  const [namespacedMatch, setNamespacedMatch] = useState(null);
-
   const {
     error: propertiesError,
     isFetching: isFetchingProperties,
     isPlaceholderData: isPropertiesPlaceholder
   } = useProperties();
   const logoutURL = useLogoutURL();
-  const tenantNamespace = useTenantNamespace();
+  const tenantNamespaces = useTenantNamespaces();
+
+  const [isSideNavExpanded, setIsSideNavExpanded] = useState(true);
+  const [selectedNamespace, setSelectedNamespace] = useState(tenantNamespaces[0] || ALL_NAMESPACES);
+  const [namespacedMatch, setNamespacedMatch] = useState(null);
 
   const {
     data: messages,
@@ -162,7 +162,7 @@ export function App({ lang }) {
   const isFetchingConfig = isFetchingProperties || isFetchingMessages;
 
   const { data: extensions = [], isWebSocketConnected } = useExtensions(
-    { namespace: tenantNamespace || ALL_NAMESPACES },
+    { namespace: tenantNamespaces[0] || ALL_NAMESPACES },
     { enabled: !isFetchingConfig }
   );
 
@@ -171,7 +171,7 @@ export function App({ lang }) {
   const queryClient = useQueryClient();
 
   useNamespaces({
-    enabled: !isFetchingConfig && !tenantNamespace
+    enabled: !isFetchingConfig && !tenantNamespaces.length
   });
   useWebSocketReconnected(
     () => queryClient.invalidateQueries(),
@@ -179,10 +179,10 @@ export function App({ lang }) {
   );
 
   useEffect(() => {
-    if (!isFetchingConfig && tenantNamespace) {
-      setSelectedNamespace(tenantNamespace);
+    if (!isFetchingConfig && tenantNamespaces.length) {
+      setSelectedNamespace(tenantNamespaces[0]);
     }
-  }, [isFetchingConfig, tenantNamespace]);
+  }, [isFetchingConfig, JSON.stringify(tenantNamespaces)]);
 
   const logoutButton = <LogoutButton getLogoutURL={() => logoutURL} />;
 
@@ -206,7 +206,7 @@ export function App({ lang }) {
         setIsSideNavExpanded(prevIsSideNavExpanded => !prevIsSideNavExpanded);
       }}
     >
-      <HeaderBarContent logoutButton={logoutButton} />
+      <HeaderBarContent isFetchingConfig={isFetchingConfig} logoutButton={logoutButton} />
     </Header>
   );
 

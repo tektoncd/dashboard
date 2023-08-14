@@ -74,7 +74,8 @@ Accepted options:
         [--read-write]                          Will build manifests for a read/write deployment
         [--stream-logs false]                   Will disable log streaming and use polling instead
         [--tag <tag>]                           Tag used for the image produced by ko
-        [--tenant-namespace <namespace>]        Will limit the visibility to the specified namespace only
+        [--tenant-namespace <namespace>]        [DEPRECATED: use tenant-namespaces instead] Will limit the visibility to the specified namespace only
+        [--tenant-namespaces <namespaces>]      Will limit the visibility to the specified comma-separated namespaces only
         [--triggers-namespace <namespace>]      Override the namespace where Tekton Triggers is installed (defaults to Dashboard install namespace)
         [--version <version>]                   Will download manifests for specified version or build everything using kustomize/ko
 ```
