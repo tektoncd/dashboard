@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -22,14 +22,12 @@ import {
   Lightning16 as TriggersIcon
 } from '@carbon/icons-react';
 
-import {
-  Actions,
-  Link as CustomLink,
-  FormattedDate,
-  FormattedDuration,
-  StatusIcon,
-  Table
-} from '..';
+import Actions from '../Actions';
+import CustomLink from '../Link';
+import FormattedDate from '../FormattedDate';
+import FormattedDuration from '../FormattedDuration';
+import StatusIcon from '../StatusIcon';
+import Table from '../Table';
 
 function getDefaultPipelineRunStatusDetail(pipelineRun) {
   const { status } = getStatus(pipelineRun);

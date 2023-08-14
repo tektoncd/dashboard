@@ -18,8 +18,8 @@
     "preview": "vite preview",
     "start": "vite",
     "storybook": "storybook dev -p 5000",
-    "storybook:build": "storybook build",
-    "storybook:deploy": "npx -p @storybook/storybook-deployer storybook-to-ghpages -e storybook-static",
+    "storybook:build": "storybook build -o storybook-static && touch storybook-static/.nojekyll",
+    "storybook:deploy": "npx gh-pages --dist ./storybook-static --dotfiles --no-history --message \"Deploy Storybook to GitHub Pages\"",
     "test": "vitest"
   },
   "dependencies": {

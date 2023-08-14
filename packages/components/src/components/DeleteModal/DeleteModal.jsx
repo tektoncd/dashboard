@@ -1,5 +1,5 @@
 /*
-Copyright 2021-2022 The Tekton Authors
+Copyright 2021-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,7 +15,8 @@ limitations under the License.
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { Modal } from 'carbon-components-react';
-import { Table } from '..';
+
+import Table from '../Table';
 
 const DeleteModal = ({
   onClose,

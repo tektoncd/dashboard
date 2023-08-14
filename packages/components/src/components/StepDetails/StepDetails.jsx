@@ -16,7 +16,10 @@ import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
 import { getStatus, getStepStatusReason } from '@tektoncd/dashboard-utils';
 
-import { DetailsHeader, StepDefinition, Tab, Tabs } from '..';
+import DetailsHeader from '../DetailsHeader';
+import StepDefinition from '../StepDefinition';
+import Tab from '../Tab';
+import Tabs from '../Tabs';
 
 const tabs = ['logs', 'details'];
 

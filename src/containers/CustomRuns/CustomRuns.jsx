@@ -41,7 +41,7 @@ import {
   UndefinedFilled20 as UndefinedIcon
 } from '@carbon/icons-react';
 
-import { ListPageLayout } from '..';
+import ListPageLayout from '../ListPageLayout';
 import {
   cancelCustomRun,
   deleteCustomRun,

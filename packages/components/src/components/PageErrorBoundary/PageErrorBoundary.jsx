@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,7 +15,7 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 import { useLocation } from 'react-router-dom-v5-compat';
 
-import { ErrorBoundary } from '..';
+import ErrorBoundary from '../ErrorBoundary';
 
 const PageErrorBoundary = ({ children }) => {
   const intl = useIntl();

@@ -24,10 +24,9 @@ import {
   TableToolbar,
   TableToolbarContent
 } from 'carbon-components-react';
-
 import { ALL_NAMESPACES, classNames } from '@tektoncd/dashboard-utils';
 
-import { DataTableSkeleton } from '..';
+import DataTableSkeleton from '../DataTableSkeleton';
 
 const {
   TableContainer,
