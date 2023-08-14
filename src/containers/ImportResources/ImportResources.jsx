@@ -35,7 +35,8 @@ import {
 } from '@tektoncd/dashboard-utils';
 import parseGitURL from 'git-url-parse';
 import { importResources, useSelectedNamespace } from '../../api';
-import { NamespacesDropdown, ServiceAccountsDropdown } from '..';
+import NamespacesDropdown from '../NamespacesDropdown';
+import ServiceAccountsDropdown from '../ServiceAccountsDropdown';
 
 const itemToString = ({ text }) => text;
 

@@ -58,7 +58,7 @@ import {
   getLogsToolbar,
   getViewChangeHandler
 } from '../../utils';
-import { NotFound } from '..';
+import NotFound from '../NotFound';
 
 const { PIPELINE_TASK, RETRY, STEP, VIEW } = queryParamConstants;
 

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,14 +17,15 @@ import { FixedSizeList as List } from 'react-window';
 import { injectIntl } from 'react-intl';
 import { getStepStatusReason, isRunning } from '@tektoncd/dashboard-utils';
 import { DownToBottom16, UpToTop16 } from '@carbon/icons-react';
+
 import {
   hasElementPositiveVerticalScrollBottom,
   hasElementPositiveVerticalScrollTop,
   isElementEndBelowViewBottom,
   isElementStartAboveViewTop
 } from './domUtils';
-
-import { DotSpinner, LogFormat } from '..';
+import DotSpinner from '../DotSpinner';
+import LogFormat from '../LogFormat';
 
 const LogLine = ({ data, index, style }) => (
   <div style={style}>

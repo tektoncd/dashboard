@@ -18,7 +18,12 @@ import { getParams, taskRunHasWarning } from '@tektoncd/dashboard-utils';
 import { ContentSwitcher, Switch, Tooltip } from 'carbon-components-react';
 import { Information16 } from '@carbon/icons-react';
 
-import { DetailsHeader, Param, Tab, Table, Tabs, ViewYAML } from '..';
+import DetailsHeader from '../DetailsHeader';
+import Param from '../Param';
+import Tab from '../Tab';
+import Table from '../Table';
+import Tabs from '../Tabs';
+import ViewYAML from '../ViewYAML';
 
 function HelpIcon({ title }) {
   const intl = useIntl();

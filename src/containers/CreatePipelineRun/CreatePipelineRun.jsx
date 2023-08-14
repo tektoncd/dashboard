@@ -34,11 +34,9 @@ import {
 import { KeyValueList, Loading } from '@tektoncd/dashboard-components';
 import { useIntl } from 'react-intl';
 
-import {
-  NamespacesDropdown,
-  PipelinesDropdown,
-  ServiceAccountsDropdown
-} from '..';
+import NamespacesDropdown from '../NamespacesDropdown';
+import PipelinesDropdown from '../PipelinesDropdown';
+import ServiceAccountsDropdown from '../ServiceAccountsDropdown';
 import {
   createPipelineRun,
   createPipelineRunRaw,

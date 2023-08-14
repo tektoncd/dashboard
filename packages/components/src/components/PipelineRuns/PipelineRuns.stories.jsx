@@ -18,7 +18,7 @@ import { action } from '@storybook/addon-actions';
 import { TrashCan32 as Delete } from '@carbon/icons-react';
 import { Dropdown } from 'carbon-components-react';
 
-import { StatusIcon } from '..';
+import StatusIcon from '../StatusIcon';
 import PipelineRuns from '.';
 
 function getFilters(showFilters) {

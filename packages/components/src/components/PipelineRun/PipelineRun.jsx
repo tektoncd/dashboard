@@ -23,14 +23,12 @@ import {
   labels as labelConstants
 } from '@tektoncd/dashboard-utils';
 
-import {
-  Log,
-  Portal,
-  RunHeader,
-  StepDetails,
-  TaskRunDetails,
-  TaskTree
-} from '..';
+import Log from '../Log';
+import Portal from '../Portal';
+import RunHeader from '../RunHeader';
+import StepDetails from '../StepDetails';
+import TaskRunDetails from '../TaskRunDetails';
+import TaskTree from '../TaskTree';
 
 function getPipelineTaskName({ pipelineRun, taskRunName }) {
   const {

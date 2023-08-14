@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -39,7 +39,7 @@ import {
 } from '@tektoncd/dashboard-utils';
 import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
 
-import { ListPageLayout } from '..';
+import ListPageLayout from '../ListPageLayout';
 import { sortRunsByStartTime } from '../../utils';
 import {
   cancelTaskRun,

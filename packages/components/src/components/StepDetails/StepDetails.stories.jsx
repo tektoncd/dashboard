@@ -12,8 +12,8 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Log } from '..';
 
+import Log from '../Log';
 import StepDetails from './StepDetails';
 
 function getStepStatus({ exitCode = 0 } = {}) {

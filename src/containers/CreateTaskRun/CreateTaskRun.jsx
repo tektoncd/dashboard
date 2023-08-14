@@ -35,12 +35,10 @@ import {
 import { KeyValueList, Loading } from '@tektoncd/dashboard-components';
 import { useIntl } from 'react-intl';
 
-import {
-  ClusterTasksDropdown,
-  NamespacesDropdown,
-  ServiceAccountsDropdown,
-  TasksDropdown
-} from '..';
+import ClusterTasksDropdown from '../ClusterTasksDropdown';
+import NamespacesDropdown from '../NamespacesDropdown';
+import ServiceAccountsDropdown from '../ServiceAccountsDropdown';
+import TasksDropdown from '../TasksDropdown';
 import {
   createTaskRun,
   createTaskRunRaw,

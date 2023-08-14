@@ -58,7 +58,7 @@ import {
   useTaskByKind,
   useTaskRun
 } from '../../api';
-import { NotFound } from '..';
+import NotFound from '../NotFound';
 
 const { STEP, TASK_RUN_DETAILS, VIEW } = queryParamConstants;
 

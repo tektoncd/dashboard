@@ -39,7 +39,7 @@ import {
   useIsReadOnly
 } from '../../api';
 import { getViewChangeHandler } from '../../utils';
-import { NotFound } from '..';
+import NotFound from '../NotFound';
 
 function getRunDuration(run) {
   if (!run) {

@@ -15,7 +15,7 @@ limitations under the License.
 import React from 'react';
 
 import Tabs from '.';
-import { Tab } from '..';
+import Tab from '../Tab';
 
 export default {
   component: Tabs,

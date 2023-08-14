@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 
 import Header from '.';
-import { LogoutButton } from '..';
+import LogoutButton from '../LogoutButton';
 
 export default {
   component: Header,
