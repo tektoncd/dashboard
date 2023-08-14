@@ -83,7 +83,7 @@
     "msw": "^1.2.1",
     "prettier": "^3.0.0",
     "rollup-plugin-visualizer": "^5.9.2",
-    "sass": "^1.64.2",
+    "sass": "^1.65.1",
     "storybook": "^7.2.2",
     "vite": "^4.4.9",
     "vite-plugin-html": "^3.2.0",
