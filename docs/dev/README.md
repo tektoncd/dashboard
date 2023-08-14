@@ -166,7 +166,7 @@ CGO_ENABLED=1 NAMESPACE=default go test -race -v ./...
 
 ### Frontend unit tests
 
-Run `npm test` to execute the unit tests via [Jest](https://jestjs.io/) in interactive watch mode. This also generates a code coverage report by default.
+Run `npm test` to execute the unit tests via [Vitest](https://vitest.dev/) in interactive watch mode. This also generates a code coverage report by default.
 
 Coverage threshold is set to 90%, if it falls below the threshold the test script will fail.
 
