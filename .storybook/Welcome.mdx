@@ -53,7 +53,15 @@ import tektonDashboardLogo from '../src/images/tekton-dashboard-color.svg';
 
       Tekton Dashboard uses the [Carbon Design System](https://v10.carbondesignsystem.com/) to guide its design, leveraging many of the base components it provides. Tekton Dashboard also publishes a number of its own npm packages containing additional components and utilities used to build on top of these.
 
-      This Storybook showcases each of the published UI components, including examples of variants or customisation where applicable. It also contains some content not included in the published packages. You can find more details in the following sections.
+      This Storybook showcases each of the published UI components, including examples of variants or customisation where applicable. You can find more details in the following sections.
+
+      {
+        process.env.NODE_ENV === 'development' && (
+          <p>
+            When running in development mode it also contains some content not included in the published packages, see the 'Containers' section for example.
+          </p>
+        )
+      }
 
       ### Carbon
 
@@ -83,9 +91,16 @@ import tektonDashboardLogo from '../src/images/tekton-dashboard-color.svg';
       <Canvas of={DetailsHeaderStories.Completed} />
       <Canvas of={RunHeaderStories.Failed} />
 
-      ### Containers
-
-      These are containers which are specific to the Tekton Dashboard application and are not included in the published packages. These generally use the UI components above, so can be used as examples of consuming them in a larger component / application, but rely on API providers or URL structures specific to the Dashboard.
+      {
+        process.env.NODE_ENV === 'development' && (
+          <>
+            <h3 id="containers">Containers</h3>
+            <p>
+              These are containers which are specific to the Tekton Dashboard application and are not included in the published packages. These generally use the UI components above, so can be used as examples of consuming them in a larger component / application, but rely on API providers or URL structures specific to the Dashboard.
+            </p>
+          </>
+        )
+      }
 
       ### Experimental
 
