@@ -44,7 +44,7 @@ limitations under the License.
     margin-left: auto;
   }
 
-  a {
+  a:not([target="_self"]) {
     @include type-style('body-short-01');
     outline: none;
     text-decoration: none;

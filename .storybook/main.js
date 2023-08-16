@@ -46,12 +46,12 @@ const config = {
     }
     return {};
   },
-  stories: [
+  stories: (_config, { configType }) => ([
     { directory: '.', files: 'Welcome.mdx' },
-    { directory: '../src', files: '**/*.stories.jsx', titlePrefix: 'Containers' },
+    configType === 'DEVELOPMENT' ? { directory: '../src', files: '**/*.stories.jsx', titlePrefix: 'Containers' } : null,
     { directory: '../packages/components', files: '**/*.stories.jsx', titlePrefix: 'Components' },
     { directory: '../packages/graph', files: '**/*.stories.jsx', titlePrefix: 'Experimental/Graph' }
-  ]
+  ].filter(Boolean))
 };
 
 export default config;
