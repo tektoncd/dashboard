@@ -408,6 +408,21 @@ describe('getStepDefinition', () => {
     expect(definition).toEqual(step);
   });
 
+  it('handles unnamed steps when steps not yet available', () => {
+    const selectedStepId = 'unnamed-1';
+    const step = { name: '' };
+    const task = {
+      spec: {
+        steps: [{ name: 'a-step' }, step]
+      }
+    };
+    const taskRun = {
+      status: {}
+    };
+    const definition = getStepDefinition({ selectedStepId, task, taskRun });
+    expect(definition).toBeUndefined();
+  });
+
   it('handles deleted Task spec', () => {
     const selectedStepId = 'unnamed-1';
     const task = {};
