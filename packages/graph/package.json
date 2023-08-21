@@ -23,7 +23,7 @@
   "dependencies": {
     "@carbon/charts": "0.58.2",
     "@carbon/charts-react": "0.58.2",
-    "@carbon/elements": "10.56.2",
+    "@carbon/elements": "^10.56.3",
     "@tektoncd/dashboard-utils": "file:../utils",
     "@visx/event": "^3.0.1",
     "@visx/network": "^3.0.0",
@@ -31,8 +31,8 @@
     "elkjs": "^0.8.2"
   },
   "peerDependencies": {
-    "@carbon/icons-react": "^10.44.0",
-    "carbon-components-react": "^7.59.6",
+    "@carbon/icons-react": "^10.49.2",
+    "carbon-components-react": "^7.59.11",
     "react": "^16.14.0 || ^17.0.1",
     "react-intl": "^6.4.1"
   },
