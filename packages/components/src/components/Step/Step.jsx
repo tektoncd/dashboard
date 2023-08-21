@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -91,11 +91,11 @@ class Step extends Component {
         data-reason={reason}
         data-selected={selected || undefined}
       >
-        <a
+        <span
           className="tkn--step-link"
-          href="#"
           tabIndex="0"
           onClick={this.handleClick}
+          onKeyUp={e => e.key === 'Enter' && this.handleClick(e)}
         >
           <StatusIcon
             DefaultIcon={DefaultIcon}
@@ -108,7 +108,7 @@ class Step extends Component {
           <span className="tkn--step-name" title={stepName}>
             {stepName}
           </span>
-        </a>
+        </span>
       </li>
     );
   }

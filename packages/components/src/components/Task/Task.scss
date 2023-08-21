@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,8 @@ limitations under the License.
 .tkn--task {
   list-style-type: none;
 
-  > a.tkn--task-link {
+  > .tkn--task-link {
+    cursor: pointer;
     display: flex;
     align-items: center;
     position: relative;
@@ -57,14 +58,19 @@ limitations under the License.
     > .tkn--task--expand-icon {
       flex-shrink: 0;
     }
+
+    > .bx--overflow-menu {
+      flex-shrink: 0;
+      margin-right: 10px;
+    }
   }
 
-  &[data-selected] > a.tkn--task-link {
+  &[data-selected] > .tkn--task-link {
     border-left: 3px solid $interactive-04;
     margin-right: 0;
   }
 
-  &[data-active] > a.tkn--task-link {
+  &[data-active] > .tkn--task-link {
     margin-right: 0;
 
     .tkn--task--expand-icon {
@@ -73,18 +79,34 @@ limitations under the License.
     }
   }
 
-  &:not([data-succeeded]) > a.tkn--task-link {
+  .bx--dropdown__wrapper.bx--dropdown__wrapper--inline {
+    position: relative;
+    left: -1.5rem;
+    grid-gap: 0;
+    margin-left: 0.5rem;
+  }
+
+  &:not([data-succeeded]) > .tkn--task-link {
     &:hover {
       color: inherit;
       background-color: $hover-ui;
     }
   }
 
-  &:first-child > a.tkn--task-link {
+  &:first-child > .tkn--task-link {
     margin-top: 0;
   }
 
   .tkn--step-list {
     background-color: $ui-01;
+  }
+}
+
+.tkn--task--retries-menu-options {
+  max-height: 350px;
+  overflow: auto;
+
+  .bx--overflow-menu-options__option {
+    flex-shrink: 0;
   }
 }
