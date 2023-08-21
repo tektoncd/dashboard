@@ -20,7 +20,9 @@ const defaults = {
 };
 
 const TaskTree = ({
+  onRetryChange,
   onSelect,
+  selectedRetry,
   selectedStepId,
   selectedTaskId,
   taskRuns = defaults.taskRuns
@@ -42,29 +44,39 @@ const TaskTree = ({
         const { uid, labels, name } = taskRun.metadata;
         const {
           [labelConstants.DASHBOARD_DISPLAY_NAME]: displayName,
-          [labelConstants.PIPELINE_TASK]: pipelineTaskName,
-          [labelConstants.DASHBOARD_RETRY_NAME]: retryName
+          [labelConstants.PIPELINE_TASK]: pipelineTaskName
         } = labels;
 
-        const { reason, status } = getStatus(taskRun);
-        const { steps } = taskRun.status || {};
+        let taskRunToUse = taskRun;
+        if (selectedRetry && selectedTaskId === pipelineTaskName) {
+          taskRunToUse = {
+            ...taskRunToUse,
+            status: taskRunToUse.status?.retriesStatus?.[selectedRetry]
+          };
+        }
+
+        const { reason, status } = getStatus(taskRunToUse);
+        const { steps } = taskRunToUse.status || {};
         const expanded =
           (!selectedTaskId && erroredTask?.metadata.uid === uid) ||
-          selectedTaskId === uid ||
+          selectedTaskId === pipelineTaskName ||
           (!erroredTask && !selectedTaskId && index === 0);
         const selectDefaultStep = !selectedTaskId;
         return (
           <Task
-            displayName={displayName || retryName || pipelineTaskName || name}
+            displayName={displayName || pipelineTaskName || name}
             expanded={expanded}
-            id={uid}
+            id={pipelineTaskName}
             key={uid}
+            onRetryChange={onRetryChange}
             onSelect={onSelect}
             reason={reason}
             selectDefaultStep={selectDefaultStep}
+            selectedRetry={expanded && selectedRetry}
             selectedStepId={selectedStepId}
             steps={steps}
             succeeded={status}
+            taskRun={taskRun}
           />
         );
       })}

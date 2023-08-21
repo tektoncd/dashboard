@@ -35,6 +35,7 @@ import {
   getStepDefinition,
   getStepStatus,
   isRunning,
+  labels as labelConstants,
   queryParams as queryParamConstants,
   urls,
   useTitleSync
@@ -60,7 +61,7 @@ import {
 } from '../../api';
 import NotFound from '../NotFound';
 
-const { STEP, TASK_RUN_DETAILS, VIEW } = queryParamConstants;
+const { STEP, RETRY, TASK_RUN_DETAILS, VIEW } = queryParamConstants;
 
 export function TaskRunContainer() {
   const intl = useIntl();
@@ -71,6 +72,12 @@ export function TaskRunContainer() {
   const { namespace: namespaceParam, taskRunName } = params;
 
   const queryParams = new URLSearchParams(location.search);
+  let currentRetry = queryParams.get(RETRY);
+  if (!currentRetry || !/^[0-9]+$/.test(currentRetry)) {
+    // if retry param is specified it should contain a positive integer (or 0) only
+    // otherwise we'll default to the latest attempt
+    currentRetry = '';
+  }
   const selectedStepId = queryParams.get(STEP);
   const view = queryParams.get(VIEW);
   const showTaskRunDetails = queryParams.get(TASK_RUN_DETAILS);
@@ -110,7 +117,10 @@ export function TaskRunContainer() {
     { enabled: !!taskRun?.spec.taskRef }
   );
 
-  const podName = taskRun?.status?.podName;
+  let podName = taskRun?.status?.podName;
+  if (currentRetry !== '') {
+    podName = taskRun?.status?.retriesStatus?.[currentRetry]?.podName;
+  }
   let { data: pod } = usePod(
     { name: podName, namespace },
     { enabled: !!podName && view === 'pod' }
@@ -161,7 +171,7 @@ export function TaskRunContainer() {
             toggleMaximized: !!maximizedLogsContainer && toggleLogsMaximized
           })}
           fetchLogs={() => logsRetriever(stepName, stepStatus, run)}
-          key={stepName}
+          key={`${stepName}:${currentRetry}`}
           stepStatus={stepStatus}
           isLogsMaximized={isLogsMaximized}
           enableLogAutoScroll
@@ -171,7 +181,17 @@ export function TaskRunContainer() {
     );
   }
 
-  function handleTaskSelected(_, newSelectedStepId) {
+  function handleRetryChange(retry) {
+    if (Number.isInteger(retry)) {
+      queryParams.set(RETRY, retry);
+    } else {
+      queryParams.delete(RETRY);
+    }
+    const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
+    navigate(browserURL);
+  }
+
+  function handleTaskSelected(_, newSelectedStepId, retry) {
     if (newSelectedStepId) {
       queryParams.set(STEP, newSelectedStepId);
       queryParams.delete(TASK_RUN_DETAILS);
@@ -371,27 +391,35 @@ export function TaskRunContainer() {
     );
   }
 
+  let taskRunToUse = taskRun;
+  if (currentRetry !== '') {
+    taskRunToUse = {
+      ...taskRun,
+      status: taskRun.status?.retriesStatus?.[currentRetry]
+    };
+  }
+
   const definition = getStepDefinition({
     selectedStepId,
     task,
-    taskRun
+    taskRun: taskRunToUse
   });
 
   const stepStatus = getStepStatus({
     selectedStepId,
-    taskRun
+    taskRun: taskRunToUse
   });
 
   const {
     reason: taskRunStatusReason,
     message: taskRunStatusMessage,
     status: succeeded
-  } = getStatus(taskRun);
+  } = getStatus(taskRunToUse);
 
   const logContainer = getLogContainer({
     stepName: selectedStepId,
     stepStatus,
-    taskRun
+    taskRun: taskRunToUse
   });
 
   const onViewChange = getViewChangeHandler({ location, navigate });
@@ -442,9 +470,13 @@ export function TaskRunContainer() {
       </RunHeader>
       <div className="tkn--tasks">
         <TaskTree
+          onRetryChange={handleRetryChange}
           onSelect={handleTaskSelected}
+          selectedRetry={currentRetry}
           selectedStepId={selectedStepId}
-          selectedTaskId={showTaskRunDetails && taskRun.metadata.uid}
+          selectedTaskId={
+            taskRun.metadata.labels?.[labelConstants.PIPELINE_TASK]
+          }
           taskRuns={[taskRun]}
         />
         {(selectedStepId && (
@@ -454,7 +486,7 @@ export function TaskRunContainer() {
             onViewChange={onViewChange}
             stepName={selectedStepId}
             stepStatus={stepStatus}
-            taskRun={taskRun}
+            taskRun={taskRunToUse}
             view={view}
           />
         )) || (
@@ -462,7 +494,7 @@ export function TaskRunContainer() {
             onViewChange={onViewChange}
             pod={podDetails}
             task={task}
-            taskRun={taskRun}
+            taskRun={taskRunToUse}
             view={view}
           />
         )}

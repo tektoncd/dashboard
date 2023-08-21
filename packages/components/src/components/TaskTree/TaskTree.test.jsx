@@ -151,7 +151,7 @@ it('TaskTree handles click event on Task', () => {
 it('TaskTree handles click event on Step', () => {
   const onSelect = vi.fn();
   const { getByText } = render(
-    <TaskTree {...getProps()} selectedTaskId="task" onSelect={onSelect} />
+    <TaskTree {...getProps()} selectedTaskId="A Task" onSelect={onSelect} />
   );
   onSelect.mockClear();
   fireEvent.click(getByText(/build/i));

@@ -19,7 +19,8 @@ import { render } from '../../utils/test';
 const props = {
   displayName: 'A Task',
   id: 'fake_task_id',
-  onSelect: () => {}
+  onSelect: () => {},
+  taskRun: {}
 };
 
 describe('Task', () => {
@@ -59,7 +60,7 @@ describe('Task', () => {
       />
     );
 
-    expect(onSelect).toHaveBeenCalledWith(props.id, firstStepName);
+    expect(onSelect).toHaveBeenCalledWith(props.id, firstStepName, undefined);
   });
 
   it('automatically selects first error step in expanded Task', () => {
@@ -81,7 +82,7 @@ describe('Task', () => {
       />
     );
 
-    expect(onSelect).toHaveBeenCalledWith(props.id, errorStepName);
+    expect(onSelect).toHaveBeenCalledWith(props.id, errorStepName, undefined);
   });
 
   it('handles no steps', () => {
@@ -97,7 +98,7 @@ describe('Task', () => {
       />
     );
 
-    expect(onSelect).toHaveBeenCalledWith(props.id, undefined);
+    expect(onSelect).toHaveBeenCalledWith(props.id, undefined, undefined);
   });
 
   it('renders completed steps in expanded state', () => {
@@ -166,7 +167,19 @@ describe('Task', () => {
     expect(onSelect).not.toHaveBeenCalled();
     fireEvent.click(getByText(props.displayName));
     expect(onSelect).toHaveBeenCalledTimes(1);
-    expect(onSelect).toHaveBeenCalledWith(props.id, null);
+    expect(onSelect).toHaveBeenCalledWith(props.id, null, undefined);
+  });
+
+  it('handles click event with retries', () => {
+    const selectedRetry = 2;
+    const onSelect = vi.fn();
+    const { getByText } = render(
+      <Task {...props} onSelect={onSelect} selectedRetry={selectedRetry} />
+    );
+    expect(onSelect).not.toHaveBeenCalled();
+    fireEvent.click(getByText(`${props.displayName} (retry ${selectedRetry})`));
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    expect(onSelect).toHaveBeenCalledWith(props.id, null, selectedRetry);
   });
 
   it('handles click event on Step', () => {
@@ -179,6 +192,26 @@ describe('Task', () => {
     expect(onSelect).not.toHaveBeenCalled();
     fireEvent.click(getByText(stepName));
     expect(onSelect).toHaveBeenCalledTimes(1);
-    expect(onSelect).toHaveBeenCalledWith(props.id, stepName);
+    expect(onSelect).toHaveBeenCalledWith(props.id, stepName, undefined);
+  });
+
+  it('handles click event on Step with retries', () => {
+    const selectedRetry = 2;
+    const onSelect = vi.fn();
+    const stepName = 'build';
+    const steps = [{ name: stepName }];
+    const { getByText } = render(
+      <Task
+        {...props}
+        expanded
+        onSelect={onSelect}
+        selectedRetry={selectedRetry}
+        steps={steps}
+      />
+    );
+    expect(onSelect).not.toHaveBeenCalled();
+    fireEvent.click(getByText(stepName));
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    expect(onSelect).toHaveBeenCalledWith(props.id, stepName, selectedRetry);
   });
 });

@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React, { useState } from 'react';
+import { labels as labelConstants } from '@tektoncd/dashboard-utils';
 
 import PipelineRun from '.';
 
@@ -35,9 +36,16 @@ const task = {
   }
 };
 
-function getTaskRun({ exitCode = 0, name }) {
+function getTaskRun({ exitCode = 0, name, pipelineTaskName }) {
   return {
-    metadata: { labels: {}, name, namespace: 'default', uid: name },
+    metadata: {
+      labels: {
+        [labelConstants.PIPELINE_TASK]: pipelineTaskName
+      },
+      name,
+      namespace: 'default',
+      uid: name
+    },
     spec: {
       params: {},
       serviceAccountName: 'default',
@@ -74,10 +82,14 @@ function getTaskRun({ exitCode = 0, name }) {
   };
 }
 
-const taskRun = getTaskRun({ name: 'sampleTaskRunName' });
+const taskRun = getTaskRun({
+  name: 'sampleTaskRunName',
+  pipelineTaskName: 'task1'
+});
 const taskRunWithWarning = getTaskRun({
   exitCode: 1,
-  name: 'sampleTaskRunName2'
+  name: 'sampleTaskRunName2',
+  pipelineTaskName: 'task2'
 });
 
 const pipelineRun = {

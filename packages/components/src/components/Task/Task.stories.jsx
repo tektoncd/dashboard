@@ -19,7 +19,8 @@ import Task from './Task';
 export default {
   args: {
     displayName: 'A Task',
-    onSelect: action('selected')
+    onSelect: action('selected'),
+    taskRun: {}
   },
   component: Task,
   decorators: [
