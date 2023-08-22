@@ -56,7 +56,7 @@ export const Expanded = args => {
     <Task
       {...args}
       expanded
-      onSelect={(_, stepId) => setSelectedStepId(stepId)}
+      onSelect={({ selectedStepId: stepId }) => setSelectedStepId(stepId)}
       reason="Running"
       selectedStepId={selectedStepId}
       steps={[

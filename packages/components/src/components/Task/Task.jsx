@@ -20,7 +20,6 @@ import {
 } from '@carbon/icons-react';
 import {
   getStepStatusReason,
-  getTranslateWithId,
   updateUnexecutedSteps
 } from '@tektoncd/dashboard-utils';
 
@@ -74,9 +73,14 @@ class Task extends Component {
   }
 
   handleClick = () => {
-    const { id, selectedRetry } = this.props;
+    const { id, selectedRetry, taskRun } = this.props;
     const { selectedStepId } = this.state;
-    this.props.onSelect(id, selectedStepId, selectedRetry);
+    this.props.onSelect({
+      selectedRetry,
+      selectedStepId,
+      selectedTaskId: id,
+      taskRunName: taskRun.metadata?.name
+    });
   };
 
   handleStepSelected = selectedStepId => {

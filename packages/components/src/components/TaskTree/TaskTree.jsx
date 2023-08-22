@@ -20,11 +20,13 @@ const defaults = {
 };
 
 const TaskTree = ({
+  isSelectedTaskMatrix,
   onRetryChange,
   onSelect,
   selectedRetry,
   selectedStepId,
   selectedTaskId,
+  selectedTaskRunName,
   taskRuns = defaults.taskRuns
 }) => {
   if (!taskRuns) {
@@ -34,6 +36,8 @@ const TaskTree = ({
   const erroredTask = taskRuns
     .filter(Boolean)
     .find(taskRun => getStatus(taskRun).status === 'False');
+
+  let hasExpandedTask = false;
 
   return (
     <ol className="tkn--task-tree">
@@ -48,7 +52,11 @@ const TaskTree = ({
         } = labels;
 
         let taskRunToUse = taskRun;
-        if (selectedRetry && selectedTaskId === pipelineTaskName) {
+        if (
+          selectedRetry &&
+          selectedTaskId === pipelineTaskName &&
+          (selectedTaskRunName ? name === selectedTaskRunName : true)
+        ) {
           taskRunToUse = {
             ...taskRunToUse,
             status: taskRunToUse.status?.retriesStatus?.[selectedRetry]
@@ -58,10 +66,25 @@ const TaskTree = ({
         const { reason, status } = getStatus(taskRunToUse);
         const { steps } = taskRunToUse.status || {};
         const expanded =
-          (!selectedTaskId && erroredTask?.metadata.uid === uid) ||
-          selectedTaskId === pipelineTaskName ||
-          (!erroredTask && !selectedTaskId && index === 0);
-        const selectDefaultStep = !selectedTaskId;
+          // should only have 1 expanded task at a time (may change in a future design)
+          // we expand the first task matching the rules below
+          !hasExpandedTask &&
+          // no explicitly selected task and current task failed, expand this one
+          ((!selectedTaskId && erroredTask?.metadata.uid === uid) ||
+            // or this task is the selected one
+            (selectedTaskId === pipelineTaskName &&
+              // if it's a matrixed TaskRun only expand if it matches the specified taskRunName
+              // if it's not a matrixed TaskRun, or no taskRunName specified, this is the first match so expand it
+              (selectedTaskRunName ? name === selectedTaskRunName : true)) ||
+            // otherwise there's no error and no explicit selection, expand the first task by default
+            (!erroredTask && !selectedTaskId && index === 0));
+
+        if (!hasExpandedTask && expanded) {
+          hasExpandedTask = true;
+        }
+
+        const selectDefaultStep =
+          !selectedTaskId || (isSelectedTaskMatrix && !selectedTaskRunName);
         return (
           <Task
             displayName={displayName || pipelineTaskName || name}

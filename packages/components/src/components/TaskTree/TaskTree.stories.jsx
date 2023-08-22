@@ -86,7 +86,7 @@ export const Default = {
     return (
       <TaskTree
         {...args}
-        onSelect={(taskId, stepId) => {
+        onSelect={({ selectedStepId: stepId, selectedTaskId: taskId }) => {
           setSelectedStepId(stepId);
           setSelectedTaskId(taskId);
         }}

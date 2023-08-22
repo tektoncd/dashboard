@@ -60,7 +60,12 @@ describe('Task', () => {
       />
     );
 
-    expect(onSelect).toHaveBeenCalledWith(props.id, firstStepName, undefined);
+    expect(onSelect).toHaveBeenCalledWith({
+      selectedRetry: undefined,
+      selectedStepId: firstStepName,
+      selectedTaskId: props.id,
+      taskRunName: undefined
+    });
   });
 
   it('automatically selects first error step in expanded Task', () => {
@@ -82,7 +87,12 @@ describe('Task', () => {
       />
     );
 
-    expect(onSelect).toHaveBeenCalledWith(props.id, errorStepName, undefined);
+    expect(onSelect).toHaveBeenCalledWith({
+      selectedRetry: undefined,
+      selectedStepId: errorStepName,
+      selectedTaskId: props.id,
+      taskRunName: undefined
+    });
   });
 
   it('handles no steps', () => {
@@ -98,7 +108,12 @@ describe('Task', () => {
       />
     );
 
-    expect(onSelect).toHaveBeenCalledWith(props.id, undefined, undefined);
+    expect(onSelect).toHaveBeenCalledWith({
+      selectedRetry: undefined,
+      selectedStepId: undefined,
+      selectedTaskId: props.id,
+      taskRunName: undefined
+    });
   });
 
   it('renders completed steps in expanded state', () => {
@@ -167,7 +182,12 @@ describe('Task', () => {
     expect(onSelect).not.toHaveBeenCalled();
     fireEvent.click(getByText(props.displayName));
     expect(onSelect).toHaveBeenCalledTimes(1);
-    expect(onSelect).toHaveBeenCalledWith(props.id, null, undefined);
+    expect(onSelect).toHaveBeenCalledWith({
+      selectedRetry: undefined,
+      selectedStepId: null,
+      selectedTaskId: props.id,
+      taskRunName: undefined
+    });
   });
 
   it('handles click event with retries', () => {
@@ -179,7 +199,12 @@ describe('Task', () => {
     expect(onSelect).not.toHaveBeenCalled();
     fireEvent.click(getByText(`${props.displayName} (retry ${selectedRetry})`));
     expect(onSelect).toHaveBeenCalledTimes(1);
-    expect(onSelect).toHaveBeenCalledWith(props.id, null, selectedRetry);
+    expect(onSelect).toHaveBeenCalledWith({
+      selectedRetry,
+      selectedStepId: null,
+      selectedTaskId: props.id,
+      taskRunName: undefined
+    });
   });
 
   it('handles click event on Step', () => {
@@ -192,7 +217,12 @@ describe('Task', () => {
     expect(onSelect).not.toHaveBeenCalled();
     fireEvent.click(getByText(stepName));
     expect(onSelect).toHaveBeenCalledTimes(1);
-    expect(onSelect).toHaveBeenCalledWith(props.id, stepName, undefined);
+    expect(onSelect).toHaveBeenCalledWith({
+      selectedRetry: undefined,
+      selectedStepId: stepName,
+      selectedTaskId: props.id,
+      taskRunName: undefined
+    });
   });
 
   it('handles click event on Step with retries', () => {
@@ -212,6 +242,11 @@ describe('Task', () => {
     expect(onSelect).not.toHaveBeenCalled();
     fireEvent.click(getByText(stepName));
     expect(onSelect).toHaveBeenCalledTimes(1);
-    expect(onSelect).toHaveBeenCalledWith(props.id, stepName, selectedRetry);
+    expect(onSelect).toHaveBeenCalledWith({
+      selectedRetry,
+      selectedStepId: stepName,
+      selectedTaskId: props.id,
+      taskRunName: undefined
+    });
   });
 });

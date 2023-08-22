@@ -174,7 +174,10 @@ export const Default = () => {
   return (
     <PipelineRun
       fetchLogs={() => 'sample log output'}
-      handleTaskSelected={(taskId, stepId) => {
+      handleTaskSelected={({
+        selectedStepId: stepId,
+        selectedTaskId: taskId
+      }) => {
         setSelectedStepId(stepId);
         setSelectedTaskId(taskId);
       }}
@@ -193,7 +196,10 @@ export const WithMinimalStatus = () => {
   return (
     <PipelineRun
       fetchLogs={() => 'sample log output'}
-      handleTaskSelected={(taskId, stepId) => {
+      handleTaskSelected={({
+        selectedStepId: stepId,
+        selectedTaskId: taskId
+      }) => {
         setSelectedStepId(stepId);
         setSelectedTaskId(taskId);
       }}
@@ -212,7 +218,10 @@ export const WithPodDetails = () => {
   return (
     <PipelineRun
       fetchLogs={() => 'sample log output'}
-      handleTaskSelected={(taskId, stepId) => {
+      handleTaskSelected={({
+        selectedStepId: stepId,
+        selectedTaskId: taskId
+      }) => {
         setSelectedStepId(stepId);
         setSelectedTaskId(taskId);
       }}

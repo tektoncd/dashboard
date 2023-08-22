@@ -191,7 +191,7 @@ export function TaskRunContainer() {
     navigate(browserURL);
   }
 
-  function handleTaskSelected(_, newSelectedStepId, retry) {
+  function handleTaskSelected({ selectedStepId: newSelectedStepId }) {
     if (newSelectedStepId) {
       queryParams.set(STEP, newSelectedStepId);
       queryParams.delete(TASK_RUN_DETAILS);
