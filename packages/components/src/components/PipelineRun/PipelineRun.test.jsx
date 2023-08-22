@@ -135,7 +135,7 @@ it('PipelineRunContainer handles init step failures for retry', async () => {
       selectedTaskId: null
     };
 
-    handleTaskSelected = (selectedTaskId, selectedStepId) => {
+    handleTaskSelected = ({ selectedStepId, selectedTaskId }) => {
       this.setState({ selectedStepId, selectedTaskId });
     };
 

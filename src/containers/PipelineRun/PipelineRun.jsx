@@ -60,7 +60,7 @@ import {
 } from '../../utils';
 import NotFound from '../NotFound';
 
-const { PIPELINE_TASK, RETRY, STEP, VIEW } = queryParamConstants;
+const { PIPELINE_TASK, RETRY, STEP, TASK_RUN_NAME, VIEW } = queryParamConstants;
 
 export /* istanbul ignore next */ function PipelineRunContainer() {
   const intl = useIntl();
@@ -72,6 +72,7 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
 
   const queryParams = new URLSearchParams(location.search);
   const currentPipelineTaskName = queryParams.get(PIPELINE_TASK);
+  const currentTaskRunName = queryParams.get(TASK_RUN_NAME);
 
   let currentRetry = queryParams.get(RETRY);
   if (!currentRetry || !/^[0-9]+$/.test(currentRetry)) {
@@ -151,10 +152,15 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
     tasks
   });
 
-  function getSelectedTaskRun({ selectedRetry, selectedTaskId }) {
-    const taskRun = taskRuns.find(
-      ({ metadata }) =>
-        metadata.labels?.[labelConstants.PIPELINE_TASK] === selectedTaskId
+  function getSelectedTaskRun({
+    selectedRetry,
+    selectedTaskId,
+    selectedTaskRunName
+  }) {
+    const taskRun = taskRuns.find(({ metadata }) =>
+      selectedTaskRunName
+        ? metadata.name === selectedTaskRunName
+        : metadata.labels?.[labelConstants.PIPELINE_TASK] === selectedTaskId
     );
 
     if (!taskRun) {
@@ -168,7 +174,12 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
     return { podName: taskRun.status?.retriesStatus?.[selectedRetry]?.podName };
   }
 
-  function handleTaskSelected(selectedTaskId, selectedStepId, retry) {
+  function handleTaskSelected({
+    selectedRetry: retry,
+    selectedStepId,
+    selectedTaskId,
+    taskRunName
+  }) {
     queryParams.set(PIPELINE_TASK, selectedTaskId);
     if (selectedStepId) {
       queryParams.set(STEP, selectedStepId);
@@ -180,6 +191,13 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
       queryParams.set(RETRY, retry);
     } else {
       queryParams.delete(RETRY);
+    }
+
+    if (taskRunName) {
+      // matrix run
+      queryParams.set(TASK_RUN_NAME, taskRunName);
+    } else {
+      queryParams.delete(TASK_RUN_NAME);
     }
 
     if (
@@ -438,7 +456,11 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
   const selectedTaskId = currentPipelineTaskName;
 
   const { podName } =
-    getSelectedTaskRun({ selectedRetry: currentRetry, selectedTaskId }) || {};
+    getSelectedTaskRun({
+      selectedRetry: currentRetry,
+      selectedTaskId,
+      selectedTaskRunName: currentTaskRunName
+    }) || {};
   let { data: pod } = usePod(
     { name: podName, namespace },
     { enabled: !!podName && view === 'pod' }
@@ -550,6 +572,7 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
         selectedRetry={currentRetry}
         selectedStepId={currentSelectedStepId}
         selectedTaskId={selectedTaskId}
+        selectedTaskRunName={currentTaskRunName}
         taskRuns={taskRuns}
         tasks={tasks.concat(clusterTasks)}
         view={view}

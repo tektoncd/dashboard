@@ -494,19 +494,24 @@ export function getTaskRunsWithPlaceholders({
 
   const taskRunsToDisplay = [];
   pipelineTasks.forEach(pipelineTask => {
-    const realTaskRun = taskRuns.find(
+    const realTaskRuns = taskRuns.filter(
       taskRun =>
         taskRun.metadata.labels?.[labelConstants.PIPELINE_TASK] ===
         pipelineTask.name
     );
 
-    const taskRunToDisplay =
-      realTaskRun ||
-      getPlaceholderTaskRun({ clusterTasks, pipelineTask, tasks });
+    realTaskRuns.forEach(taskRun => {
+      taskRunsToDisplay.push(addDashboardLabels({ pipelineTask, taskRun }));
+    });
 
-    taskRunsToDisplay.push(
-      addDashboardLabels({ pipelineTask, taskRun: taskRunToDisplay })
-    );
+    if (!realTaskRuns.length) {
+      taskRunsToDisplay.push(
+        addDashboardLabels({
+          pipelineTask,
+          taskRun: getPlaceholderTaskRun({ clusterTasks, pipelineTask, tasks })
+        })
+      );
+    }
   });
 
   return taskRunsToDisplay;

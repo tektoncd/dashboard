@@ -112,6 +112,16 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     }));
   };
 
+  getPipelineTask = ({ pipelineRun, selectedTaskId, taskRun }) => {
+    const memberOf = taskRun?.metadata?.labels?.[labelConstants.MEMBER_OF];
+    const pipelineTask = (
+      pipelineRun.spec?.pipelineSpec?.[memberOf] ||
+      pipelineRun.status?.pipelineSpec?.[memberOf]
+    )?.find(task => task.name === selectedTaskId);
+
+    return pipelineTask;
+  };
+
   loadTaskRuns = () => {
     const { pipelineRun } = this.props;
     if (
@@ -122,19 +132,32 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     }
 
     let { taskRuns } = this.props;
-
-    if (!taskRuns) {
-      return [];
-    }
-
-    return taskRuns;
+    return taskRuns || [];
   };
+
+  onTaskSelected = ({
+    selectedRetry: retry, selectedStepId, selectedTaskId, taskRunName
+  }) => {
+    const { handleTaskSelected, pipelineRun } = this.props;
+    const taskRuns = this.loadTaskRuns();
+    let taskRun = taskRuns.find(
+      ({ metadata }) =>
+        metadata.labels?.[labelConstants.PIPELINE_TASK] === selectedTaskId
+    ) || {};
+
+    const pipelineTask = this.getPipelineTask({ pipelineRun, selectedTaskId, taskRun });
+    handleTaskSelected({
+      selectedRetry: retry,
+      selectedStepId,
+      selectedTaskId,
+      taskRunName: pipelineTask?.matrix ? taskRunName : undefined
+    });
+  }
 
   render() {
     const {
       customNotification,
       error,
-      handleTaskSelected,
       icon,
       intl,
       loading,
@@ -146,6 +169,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       selectedRetry,
       selectedStepId,
       selectedTaskId,
+      selectedTaskRunName,
       triggerHeader,
       view
     } = this.props;
@@ -236,7 +260,18 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     }
 
     const taskRuns = this.loadTaskRuns();
-    let taskRun = taskRuns.find(({ metadata }) => metadata.labels?.[labelConstants.PIPELINE_TASK] === selectedTaskId) || {};
+    let taskRun = taskRuns.find(
+      ({ metadata }) =>
+        metadata.labels?.[labelConstants.PIPELINE_TASK] === selectedTaskId
+    ) || {};
+
+    const pipelineTask = this.getPipelineTask({ pipelineRun, selectedTaskId, taskRun });
+    if (pipelineTask?.matrix && selectedTaskRunName) {
+      taskRun = taskRuns.find(
+        ({ metadata }) =>
+          metadata.name === selectedTaskRunName
+      );
+    }
 
     if (taskRun.status?.retriesStatus && selectedRetry) {
       taskRun = {
@@ -287,11 +322,13 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         {taskRuns.length > 0 && (
           <div className="tkn--tasks">
             <TaskTree
+              isSelectedTaskMatrix={!!pipelineTask?.matrix}
               onRetryChange={onRetryChange}
-              onSelect={handleTaskSelected}
+              onSelect={this.onTaskSelected}
               selectedRetry={selectedRetry}
               selectedStepId={selectedStepId}
               selectedTaskId={selectedTaskId}
+              selectedTaskRunName={selectedTaskRunName}
               taskRuns={taskRuns}
             />
             {(selectedStepId && (

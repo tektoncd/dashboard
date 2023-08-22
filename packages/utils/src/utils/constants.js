@@ -16,6 +16,7 @@ export const labels = {
   DASHBOARD_DESCRIPTION: 'dashboard.tekton.dev/description',
   DASHBOARD_DISPLAY_NAME: 'dashboard.tekton.dev/displayName',
   DASHBOARD_IMPORT: 'dashboard.tekton.dev/import',
+  MEMBER_OF: 'tekton.dev/memberOf',
   PIPELINE: 'tekton.dev/pipeline',
   PIPELINE_RUN: 'tekton.dev/pipelineRun',
   PIPELINE_TASK: 'tekton.dev/pipelineTask',
@@ -35,6 +36,7 @@ export const queryParams = {
   RETRY: 'retry',
   STEP: 'step',
   TASK_RUN_DETAILS: 'taskRunDetails',
+  TASK_RUN_NAME: 'taskRunName',
   VIEW: 'view'
 };
 
