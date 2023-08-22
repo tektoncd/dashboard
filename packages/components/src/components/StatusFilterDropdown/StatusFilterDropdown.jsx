@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2022 The Tekton Authors
+Copyright 2020-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,10 @@ limitations under the License.
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { Dropdown } from 'carbon-components-react';
-import { statusFilterOrder } from '@tektoncd/dashboard-utils';
+import {
+  getTranslateWithId,
+  statusFilterOrder
+} from '@tektoncd/dashboard-utils';
 
 const StatusFilterDropdown = ({ id, initialSelectedStatus, onChange }) => {
   const intl = useIntl();
@@ -77,6 +80,7 @@ const StatusFilterDropdown = ({ id, initialSelectedStatus, onChange }) => {
         id: 'dashboard.filter.status.title',
         defaultMessage: 'Status:'
       })}
+      translateWithId={getTranslateWithId(intl)}
       type="inline"
     />
   );
