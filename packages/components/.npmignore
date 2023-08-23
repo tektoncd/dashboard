@@ -1,5 +1,6 @@
-src/utils/test.js
+src/utils/test.jsx
 *.cy.js
-*.stories.js
+*.stories.jsx
 *.test.js
+*.test.jsx
 **/examples/
