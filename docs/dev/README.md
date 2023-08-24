@@ -224,6 +224,8 @@ Stories are defined in `*.stories.js(x)` files alongside their components.
 
 Run `npm run storybook:build` to build the static storybook files. The build artifacts will be stored in the `static-storybook/` directory and can be hosted on GitHub Pages or any other static resource server.
 
+**Note**: The Storybook for the latest published packages is available at https://tektoncd.github.io/dashboard/. For previous versions, checkout the relevant commit and run Storybook locally.
+
 ## Next steps
 
 You can read the dashboard backend [API docs](./api.md).
