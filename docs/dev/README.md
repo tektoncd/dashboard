@@ -75,6 +75,8 @@ To run the dev server with the production bundles:
 npm run preview
 ```
 
+**Note**: To help ensure the build process is efficient and content is transformed as required for current browser support, JSX processing is only performed on files with a `.jsx` extension. This means that if a file contains JSX expressions (e.g. `<MyComponent … />` or `<span>…</span>`), it must be named with a `.jsx` extension. This applies to all files containing JSX, including tests, stories, etc.
+
 ## Build the backend (optional: for local debugging)
 
 The backend uses `go modules` to manage its dependencies. To build the go backend, run:
@@ -171,7 +173,7 @@ Run `npm test` to execute the unit tests via [Vitest](https://vitest.dev/) in in
 
 Coverage threshold is set to 90%, if it falls below the threshold the test script will fail.
 
-Tests are defined in `*.test.js` files alongside the code under test.
+Tests are defined in `*.test.js(x)` files alongside the code under test.
 
 ### Frontend E2E tests
 
@@ -218,7 +220,7 @@ You can also run the Dashboard in 'i18n mode' which enables all built locales vi
 Run `npm run storybook` to start [storybook](https://storybook.js.org/) in development mode. It automatically opens 
 [`http://localhost:5000/`](http://localhost:5000/) in your browser. The app automatically hot-reloads any changes to the source files, including CSS.
 
-Stories are defined in `*.stories.js` files alongside their components.
+Stories are defined in `*.stories.js(x)` files alongside their components.
 
 Run `npm run storybook:build` to build the static storybook files. The build artifacts will be stored in the `static-storybook/` directory and can be hosted on GitHub Pages or any other static resource server.
 
