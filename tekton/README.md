@@ -148,3 +148,7 @@ To release a new version of the npm packages, e.g. `@tektoncd/dashboard-componen
 1. `npm --workspaces publish --otp <one-time-passcode>`
 1. once the packages are published run `npm install`
 1. stage and commit the changes to the package.json and package-lock.json files and open a new PR to record the release
+1. build and publish the Storybook:
+   1. `npm run storybook:build`
+   1. `npm run storybook:deploy -- --remote upstream`
+   1. verify that the updated version is available at https://tektoncd.github.io/dashboard/
