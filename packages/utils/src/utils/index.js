@@ -199,7 +199,10 @@ export function isRunning(reason, status) {
   return (
     status === 'running' ||
     (status === 'Unknown' &&
-      (reason === 'Running' || reason === 'PipelineRunStopping'))
+      (reason === 'Running' ||
+        reason === 'PipelineRunStopping' ||
+        reason === 'CancelledRunningFinally' ||
+        reason === 'StoppedRunningFinally'))
   );
 }
 
