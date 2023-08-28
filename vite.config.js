@@ -24,7 +24,7 @@ const proxyConfig = {
   target: customAPIDomain || 'http://localhost:9097'
 };
 
-export default defineConfig(({ _mode }) => ({
+export default defineConfig(({ mode }) => ({
   root: './',
   base: './',
   build: {
@@ -54,7 +54,7 @@ export default defineConfig(({ _mode }) => ({
       'Content-Security-Policy':
         "default-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; connect-src 'self' wss: ws:; font-src 'self' https://1.www.s81c.com;"
     },
-    open: true,
+    open: mode !== 'test',
     port: process.env.PORT || 8000,
     proxy: {
       '/v1': proxyConfig,
@@ -63,7 +63,7 @@ export default defineConfig(({ _mode }) => ({
         ws: true
       }
     },
-    strictPort: true
+    strictPort: mode !== 'test'
   },
   test: {
     clearMocks: true,
