@@ -88,7 +88,7 @@
     "vite": "^4.4.9",
     "vite-plugin-html": "^3.2.0",
     "vite-plugin-svgr": "^3.2.0",
-    "vitest": "^0.34.1"
+    "vitest": "^0.34.3"
   },
   "engines": {
     "node": "^18.17.0",
