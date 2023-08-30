@@ -68,7 +68,9 @@ function get_node() {
   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
   export NVM_DIR="$HOME/.nvm"
   source "$NVM_DIR/nvm.sh"
-  nvm install
+  # if nvm install fails using the Node.js binary, the `-b` causes it to exit
+  # instead of trying to build from source
+  nvm install -b
 }
 
 function node_npm_install() {
