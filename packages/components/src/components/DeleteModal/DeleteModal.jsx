@@ -14,8 +14,8 @@ limitations under the License.
 
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Modal } from 'carbon-components-react';
 
+import Modal from '../Modal';
 import Table from '../Table';
 
 const DeleteModal = ({

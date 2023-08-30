@@ -110,9 +110,10 @@ const ConfigErrorComponent = ({ loadingConfigError }) => {
 const ConfigError = ConfigErrorComponent;
 
 async function loadMessages(lang) {
-  const loadedMessages = (await import(`../../nls/messages_${lang}.json`)).default;
+  const loadedMessages = (await import(`../../nls/messages_${lang}.json`))
+    .default;
   /* istanbul ignore next */
-  if (import.meta.env.MODE === "i18n:pseudo") {
+  if (import.meta.env.MODE === 'i18n:pseudo') {
     const startBoundary = '[[%';
     const endBoundary = '%]]';
     // Make it easier to identify untranslated strings in the UI
@@ -146,7 +147,9 @@ export function App({ lang }) {
   const tenantNamespaces = useTenantNamespaces();
 
   const [isSideNavExpanded, setIsSideNavExpanded] = useState(true);
-  const [selectedNamespace, setSelectedNamespace] = useState(tenantNamespaces[0] || ALL_NAMESPACES);
+  const [selectedNamespace, setSelectedNamespace] = useState(
+    tenantNamespaces[0] || ALL_NAMESPACES
+  );
   const [namespacedMatch, setNamespacedMatch] = useState(null);
 
   const {
@@ -206,7 +209,10 @@ export function App({ lang }) {
         setIsSideNavExpanded(prevIsSideNavExpanded => !prevIsSideNavExpanded);
       }}
     >
-      <HeaderBarContent isFetchingConfig={isFetchingConfig} logoutButton={logoutButton} />
+      <HeaderBarContent
+        isFetchingConfig={isFetchingConfig}
+        logoutButton={logoutButton}
+      />
     </Header>
   );
 
