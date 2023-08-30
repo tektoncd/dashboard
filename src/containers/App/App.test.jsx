@@ -22,8 +22,9 @@ import * as PipelinesAPI from '../../api/pipelines';
 describe('App', () => {
   beforeEach(() => {
     vi.spyOn(API, 'useProperties').mockImplementation(() => ({ data: {} }));
-    vi.spyOn(PipelinesAPI, 'usePipelines')
-      .mockImplementation(() => ({ data: [] }));
+    vi.spyOn(PipelinesAPI, 'usePipelines').mockImplementation(() => ({
+      data: []
+    }));
     vi.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
     vi.spyOn(API, 'useIsTriggersInstalled').mockImplementation(() => false);
     vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({ data: [] }));
@@ -60,7 +61,7 @@ describe('App', () => {
   it('does not call namespaces API in tenant namespace mode', async () => {
     vi.spyOn(API, 'getNamespaces');
     vi.spyOn(API, 'useTenantNamespaces').mockImplementation(() => ['fake']);
-    const { queryByText } = render(<App />);
+    const { queryByText } = render(<App lang="en" />);
 
     await waitFor(() => queryByText('Tekton resources'));
     expect(API.useNamespaces).toHaveBeenCalledWith(
@@ -71,7 +72,7 @@ describe('App', () => {
   it('calls namespaces API in full cluster mode', async () => {
     vi.spyOn(API, 'getNamespaces').mockImplementation(() => {});
     vi.spyOn(API, 'useTenantNamespaces').mockImplementation(() => []);
-    const { queryByText } = render(<App />);
+    const { queryByText } = render(<App lang="en" />);
 
     await waitFor(() => queryByText('Tekton resources'));
     await waitFor(() =>
