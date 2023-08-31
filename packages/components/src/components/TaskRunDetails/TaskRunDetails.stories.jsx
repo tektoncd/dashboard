@@ -25,11 +25,6 @@ const results = [{ name: 'message', value: 'hello' }];
 
 export default {
   component: TaskRunDetails,
-  parameters: {
-    backgrounds: {
-      default: 'white'
-    }
-  },
   title: 'TaskRunDetails'
 };
 

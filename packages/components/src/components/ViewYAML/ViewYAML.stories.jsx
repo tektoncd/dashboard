@@ -38,6 +38,11 @@ export default {
     }
   },
   component: ViewYAML,
+  parameters: {
+    themes: {
+      themeOverride: 'dark'
+    }
+  },
   title: 'ViewYAML'
 };
 

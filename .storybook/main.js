@@ -17,7 +17,8 @@ const config = {
   addons: [
     '@storybook/addon-essentials',
     '@storybook/addon-links',
-    '@storybook/addon-storysource'
+    '@storybook/addon-storysource',
+    '@storybook/addon-themes'
   ],
   core: { disableTelemetry: true },
   docs: {

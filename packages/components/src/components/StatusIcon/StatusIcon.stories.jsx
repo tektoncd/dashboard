@@ -38,11 +38,6 @@ export default {
       options: ['normal', 'inverse']
     }
   },
-  parameters: {
-    backgrounds: {
-      default: 'white'
-    }
-  },
   title: 'StatusIcon'
 };
 

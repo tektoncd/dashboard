@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
+import { withThemeByClassName } from '@storybook/addon-themes';
 
 import Container from './Container';
 
@@ -22,7 +23,7 @@ const parameters = {
     }
   },
   backgrounds: {
-    default: 'gray10',
+    disable: true,
     grid: {
       disable: true,
       cellSize: 16,
@@ -30,18 +31,20 @@ const parameters = {
       cellAmount: 1,
       offsetX: 0,
       offsetY: 0
-    },
-    values: [
-      { name: 'white', value: 'white' },
-      { name: 'gray10', value: '#f4f4f4' },
-      { name: 'gray90', value: '#262626' },
-      { name: 'debug', value: 'red' }
-    ]
+    }
   },
   controls: { hideNoControlsWarning: true }
 };
 
 const decorators = [
+  withThemeByClassName({
+    themes: {
+      light: 'tkn--theme-light tkn--storybook-theme',
+      dark: 'tkn--theme-dark tkn--storybook-theme',
+      system: 'tkn--theme-system tkn--storybook-theme'
+    },
+    defaultTheme: 'system'
+  }),
   (story, context) => (
     <Container
       notes={context.parameters.notes}

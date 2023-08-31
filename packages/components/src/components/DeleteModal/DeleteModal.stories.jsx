@@ -17,11 +17,6 @@ import DeleteModal from './DeleteModal';
 
 export default {
   component: DeleteModal,
-  parameters: {
-    backgrounds: {
-      default: 'white'
-    }
-  },
   title: 'DeleteModal'
 };
 

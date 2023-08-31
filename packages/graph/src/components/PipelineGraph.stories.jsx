@@ -22,11 +22,6 @@ import taskRuns from './examples/taskRuns.json';
 import tasks from './examples/tasks.json';
 
 export default {
-  parameters: {
-    backgrounds: {
-      default: 'white'
-    }
-  },
   title: 'legacy/PipelineGraph'
 };
 

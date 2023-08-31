@@ -47,11 +47,6 @@ export default {
       options: ['card', 'icon']
     }
   },
-  parameters: {
-    backgrounds: {
-      default: 'gray10'
-    }
-  },
   title: 'Node'
 };
 

@@ -22,11 +22,6 @@ export default {
     stepName: 'build'
   },
   component: Step,
-  parameters: {
-    backgrounds: {
-      default: 'white'
-    }
-  },
   title: 'Step'
 };
 

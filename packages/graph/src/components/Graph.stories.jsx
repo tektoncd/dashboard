@@ -17,11 +17,6 @@ import graph from './examples/graph.json';
 
 export default {
   component: Graph,
-  parameters: {
-    backgrounds: {
-      default: 'white'
-    }
-  },
   title: 'legacy/Graph'
 };
 
