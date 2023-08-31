@@ -64,11 +64,6 @@ export default {
       </div>
     )
   ],
-  parameters: {
-    backgrounds: {
-      default: 'white'
-    }
-  },
   title: 'legacy/Node'
 };
 

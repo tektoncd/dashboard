@@ -34,11 +34,6 @@ export default {
       ]
     }
   },
-  parameters: {
-    backgrounds: {
-      default: 'white'
-    }
-  },
   title: 'StatusIcon'
 };
 

@@ -19,11 +19,6 @@ import Tab from '../Tab';
 
 export default {
   component: Tabs,
-  parameters: {
-    backgrounds: {
-      default: 'white'
-    }
-  },
   title: 'Tabs'
 };
 

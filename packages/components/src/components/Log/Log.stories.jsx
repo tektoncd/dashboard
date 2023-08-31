@@ -37,6 +37,11 @@ export default {
       </div>
     )
   ],
+  parameters: {
+    themes: {
+      themeOverride: 'dark'
+    }
+  },
   title: 'Log'
 };
 

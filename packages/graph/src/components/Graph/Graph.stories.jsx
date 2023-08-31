@@ -38,11 +38,6 @@ export default {
       options: ['DOWN', 'RIGHT']
     }
   },
-  parameters: {
-    backgrounds: {
-      default: 'gray10'
-    }
-  },
   title: 'Graph'
 };
 

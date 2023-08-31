@@ -54,17 +54,17 @@ const ansiTextStyles = (() => {
 
 export default {
   component: LogFormat,
+  parameters: {
+    themes: {
+      themeOverride: 'dark'
+    }
+  },
   title: 'LogFormat'
 };
 
 export const Colors = {
   args: {
     children: ansiColors
-  },
-  parameters: {
-    backgrounds: {
-      default: 'gray90'
-    }
   }
 };
 

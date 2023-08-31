@@ -36,11 +36,6 @@ export default {
     taskRun: {}
   },
   component: StepDetails,
-  parameters: {
-    backgrounds: {
-      default: 'white'
-    }
-  },
   title: 'StepDetails'
 };
 

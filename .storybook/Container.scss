@@ -18,3 +18,12 @@ limitations under the License.
 @import '@tektoncd/dashboard-graph/src/components/ZoomablePipelineGraph.scss';
 
 @import '@tektoncd/dashboard-graph/src/components/newGraph.scss';
+
+.tkn--storybook-theme {
+  background-color: $ui-background;
+  color: $text-01;
+
+  .sb-show-main {
+    background-color: inherit !important;
+  }
+}
