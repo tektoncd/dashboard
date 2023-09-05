@@ -34,6 +34,7 @@ import {
   Table
 } from '@tektoncd/dashboard-components';
 import {
+  Add16 as Add,
   Calendar16 as CalendarIcon,
   TrashCan32 as DeleteIcon,
   Time16 as TimeIcon,
@@ -188,6 +189,14 @@ function CustomRuns() {
     rerunCustomRun(run);
   }
 
+  function editAndRun(run) {
+    navigate(
+      `${urls.customRuns.create()}?mode=yaml&customRunName=${
+        run.metadata.name
+      }&namespace=${run.metadata.namespace}`
+    );
+  }
+
   function deleteResource(run) {
     const { name, namespace: resourceNamespace } = run.metadata;
     return deleteCustomRun({ name, namespace: resourceNamespace }).catch(
@@ -224,6 +233,13 @@ function CustomRuns() {
           defaultMessage: 'Rerun'
         }),
         disable: resource => !!resource.metadata.labels?.['tekton.dev/pipeline']
+      },
+      {
+        actionText: intl.formatMessage({
+          id: 'dashboard.editAndRun.actionText',
+          defaultMessage: 'Edit and run'
+        }),
+        action: editAndRun
       },
       {
         actionText: intl.formatMessage({
@@ -293,6 +309,31 @@ function CustomRuns() {
       }
     ];
   }
+
+  const toolbarButtons = isReadOnly
+    ? []
+    : [
+        {
+          onClick: () => {
+            let queryString;
+            if (namespace !== ALL_NAMESPACES || kind !== 'CustomRun') {
+              queryString = new URLSearchParams({
+                ...(namespace !== ALL_NAMESPACES && { namespace }),
+                ...(kind && { kind }),
+                ...(customRunName && { customRunName })
+              }).toString();
+            }
+            navigate(
+              urls.customRuns.create() + (queryString ? `?${queryString}` : '')
+            );
+          },
+          text: intl.formatMessage({
+            id: 'dashboard.actions.createButton',
+            defaultMessage: 'Create'
+          }),
+          icon: Add
+        }
+      ];
 
   const batchActionButtons = isReadOnly
     ? []
@@ -482,6 +523,7 @@ function CustomRuns() {
         return (
           <>
             <Table
+              toolbarButtons={toolbarButtons}
               batchActionButtons={batchActionButtons}
               emptyTextAllNamespaces={intl.formatMessage(
                 {
