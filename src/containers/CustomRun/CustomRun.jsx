@@ -202,6 +202,14 @@ function CustomRun() {
       });
   }
 
+  function editAndRun(run) {
+    navigate(
+      `${urls.customRuns.create()}?mode=yaml&customRunName=${
+        run.metadata.name
+      }&namespace=${run.metadata.namespace}`
+    );
+  }
+
   function runActions() {
     if (isReadOnly) {
       return [];
@@ -214,6 +222,13 @@ function CustomRun() {
           defaultMessage: 'Rerun'
         }),
         disable: resource => !!resource.metadata.labels?.['tekton.dev/pipeline']
+      },
+      {
+        actionText: intl.formatMessage({
+          id: 'dashboard.editAndRun.actionText',
+          defaultMessage: 'Edit and run'
+        }),
+        action: editAndRun
       },
       {
         actionText: intl.formatMessage({
