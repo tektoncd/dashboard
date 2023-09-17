@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/tektoncd/plumbing v0.0.0-20221005125931-631bdcbca245
-	go.uber.org/zap v1.25.0
+	go.uber.org/zap v1.26.0
 	k8s.io/apimachinery v0.27.4
 	k8s.io/client-go v0.27.4
 )
