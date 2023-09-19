@@ -51,6 +51,9 @@ export const paths = {
     },
     byNamespace() {
       return byNamespace({ path: '/customruns' });
+    },
+    create() {
+      return '/customruns/create';
     }
   },
   eventListeners: {

@@ -18,6 +18,7 @@ export { default as ClusterTasksDropdown } from './ClusterTasksDropdown';
 export { default as ClusterTriggerBinding } from './ClusterTriggerBinding';
 export { default as ClusterTriggerBindings } from './ClusterTriggerBindings';
 export { default as CustomResourceDefinition } from './CustomResourceDefinition';
+export { default as CreateCustomRun } from './CreateCustomRun';
 export { default as CreatePipelineRun } from './CreatePipelineRun';
 export { default as CreateTaskRun } from './CreateTaskRun';
 export { default as CustomRun } from './CustomRun';

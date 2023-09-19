@@ -18,6 +18,9 @@ import { deleteRequest, get, patch, post } from './comms';
 import {
   getQueryParams,
   getTektonAPI,
+  getTektonPipelinesAPIVersion,
+  removeSystemAnnotations,
+  removeSystemLabels,
   useCollection,
   useResource
 } from './utils';
@@ -37,6 +40,53 @@ function getCustomRunsAPI({ filters, isWebSocket, name, namespace }) {
     { isWebSocket, namespace, version: 'v1beta1' },
     getQueryParams({ filters, name })
   );
+}
+
+export function getCustomRunPayload({
+  kind,
+  labels,
+  namespace,
+  nodeSelector,
+  params,
+  serviceAccount,
+  customName,
+  customRunName = `${customName ? `${customName}-run` : 'run'}-${Date.now()}`,
+  timeout
+}) {
+  const payload = {
+    apiVersion: 'tekton.dev/v1beta1',
+    kind: 'CustomRun',
+    metadata: {
+      name: customRunName,
+      namespace
+    },
+    spec: {
+      customRef: {
+        apiVersion: '',
+        kind: 'Custom'
+      }
+    }
+  };
+  if (labels) {
+    payload.metadata.labels = labels;
+  }
+  if (params) {
+    payload.spec.params = Object.keys(params).map(name => ({
+      name,
+      value: params[name]
+    }));
+  }
+  if (nodeSelector) {
+    payload.spec.podTemplate = { nodeSelector };
+  }
+  if (serviceAccount) {
+    payload.spec.serviceAccountName = serviceAccount;
+  }
+  if (timeout) {
+    payload.spec.timeout = timeout;
+  }
+
+  return payload;
 }
 
 export function getCustomRuns({ filters = [], namespace } = {}) {
@@ -106,4 +156,75 @@ export function rerunCustomRun(run) {
 
   const uri = getTektonAPI('customruns', { namespace, version: 'v1beta1' });
   return post(uri, payload).then(({ body }) => body);
+}
+
+export function createCustomRun({
+  kind,
+  labels,
+  namespace,
+  nodeSelector,
+  params,
+  serviceAccount,
+  customName,
+  customRunName = `${customName}-run-${Date.now()}`,
+  timeout
+}) {
+  const payload = getCustomRunPayload({
+    kind,
+    labels,
+    namespace,
+    nodeSelector,
+    params,
+    serviceAccount,
+    customName,
+    customRunName,
+    timeout
+  });
+  const uri = getTektonAPI('customruns', { namespace });
+  return post(uri, payload).then(({ body }) => body);
+}
+
+export function createCustomRunRaw({ namespace, payload }) {
+  const uri = getTektonAPI('customruns', { namespace, version: 'v1beta1' });
+  return post(uri, payload).then(({ body }) => body);
+}
+
+export function generateNewCustomRunPayload({ customRun, rerun }) {
+  const { annotations, labels, name, namespace, generateName } =
+    customRun.metadata;
+
+  const payload = deepClone(customRun);
+  payload.apiVersion =
+    payload.apiVersion || 'tekton.dev/v1beta1';
+  payload.kind = payload.kind || 'CustomRun';
+
+  function getGenerateName() {
+    if (rerun) {
+      return getGenerateNamePrefixForRerun(name);
+    }
+
+    return generateName || `${name}-`;
+  }
+
+  payload.metadata = {
+    annotations: annotations || {},
+    generateName: getGenerateName(),
+    labels: labels || {},
+    namespace
+  };
+  if (rerun) {
+    payload.metadata.labels['dashboard.tekton.dev/rerunOf'] = name;
+  }
+
+  removeSystemAnnotations(payload);
+  removeSystemLabels(payload);
+
+  Object.keys(payload.metadata).forEach(
+    i => payload.metadata[i] === undefined && delete payload.metadata[i]
+  );
+
+  delete payload.status;
+
+  delete payload.spec?.status;
+  return { namespace, payload };
 }

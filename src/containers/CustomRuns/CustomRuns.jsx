@@ -14,13 +14,14 @@ limitations under the License.
 
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useLocation, useParams } from 'react-router-dom-v5-compat';
+import { useLocation, useNavigate, useParams } from 'react-router-dom-v5-compat';
 import { useIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
 import {
   ALL_NAMESPACES,
   getFilters,
   getStatus,
+  labels,
   urls,
   useTitleSync
 } from '@tektoncd/dashboard-utils';
@@ -108,9 +109,15 @@ function getRunStatusTooltip(run) {
 
 function CustomRuns() {
   const intl = useIntl();
+  const navigate = useNavigate();
   const location = useLocation();
   const params = useParams();
   const filters = getFilters(location);
+
+  const customFilter = filters.find(f => f.indexOf(`${CUSTOM}=`) !== -1) || '';
+  const customName = customFilter.replace(`${labels.CUSTOM}=`, '');
+
+  const kind = 'Custom';
 
   useTitleSync({ page: 'CustomRuns' });
 
@@ -243,7 +250,7 @@ function CustomRuns() {
       },
       {
         actionText: intl.formatMessage({
-          id: 'dashboard.cancelTaskRun.actionText',
+          id: 'dashboard.cancelCustomRun.actionText',
           defaultMessage: 'Stop'
         }),
         action: cancel,
@@ -316,15 +323,14 @@ function CustomRuns() {
         {
           onClick: () => {
             let queryString;
-            if (namespace !== ALL_NAMESPACES || kind !== 'CustomRun') {
+            if (namespace !== ALL_NAMESPACES) {
               queryString = new URLSearchParams({
-                ...(namespace !== ALL_NAMESPACES && { namespace }),
-                ...(kind && { kind }),
-                ...(customRunName && { customRunName })
+                ...(namespace !== ALL_NAMESPACES && { namespace })
               }).toString();
             }
             navigate(
-              urls.customRuns.create() + (queryString ? `?${queryString}` : '')
+              // currently default is yaml mode
+              urls.customRuns.create() + (queryString ? `?${queryString}&mode=yaml` : '?mode=yaml')
             );
           },
           text: intl.formatMessage({
