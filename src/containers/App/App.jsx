@@ -42,6 +42,7 @@ import {
   ClusterTasks,
   ClusterTriggerBinding,
   ClusterTriggerBindings,
+  CreateCustomRun,
   CreatePipelineRun,
   CreateTaskRun,
   CustomResourceDefinition,
@@ -315,6 +316,11 @@ export function App({ lang }) {
                         <NamespacedRoute isResourceDetails>
                           <TaskRun />
                         </NamespacedRoute>
+                      </CompatRoute>
+                      <CompatRoute path={paths.customRuns.create()} exact>
+                        <ReadWriteRoute>
+                          <CreateCustomRun />
+                        </ReadWriteRoute>
                       </CompatRoute>
                       <CompatRoute path={paths.customRuns.all()}>
                         <NamespacedRoute>
