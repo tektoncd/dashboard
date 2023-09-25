@@ -114,6 +114,8 @@ case $1 in
     ;;
   'update'|u)
     shift
+    install_pipelines
+    install_triggers
     install_dashboard $@
     ;;
   'delete'|d)
