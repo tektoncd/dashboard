@@ -13,9 +13,7 @@ limitations under the License.
 
 describe('About page', () => {
   before(() => {
-    cy.request('/v1/properties')
-      .then(({ body }) => body)
-      .as('installProperties');
+    cy.request('/v1/properties').its('body').as('installProperties');
   });
 
   it('should display install metadata', function () {
