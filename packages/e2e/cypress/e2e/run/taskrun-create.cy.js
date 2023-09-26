@@ -57,6 +57,9 @@ spec:
     cy.get('header[class="tkn--pipeline-run-header"]')
       .find('span[class="tkn--status-label"]', { timeout: 15000 })
       .should('have.text', 'Succeeded');
+
+    cy.contains('.tkn--log', 'Hello World!');
+    cy.contains('.tkn--log', 'Step completed successfully');
   });
 
   it('should populate YAML editor based on form inputs', function () {
@@ -107,6 +110,9 @@ spec:
     cy.get('header[class="tkn--pipeline-run-header"]')
       .find('span[class="tkn--status-label"]', { timeout: 15000 })
       .should('have.text', 'Succeeded');
+
+    cy.contains('.tkn--log', 'Hello World!');
+    cy.contains('.tkn--log', 'Step completed successfully');
   });
 
   it('should create TaskRun in YAML mode', function () {
@@ -143,6 +149,9 @@ spec:
     cy.get('header[class="tkn--pipeline-run-header"]')
       .find('span[class="tkn--status-label"]', { timeout: 15000 })
       .should('have.text', 'Succeeded');
+
+    cy.contains('.tkn--log', 'Hello World!');
+    cy.contains('.tkn--log', 'Step completed successfully');
   });
 
   it('should create TaskRun when open YAML mode directly', function () {
@@ -176,5 +185,8 @@ spec:
     cy.get('header[class="tkn--pipeline-run-header"]')
       .find('span[class="tkn--status-label"]', { timeout: 15000 })
       .should('have.text', 'Succeeded');
+
+    cy.contains('.tkn--log', 'Hello World!');
+    cy.contains('.tkn--log', 'Step completed successfully');
   });
 });
