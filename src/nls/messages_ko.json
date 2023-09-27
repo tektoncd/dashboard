@@ -49,6 +49,7 @@
   "dashboard.clusterTasksDropdown.label": "ClusterTask 선택",
   "dashboard.clusterTriggerBinding.noParams": "이 ClusterTriggerBinding에 대한 매개변수를 찾을 수 없습니다.",
   "dashboard.create.yamlModeButton": "YAML 모드",
+  "dashboard.createCustomRun.title": "CustomRun 만들기",
   "dashboard.createPipelineRun.createError": "PipelineRun 생성 오류",
   "dashboard.createPipelineRun.disabled": "비활성화",
   "dashboard.createPipelineRun.enabled": "활성화",

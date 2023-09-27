@@ -49,6 +49,7 @@
   "dashboard.clusterTasksDropdown.label": "选择 ClusterTask",
   "dashboard.clusterTriggerBinding.noParams": "未找到该 ClusterTriggerBinding 的参数。",
   "dashboard.create.yamlModeButton": "",
+  "dashboard.createCustomRun.title": "",
   "dashboard.createPipelineRun.createError": "创建 PipelineRun 时失败",
   "dashboard.createPipelineRun.disabled": "禁用",
   "dashboard.createPipelineRun.enabled": "启用",

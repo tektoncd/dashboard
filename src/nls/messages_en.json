@@ -49,6 +49,7 @@
   "dashboard.clusterTasksDropdown.label": "Select ClusterTask",
   "dashboard.clusterTriggerBinding.noParams": "No parameters found for this ClusterTriggerBinding.",
   "dashboard.create.yamlModeButton": "YAML Mode",
+  "dashboard.createCustomRun.title": "Create CustomRun",
   "dashboard.createPipelineRun.createError": "Error creating PipelineRun",
   "dashboard.createPipelineRun.disabled": "Disabled",
   "dashboard.createPipelineRun.enabled": "Enabled",

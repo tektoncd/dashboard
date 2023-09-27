@@ -49,6 +49,7 @@
   "dashboard.clusterTasksDropdown.label": "",
   "dashboard.clusterTriggerBinding.noParams": "",
   "dashboard.create.yamlModeButton": "",
+  "dashboard.createCustomRun.title": "",
   "dashboard.createPipelineRun.createError": "",
   "dashboard.createPipelineRun.disabled": "",
   "dashboard.createPipelineRun.enabled": "",

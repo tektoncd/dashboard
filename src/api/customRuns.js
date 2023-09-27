@@ -18,7 +18,6 @@ import { deleteRequest, get, patch, post } from './comms';
 import {
   getQueryParams,
   getTektonAPI,
-  getTektonPipelinesAPIVersion,
   removeSystemAnnotations,
   removeSystemLabels,
   useCollection,
@@ -43,14 +42,11 @@ function getCustomRunsAPI({ filters, isWebSocket, name, namespace }) {
 }
 
 export function getCustomRunPayload({
-  kind,
+  customRunName = `run-${Date.now()}`,
   labels,
   namespace,
-  nodeSelector,
   params,
   serviceAccount,
-  customName,
-  customRunName = `${customName ? `${customName}-run` : 'run'}-${Date.now()}`,
   timeout
 }) {
   const payload = {
@@ -63,7 +59,7 @@ export function getCustomRunPayload({
     spec: {
       customRef: {
         apiVersion: '',
-        kind: 'Custom'
+        kind: ''
       }
     }
   };
@@ -75,9 +71,6 @@ export function getCustomRunPayload({
       name,
       value: params[name]
     }));
-  }
-  if (nodeSelector) {
-    payload.spec.podTemplate = { nodeSelector };
   }
   if (serviceAccount) {
     payload.spec.serviceAccountName = serviceAccount;
@@ -158,32 +151,6 @@ export function rerunCustomRun(run) {
   return post(uri, payload).then(({ body }) => body);
 }
 
-export function createCustomRun({
-  kind,
-  labels,
-  namespace,
-  nodeSelector,
-  params,
-  serviceAccount,
-  customName,
-  customRunName = `${customName}-run-${Date.now()}`,
-  timeout
-}) {
-  const payload = getCustomRunPayload({
-    kind,
-    labels,
-    namespace,
-    nodeSelector,
-    params,
-    serviceAccount,
-    customName,
-    customRunName,
-    timeout
-  });
-  const uri = getTektonAPI('customruns', { namespace });
-  return post(uri, payload).then(({ body }) => body);
-}
-
 export function createCustomRunRaw({ namespace, payload }) {
   const uri = getTektonAPI('customruns', { namespace, version: 'v1beta1' });
   return post(uri, payload).then(({ body }) => body);
@@ -194,8 +161,7 @@ export function generateNewCustomRunPayload({ customRun, rerun }) {
     customRun.metadata;
 
   const payload = deepClone(customRun);
-  payload.apiVersion =
-    payload.apiVersion || 'tekton.dev/v1beta1';
+  payload.apiVersion = payload.apiVersion || 'tekton.dev/v1beta1';
   payload.kind = payload.kind || 'CustomRun';
 
   function getGenerateName() {
