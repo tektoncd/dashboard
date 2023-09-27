@@ -49,6 +49,7 @@
   "dashboard.clusterTasksDropdown.label": "ClusterTaskを選択",
   "dashboard.clusterTriggerBinding.noParams": "このClusterTriggerBindingのパラメータが見つかりません",
   "dashboard.create.yamlModeButton": "",
+  "dashboard.createCustomRun.title": "",
   "dashboard.createPipelineRun.createError": "PipelineRunの作成中にエラーが発生しました",
   "dashboard.createPipelineRun.disabled": "",
   "dashboard.createPipelineRun.enabled": "",

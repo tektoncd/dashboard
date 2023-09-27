@@ -202,7 +202,7 @@ function CustomRun() {
       });
   }
 
-  function editAndRun(run) {
+  function editAndRun() {
     navigate(
       `${urls.customRuns.create()}?mode=yaml&customRunName=${
         run.metadata.name
