@@ -56,7 +56,7 @@ const NamespacesDropdown = ({
     disableWebSocket: true
   });
 
-  let selectedItem = { ...originalSelectedItem };
+  const selectedItem = { ...originalSelectedItem };
   if (selectedItem && selectedItem.id === ALL_NAMESPACES) {
     selectedItem.text = allNamespacesString;
   }
