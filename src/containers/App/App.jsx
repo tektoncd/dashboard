@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { hot } from 'react-hot-loader/root';
 import { Link, Redirect, HashRouter as Router, Switch } from 'react-router-dom';
@@ -180,12 +180,6 @@ export function App({ lang }) {
     () => queryClient.invalidateQueries(),
     isWebSocketConnected
   );
-
-  useEffect(() => {
-    if (!isFetchingConfig && tenantNamespaces.length) {
-      setSelectedNamespace(tenantNamespaces[0]);
-    }
-  }, [isFetchingConfig, JSON.stringify(tenantNamespaces)]);
 
   const logoutButton = <LogoutButton getLogoutURL={() => logoutURL} />;
 

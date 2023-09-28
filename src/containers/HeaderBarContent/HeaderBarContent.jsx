@@ -37,8 +37,10 @@ export default function HeaderBarContent({ isFetchingConfig, logoutButton }) {
   useEffect(() => {
     if (params.namespace) {
       selectNamespace(params.namespace);
+    } else if (tenantNamespaces.length) {
+      selectNamespace(tenantNamespaces[0]);
     }
-  }, [params.namespace]);
+  }, [params.namespace, JSON.stringify(tenantNamespaces)]);
 
   function setPath(path, { dropQueryParams } = {}) {
     navigate(`${path}${dropQueryParams ? '' : location.search}`);
