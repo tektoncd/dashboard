@@ -137,18 +137,24 @@ class Task extends Component {
       });
 
       if (selectedRetry === '0') {
-        retryName = intl.formatMessage({
-          id: 'dashboard.pipelineRun.pipelineTaskName.firstAttempt',
-          defaultMessage: '{pipelineTaskName} (first attempt)'
-        }, { pipelineTaskName: displayName });
+        retryName = intl.formatMessage(
+          {
+            id: 'dashboard.pipelineRun.pipelineTaskName.firstAttempt',
+            defaultMessage: '{pipelineTaskName} (first attempt)'
+          },
+          { pipelineTaskName: displayName }
+        );
       } else {
-        retryName = intl.formatMessage({
-          id: 'dashboard.pipelineRun.pipelineTaskName.retry',
-          defaultMessage: '{pipelineTaskName} (retry {retryNumber, number})'
-        }, {
-          pipelineTaskName: displayName,
-          retryNumber: selectedRetry || taskRun.status.retriesStatus.length
-        });
+        retryName = intl.formatMessage(
+          {
+            id: 'dashboard.pipelineRun.pipelineTaskName.retry',
+            defaultMessage: '{pipelineTaskName} (retry {retryNumber, number})'
+          },
+          {
+            pipelineTaskName: displayName,
+            retryNumber: selectedRetry || taskRun.status.retriesStatus.length
+          }
+        );
       }
     }
 
@@ -161,8 +167,9 @@ class Task extends Component {
         data-succeeded={succeeded}
         data-selected={(expanded && !selectedStepId) || undefined}
       >
-        <span
+        <span // eslint-disable-line jsx-a11y/no-static-element-interactions
           className="tkn--task-link"
+          tabIndex={0} // eslint-disable-line jsx-a11y/no-noninteractive-tabindex
           title={retryName || displayName}
           onClick={this.handleTaskSelected}
           onKeyUp={e => e.key === 'Enter' && this.handleTaskSelected(e)}
@@ -173,34 +180,47 @@ class Task extends Component {
             reason={reason}
             status={succeeded}
           />
-          <span className="tkn--task-link--name">{retryName || displayName}</span>
+          <span className="tkn--task-link--name">
+            {retryName || displayName}
+          </span>
           {expanded && taskRun.status?.retriesStatus ? (
             <OverflowMenu
               ariaLabel={retryMenuTitle}
               iconDescription={retryMenuTitle}
-              menuOptionsClass='tkn--task--retries-menu-options'
+              menuOptionsClass="tkn--task--retries-menu-options"
               selectorPrimaryFocus="button:not([disabled])"
               size="sm"
               title={retryMenuTitle}
             >
-              {
-                taskRun.status.retriesStatus.map((_retryStatus, index) => {
+              {taskRun.status.retriesStatus
+                .map((_retryStatus, index) => {
                   return {
                     id: index,
-                    text: index === 0 ?
-                      intl.formatMessage({
-                        id: 'dashboard.pipelineRun.retries.viewFirstAttempt',
-                        defaultMessage: 'View first attempt'
-                      }) :
-                      intl.formatMessage({
-                        id: 'dashboard.pipelineRun.retries.viewRetry',
-                        defaultMessage: 'View retry {retryNumber, number}'
-                      }, { retryNumber: index })
+                    text:
+                      index === 0
+                        ? intl.formatMessage({
+                            id: 'dashboard.pipelineRun.retries.viewFirstAttempt',
+                            defaultMessage: 'View first attempt'
+                          })
+                        : intl.formatMessage(
+                            {
+                              id: 'dashboard.pipelineRun.retries.viewRetry',
+                              defaultMessage: 'View retry {retryNumber, number}'
+                            },
+                            { retryNumber: index }
+                          )
                   };
-                }).concat([{ id: '', text: intl.formatMessage({
-                  id: 'dashboard.pipelineRun.retries.viewLatestRetry',
-                  defaultMessage: 'View latest retry'
-                })}]).map(item =>
+                })
+                .concat([
+                  {
+                    id: '',
+                    text: intl.formatMessage({
+                      id: 'dashboard.pipelineRun.retries.viewLatestRetry',
+                      defaultMessage: 'View latest retry'
+                    })
+                  }
+                ])
+                .map(item => (
                   <OverflowMenuItem
                     disabled={`${item.id}` === selectedRetry}
                     itemText={item.text}
@@ -208,8 +228,7 @@ class Task extends Component {
                     onClick={() => onRetryChange(item.id)}
                     requireTitle
                   />
-                )
-              }
+                ))}
             </OverflowMenu>
           ) : null}
           {expandIcon}

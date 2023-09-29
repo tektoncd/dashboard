@@ -13,7 +13,7 @@ limitations under the License.
 module.exports = {
   env: {
     browser: true,
-    es2021: true,
+    es2022: true,
     node: true
   },
   extends: [
@@ -32,6 +32,9 @@ module.exports = {
   },
   overrides: [
     {
+      files: ['*.js', '*.jsx']
+    },
+    {
       files: ['*.cy.js'],
       rules: {
         'func-names': 'off'
@@ -42,7 +45,7 @@ module.exports = {
     ecmaFeatures: {
       jsx: true
     },
-    ecmaVersion: 2021,
+    ecmaVersion: 2022,
     sourceType: 'module'
   },
   plugins: ['notice', 'react', 'formatjs'],
@@ -53,7 +56,7 @@ module.exports = {
     'formatjs/enforce-default-message': 'error',
     'formatjs/enforce-id': 'error',
     'formatjs/no-complex-selectors': 'error',
-    'formatjs/no-literal-string-in-jsx': 'error',
+    'formatjs/no-literal-string-in-jsx': 'off', // TODO: [AG] re-enable this after cleanup
     'formatjs/no-multiple-whitespaces': 'error',
     'formatjs/no-multiple-plurals': 'error',
     'import/named': 'off',

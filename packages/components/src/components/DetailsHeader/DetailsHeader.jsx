@@ -28,7 +28,7 @@ class DetailsHeader extends Component {
         stepStatus.terminated || {});
     }
 
-    if (!startTime || !endTime || new Date(startTime).getTime() == 0) {
+    if (!startTime || !endTime || new Date(startTime).getTime() === 0) {
       return null;
     }
 

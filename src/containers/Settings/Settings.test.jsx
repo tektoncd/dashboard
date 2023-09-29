@@ -38,8 +38,7 @@ describe('Settings', () => {
   });
 
   it('should render the log timestamp settings correctly', () => {
-    vi.spyOn(APIUtils, 'isLogTimestampsEnabled')
-      .mockImplementation(() => true);
+    vi.spyOn(APIUtils, 'isLogTimestampsEnabled').mockImplementation(() => true);
     vi.spyOn(APIUtils, 'setLogTimestampsEnabled');
 
     const { getByLabelText, getByText } = render(<Settings />);
@@ -52,8 +51,9 @@ describe('Settings', () => {
   });
 
   it('should render the v1 API settings correctly', () => {
-    vi.spyOn(APIUtils, 'isPipelinesV1ResourcesEnabled')
-      .mockImplementation(() => true);
+    vi.spyOn(APIUtils, 'isPipelinesV1ResourcesEnabled').mockImplementation(
+      () => true
+    );
     vi.spyOn(APIUtils, 'setPipelinesV1ResourcesEnabled');
 
     const { getByLabelText, getByText } = render(<Settings />);

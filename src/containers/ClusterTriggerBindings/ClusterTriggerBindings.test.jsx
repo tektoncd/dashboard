@@ -44,9 +44,9 @@ it('ClusterTriggerBindings renders with no bindings', () => {
 });
 
 it('ClusterTriggerBindings renders with one binding', () => {
-  vi
-    .spyOn(API, 'useClusterTriggerBindings')
-    .mockImplementation(() => ({ data: [clusterTriggerBinding] }));
+  vi.spyOn(API, 'useClusterTriggerBindings').mockImplementation(() => ({
+    data: [clusterTriggerBinding]
+  }));
 
   const { queryByText } = renderWithRouter(<ClusterTriggerBindings />, {
     path: '/clustertriggerbindings',
@@ -58,11 +58,11 @@ it('ClusterTriggerBindings renders with one binding', () => {
 });
 
 it('ClusterTriggerBindings can be filtered on a single label filter', async () => {
-  vi
-    .spyOn(API, 'useClusterTriggerBindings')
-    .mockImplementation(({ filters }) => ({
+  vi.spyOn(API, 'useClusterTriggerBindings').mockImplementation(
+    ({ filters }) => ({
       data: filters.length ? [] : [clusterTriggerBinding]
-    }));
+    })
+  );
 
   const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
     <ClusterTriggerBindings />,
@@ -82,9 +82,9 @@ it('ClusterTriggerBindings can be filtered on a single label filter', async () =
 });
 
 it('ClusterTriggerBindings renders in loading state', () => {
-  vi
-    .spyOn(API, 'useClusterTriggerBindings')
-    .mockImplementation(() => ({ isLoading: true }));
+  vi.spyOn(API, 'useClusterTriggerBindings').mockImplementation(() => ({
+    isLoading: true
+  }));
 
   const { queryByText } = renderWithRouter(<ClusterTriggerBindings />, {
     path: '/clustertriggerbindings',
@@ -98,9 +98,9 @@ it('ClusterTriggerBindings renders in loading state', () => {
 
 it('ClusterTriggerBindings renders in error state', () => {
   const error = 'fake_error_message';
-  vi
-    .spyOn(API, 'useClusterTriggerBindings')
-    .mockImplementation(() => ({ error }));
+  vi.spyOn(API, 'useClusterTriggerBindings').mockImplementation(() => ({
+    error
+  }));
 
   const { queryByText } = renderWithRouter(<ClusterTriggerBindings />, {
     path: '/clustertriggerbindings',

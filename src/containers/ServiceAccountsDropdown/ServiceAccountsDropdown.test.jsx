@@ -80,15 +80,17 @@ describe('ServiceAccountsDropdown', () => {
     vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [{ metadata: { name: 'blue' } }, { metadata: { name: 'green' } }]
     }));
-    vi.spyOn(APIUtils, 'useSelectedNamespace')
-      .mockImplementation(() => ({ selectedNamespace: 'blue' }));
+    vi.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
+      selectedNamespace: 'blue'
+    }));
   });
 
   it('renders items', () => {
-    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts')
-      .mockImplementation(() => ({
+    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts').mockImplementation(
+      () => ({
         data: [serviceAccount1, serviceAccount2]
-      }));
+      })
+    );
     const { getByPlaceholderText, getAllByText, queryByText } = render(
       <ServiceAccountsDropdown {...props} />
     );
@@ -102,10 +104,11 @@ describe('ServiceAccountsDropdown', () => {
   });
 
   it('renders controlled selection', () => {
-    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts')
-      .mockImplementation(() => ({
+    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts').mockImplementation(
+      () => ({
         data: [serviceAccount1, serviceAccount2]
-      }));
+      })
+    );
     // Select item 'service-account-1'
     const { queryByPlaceholderText, queryByDisplayValue, rerender } = render(
       <ServiceAccountsDropdown
@@ -131,10 +134,11 @@ describe('ServiceAccountsDropdown', () => {
   });
 
   it('renders controlled namespace', () => {
-    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts')
-      .mockImplementation(({ namespace }) => ({
+    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts').mockImplementation(
+      ({ namespace }) => ({
         data: namespace === 'green' ? [serviceAccount3] : []
-      }));
+      })
+    );
     // Select namespace 'green'
     const { queryByText, getByPlaceholderText, getAllByText } = render(
       <ServiceAccountsDropdown {...props} namespace="green" />
@@ -148,8 +152,9 @@ describe('ServiceAccountsDropdown', () => {
   });
 
   it('renders empty', () => {
-    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts')
-      .mockImplementation(() => ({ data: [] }));
+    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts').mockImplementation(
+      () => ({ data: [] })
+    );
     // Select item 'service-account-1'
     const { queryByPlaceholderText } = render(
       <ServiceAccountsDropdown {...props} />
@@ -163,17 +168,19 @@ describe('ServiceAccountsDropdown', () => {
   });
 
   it('renders loading skeleton', () => {
-    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts')
-      .mockImplementation(() => ({ isFetching: true }));
+    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts').mockImplementation(
+      () => ({ isFetching: true })
+    );
     const { queryByText } = render(<ServiceAccountsDropdown {...props} />);
     expect(queryByText(initialTextRegExp)).toBeFalsy();
   });
 
   it('handles onChange event', () => {
-    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts')
-      .mockImplementation(() => ({
+    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts').mockImplementation(
+      () => ({
         data: [serviceAccount1, serviceAccount2]
-      }));
+      })
+    );
     const onChange = vi.fn();
     const { getByPlaceholderText, getByText } = render(
       <ServiceAccountsDropdown {...props} onChange={onChange} />

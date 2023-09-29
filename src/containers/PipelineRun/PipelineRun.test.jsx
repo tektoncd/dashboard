@@ -36,13 +36,14 @@ const pipelineRun = {
 };
 
 it('PipelineRunContainer renders data', async () => {
-  vi.spyOn(PipelineRunsAPI, 'usePipelineRun')
-    .mockImplementation(() => ({ data: pipelineRun }));
-  vi.spyOn(TaskRunsAPI, 'useTaskRuns')
-    .mockImplementation(() => ({ data: [] }));
+  vi.spyOn(PipelineRunsAPI, 'usePipelineRun').mockImplementation(() => ({
+    data: pipelineRun
+  }));
+  vi.spyOn(TaskRunsAPI, 'useTaskRuns').mockImplementation(() => ({ data: [] }));
   vi.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({ data: [] }));
-  vi.spyOn(ClusterTasksAPI, 'useClusterTasks')
-    .mockImplementation(() => ({ data: [] }));
+  vi.spyOn(ClusterTasksAPI, 'useClusterTasks').mockImplementation(() => ({
+    data: []
+  }));
 
   const { getByText } = renderWithRouter(<PipelineRunContainer intl={intl} />);
   await waitFor(() => getByText(pipelineRun.metadata.name));
@@ -51,8 +52,10 @@ it('PipelineRunContainer renders data', async () => {
 it('PipelineRunContainer renders not found state', async () => {
   const namespace = 'fake_namespace';
   const pipelineRunName = 'fake_pipelineRunName';
-  vi.spyOn(PipelineRunsAPI, 'usePipelineRun')
-    .mockImplementation(() => ({ data: null, error: null }));
+  vi.spyOn(PipelineRunsAPI, 'usePipelineRun').mockImplementation(() => ({
+    data: null,
+    error: null
+  }));
 
   const { findByText } = renderWithRouter(
     <PipelineRunContainer intl={intl} />,
@@ -67,8 +70,10 @@ it('PipelineRunContainer renders not found state', async () => {
 it('PipelineRunContainer renders error state', async () => {
   const namespace = 'fake_namespace';
   const pipelineRunName = 'fake_pipelineRunName';
-  vi.spyOn(PipelineRunsAPI, 'usePipelineRun')
-    .mockImplementation(() => ({ data: null, error: 'some error' }));
+  vi.spyOn(PipelineRunsAPI, 'usePipelineRun').mockImplementation(() => ({
+    data: null,
+    error: 'some error'
+  }));
 
   const { findByText } = renderWithRouter(
     <PipelineRunContainer intl={intl} />,

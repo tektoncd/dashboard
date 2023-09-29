@@ -28,8 +28,9 @@ describe('ImportResources component', () => {
         { metadata: { name: 'tekton-dashboard' } }
       ]
     }));
-    vi.spyOn(APIUtils, 'useSelectedNamespace')
-      .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
+    vi.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
+      selectedNamespace: ALL_NAMESPACES
+    }));
   });
 
   it('Displays errors when Repository URL and Namespace is empty', async () => {
@@ -77,34 +78,33 @@ describe('ImportResources component', () => {
     const repositoryURLValue = 'https://github.com/test/testing';
     const revisionValue = 'main';
 
-    vi.spyOn(API, 'importResources')
-      .mockImplementation(
-        ({
-          importerNamespace,
-          labels,
-          namespace,
-          path,
-          repositoryURL,
-          revision,
-          serviceAccount
-        }) => {
-          const labelsShouldEqual = {
-            gitOrg: 'test',
-            gitRepo: 'testing',
-            gitServer: 'github.com'
-          };
+    vi.spyOn(API, 'importResources').mockImplementation(
+      ({
+        importerNamespace,
+        labels,
+        namespace,
+        path,
+        repositoryURL,
+        revision,
+        serviceAccount
+      }) => {
+        const labelsShouldEqual = {
+          gitOrg: 'test',
+          gitRepo: 'testing',
+          gitServer: 'github.com'
+        };
 
-          expect(repositoryURL).toEqual(repositoryURLValue);
-          expect(path).toEqual(pathValue);
-          expect(revision).toEqual(revisionValue);
-          expect(namespace).toEqual('default');
-          expect(labels).toEqual(labelsShouldEqual);
-          expect(serviceAccount).toEqual('');
-          expect(importerNamespace).toEqual('tekton-dashboard');
+        expect(repositoryURL).toEqual(repositoryURLValue);
+        expect(path).toEqual(pathValue);
+        expect(revision).toEqual(revisionValue);
+        expect(namespace).toEqual('default');
+        expect(labels).toEqual(labelsShouldEqual);
+        expect(serviceAccount).toEqual('');
+        expect(importerNamespace).toEqual('tekton-dashboard');
 
-          return Promise.resolve(headers);
-        }
-      );
+        return Promise.resolve(headers);
+      }
+    );
 
     const namespace = 'default';
 
@@ -142,8 +142,9 @@ describe('ImportResources component', () => {
   it('Invalid data submit displays invalidText', async () => {
     const importResourcesResponseMock = { response: { status: 500 } };
 
-    vi.spyOn(API, 'importResources')
-      .mockImplementation(() => Promise.reject(importResourcesResponseMock));
+    vi.spyOn(API, 'importResources').mockImplementation(() =>
+      Promise.reject(importResourcesResponseMock)
+    );
 
     const { getAllByPlaceholderText, getByPlaceholderText, getByText } =
       await render(<ImportResourcesContainer />);

@@ -95,14 +95,16 @@ const submitButton = allByText => allByText('Create')[0];
 
 describe('CreateTaskRun', () => {
   beforeEach(() => {
-    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts')
-      .mockImplementation(() => ({ data: [serviceAccount] }));
-    vi.spyOn(TasksAPI, 'useTasks')
-      .mockImplementation(() => ({ data: tasks }));
-    vi.spyOn(ClusterTasksAPI, 'useClusterTasks')
-      .mockImplementation(() => ({ data: clusterTasks }));
-    vi.spyOn(TaskRunsAPI, 'getTaskRuns')
-      .mockImplementation(() => taskRuns.byId);
+    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts').mockImplementation(
+      () => ({ data: [serviceAccount] })
+    );
+    vi.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({ data: tasks }));
+    vi.spyOn(ClusterTasksAPI, 'useClusterTasks').mockImplementation(() => ({
+      data: clusterTasks
+    }));
+    vi.spyOn(TaskRunsAPI, 'getTaskRuns').mockImplementation(
+      () => taskRuns.byId
+    );
 
     vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [
@@ -113,8 +115,9 @@ describe('CreateTaskRun', () => {
   });
 
   it('renders empty, dropdowns disabled when no namespace selected', async () => {
-    vi.spyOn(APIUtils, 'useSelectedNamespace')
-      .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
+    vi.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
+      selectedNamespace: ALL_NAMESPACES
+    }));
     const {
       getByPlaceholderText,
       getByText,
@@ -175,8 +178,9 @@ describe('CreateTaskRun', () => {
   });
 
   it('resets Task and ServiceAccount when namespace changes', async () => {
-    vi.spyOn(APIUtils, 'useSelectedNamespace')
-      .mockImplementation(() => ({ selectedNamespace: 'namespace-1' }));
+    vi.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
+      selectedNamespace: 'namespace-1'
+    }));
 
     const { getByPlaceholderText, getByText, getByDisplayValue } =
       renderWithRouter(<CreateTaskRun />);
@@ -201,8 +205,9 @@ describe('CreateTaskRun', () => {
   });
 
   it('handles onClose event', () => {
-    vi.spyOn(APIUtils, 'useSelectedNamespace')
-      .mockImplementation(() => ({ selectedNamespace: 'namespace-1' }));
+    vi.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
+      selectedNamespace: 'namespace-1'
+    }));
     vi.spyOn(window.history, 'pushState');
     const { getByText } = renderWithRouter(<CreateTaskRun />);
     fireEvent.click(getByText(/cancel/i));

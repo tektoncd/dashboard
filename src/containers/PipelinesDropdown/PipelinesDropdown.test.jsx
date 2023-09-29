@@ -69,8 +69,9 @@ const checkDropdownItems = ({
 
 describe('PipelinesDropdown', () => {
   it('renders items', () => {
-    vi.spyOn(API, 'usePipelines')
-      .mockImplementation(() => ({ data: pipelines }));
+    vi.spyOn(API, 'usePipelines').mockImplementation(() => ({
+      data: pipelines
+    }));
     const { getByPlaceholderText, getAllByText, queryByText } = render(
       <PipelinesDropdown {...props} />
     );
@@ -83,8 +84,9 @@ describe('PipelinesDropdown', () => {
   });
 
   it('renders controlled selection', () => {
-    vi.spyOn(API, 'usePipelines')
-      .mockImplementation(() => ({ data: pipelines }));
+    vi.spyOn(API, 'usePipelines').mockImplementation(() => ({
+      data: pipelines
+    }));
     // Select item 'pipeline-1'
     const { queryByDisplayValue, queryByPlaceholderText, rerender } = render(
       <PipelinesDropdown {...props} selectedItem={{ text: 'pipeline-1' }} />
@@ -103,8 +105,9 @@ describe('PipelinesDropdown', () => {
 
   it('renders empty', () => {
     vi.spyOn(API, 'usePipelines').mockImplementation(() => ({ data: [] }));
-    vi.spyOn(APIUtils, 'useSelectedNamespace')
-      .mockImplementation(() => ({ selectedNamespace: 'blue' }));
+    vi.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
+      selectedNamespace: 'blue'
+    }));
     const { queryByPlaceholderText } = render(<PipelinesDropdown {...props} />);
     expect(
       queryByPlaceholderText(/no pipelines found in the 'blue' namespace/i)
@@ -122,15 +125,17 @@ describe('PipelinesDropdown', () => {
   });
 
   it('renders loading state', () => {
-    vi.spyOn(API, 'usePipelines')
-      .mockImplementation(() => ({ isFetching: true }));
+    vi.spyOn(API, 'usePipelines').mockImplementation(() => ({
+      isFetching: true
+    }));
     const { queryByPlaceholderText } = render(<PipelinesDropdown {...props} />);
     expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
   });
 
   it('handles onChange event', () => {
-    vi.spyOn(API, 'usePipelines')
-      .mockImplementation(() => ({ data: pipelines }));
+    vi.spyOn(API, 'usePipelines').mockImplementation(() => ({
+      data: pipelines
+    }));
     const onChange = vi.fn();
     const { getByPlaceholderText, getByText } = render(
       <PipelinesDropdown {...props} onChange={onChange} />

@@ -30,9 +30,9 @@ const clusterInterceptor = {
 
 describe('ClusterInterceptors', () => {
   it('renders loading state', async () => {
-    vi
-      .spyOn(API, 'useClusterInterceptors')
-      .mockImplementation(() => ({ isLoading: true }));
+    vi.spyOn(API, 'useClusterInterceptors').mockImplementation(() => ({
+      isLoading: true
+    }));
     const { queryByText } = renderWithRouter(<ClusterInterceptorsContainer />, {
       path: paths.clusterInterceptors.all(),
       route: urls.clusterInterceptors.all()
@@ -41,9 +41,9 @@ describe('ClusterInterceptors', () => {
   });
 
   it('renders data', async () => {
-    vi
-      .spyOn(API, 'useClusterInterceptors')
-      .mockImplementation(() => ({ data: [clusterInterceptor] }));
+    vi.spyOn(API, 'useClusterInterceptors').mockImplementation(() => ({
+      data: [clusterInterceptor]
+    }));
     const { queryByText } = renderWithRouter(<ClusterInterceptorsContainer />, {
       path: paths.clusterInterceptors.all(),
       route: urls.clusterInterceptors.all()
@@ -54,9 +54,9 @@ describe('ClusterInterceptors', () => {
 
   it('handles error', async () => {
     const error = 'fake_errorMessage';
-    vi
-      .spyOn(API, 'useClusterInterceptors')
-      .mockImplementation(() => ({ error }));
+    vi.spyOn(API, 'useClusterInterceptors').mockImplementation(() => ({
+      error
+    }));
     const { queryByText } = renderWithRouter(<ClusterInterceptorsContainer />, {
       path: paths.clusterInterceptors.all(),
       route: urls.clusterInterceptors.all()

@@ -91,9 +91,9 @@ class Step extends Component {
         data-reason={reason}
         data-selected={selected || undefined}
       >
-        <span
+        <span // eslint-disable-line jsx-a11y/no-static-element-interactions
           className="tkn--step-link"
-          tabIndex="0"
+          tabIndex="0" // eslint-disable-line jsx-a11y/no-noninteractive-tabindex
           onClick={this.handleClick}
           onKeyUp={e => e.key === 'Enter' && this.handleClick(e)}
         >

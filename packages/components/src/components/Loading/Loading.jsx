@@ -32,4 +32,4 @@ export default function Loading({ message }) {
       <span className="tkn--loading-text">{messageToDisplay}</span>
     </div>
   );
-};
+}

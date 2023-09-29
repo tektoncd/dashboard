@@ -33,13 +33,16 @@ const triggerTemplate = {
 };
 
 it('TriggerTemplates renders with no templates', () => {
-  vi.spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
-    .mockImplementation(() => ({ data: [] }));
+  vi.spyOn(TriggerTemplatesAPI, 'useTriggerTemplates').mockImplementation(
+    () => ({ data: [] })
+  );
 
-  vi.spyOn(API, 'useNamespaces')
-    .mockImplementation(() => ({ data: [{ metadata: { name: 'default' } }] }));
-  vi.spyOn(APIUtils, 'useSelectedNamespace')
-    .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
+  vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+    data: [{ metadata: { name: 'default' } }]
+  }));
+  vi.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
+    selectedNamespace: ALL_NAMESPACES
+  }));
 
   const { queryByText } = renderWithRouter(<TriggerTemplates />, {
     path: '/triggertemplates',
@@ -51,8 +54,9 @@ it('TriggerTemplates renders with no templates', () => {
 });
 
 it('TriggerTemplates renders with one template', () => {
-  vi.spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
-    .mockImplementation(() => ({ data: [triggerTemplate] }));
+  vi.spyOn(TriggerTemplatesAPI, 'useTriggerTemplates').mockImplementation(
+    () => ({ data: [triggerTemplate] })
+  );
 
   const { queryByText } = renderWithRouter(<TriggerTemplates />, {
     path: '/triggertemplates',
@@ -65,10 +69,11 @@ it('TriggerTemplates renders with one template', () => {
 });
 
 it('TriggerTemplates can be filtered on a single label filter', async () => {
-  vi.spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
-    .mockImplementation(({ filters }) => ({
+  vi.spyOn(TriggerTemplatesAPI, 'useTriggerTemplates').mockImplementation(
+    ({ filters }) => ({
       data: filters.length ? [] : [triggerTemplate]
-    }));
+    })
+  );
 
   const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
     <TriggerTemplates />,
@@ -85,8 +90,9 @@ it('TriggerTemplates can be filtered on a single label filter', async () => {
 });
 
 it('TriggerTemplates renders in loading state', () => {
-  vi.spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
-    .mockImplementation(() => ({ isLoading: true }));
+  vi.spyOn(TriggerTemplatesAPI, 'useTriggerTemplates').mockImplementation(
+    () => ({ isLoading: true })
+  );
 
   const { queryByText } = renderWithRouter(<TriggerTemplates />, {
     path: '/triggertemplates',
@@ -99,8 +105,9 @@ it('TriggerTemplates renders in loading state', () => {
 
 it('TriggerTemplates renders in error state', () => {
   const error = 'fake_error_message';
-  vi.spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
-    .mockImplementation(() => ({ error }));
+  vi.spyOn(TriggerTemplatesAPI, 'useTriggerTemplates').mockImplementation(
+    () => ({ error })
+  );
 
   const { queryByText } = renderWithRouter(<TriggerTemplates />, {
     path: '/triggertemplates',

@@ -64,9 +64,9 @@ const clusterTriggerBindingWithLabels = {
 
 it('ClusterTriggerBindingContainer handles error state', async () => {
   const error = 'fake_error_message';
-  vi
-    .spyOn(API, 'useClusterTriggerBinding')
-    .mockImplementation(() => ({ error }));
+  vi.spyOn(API, 'useClusterTriggerBinding').mockImplementation(() => ({
+    error
+  }));
 
   const { getByText } = renderWithRouter(
     <ClusterTriggerBindingContainer intl={intl} />
@@ -76,9 +76,9 @@ it('ClusterTriggerBindingContainer handles error state', async () => {
 });
 
 it('ClusterTriggerBindingContainer renders overview', async () => {
-  vi
-    .spyOn(API, 'useClusterTriggerBinding')
-    .mockImplementation(() => ({ data: clusterTriggerBindingSimple }));
+  vi.spyOn(API, 'useClusterTriggerBinding').mockImplementation(() => ({
+    data: clusterTriggerBindingSimple
+  }));
 
   const { getByText } = renderWithRouter(
     <ClusterTriggerBindingContainer intl={intl} />
@@ -93,9 +93,9 @@ it('ClusterTriggerBindingContainer renders overview', async () => {
 });
 
 it('ClusterTriggerBindingContainer renders YAML', async () => {
-  vi
-    .spyOn(API, 'useClusterTriggerBinding')
-    .mockImplementation(() => ({ data: clusterTriggerBindingSimple }));
+  vi.spyOn(API, 'useClusterTriggerBinding').mockImplementation(() => ({
+    data: clusterTriggerBindingSimple
+  }));
   const clusterTriggerBindingName = 'cluster-trigger-binding-simple';
 
   const { getByText } = renderWithRouter(
@@ -119,9 +119,9 @@ it('ClusterTriggerBindingContainer renders YAML', async () => {
 });
 
 it('ClusterTriggerBindingContainer does not render label section if they are not present', async () => {
-  vi
-    .spyOn(API, 'useClusterTriggerBinding')
-    .mockImplementation(() => ({ data: clusterTriggerBindingSimple }));
+  vi.spyOn(API, 'useClusterTriggerBinding').mockImplementation(() => ({
+    data: clusterTriggerBindingSimple
+  }));
 
   const { getByText } = renderWithRouter(
     <ClusterTriggerBindingContainer intl={intl} />
@@ -132,9 +132,9 @@ it('ClusterTriggerBindingContainer does not render label section if they are not
 });
 
 it('ClusterTriggerBindingContainer renders labels section if they are present', async () => {
-  vi
-    .spyOn(API, 'useClusterTriggerBinding')
-    .mockImplementation(() => ({ data: clusterTriggerBindingWithLabels }));
+  vi.spyOn(API, 'useClusterTriggerBinding').mockImplementation(() => ({
+    data: clusterTriggerBindingWithLabels
+  }));
 
   const { getByText } = renderWithRouter(
     <ClusterTriggerBindingContainer intl={intl} />

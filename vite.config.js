@@ -32,13 +32,13 @@ export default defineConfig(({ mode }) => ({
     assetsDir: '.',
     // Relative to the root
     outDir: 'cmd/dashboard/kodata',
-    target: 'es2021'
+    target: 'es2022'
   },
   css: {
     devSourcemap: true
   },
   esbuild: {
-    target: 'es2021'
+    target: 'es2022'
   },
   plugins: [
     createHtmlPlugin({}),
