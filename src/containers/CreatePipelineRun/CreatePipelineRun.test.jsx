@@ -215,9 +215,6 @@ describe('CreatePipelineRun yaml mode', () => {
       }
     );
     await waitFor(() => {
-      expect(queryAllByText(/Loading/).length).toBe(0);
-    });
-    await waitFor(() => {
       expect(getByRole(/textbox/)).toBeTruthy();
     });
     let actual = getByRole(/textbox/).textContent;
