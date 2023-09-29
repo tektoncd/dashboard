@@ -77,8 +77,9 @@ it('TriggerBindingContainer handles error state', async () => {
 });
 
 it('TriggerBindingContainer renders details', async () => {
-  vi.spyOn(API, 'useTriggerBinding')
-    .mockImplementation(() => ({ data: triggerBindingSimple }));
+  vi.spyOn(API, 'useTriggerBinding').mockImplementation(() => ({
+    data: triggerBindingSimple
+  }));
 
   const { getByText } = renderWithRouter(
     <TriggerBindingContainer intl={intl} />
@@ -94,8 +95,9 @@ it('TriggerBindingContainer renders details', async () => {
 });
 
 it('TriggerBindingContainer renders YAML', async () => {
-  vi.spyOn(API, 'useTriggerBinding')
-    .mockImplementation(() => ({ data: triggerBindingSimple }));
+  vi.spyOn(API, 'useTriggerBinding').mockImplementation(() => ({
+    data: triggerBindingSimple
+  }));
   const triggerBindingName = 'trigger-binding-simple';
 
   const { getByText } = renderWithRouter(
@@ -121,8 +123,9 @@ it('TriggerBindingContainer renders YAML', async () => {
 });
 
 it('TriggerBindingContainer does not render label section if they are not present', async () => {
-  vi.spyOn(API, 'useTriggerBinding')
-    .mockImplementation(() => ({ data: triggerBindingSimple }));
+  vi.spyOn(API, 'useTriggerBinding').mockImplementation(() => ({
+    data: triggerBindingSimple
+  }));
 
   const { getByText } = renderWithRouter(
     <TriggerBindingContainer intl={intl} />
@@ -133,8 +136,9 @@ it('TriggerBindingContainer does not render label section if they are not presen
 });
 
 it('TriggerBindingContainer renders labels section if they are present', async () => {
-  vi.spyOn(API, 'useTriggerBinding')
-    .mockImplementation(() => ({ data: triggerBindingWithLabels }));
+  vi.spyOn(API, 'useTriggerBinding').mockImplementation(() => ({
+    data: triggerBindingWithLabels
+  }));
 
   const { getByText } = renderWithRouter(
     <TriggerBindingContainer intl={intl} />

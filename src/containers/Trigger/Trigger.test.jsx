@@ -27,8 +27,9 @@ const intl = createIntl({
 describe('TriggerContainer', () => {
   it('handles error state', async () => {
     const errorMessage = 'fake_errorMessage';
-    vi.spyOn(API, 'useTrigger')
-      .mockImplementation(() => ({ error: errorMessage }));
+    vi.spyOn(API, 'useTrigger').mockImplementation(() => ({
+      error: errorMessage
+    }));
 
     const { getByText } = renderWithRouter(<TriggerContainer intl={intl} />);
     await waitFor(() => getByText('Error loading resource'));

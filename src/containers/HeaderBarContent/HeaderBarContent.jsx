@@ -47,7 +47,8 @@ export default function HeaderBarContent({ isFetchingConfig, logoutButton }) {
   }
 
   function handleNamespaceSelected(event) {
-    const newNamespace = event.selectedItem?.id || tenantNamespaces[0] || ALL_NAMESPACES;
+    const newNamespace =
+      event.selectedItem?.id || tenantNamespaces[0] || ALL_NAMESPACES;
     selectNamespace(newNamespace);
 
     if (!namespacedMatch) {

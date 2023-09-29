@@ -157,14 +157,18 @@ export default function YAMLEditor({
           />
         )}
         <FormGroup legendText="" className="tkn--codemirror--form">
-          {loading ? <Loading message={loadingMessage} /> : (
+          {loading ? (
+            <Loading message={loadingMessage} />
+          ) : (
             <CodeMirror
               value={code}
               height="800px"
               theme="dark"
               // there's an issue with CodeMirror in the unit tests when loading certain extensions
               // but they're not relevant for the purposes of the tests so skip adding them
-              {...(import.meta.env.MODE === 'test' ? null : { extensions: [StreamLanguage.define(yamlMode)]})}
+              {...(import.meta.env.MODE === 'test'
+                ? null
+                : { extensions: [StreamLanguage.define(yamlMode)] })}
               onChange={onChange}
               editable={!loading}
             />

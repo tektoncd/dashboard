@@ -17,7 +17,7 @@ import ELK from 'elkjs/lib/elk.bundled';
 
 import { ArrowRightMarker } from '@carbon/charts-react/diagrams/Marker';
 
-import Edge from '../Edge/';
+import Edge from '../Edge';
 import Node from '../Node/Node';
 
 function buildEdges({ direction, edges }) {

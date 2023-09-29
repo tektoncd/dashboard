@@ -37,13 +37,15 @@ describe('Interceptors', () => {
     vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [{ metadata: { name: 'default' } }]
     }));
-    vi.spyOn(APIUtils, 'useSelectedNamespace')
-      .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
+    vi.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
+      selectedNamespace: ALL_NAMESPACES
+    }));
   });
 
   it('renders with no interceptors', () => {
-    vi.spyOn(InterceptorsAPI, 'useInterceptors')
-      .mockImplementation(() => ({ data: [] }));
+    vi.spyOn(InterceptorsAPI, 'useInterceptors').mockImplementation(() => ({
+      data: []
+    }));
 
     const { getByText } = renderWithRouter(<Interceptors />, {
       path: '/interceptors',
@@ -55,8 +57,9 @@ describe('Interceptors', () => {
   });
 
   it('renders with one interceptor', () => {
-    vi.spyOn(InterceptorsAPI, 'useInterceptors')
-      .mockImplementation(() => ({ data: [interceptor] }));
+    vi.spyOn(InterceptorsAPI, 'useInterceptors').mockImplementation(() => ({
+      data: [interceptor]
+    }));
 
     const { queryByText } = renderWithRouter(<Interceptors />, {
       path: '/interceptors',
@@ -69,10 +72,11 @@ describe('Interceptors', () => {
   });
 
   it('can be filtered on a single label filter', async () => {
-    vi.spyOn(InterceptorsAPI, 'useInterceptors')
-      .mockImplementation(({ filters }) => ({
+    vi.spyOn(InterceptorsAPI, 'useInterceptors').mockImplementation(
+      ({ filters }) => ({
         data: filters.length ? [] : [interceptor]
-      }));
+      })
+    );
 
     const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <Interceptors />,
@@ -89,8 +93,9 @@ describe('Interceptors', () => {
   });
 
   it('renders in loading state', () => {
-    vi.spyOn(InterceptorsAPI, 'useInterceptors')
-      .mockImplementation(() => ({ isLoading: true }));
+    vi.spyOn(InterceptorsAPI, 'useInterceptors').mockImplementation(() => ({
+      isLoading: true
+    }));
 
     const { queryByText } = renderWithRouter(<Interceptors />, {
       path: '/interceptors',
@@ -104,8 +109,9 @@ describe('Interceptors', () => {
 
   it('renders in error state', () => {
     const error = 'fake_error_message';
-    vi.spyOn(InterceptorsAPI, 'useInterceptors')
-      .mockImplementation(() => ({ error }));
+    vi.spyOn(InterceptorsAPI, 'useInterceptors').mockImplementation(() => ({
+      error
+    }));
 
     const { queryByText } = renderWithRouter(<Interceptors />, {
       path: '/interceptors',

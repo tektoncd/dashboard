@@ -61,9 +61,9 @@ const checkDropdownItems = ({
 
 describe('ClusterTasksDropdown', () => {
   it('renders items', () => {
-    vi
-      .spyOn(API, 'useClusterTasks')
-      .mockImplementation(() => ({ data: clusterTasks }));
+    vi.spyOn(API, 'useClusterTasks').mockImplementation(() => ({
+      data: clusterTasks
+    }));
     const { getByPlaceholderText, getAllByText, queryByText } = render(
       <ClusterTasksDropdown {...props} />
     );
@@ -77,9 +77,9 @@ describe('ClusterTasksDropdown', () => {
   });
 
   it('renders controlled selection', () => {
-    vi
-      .spyOn(API, 'useClusterTasks')
-      .mockImplementation(() => ({ data: clusterTasks }));
+    vi.spyOn(API, 'useClusterTasks').mockImplementation(() => ({
+      data: clusterTasks
+    }));
     // Select item 'clustertask-1'
     const { queryByDisplayValue, queryByPlaceholderText, rerender } = render(
       <ClusterTasksDropdown
@@ -113,9 +113,9 @@ describe('ClusterTasksDropdown', () => {
   });
 
   it('renders loading state', () => {
-    vi
-      .spyOn(API, 'useClusterTasks')
-      .mockImplementation(() => ({ isFetching: true }));
+    vi.spyOn(API, 'useClusterTasks').mockImplementation(() => ({
+      isFetching: true
+    }));
     const { queryByPlaceholderText } = render(
       <ClusterTasksDropdown {...props} />
     );
@@ -123,9 +123,9 @@ describe('ClusterTasksDropdown', () => {
   });
 
   it('handles onChange event', () => {
-    vi
-      .spyOn(API, 'useClusterTasks')
-      .mockImplementation(() => ({ data: clusterTasks }));
+    vi.spyOn(API, 'useClusterTasks').mockImplementation(() => ({
+      data: clusterTasks
+    }));
     const onChange = vi.fn();
     const { getByPlaceholderText, getByText } = render(
       <ClusterTasksDropdown {...props} onChange={onChange} />

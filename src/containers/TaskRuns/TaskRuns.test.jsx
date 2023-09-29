@@ -62,8 +62,9 @@ const taskRuns = [
 
 describe('TaskRuns container', () => {
   beforeEach(() => {
-    vi.spyOn(taskRunsAPI, 'useTaskRuns')
-      .mockImplementation(() => ({ data: taskRuns }));
+    vi.spyOn(taskRunsAPI, 'useTaskRuns').mockImplementation(() => ({
+      data: taskRuns
+    }));
   });
 
   it('Duplicate label filters are prevented', async () => {

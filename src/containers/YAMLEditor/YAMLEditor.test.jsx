@@ -134,7 +134,8 @@ describe('YAMLEditor', () => {
   });
 
   it('handle submit', async () => {
-    const handleCreate = vi.fn()
+    const handleCreate = vi
+      .fn()
       .mockImplementation(() => Promise.resolve({ data: {} }));
     const { queryAllByText, getByText, getByRole } = renderWithRouter(
       <YAMLEditor kind="PipelineRun" handleCreate={handleCreate} />
@@ -157,7 +158,8 @@ describe('YAMLEditor', () => {
     const errorResponseMock = {
       response: { status: 404, text: () => Promise.resolve('Whoops!') }
     };
-    const handleCreate = vi.fn()
+    const handleCreate = vi
+      .fn()
       .mockImplementation(() => Promise.reject(errorResponseMock));
     const { queryAllByText, getByText, getByRole } = renderWithRouter(
       <YAMLEditor kind="PipelineRun" handleCreate={handleCreate} />

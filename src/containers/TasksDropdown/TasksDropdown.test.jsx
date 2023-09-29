@@ -73,13 +73,13 @@ describe('TasksDropdown', () => {
     vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [{ metadata: { name: 'blue' } }, { metadata: { name: 'green' } }]
     }));
-    vi.spyOn(APIUtils, 'useSelectedNamespace')
-      .mockImplementation(() => ({ selectedNamespace: 'blue' }));
+    vi.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
+      selectedNamespace: 'blue'
+    }));
   });
 
   it('renders items', () => {
-    vi.spyOn(TasksAPI, 'useTasks')
-      .mockImplementation(() => ({ data: tasks }));
+    vi.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({ data: tasks }));
     const { getByPlaceholderText, getAllByText, queryByText } = render(
       <TasksDropdown {...props} />
     );
@@ -93,8 +93,7 @@ describe('TasksDropdown', () => {
   });
 
   it('renders controlled selection', () => {
-    vi.spyOn(TasksAPI, 'useTasks')
-      .mockImplementation(() => ({ data: tasks }));
+    vi.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({ data: tasks }));
     // Select item 'task-1'
     const { queryByDisplayValue, queryByPlaceholderText, rerender } = render(
       <TasksDropdown {...props} selectedItem={{ text: 'task-1' }} />
@@ -129,15 +128,15 @@ describe('TasksDropdown', () => {
   });
 
   it('renders loading state', () => {
-    vi.spyOn(TasksAPI, 'useTasks')
-      .mockImplementation(() => ({ isFetching: true }));
+    vi.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({
+      isFetching: true
+    }));
     const { queryByPlaceholderText } = render(<TasksDropdown {...props} />);
     expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
   });
 
   it('handles onChange event', () => {
-    vi.spyOn(TasksAPI, 'useTasks')
-      .mockImplementation(() => ({ data: tasks }));
+    vi.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({ data: tasks }));
     const onChange = vi.fn();
     const { getByPlaceholderText, getByText } = render(
       <TasksDropdown {...props} onChange={onChange} />

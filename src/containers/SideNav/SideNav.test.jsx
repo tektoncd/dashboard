@@ -44,8 +44,9 @@ it('SideNav renders only when expanded', () => {
 });
 
 it('SideNav renders with extensions', () => {
-  vi.spyOn(extensionsAPI, 'useExtensions')
-    .mockImplementation(() => ({ data: mockExtensions }));
+  vi.spyOn(extensionsAPI, 'useExtensions').mockImplementation(() => ({
+    data: mockExtensions
+  }));
   const { queryByText } = renderWithRouter(<SideNav expanded />);
   expect(queryByText('Pipelines')).toBeTruthy();
   expect(queryByText('Tasks')).toBeTruthy();

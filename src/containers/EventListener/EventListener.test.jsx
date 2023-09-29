@@ -129,8 +129,9 @@ const fakeEventListenerWithLabels = {
 const props = { intl };
 
 it('EventListener displays with formatted labels', async () => {
-  vi.spyOn(API, 'useEventListener')
-    .mockImplementation(() => ({ data: fakeEventListenerWithLabels }));
+  vi.spyOn(API, 'useEventListener').mockImplementation(() => ({
+    data: fakeEventListenerWithLabels
+  }));
   const { queryByText, getByText } = renderWithRouter(
     <EventListenerContainer {...props} />,
     {
@@ -171,8 +172,9 @@ it('EventListener handles no serviceAccountName', async () => {
       serviceAccountName: undefined
     }
   };
-  vi.spyOn(API, 'useEventListener')
-    .mockImplementation(() => ({ data: eventListener }));
+  vi.spyOn(API, 'useEventListener').mockImplementation(() => ({
+    data: eventListener
+  }));
   const { queryByText, getByText } = renderWithRouter(
     <EventListenerContainer {...props} />,
     {
@@ -193,8 +195,9 @@ it('EventListener handles no service type', async () => {
       serviceType: undefined
     }
   };
-  vi.spyOn(API, 'useEventListener')
-    .mockImplementation(() => ({ data: eventListener }));
+  vi.spyOn(API, 'useEventListener').mockImplementation(() => ({
+    data: eventListener
+  }));
   const { queryByText, getByText } = renderWithRouter(
     <EventListenerContainer {...props} />,
     {
@@ -215,8 +218,9 @@ it('EventListener handles no triggers', async () => {
       triggers: []
     }
   };
-  vi.spyOn(API, 'useEventListener')
-    .mockImplementation(() => ({ data: eventListener }));
+  vi.spyOn(API, 'useEventListener').mockImplementation(() => ({
+    data: eventListener
+  }));
   const { queryByText, getByText } = renderWithRouter(
     <EventListenerContainer {...props} />
   );

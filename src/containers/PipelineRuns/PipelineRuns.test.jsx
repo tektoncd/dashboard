@@ -101,10 +101,12 @@ const pipelineRuns = [
 
 describe('PipelineRuns container', () => {
   beforeEach(() => {
-    vi.spyOn(PipelinesAPI, 'usePipelines')
-      .mockImplementation(() => ({ data: pipelines }));
-    vi.spyOn(PipelineRunsAPI, 'usePipelineRuns')
-      .mockImplementation(() => ({ data: [...pipelineRuns] }));
+    vi.spyOn(PipelinesAPI, 'usePipelines').mockImplementation(() => ({
+      data: pipelines
+    }));
+    vi.spyOn(PipelineRunsAPI, 'usePipelineRuns').mockImplementation(() => ({
+      data: [...pipelineRuns]
+    }));
     vi.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
   });
 
@@ -194,8 +196,7 @@ describe('PipelineRuns container', () => {
     PipelineRunsAPI.usePipelineRuns.mockImplementation(() => ({
       data: [pipelineRuns[0]]
     }));
-    vi.spyOn(PipelineRunsAPI, 'rerunPipelineRun')
-      .mockImplementation(() => []);
+    vi.spyOn(PipelineRunsAPI, 'rerunPipelineRun').mockImplementation(() => []);
     const { getAllByTitle, getByText } = renderWithRouter(
       <PipelineRunsContainer />,
       {
@@ -215,10 +216,10 @@ describe('PipelineRuns container', () => {
 
   it('handles start event in PipelineRuns page', async () => {
     vi.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
-    vi.spyOn(PipelineRunsAPI, 'usePipelineRuns')
-      .mockImplementation(() => ({ data: [pipelineRuns[2]] }));
-    vi.spyOn(PipelineRunsAPI, 'startPipelineRun')
-      .mockImplementation(() => []);
+    vi.spyOn(PipelineRunsAPI, 'usePipelineRuns').mockImplementation(() => ({
+      data: [pipelineRuns[2]]
+    }));
+    vi.spyOn(PipelineRunsAPI, 'startPipelineRun').mockImplementation(() => []);
     const { getAllByTitle, getByText } = renderWithRouter(
       <PipelineRunsContainer />,
       {

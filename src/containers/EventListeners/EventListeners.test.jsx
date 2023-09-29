@@ -37,13 +37,15 @@ describe('EventListeners', () => {
     vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [{ metadata: { name: 'default' } }]
     }));
-    vi.spyOn(APIUtils, 'useSelectedNamespace')
-      .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
+    vi.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
+      selectedNamespace: ALL_NAMESPACES
+    }));
   });
 
   it('renders with no bindings', () => {
-    vi.spyOn(EventListenersAPI, 'useEventListeners')
-      .mockImplementation(() => ({ data: [] }));
+    vi.spyOn(EventListenersAPI, 'useEventListeners').mockImplementation(() => ({
+      data: []
+    }));
 
     const { getByText } = renderWithRouter(<EventListeners />, {
       path: '/eventlisteners',
@@ -55,8 +57,9 @@ describe('EventListeners', () => {
   });
 
   it('renders with one binding', () => {
-    vi.spyOn(EventListenersAPI, 'useEventListeners')
-      .mockImplementation(() => ({ data: [eventListener] }));
+    vi.spyOn(EventListenersAPI, 'useEventListeners').mockImplementation(() => ({
+      data: [eventListener]
+    }));
 
     const { queryByText, queryByTitle } = renderWithRouter(<EventListeners />, {
       path: '/eventlisteners',
@@ -70,10 +73,11 @@ describe('EventListeners', () => {
   });
 
   it('can be filtered on a single label filter', async () => {
-    vi.spyOn(EventListenersAPI, 'useEventListeners')
-      .mockImplementation(({ filters }) => ({
+    vi.spyOn(EventListenersAPI, 'useEventListeners').mockImplementation(
+      ({ filters }) => ({
         data: filters.length ? [] : [eventListener]
-      }));
+      })
+    );
 
     const { getByPlaceholderText, getByText, queryByText } = renderWithRouter(
       <EventListeners />,
@@ -90,8 +94,9 @@ describe('EventListeners', () => {
   });
 
   it('renders in loading state', () => {
-    vi.spyOn(EventListenersAPI, 'useEventListeners')
-      .mockImplementation(() => ({ isLoading: true }));
+    vi.spyOn(EventListenersAPI, 'useEventListeners').mockImplementation(() => ({
+      isLoading: true
+    }));
 
     const { queryByText } = renderWithRouter(<EventListeners />, {
       path: '/eventlisteners',
@@ -105,8 +110,9 @@ describe('EventListeners', () => {
 
   it('renders in error state', () => {
     const error = 'fake_error_message';
-    vi.spyOn(EventListenersAPI, 'useEventListeners')
-      .mockImplementation(() => ({ error }));
+    vi.spyOn(EventListenersAPI, 'useEventListeners').mockImplementation(() => ({
+      error
+    }));
 
     const { queryByText } = renderWithRouter(<EventListeners />, {
       path: '/eventlisteners',

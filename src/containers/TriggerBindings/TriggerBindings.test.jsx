@@ -37,13 +37,15 @@ describe('TriggerBindings', () => {
     vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [{ metadata: { name: 'default' } }]
     }));
-    vi.spyOn(APIUtils, 'useSelectedNamespace')
-      .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
+    vi.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
+      selectedNamespace: ALL_NAMESPACES
+    }));
   });
 
   it('renders with no bindings', () => {
-    vi.spyOn(TriggerBindingsAPI, 'useTriggerBindings')
-      .mockImplementation(() => ({ data: [] }));
+    vi.spyOn(TriggerBindingsAPI, 'useTriggerBindings').mockImplementation(
+      () => ({ data: [] })
+    );
 
     const { getByText } = renderWithRouter(<TriggerBindings />, {
       path: '/triggerbindings',
@@ -55,8 +57,9 @@ describe('TriggerBindings', () => {
   });
 
   it('renders with one binding', () => {
-    vi.spyOn(TriggerBindingsAPI, 'useTriggerBindings')
-      .mockImplementation(() => ({ data: [triggerBinding] }));
+    vi.spyOn(TriggerBindingsAPI, 'useTriggerBindings').mockImplementation(
+      () => ({ data: [triggerBinding] })
+    );
 
     const { queryByText } = renderWithRouter(<TriggerBindings />, {
       path: '/triggerbindings',
@@ -69,10 +72,11 @@ describe('TriggerBindings', () => {
   });
 
   it('can be filtered on a single label filter', async () => {
-    vi.spyOn(TriggerBindingsAPI, 'useTriggerBindings')
-      .mockImplementation(({ filters }) => ({
+    vi.spyOn(TriggerBindingsAPI, 'useTriggerBindings').mockImplementation(
+      ({ filters }) => ({
         data: filters.length ? [] : [triggerBinding]
-      }));
+      })
+    );
 
     const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <TriggerBindings />,
@@ -89,8 +93,9 @@ describe('TriggerBindings', () => {
   });
 
   it('renders in loading state', () => {
-    vi.spyOn(TriggerBindingsAPI, 'useTriggerBindings')
-      .mockImplementation(() => ({ isLoading: true }));
+    vi.spyOn(TriggerBindingsAPI, 'useTriggerBindings').mockImplementation(
+      () => ({ isLoading: true })
+    );
 
     const { queryByText } = renderWithRouter(<TriggerBindings />, {
       path: '/triggerbindings',
@@ -104,8 +109,9 @@ describe('TriggerBindings', () => {
 
   it('renders in error state', () => {
     const error = 'fake_error_message';
-    vi.spyOn(TriggerBindingsAPI, 'useTriggerBindings')
-      .mockImplementation(() => ({ error }));
+    vi.spyOn(TriggerBindingsAPI, 'useTriggerBindings').mockImplementation(
+      () => ({ error })
+    );
 
     const { queryByText } = renderWithRouter(<TriggerBindings />, {
       path: '/triggerbindings',

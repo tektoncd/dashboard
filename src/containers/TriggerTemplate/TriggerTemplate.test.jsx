@@ -144,8 +144,9 @@ it('TriggerTemplateContainer handles error state', async () => {
 });
 
 it('TriggerTemplateContainer renders', async () => {
-  vi.spyOn(API, 'useTriggerTemplate')
-    .mockImplementation(() => ({ data: fakeTriggerTemplate }));
+  vi.spyOn(API, 'useTriggerTemplate').mockImplementation(() => ({
+    data: fakeTriggerTemplate
+  }));
 
   const { getAllByText, getByText } = renderWithRouter(
     <TriggerTemplateContainer intl={intl} />
@@ -171,8 +172,9 @@ it('TriggerTemplateContainer renders', async () => {
 });
 
 it('TriggerTemplateContainer contains overview tab with accurate information', async () => {
-  vi.spyOn(API, 'useTriggerTemplate')
-    .mockImplementation(() => ({ data: fakeTriggerTemplate }));
+  vi.spyOn(API, 'useTriggerTemplate').mockImplementation(() => ({
+    data: fakeTriggerTemplate
+  }));
 
   const { getByText } = renderWithRouter(
     <TriggerTemplateContainer intl={intl} />
@@ -185,8 +187,9 @@ it('TriggerTemplateContainer contains overview tab with accurate information', a
 });
 
 it('TriggerTemplateContainer contains YAML tab with accurate information', async () => {
-  vi.spyOn(API, 'useTriggerTemplate')
-    .mockImplementation(() => ({ data: fakeTriggerTemplate }));
+  vi.spyOn(API, 'useTriggerTemplate').mockImplementation(() => ({
+    data: fakeTriggerTemplate
+  }));
   const { getByText } = renderWithRouter(
     <TriggerTemplateContainer intl={intl} />,
     {
@@ -209,8 +212,9 @@ it('TriggerTemplateContainer contains YAML tab with accurate information', async
 });
 
 it('TriggerTemplateContainer does not render label section if they are not present', async () => {
-  vi.spyOn(API, 'useTriggerTemplate')
-    .mockImplementation(() => ({ data: fakeTriggerTemplate }));
+  vi.spyOn(API, 'useTriggerTemplate').mockImplementation(() => ({
+    data: fakeTriggerTemplate
+  }));
 
   const { getByText, queryByText } = renderWithRouter(
     <TriggerTemplateContainer intl={intl} />
@@ -221,8 +225,9 @@ it('TriggerTemplateContainer does not render label section if they are not prese
 });
 
 it('TriggerTemplateContainer renders labels section if they are present', async () => {
-  vi.spyOn(API, 'useTriggerTemplate')
-    .mockImplementation(() => ({ data: fakeTriggerTemplateWithLabels }));
+  vi.spyOn(API, 'useTriggerTemplate').mockImplementation(() => ({
+    data: fakeTriggerTemplateWithLabels
+  }));
 
   const { getByText } = renderWithRouter(
     <TriggerTemplateContainer intl={intl} />
@@ -239,8 +244,9 @@ it('TriggerTemplateContainer renders labels section if they are present', async 
 });
 
 it('TriggerTemplateContainer contains formatted labels', async () => {
-  vi.spyOn(API, 'useTriggerTemplate')
-    .mockImplementation(() => ({ data: fakeTriggerTemplateWithLabels }));
+  vi.spyOn(API, 'useTriggerTemplate').mockImplementation(() => ({
+    data: fakeTriggerTemplateWithLabels
+  }));
 
   const { getByText } = renderWithRouter(
     <TriggerTemplateContainer intl={intl} />

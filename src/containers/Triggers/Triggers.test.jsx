@@ -24,8 +24,9 @@ describe('Triggers', () => {
   });
 
   it('renders loading state', async () => {
-    vi.spyOn(API, 'useTriggers')
-      .mockImplementation(() => ({ isLoading: true }));
+    vi.spyOn(API, 'useTriggers').mockImplementation(() => ({
+      isLoading: true
+    }));
     const { queryByText } = renderWithRouter(<TriggersContainer />, {
       path: paths.triggers.all(),
       route: urls.triggers.all()
@@ -58,8 +59,9 @@ describe('Triggers', () => {
 
   it('handles error', async () => {
     const errorMessage = 'fake_errorMessage';
-    vi.spyOn(API, 'useTriggers')
-      .mockImplementation(() => ({ error: errorMessage }));
+    vi.spyOn(API, 'useTriggers').mockImplementation(() => ({
+      error: errorMessage
+    }));
     const { queryByText } = renderWithRouter(<TriggersContainer />, {
       path: paths.triggers.all(),
       route: urls.triggers.all()

@@ -30,6 +30,16 @@ import StepDetails from '../StepDetails';
 import TaskRunDetails from '../TaskRunDetails';
 import TaskTree from '../TaskTree';
 
+function getPipelineTask({ pipelineRun, selectedTaskId, taskRun }) {
+  const memberOf = taskRun?.metadata?.labels?.[labelConstants.MEMBER_OF];
+  const pipelineTask = (
+    pipelineRun.spec?.pipelineSpec?.[memberOf] ||
+    pipelineRun.status?.pipelineSpec?.[memberOf]
+  )?.find(task => task.name === selectedTaskId);
+
+  return pipelineTask;
+}
+
 export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   state = {
     isLogsMaximized: false
@@ -112,16 +122,6 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     }));
   };
 
-  getPipelineTask = ({ pipelineRun, selectedTaskId, taskRun }) => {
-    const memberOf = taskRun?.metadata?.labels?.[labelConstants.MEMBER_OF];
-    const pipelineTask = (
-      pipelineRun.spec?.pipelineSpec?.[memberOf] ||
-      pipelineRun.status?.pipelineSpec?.[memberOf]
-    )?.find(task => task.name === selectedTaskId);
-
-    return pipelineTask;
-  };
-
   loadTaskRuns = () => {
     const { pipelineRun } = this.props;
     if (
@@ -131,28 +131,36 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       return [];
     }
 
-    let { taskRuns } = this.props;
+    const { taskRuns } = this.props;
     return taskRuns || [];
   };
 
   onTaskSelected = ({
-    selectedRetry: retry, selectedStepId, selectedTaskId, taskRunName
+    selectedRetry: retry,
+    selectedStepId,
+    selectedTaskId,
+    taskRunName
   }) => {
     const { handleTaskSelected, pipelineRun } = this.props;
     const taskRuns = this.loadTaskRuns();
-    let taskRun = taskRuns.find(
-      ({ metadata }) =>
-        metadata.labels?.[labelConstants.PIPELINE_TASK] === selectedTaskId
-    ) || {};
+    const taskRun =
+      taskRuns.find(
+        ({ metadata }) =>
+          metadata.labels?.[labelConstants.PIPELINE_TASK] === selectedTaskId
+      ) || {};
 
-    const pipelineTask = this.getPipelineTask({ pipelineRun, selectedTaskId, taskRun });
+    const pipelineTask = getPipelineTask({
+      pipelineRun,
+      selectedTaskId,
+      taskRun
+    });
     handleTaskSelected({
       selectedRetry: retry,
       selectedStepId,
       selectedTaskId,
       taskRunName: pipelineTask?.matrix ? taskRunName : undefined
     });
-  }
+  };
 
   render() {
     const {
@@ -260,16 +268,20 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     }
 
     const taskRuns = this.loadTaskRuns();
-    let taskRun = taskRuns.find(
-      ({ metadata }) =>
-        metadata.labels?.[labelConstants.PIPELINE_TASK] === selectedTaskId
-    ) || {};
+    let taskRun =
+      taskRuns.find(
+        ({ metadata }) =>
+          metadata.labels?.[labelConstants.PIPELINE_TASK] === selectedTaskId
+      ) || {};
 
-    const pipelineTask = this.getPipelineTask({ pipelineRun, selectedTaskId, taskRun });
+    const pipelineTask = getPipelineTask({
+      pipelineRun,
+      selectedTaskId,
+      taskRun
+    });
     if (pipelineTask?.matrix && selectedTaskRunName) {
       taskRun = taskRuns.find(
-        ({ metadata }) =>
-          metadata.name === selectedTaskRunName
+        ({ metadata }) => metadata.name === selectedTaskRunName
       );
     }
 

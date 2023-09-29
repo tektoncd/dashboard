@@ -123,8 +123,9 @@ describe('Log', () => {
       { length: 19999 },
       (_v, i) => `Line ${i + 1}\n`
     ).join('');
-    vi.spyOn(Element.prototype, 'getBoundingClientRect')
-      .mockReturnValue({ bottom: 0 });
+    vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({
+      bottom: 0
+    });
     vi.spyOn(Element.prototype, 'scrollTop', 'get')
       .mockReturnValue(-1) // to ensure el.scrollHeight - el.clientHeight > el.scrollTop i.e. 0 - 0 > -1
       .mockReturnValueOnce(0);
@@ -154,8 +155,9 @@ describe('Log', () => {
       { length: 19999 },
       (_v, i) => `Line ${i + 1}\n`
     ).join('');
-    vi.spyOn(Element.prototype, 'getBoundingClientRect')
-      .mockReturnValue({ bottom: 0 });
+    vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({
+      bottom: 0
+    });
     vi.spyOn(Element.prototype, 'scrollTop', 'get')
       .mockReturnValue(-1) // to ensure el.scrollHeight - el.clientHeight > el.scrollTop i.e. 0 - 0 > -1
       .mockReturnValueOnce(0);
@@ -185,8 +187,11 @@ describe('Log', () => {
       { length: 20000 },
       (_v, i) => `Line ${i + 1}\n`
     ).join('');
-    vi.spyOn(Element.prototype, 'getBoundingClientRect')
-      .mockReturnValue({ bottom: 0, top: 0, right: 0 });
+    vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({
+      bottom: 0,
+      top: 0,
+      right: 0
+    });
     vi.spyOn(Element.prototype, 'scrollTop', 'get').mockReturnValue(1);
     const spiedFn = vi.spyOn(Element.prototype, 'scrollTop', 'set'); // the scrollTop value is changed in scrollToBottomLog
 
@@ -211,8 +216,11 @@ describe('Log', () => {
       { length: 20000 },
       (_v, i) => `Line ${i + 1}\n`
     ).join('');
-    vi.spyOn(Element.prototype, 'getBoundingClientRect')
-      .mockReturnValue({ bottom: 0, top: 0, right: 0 });
+    vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({
+      bottom: 0,
+      top: 0,
+      right: 0
+    });
     vi.spyOn(Element.prototype, 'scrollTop', 'get').mockReturnValue(1);
     vi.spyOn(Element.prototype, 'scrollHeight', 'get').mockReturnValue(2);
     const spiedFn = vi.spyOn(Element.prototype, 'scrollTop', 'set'); // the scrollTop value is changed in scrollToBottomLog

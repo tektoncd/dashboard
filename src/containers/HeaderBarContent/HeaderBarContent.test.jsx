@@ -24,8 +24,10 @@ describe('HeaderBarContent', () => {
   it('selects namespace based on URL', () => {
     const namespace = 'default';
     const selectNamespace = vi.fn();
-    vi.spyOn(APIUtils, 'useSelectedNamespace')
-      .mockImplementation(() => ({ selectedNamespace: null, selectNamespace }));
+    vi.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
+      selectedNamespace: null,
+      selectNamespace
+    }));
     const path = '/namespaces/:namespace/foo';
     renderWithRouter(<HeaderBarContent />, {
       path,
@@ -151,17 +153,23 @@ describe('HeaderBarContent', () => {
     const tenantNamespace2 = 'fake_tenantNamespace2';
     const path = '/namespaces/:namespace/fake/path';
     const selectNamespace = vi.fn();
-    vi.spyOn(API, 'useTenantNamespaces').mockImplementation(() => [tenantNamespace1, tenantNamespace2]);
+    vi.spyOn(API, 'useTenantNamespaces').mockImplementation(() => [
+      tenantNamespace1,
+      tenantNamespace2
+    ]);
     vi.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
       namespacedMatch: { path, params: { namespace: tenantNamespace2 } },
       selectedNamespace: tenantNamespace2,
       selectNamespace
     }));
     vi.spyOn(window.history, 'pushState');
-    const { getByDisplayValue, getByTitle } = renderWithRouter(<HeaderBarContent />, {
-      path,
-      route: `/namespaces/${tenantNamespace2}/fake/path`
-    });
+    const { getByDisplayValue, getByTitle } = renderWithRouter(
+      <HeaderBarContent />,
+      {
+        path,
+        route: `/namespaces/${tenantNamespace2}/fake/path`
+      }
+    );
     await waitFor(() => getByDisplayValue(tenantNamespace2));
     fireEvent.click(getByTitle(/clear selected item/i));
     expect(selectNamespace).toHaveBeenCalledWith(tenantNamespace1);

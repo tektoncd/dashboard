@@ -31,8 +31,9 @@ const namespaceResources = namespaces.map(namespace => ({
 const initialTextRegExp = /select namespace/i;
 
 it('NamespacesDropdown renders items', () => {
-  vi.spyOn(API, 'useNamespaces')
-    .mockImplementation(() => ({ data: namespaceResources }));
+  vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+    data: namespaceResources
+  }));
   const { getAllByText, getByPlaceholderText, queryByText } = render(
     <NamespacesDropdown {...props} />
   );
@@ -47,8 +48,9 @@ it('NamespacesDropdown renders items', () => {
 });
 
 it('NamespacesDropdown renders controlled selection', () => {
-  vi.spyOn(API, 'useNamespaces')
-    .mockImplementation(() => ({ data: namespaceResources }));
+  vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+    data: namespaceResources
+  }));
   // Select item 'namespace-1'
   const { queryByPlaceholderText, queryByDisplayValue, rerender } = render(
     <NamespacesDropdown {...props} selectedItem={{ text: 'namespace-1' }} />
@@ -72,15 +74,17 @@ it('NamespacesDropdown renders empty', () => {
 });
 
 it('NamespacesDropdown renders loading skeleton', () => {
-  vi.spyOn(API, 'useNamespaces')
-    .mockImplementation(() => ({ isFetching: true }));
+  vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+    isFetching: true
+  }));
   const { queryByPlaceholderText } = render(<NamespacesDropdown {...props} />);
   expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
 });
 
 it('NamespacesDropdown handles onChange event', () => {
-  vi.spyOn(API, 'useNamespaces')
-    .mockImplementation(() => ({ data: namespaceResources }));
+  vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+    data: namespaceResources
+  }));
   const onChange = vi.fn();
   const { getByPlaceholderText, getByText } = render(
     <NamespacesDropdown {...props} onChange={onChange} />
