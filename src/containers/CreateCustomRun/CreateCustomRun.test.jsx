@@ -43,12 +43,10 @@ kind: CustomRun
 metadata:
   name: run-1111111111
   namespace: test-namespace
-  labels: {}
 spec:
   customRef:
     apiVersion: ''
-    kind: ''
-  params: []`;
+    kind: ''`;
 
 const expectedCustomRunOneLine = expectedCustomRun.replace(/\r?\n|\r/g, '');
 
