@@ -12,7 +12,7 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
-import React, { Suspense, useState } from 'react';
+import React, { Suspense } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import yaml from 'js-yaml';
 import { ALL_NAMESPACES, urls, useTitleSync } from '@tektoncd/dashboard-utils';
@@ -27,15 +27,6 @@ import {
 } from '../../api';
 
 const YAMLEditor = React.lazy(() => import('../YAMLEditor'));
-
-const initialState = {
-  creating: false,
-  kind: 'CustomRun',
-  labels: [],
-  params: {},
-  validationError: false,
-  validCustomRunName: true
-};
 
 function CreateCustomRun() {
   const intl = useIntl();
@@ -55,13 +46,6 @@ function CreateCustomRun() {
       (defaultNamespace !== ALL_NAMESPACES ? defaultNamespace : '')
     );
   }
-
-  const [{ kind, labels, namespace, params }] = useState({
-    ...initialState,
-    customRef: '',
-    kind: 'Custom',
-    namespace: getNamespace()
-  });
 
   useTitleSync({
     page: intl.formatMessage({
@@ -127,15 +111,7 @@ function CreateCustomRun() {
     );
   }
 
-  const customRun = getCustomRunPayload({
-    kind,
-    labels: labels.reduce((acc, { key, value }) => {
-      acc[key] = value;
-      return acc;
-    }, {}),
-    namespace,
-    params
-  });
+  const customRun = getCustomRunPayload({ namespace: getNamespace() });
 
   return (
     <Suspense fallback={<Loading />}>

@@ -41,19 +41,12 @@ function getCustomRunsAPI({ filters, isWebSocket, name, namespace }) {
   );
 }
 
-export function getCustomRunPayload({
-  customRunName = `run-${Date.now()}`,
-  labels,
-  namespace,
-  params,
-  serviceAccount,
-  timeout
-}) {
+export function getCustomRunPayload({ namespace }) {
   const payload = {
     apiVersion: 'tekton.dev/v1beta1',
     kind: 'CustomRun',
     metadata: {
-      name: customRunName,
+      name: `run-${Date.now()}`,
       namespace
     },
     spec: {
@@ -63,21 +56,6 @@ export function getCustomRunPayload({
       }
     }
   };
-  if (labels) {
-    payload.metadata.labels = labels;
-  }
-  if (params) {
-    payload.spec.params = Object.keys(params).map(name => ({
-      name,
-      value: params[name]
-    }));
-  }
-  if (serviceAccount) {
-    payload.spec.serviceAccountName = serviceAccount;
-  }
-  if (timeout) {
-    payload.spec.timeout = timeout;
-  }
 
   return payload;
 }
@@ -130,27 +108,6 @@ export function cancelCustomRun({ name, namespace }) {
   return patch(uri, payload);
 }
 
-export function rerunCustomRun(run) {
-  const { annotations, labels, name, namespace } = run.metadata;
-
-  const payload = deepClone(run);
-  payload.metadata = {
-    annotations,
-    generateName: getGenerateNamePrefixForRerun(name),
-    labels: {
-      ...labels,
-      'dashboard.tekton.dev/rerunOf': name
-    },
-    namespace
-  };
-
-  delete payload.status;
-  delete payload.spec?.status;
-
-  const uri = getTektonAPI('customruns', { namespace, version: 'v1beta1' });
-  return post(uri, payload).then(({ body }) => body);
-}
-
 export function createCustomRunRaw({ namespace, payload }) {
   const uri = getTektonAPI('customruns', { namespace, version: 'v1beta1' });
   return post(uri, payload).then(({ body }) => body);
@@ -193,4 +150,14 @@ export function generateNewCustomRunPayload({ customRun, rerun }) {
 
   delete payload.spec?.status;
   return { namespace, payload };
+}
+
+export function rerunCustomRun(customRun) {
+  const { namespace, payload } = generateNewCustomRunPayload({
+    customRun,
+    rerun: true
+  });
+
+  const uri = getTektonAPI('customruns', { namespace, version: 'v1beta1' });
+  return post(uri, payload).then(({ body }) => body);
 }
