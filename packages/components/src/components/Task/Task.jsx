@@ -173,6 +173,7 @@ class Task extends Component {
           title={retryName || displayName}
           onClick={this.handleTaskSelected}
           onKeyUp={e => e.key === 'Enter' && this.handleTaskSelected(e)}
+          role="button"
         >
           <StatusIcon
             DefaultIcon={DefaultIcon}

@@ -96,6 +96,7 @@ class Step extends Component {
           tabIndex="0" // eslint-disable-line jsx-a11y/no-noninteractive-tabindex
           onClick={this.handleClick}
           onKeyUp={e => e.key === 'Enter' && this.handleClick(e)}
+          role="button"
         >
           <StatusIcon
             DefaultIcon={DefaultIcon}
