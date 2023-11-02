@@ -12,10 +12,12 @@ limitations under the License.
 */
 
 import yaml from 'js-yaml';
+import { http, HttpResponse } from 'msw';
+
 import * as API from './pipelineRuns';
 import * as utils from './utils';
 import * as comms from './comms';
-import { rest, server } from '../../config_frontend/msw';
+import { server } from '../../config_frontend/msw';
 import { generateNewPipelineRunPayload } from './pipelineRuns';
 
 describe('cancelPipelineRun', () => {
@@ -185,7 +187,7 @@ it('deletePipelineRun', () => {
   const name = 'foo';
   const data = { fake: 'pipelineRun' };
   server.use(
-    rest.delete(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
+    http.delete(new RegExp(`/${name}$`), () => HttpResponse.json(data))
   );
   return API.deletePipelineRun({ name }).then(pipelineRun => {
     expect(pipelineRun).toEqual(data);
@@ -195,9 +197,7 @@ it('deletePipelineRun', () => {
 it('getPipelineRun', () => {
   const name = 'foo';
   const data = { fake: 'pipelineRun' };
-  server.use(
-    rest.get(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
-  );
+  server.use(http.get(new RegExp(`/${name}$`), () => HttpResponse.json(data)));
   return API.getPipelineRun({ name }).then(pipelineRun => {
     expect(pipelineRun).toEqual(data);
   });
@@ -207,9 +207,7 @@ it('getPipelineRuns', () => {
   const data = {
     items: 'pipelineRuns'
   };
-  server.use(
-    rest.get(/\/pipelineruns\//, (req, res, ctx) => res(ctx.json(data)))
-  );
+  server.use(http.get(/\/pipelineruns\//, () => HttpResponse.json(data)));
   return API.getPipelineRuns({ filters: [] }).then(pipelineRuns => {
     expect(pipelineRuns).toEqual(data);
   });
@@ -220,9 +218,7 @@ it('getPipelineRuns With Query Params', () => {
   const data = {
     items: 'pipelineRuns'
   };
-  server.use(
-    rest.get(/\/pipelineruns\//, (req, res, ctx) => res(ctx.json(data)))
-  );
+  server.use(http.get(/\/pipelineruns\//, () => HttpResponse.json(data)));
   return API.getPipelineRuns({ pipelineName, filters: [] }).then(
     pipelineRuns => {
       expect(pipelineRuns).toEqual(data);

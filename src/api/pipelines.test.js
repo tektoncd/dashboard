@@ -11,15 +11,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { http, HttpResponse } from 'msw';
+
 import * as API from './pipelines';
 import * as utils from './utils';
-import { rest, server } from '../../config_frontend/msw';
+import { server } from '../../config_frontend/msw';
 
 it('getPipelines', () => {
   const data = {
     items: 'pipelines'
   };
-  server.use(rest.get(/\/pipelines\//, (req, res, ctx) => res(ctx.json(data))));
+  server.use(http.get(/\/pipelines\//, () => HttpResponse.json(data)));
   return API.getPipelines().then(pipelines => {
     expect(pipelines).toEqual(data);
   });
@@ -28,9 +30,7 @@ it('getPipelines', () => {
 it('getPipeline', () => {
   const name = 'foo';
   const data = { fake: 'pipeline' };
-  server.use(
-    rest.get(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
-  );
+  server.use(http.get(new RegExp(`/${name}$`), () => HttpResponse.json(data)));
   return API.getPipeline({ name }).then(pipeline => {
     expect(pipeline).toEqual(data);
   });
@@ -40,7 +40,7 @@ it('deletePipeline', () => {
   const name = 'foo';
   const data = { fake: 'pipeline' };
   server.use(
-    rest.delete(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
+    http.delete(new RegExp(`/${name}$`), () => HttpResponse.json(data))
   );
   return API.deletePipeline({ name }).then(pipeline => {
     expect(pipeline).toEqual(data);

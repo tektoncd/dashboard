@@ -11,16 +11,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { http, HttpResponse } from 'msw';
+
 import * as API from './triggerBindings';
 import * as utils from './utils';
-import { rest, server } from '../../config_frontend/msw';
+import { server } from '../../config_frontend/msw';
 
 it('getTriggerBinding', () => {
   const name = 'foo';
   const data = { fake: 'triggerBinding' };
-  server.use(
-    rest.get(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
-  );
+  server.use(http.get(new RegExp(`/${name}$`), () => HttpResponse.json(data)));
   return API.getTriggerBinding({ name }).then(triggerBinding => {
     expect(triggerBinding).toEqual(data);
   });
@@ -30,9 +30,7 @@ it('getTriggerBindings', () => {
   const data = {
     items: 'triggerBindings'
   };
-  server.use(
-    rest.get(/\/triggerbindings\//, (req, res, ctx) => res(ctx.json(data)))
-  );
+  server.use(http.get(/\/triggerbindings\//, () => HttpResponse.json(data)));
   return API.getTriggerBindings().then(triggerBindings => {
     expect(triggerBindings).toEqual(data);
   });

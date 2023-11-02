@@ -11,16 +11,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { http, HttpResponse } from 'msw';
+
 import * as API from './interceptors';
 import * as utils from './utils';
-import { rest, server } from '../../config_frontend/msw';
+import { server } from '../../config_frontend/msw';
 
 it('getInterceptor', () => {
   const name = 'foo';
   const data = { fake: 'interceptor' };
-  server.use(
-    rest.get(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
-  );
+  server.use(http.get(new RegExp(`/${name}$`), () => HttpResponse.json(data)));
   return API.getInterceptor({ name }).then(interceptor => {
     expect(interceptor).toEqual(data);
   });
@@ -30,9 +30,7 @@ it('getInterceptors', () => {
   const data = {
     items: 'interceptors'
   };
-  server.use(
-    rest.get(/\/interceptors\//, (req, res, ctx) => res(ctx.json(data)))
-  );
+  server.use(http.get(/\/interceptors\//, () => HttpResponse.json(data)));
   return API.getInterceptors().then(interceptors => {
     expect(interceptors).toEqual(data);
   });

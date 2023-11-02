@@ -11,15 +11,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { http, HttpResponse } from 'msw';
+
 import * as API from './serviceAccounts';
 import * as utils from './utils';
-import { rest, server } from '../../config_frontend/msw';
+import { server } from '../../config_frontend/msw';
 
 it('getServiceAccounts returns the correct data', () => {
   const data = { items: 'serviceaccounts' };
-  server.use(
-    rest.get(/\/serviceaccounts\//, (req, res, ctx) => res(ctx.json(data)))
-  );
+  server.use(http.get(/\/serviceaccounts\//, () => HttpResponse.json(data)));
   return API.getServiceAccounts().then(response => {
     expect(response).toEqual(data);
   });

@@ -11,17 +11,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { http, HttpResponse } from 'msw';
+
 import * as API from './clusterTasks';
 import * as utils from './utils';
-import { rest, server } from '../../config_frontend/msw';
+import { server } from '../../config_frontend/msw';
 
 it('getClusterTasks', () => {
   const data = {
     items: 'clustertasks'
   };
-  server.use(
-    rest.get(/\/clustertasks\//, (req, res, ctx) => res(ctx.json(data)))
-  );
+  server.use(http.get(/\/clustertasks\//, () => HttpResponse.json(data)));
 
   return API.getClusterTasks().then(tasks => {
     expect(tasks).toEqual(data);
@@ -31,9 +31,7 @@ it('getClusterTasks', () => {
 it('getClusterTask', () => {
   const name = 'foo';
   const data = { fake: 'clustertask' };
-  server.use(
-    rest.get(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
-  );
+  server.use(http.get(new RegExp(`/${name}$`), () => HttpResponse.json(data)));
   return API.getClusterTask({ name }).then(task => {
     expect(task).toEqual(data);
   });
@@ -43,7 +41,7 @@ it('deletePipelineRun', () => {
   const name = 'foo';
   const data = { fake: 'clusterTask' };
   server.use(
-    rest.delete(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
+    http.delete(new RegExp(`/${name}$`), () => HttpResponse.json(data))
   );
   return API.deleteClusterTask({ name }).then(clusterTask => {
     expect(clusterTask).toEqual(data);
