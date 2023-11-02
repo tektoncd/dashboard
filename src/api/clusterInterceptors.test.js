@@ -11,9 +11,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { http, HttpResponse } from 'msw';
+
 import * as API from './clusterInterceptors';
 import * as utils from './utils';
-import { rest, server } from '../../config_frontend/msw';
+import { server } from '../../config_frontend/msw';
 
 it('getClusterInterceptors', () => {
   const data = {
@@ -21,7 +23,7 @@ it('getClusterInterceptors', () => {
   };
 
   server.use(
-    rest.get(/\/clusterinterceptors\/$/, (req, res, ctx) => res(ctx.json(data)))
+    http.get(/\/clusterinterceptors\/$/, () => HttpResponse.json(data))
   );
 
   return API.getClusterInterceptors().then(tasks => {
@@ -32,9 +34,7 @@ it('getClusterInterceptors', () => {
 it('getClusterInterceptor', () => {
   const name = 'foo';
   const data = { fake: 'clusterinterceptor' };
-  server.use(
-    rest.get(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
-  );
+  server.use(http.get(new RegExp(`/${name}$`), () => HttpResponse.json(data)));
 
   return API.getClusterInterceptor({ name }).then(task => {
     expect(task).toEqual(data);

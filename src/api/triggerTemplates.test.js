@@ -11,16 +11,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { http, HttpResponse } from 'msw';
+
 import * as API from './triggerTemplates';
 import * as utils from './utils';
-import { rest, server } from '../../config_frontend/msw';
+import { server } from '../../config_frontend/msw';
 
 it('getTriggerTemplate', () => {
   const name = 'foo';
   const data = { fake: 'triggerTemplate' };
-  server.use(
-    rest.get(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
-  );
+  server.use(http.get(new RegExp(`/${name}$`), () => HttpResponse.json(data)));
   return API.getTriggerTemplate({ name }).then(triggerTemplate => {
     expect(triggerTemplate).toEqual(data);
   });
@@ -30,9 +30,7 @@ it('getTriggerTemplates', () => {
   const data = {
     items: 'triggerTemplates'
   };
-  server.use(
-    rest.get(/\/triggertemplates\//, (req, res, ctx) => res(ctx.json(data)))
-  );
+  server.use(http.get(/\/triggertemplates\//, () => HttpResponse.json(data)));
   return API.getTriggerTemplates().then(triggerTemplates => {
     expect(triggerTemplates).toEqual(data);
   });

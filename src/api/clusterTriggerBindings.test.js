@@ -11,16 +11,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { http, HttpResponse } from 'msw';
+
 import * as API from './clusterTriggerBindings';
 import * as utils from './utils';
-import { rest, server } from '../../config_frontend/msw';
+import { server } from '../../config_frontend/msw';
 
 it('getClusterTriggerBinding', () => {
   const name = 'foo';
   const data = { fake: 'clusterTriggerBinding' };
-  server.use(
-    rest.get(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
-  );
+  server.use(http.get(new RegExp(`/${name}$`), () => HttpResponse.json(data)));
   return API.getClusterTriggerBinding({ name }).then(clusterTriggerBinding => {
     expect(clusterTriggerBinding).toEqual(data);
   });
@@ -31,9 +31,7 @@ it('getClusterTriggerBindings', () => {
     items: 'clusterTriggerBindings'
   };
   server.use(
-    rest.get(/\/clustertriggerbindings\//, (req, res, ctx) =>
-      res(ctx.json(data))
-    )
+    http.get(/\/clustertriggerbindings\//, () => HttpResponse.json(data))
   );
   return API.getClusterTriggerBindings().then(clusterTriggerBindings => {
     expect(clusterTriggerBindings).toEqual(data);

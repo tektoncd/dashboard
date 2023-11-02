@@ -11,10 +11,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { http, HttpResponse } from 'msw';
+
 import * as API from './customRuns';
 import * as utils from './utils';
 import * as comms from './comms';
-import { rest, server } from '../../config_frontend/msw';
+import { server } from '../../config_frontend/msw';
 
 it('cancelCustomRun', () => {
   const name = 'foo';
@@ -35,7 +37,7 @@ it('deleteCustomRun', () => {
   const name = 'foo';
   const data = { fake: 'CustomRun' };
   server.use(
-    rest.delete(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
+    http.delete(new RegExp(`/${name}$`), () => HttpResponse.json(data))
   );
   return API.deleteCustomRun({ name }).then(run => {
     expect(run).toEqual(data);
@@ -45,9 +47,7 @@ it('deleteCustomRun', () => {
 it('getCustomRun', () => {
   const name = 'foo';
   const data = { fake: 'CustomRun' };
-  server.use(
-    rest.get(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
-  );
+  server.use(http.get(new RegExp(`/${name}$`), () => HttpResponse.json(data)));
   return API.getCustomRun({ name }).then(run => {
     expect(run).toEqual(data);
   });
@@ -57,9 +57,7 @@ it('getCustomRuns', () => {
   const data = {
     items: 'Runs'
   };
-  server.use(
-    rest.get(/\/customruns\//, (req, res, ctx) => res(ctx.json(data)))
-  );
+  server.use(http.get(/\/customruns\//, () => HttpResponse.json(data)));
   return API.getCustomRuns({ filters: [] }).then(runs => {
     expect(runs).toEqual(data);
   });

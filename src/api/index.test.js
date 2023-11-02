@@ -13,9 +13,10 @@ limitations under the License.
 
 import { renderHook } from '@testing-library/react-hooks';
 import { labels } from '@tektoncd/dashboard-utils';
+import { http, HttpResponse } from 'msw';
 
 import { getAPIWrapper, getQueryClient } from '../utils/test';
-import { rest, server } from '../../config_frontend/msw';
+import { server } from '../../config_frontend/msw';
 
 import * as API from '.';
 import * as ClusterTasksAPI from './clusterTasks';
@@ -30,9 +31,7 @@ it('getCustomResource', () => {
   const name = 'testresource';
   const namespace = 'testnamespace';
   const data = { fake: 'resourcedata' };
-  server.use(
-    rest.get(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
-  );
+  server.use(http.get(new RegExp(`/${name}$`), () => HttpResponse.json(data)));
   return API.getCustomResource({ group, version, type, namespace, name }).then(
     resource => {
       expect(resource).toEqual(data);
@@ -46,9 +45,7 @@ it('getCustomResources', () => {
   const type = 'testtype';
   const namespace = 'testnamespace';
   const data = { items: 'resourcedata' };
-  server.use(
-    rest.get(new RegExp(`/${type}/$`), (req, res, ctx) => res(ctx.json(data)))
-  );
+  server.use(http.get(new RegExp(`/${type}/$`), () => HttpResponse.json(data)));
   return API.getCustomResources({ group, version, type, namespace }).then(
     resources => {
       expect(resources).toEqual(data);
@@ -84,9 +81,7 @@ it('useCustomResources', async () => {
       { metadata: { name: 'resource2' } }
     ]
   };
-  server.use(
-    rest.get(/\/fake_type\//, (req, res, ctx) => res(ctx.json(resources)))
-  );
+  server.use(http.get(/\/fake_type\//, () => HttpResponse.json(resources)));
   const { result, waitFor } = renderHook(
     () => API.useCustomResources({ group, type, version }),
     {
@@ -154,9 +149,7 @@ it('getNamespaces returns the correct data', () => {
   const data = {
     items: 'namespaces'
   };
-  server.use(
-    rest.get(/\/namespaces\//, (req, res, ctx) => res(ctx.json(data)))
-  );
+  server.use(http.get(/\/namespaces\//, () => HttpResponse.json(data)));
   return API.getNamespaces().then(response => {
     expect(response).toEqual(data);
   });
@@ -170,9 +163,7 @@ it('useNamespaces', async () => {
       { metadata: { name: 'namespace2' } }
     ]
   };
-  server.use(
-    rest.get(/\/namespaces\//, (req, res, ctx) => res(ctx.json(namespaces)))
-  );
+  server.use(http.get(/\/namespaces\//, () => HttpResponse.json(namespaces)));
   const { result, waitFor } = renderHook(() => API.useNamespaces(), {
     wrapper: getAPIWrapper()
   });
@@ -188,7 +179,7 @@ it('usePod', async () => {
     metadata: {},
     spec: 'fake_spec'
   };
-  server.use(rest.get(/\/pods\//, (req, res, ctx) => res(ctx.json(pod))));
+  server.use(http.get(/\/pods\//, () => HttpResponse.json(pod)));
   const { result, waitFor } = renderHook(
     () => API.usePod({ name, namespace }),
     {
@@ -208,7 +199,7 @@ it('useEvents', async () => {
     metadata: {},
     items: [{ metadata: { name: 'event1' } }, { metadata: { name: 'event2' } }]
   };
-  server.use(rest.get(/\/events\//, (req, res, ctx) => res(ctx.json(events))));
+  server.use(http.get(/\/events\//, () => HttpResponse.json(events)));
   const { result, waitFor } = renderHook(
     () => API.useEvents({ involvedObjectKind, involvedObjectName, namespace }),
     {
@@ -281,9 +272,7 @@ it('getPodLog', () => {
   const name = 'foo';
   const data = 'logs';
   server.use(
-    rest.get(new RegExp(`/${name}/log$`), (req, res, ctx) =>
-      res(ctx.text(data))
-    )
+    http.get(new RegExp(`/${name}/log$`), () => new HttpResponse(data))
   );
   return API.getPodLog({ name, namespace }).then(log => {
     expect(log).toEqual(data);
@@ -296,10 +285,10 @@ it('getPodLog with container name', () => {
   const container = 'containerName';
   const data = 'logs';
   server.use(
-    rest.get(new RegExp(`/${name}/log$`), async (req, res, ctx) =>
-      req.url.searchParams.get('container') === container
-        ? res(await ctx.text(data))
-        : res(ctx.json(404))
+    http.get(new RegExp(`/${name}/log$`), async ({ request: apiRequest }) =>
+      new URL(apiRequest.url).searchParams.get('container') === container
+        ? new HttpResponse(data)
+        : HttpResponse.json(404)
     )
   );
   return API.getPodLog({ container, name, namespace }).then(log => {
@@ -436,8 +425,8 @@ describe('getAPIResource', () => {
     const apiResource = { name: type };
     const data = { resources: [apiResource] };
     server.use(
-      rest.get(new RegExp(`/apis/${group}/${version}$`), (req, res, ctx) =>
-        res(ctx.json(data))
+      http.get(new RegExp(`/apis/${group}/${version}$`), () =>
+        HttpResponse.json(data)
       )
     );
     return API.getAPIResource({ group, version, type }).then(resource => {
@@ -452,9 +441,7 @@ describe('getAPIResource', () => {
     const apiResource = { name: type };
     const data = { resources: [apiResource] };
     server.use(
-      rest.get(new RegExp(`/api/${version}$`), (req, res, ctx) =>
-        res(ctx.json(data))
-      )
+      http.get(new RegExp(`/api/${version}$`), () => HttpResponse.json(data))
     );
     return API.getAPIResource({ group, version, type }).then(resource => {
       expect(resource).toEqual(apiResource);
@@ -467,9 +454,7 @@ describe('getAPIResource', () => {
     const type = 'testtype';
     const data = { resources: [] };
     server.use(
-      rest.get(new RegExp(`/api/${version}$`), (req, res, ctx) =>
-        res(ctx.json(data))
-      )
+      http.get(new RegExp(`/api/${version}$`), () => HttpResponse.json(data))
     );
     return API.getAPIResource({ group, version, type }).then(resource => {
       expect(resource).toEqual({});
@@ -480,16 +465,14 @@ describe('getAPIResource', () => {
 describe('getInstallProperties', () => {
   it('returns expected data', async () => {
     const data = { fake: 'properties' };
-    server.use(
-      rest.get(/\/properties$/, (req, res, ctx) => res(ctx.json(data)))
-    );
+    server.use(http.get(/\/properties$/, () => HttpResponse.json(data)));
     const properties = await API.getInstallProperties();
     expect(properties).toEqual(data);
   });
 
   it('handles error in case of Dashboard client mode', async () => {
     server.use(
-      rest.get(/\/properties$/, (req, res, ctx) => res(ctx.status(404)))
+      http.get(/\/properties$/, () => new HttpResponse(null, { status: 404 }))
     );
     const properties = await API.getInstallProperties();
     expect(properties.dashboardVersion).toEqual('kubectl-proxy-client');
@@ -497,7 +480,7 @@ describe('getInstallProperties', () => {
 
   it('handles unexpected errors', async () => {
     server.use(
-      rest.get(/\/properties$/, (req, res, ctx) => res(ctx.status(500)))
+      http.get(/\/properties$/, () => new HttpResponse(null, { status: 500 }))
     );
     const properties = await API.getInstallProperties();
     expect(properties).toBeUndefined();
@@ -506,9 +489,7 @@ describe('getInstallProperties', () => {
 
 it('useProperties', async () => {
   const properties = { fake: 'properties' };
-  server.use(
-    rest.get(/\/properties$/, (req, res, ctx) => res(ctx.json(properties)))
-  );
+  server.use(http.get(/\/properties$/, () => HttpResponse.json(properties)));
   const { result, waitFor } = renderHook(() => API.useProperties(), {
     wrapper: getAPIWrapper()
   });
@@ -539,9 +520,7 @@ it('other hooks that depend on useProperties', async () => {
     triggersNamespace,
     triggersVersion
   };
-  server.use(
-    rest.get(/\/properties$/, (req, res, ctx) => res(ctx.json(properties)))
-  );
+  server.use(http.get(/\/properties$/, () => HttpResponse.json(properties)));
   const { result, waitFor } = renderHook(() => API.useProperties(), {
     wrapper: getAPIWrapper({ queryClient })
   });
@@ -606,9 +585,7 @@ it('useTenantNamespaces', async () => {
   const tenantNamespaces = ['fake_tenantNamespace1', 'fake_tenantNamespace2'];
 
   const properties = { tenantNamespaces };
-  server.use(
-    rest.get(/\/properties$/, (req, res, ctx) => res(ctx.json(properties)))
-  );
+  server.use(http.get(/\/properties$/, () => HttpResponse.json(properties)));
   const { result, waitFor } = renderHook(() => API.useProperties(), {
     wrapper: getAPIWrapper({ queryClient })
   });

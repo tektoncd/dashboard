@@ -11,6 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { http, HttpResponse } from 'msw';
+
 import {
   checkStatus,
   get,
@@ -20,7 +22,7 @@ import {
   post,
   request
 } from './comms';
-import { rest, server } from '../../config_frontend/msw';
+import { server } from '../../config_frontend/msw';
 
 const uri = 'http://example.com';
 
@@ -145,14 +147,14 @@ describe('request', () => {
     const data = {
       fake: 'data'
     };
-    server.use(rest.get(uri, (req, res, ctx) => res(ctx.json(data))));
+    server.use(http.get(uri, () => HttpResponse.json(data)));
     return request(uri).then(response => {
       expect(response).toEqual(data);
     });
   });
 
   it('throws on error', () => {
-    server.use(rest.get(uri, (req, res, ctx) => res(ctx.status(400))));
+    server.use(http.get(uri, () => new HttpResponse(null, { status: 400 })));
     expect.assertions(1);
     return request(uri).catch(e => {
       expect(e).not.toBeNull();
@@ -165,7 +167,7 @@ describe('get', () => {
     const data = {
       fake: 'data'
     };
-    server.use(rest.get(uri, (req, res, ctx) => res(ctx.json(data))));
+    server.use(http.get(uri, () => HttpResponse.json(data)));
     return get(uri).then(response => {
       expect(response).toEqual(data);
     });
@@ -180,7 +182,7 @@ describe.skip('post', () => {
     };
     server.use(
       // echo the received body so we can assert on it
-      rest.post(uri, async (req, res, ctx) => res(ctx.json(await req.json())))
+      http.post(uri, ({ request: apiRequest }) => apiRequest.json())
     );
     return post(uri, data).then(responseBody => {
       expect(responseBody).toEqual(data);

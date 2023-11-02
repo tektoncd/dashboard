@@ -12,10 +12,12 @@ limitations under the License.
 */
 
 import yaml from 'js-yaml';
+import { http, HttpResponse } from 'msw';
+
 import * as API from './taskRuns';
 import * as utils from './utils';
 import * as comms from './comms';
-import { rest, server } from '../../config_frontend/msw';
+import { server } from '../../config_frontend/msw';
 
 it('cancelTaskRun', () => {
   const name = 'foo';
@@ -193,7 +195,7 @@ it('deleteTaskRun', () => {
   const name = 'foo';
   const data = { fake: 'taskRun' };
   server.use(
-    rest.delete(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
+    http.delete(new RegExp(`/${name}$`), () => HttpResponse.json(data))
   );
   return API.deleteTaskRun({ name }).then(taskRun => {
     expect(taskRun).toEqual(data);
@@ -203,9 +205,7 @@ it('deleteTaskRun', () => {
 it('getTaskRun', () => {
   const name = 'foo';
   const data = { fake: 'taskRun' };
-  server.use(
-    rest.get(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
-  );
+  server.use(http.get(new RegExp(`/${name}$`), () => HttpResponse.json(data)));
   return API.getTaskRun({ name }).then(taskRun => {
     expect(taskRun).toEqual(data);
   });
@@ -215,7 +215,7 @@ it('getTaskRuns', () => {
   const data = {
     items: 'taskRuns'
   };
-  server.use(rest.get(/\/taskruns\//, (req, res, ctx) => res(ctx.json(data))));
+  server.use(http.get(/\/taskruns\//, () => HttpResponse.json(data)));
   return API.getTaskRuns().then(taskRuns => {
     expect(taskRuns).toEqual(data);
   });
@@ -226,7 +226,7 @@ it('getTaskRuns With Query Params', () => {
   const data = {
     items: 'taskRuns'
   };
-  server.use(rest.get(/\/taskruns\//, (req, res, ctx) => res(ctx.json(data))));
+  server.use(http.get(/\/taskruns\//, () => HttpResponse.json(data)));
   return API.getTaskRuns({ taskName }).then(taskRuns => {
     expect(taskRuns).toEqual(data);
   });

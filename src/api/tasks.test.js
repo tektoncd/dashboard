@@ -11,15 +11,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { http, HttpResponse } from 'msw';
+
 import * as API from './tasks';
 import * as utils from './utils';
-import { rest, server } from '../../config_frontend/msw';
+import { server } from '../../config_frontend/msw';
 
 it('getTasks', () => {
   const data = {
     items: 'tasks'
   };
-  server.use(rest.get(/\/tasks\//, (req, res, ctx) => res(ctx.json(data))));
+  server.use(http.get(/\/tasks\//, () => HttpResponse.json(data)));
   return API.getTasks().then(tasks => {
     expect(tasks).toEqual(data);
   });
@@ -28,9 +30,7 @@ it('getTasks', () => {
 it('getTask', () => {
   const name = 'foo';
   const data = { fake: 'task' };
-  server.use(
-    rest.get(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
-  );
+  server.use(http.get(new RegExp(`/${name}$`), () => HttpResponse.json(data)));
   return API.getTask({ name }).then(task => {
     expect(task).toEqual(data);
   });
@@ -40,7 +40,7 @@ it('deleteTask', () => {
   const name = 'foo';
   const data = { fake: 'task' };
   server.use(
-    rest.delete(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
+    http.delete(new RegExp(`/${name}$`), () => HttpResponse.json(data))
   );
   return API.deleteTask({ name }).then(task => {
     expect(task).toEqual(data);
