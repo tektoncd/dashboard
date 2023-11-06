@@ -109,11 +109,13 @@ const LogFormat = ({ children }) => {
   };
 
   const enableTextStyle = flag => {
-    properties.classes[`tkn--ansi--text--${flag}`] = true;
+    const className = `tkn--ansi--text--${flag}`;
+    properties.classes[className] = true;
   };
 
   const disableTextStyle = flag => {
-    properties.classes[`tkn--ansi--text--${flag}`] = false;
+    const className = `tkn--ansi--text--${flag}`;
+    properties.classes[className] = false;
   };
 
   const setFGColor = color => {
