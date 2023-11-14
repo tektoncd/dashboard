@@ -32,8 +32,6 @@ You will also need the following tools in order to build the Dashboard locally a
 1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/): For interacting with your kube cluster
 1. [`kustomize`](https://kubectl.docs.kubernetes.io/installation/kustomize/): For building the Dashboard manifests. v4.5.4 is known to work
 
-> Note: If using [Colima](https://github.com/abiosoft/colima) on macOS there's a known issue regarding compatibility with recent releases of `kind`. Use kind v0.19.0 for now.
-
 ## Checkout your fork
 
 To check out this repository:
