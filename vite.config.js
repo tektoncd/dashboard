@@ -47,6 +47,9 @@ export default defineConfig(({ mode }) => ({
     yaml(),
     splitVendorChunkPlugin()
   ],
+  resolve: {
+    extensions: ['.js', '.jsx']
+  },
   server: {
     headers: {
       // https://github.com/codemirror/codemirror5/issues/6707
