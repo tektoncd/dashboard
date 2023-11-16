@@ -26,8 +26,8 @@ import { getErrorMessage, useTitleSync } from '@tektoncd/dashboard-utils';
 import { useProperties } from '../../api';
 
 import tektonLogo from '../../images/tekton-dashboard-color.svg';
-import { ReactComponent as DocsPictogram } from '../../images/assets.svg';
-import { ReactComponent as HubPictogram } from '../../images/user--interface.svg';
+import DocsPictogram from '../../images/assets.svg?react';
+import HubPictogram from '../../images/user--interface.svg?react';
 
 function ClickableTile(props) {
   return (
