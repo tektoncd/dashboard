@@ -14,13 +14,16 @@ limitations under the License.
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import { getCarbonPrefix } from '@tektoncd/dashboard-utils';
+
+const carbonPrefix = getCarbonPrefix();
 
 const tableSizeClassNames = {
-  xs: 'bx--data-table--xs',
-  sm: 'bx--data-table--sm',
-  md: 'bx--data-table--md',
-  lg: 'bx--data-table--lg',
-  xl: 'bx--data-table--xl'
+  xs: `${carbonPrefix}--data-table--xs`,
+  sm: `${carbonPrefix}--data-table--sm`,
+  md: `${carbonPrefix}--data-table--md`,
+  lg: `${carbonPrefix}--data-table--lg`,
+  xl: `${carbonPrefix}--data-table--xl`
 };
 
 const defaults = {
@@ -51,7 +54,7 @@ const DataTableSkeleton = ({
 
   return (
     <table
-      className={`${className} ${sizeClassName} bx--data-table bx--skeleton tkn--data-table-skeleton`}
+      className={`${className} ${sizeClassName} ${carbonPrefix}--data-table ${carbonPrefix}--skeleton tkn--data-table-skeleton`}
       {...rest}
     >
       <thead>

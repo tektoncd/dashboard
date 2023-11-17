@@ -21,13 +21,19 @@ import {
   Tile
 } from 'carbon-components-react';
 import { ArrowRight24 as ArrowIcon } from '@carbon/icons-react';
-import { getErrorMessage, useTitleSync } from '@tektoncd/dashboard-utils';
+import {
+  getCarbonPrefix,
+  getErrorMessage,
+  useTitleSync
+} from '@tektoncd/dashboard-utils';
 
 import { useProperties } from '../../api';
 
 import tektonLogo from '../../images/tekton-dashboard-color.svg';
 import { ReactComponent as DocsPictogram } from '../../images/assets.svg';
 import { ReactComponent as HubPictogram } from '../../images/user--interface.svg';
+
+const carbonPrefix = getCarbonPrefix();
 
 function ClickableTile(props) {
   return (
@@ -107,7 +113,7 @@ export function About() {
     return (
       displayValue && (
         <Fragment key={property}>
-          <dt className="bx--label">{property}</dt>
+          <dt className={`${carbonPrefix}--label`}>{property}</dt>
           <dd>{displayValue}</dd>
         </Fragment>
       )

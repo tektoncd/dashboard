@@ -14,8 +14,8 @@ limitations under the License.
 // TODO: move SideNav.scss to components and import here for consistency
 
 .tkn--config-loading-shell {
-  .bx--header ~ {
-    .bx--content {
+  .#{$prefix}--header ~ {
+    .#{$prefix}--content {
       background-color: $ui-background;
       transform: none;
       padding-top: $spacing-06;
@@ -23,32 +23,32 @@ limitations under the License.
   }
 
   .tkn--config-loading-nav-skeleton {
-    .bx--skeleton__text {
+    .#{$prefix}--skeleton__text {
       margin-left: 1rem;
     }
 
-    .bx--skeleton__heading {
+    .#{$prefix}--skeleton__heading {
       margin-top: 1.5rem;
     }
   }
 
-  nav.bx--side-nav {
-    .bx--side-nav__items {
+  nav.#{$prefix}--side-nav {
+    .#{$prefix}--side-nav__items {
       display: flex;
       flex-direction: column;
 
-      .bx--side-nav__item {
+      .#{$prefix}--side-nav__item {
         flex-shrink: 0;
       }
 
-      div + .bx--side-nav__item {
+      div + .#{$prefix}--side-nav__item {
         display: flex;
         flex-direction: column;
         flex-grow: 1;
         justify-content: flex-end;
       }
 
-      .bx--side-nav__item:last-child {
+      .#{$prefix}--side-nav__item:last-child {
         margin-bottom: 1rem;
       }
     }

@@ -29,14 +29,14 @@ limitations under the License.
         margin-right: $spacing-02;
       }
 
-      .bx--link span {
+      .#{$prefix}--link span {
         font-weight: normal;
       }
     }
 
     .tkn--table {
-      .bx--data-table-container {
-        .bx--data-table {
+      .#{$prefix}--data-table-container {
+        .#{$prefix}--data-table {
           .cell-description {
             max-width: 30vw;
           }
@@ -45,12 +45,12 @@ limitations under the License.
     }
   }
 
-  .bx--snippet--multi {
+  .#{$prefix}--snippet--multi {
     margin-top: $spacing-03
   }
 
   .tkn--trigger-details {
-    .bx--list--unordered {
+    .#{$prefix}--list--unordered {
       position: relative;
       top: 2px;
     }
@@ -62,7 +62,7 @@ limitations under the License.
   padding: $spacing-05;
   background-color: $ui-01;
 
-  .bx--tag {
+  .#{$prefix}--tag {
     margin-top: 0;
   }
 

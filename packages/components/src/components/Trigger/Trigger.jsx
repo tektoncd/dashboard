@@ -20,11 +20,13 @@ import {
   ListItem,
   UnorderedList
 } from 'carbon-components-react';
-import { urls } from '@tektoncd/dashboard-utils';
+import { getCarbonPrefix, urls } from '@tektoncd/dashboard-utils';
 
 import CustomLink from '../Link';
 import Table from '../Table';
 import ViewYAML from '../ViewYAML';
+
+const carbonPrefix = getCarbonPrefix();
 
 const Trigger = ({ namespace, trigger }) => {
   const intl = useIntl();
@@ -289,7 +291,9 @@ const Trigger = ({ namespace, trigger }) => {
                             defaultMessage: 'Filter:'
                           })}
                         </p>
-                        <code className="bx--snippet--multi tkn--trigger-interceptor-cel-filter">
+                        <code
+                          className={`${carbonPrefix}--snippet--multi tkn--trigger-interceptor-cel-filter`}
+                        >
                           {interceptor.cel.filter}
                         </code>
                       </>

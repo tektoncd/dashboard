@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -18,14 +18,14 @@ limitations under the License.
 }
 
 main {
-  .bx--data-table-header {
+  .#{$prefix}--data-table-header {
     background-color: transparent !important;
   }
 
-  .bx--inline-notification {
+  .#{$prefix}--inline-notification {
     max-width: 100%;
 
-    .bx--inline-notification__text-wrapper {
+    .#{$prefix}--inline-notification__text-wrapper {
       align-items: center;
     }
   }

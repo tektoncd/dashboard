@@ -59,7 +59,7 @@ limitations under the License.
       flex-shrink: 0;
     }
 
-    > .bx--overflow-menu {
+    > .#{$prefix}--overflow-menu {
       flex-shrink: 0;
       margin-right: 10px;
     }
@@ -79,7 +79,7 @@ limitations under the License.
     }
   }
 
-  .bx--dropdown__wrapper.bx--dropdown__wrapper--inline {
+  .#{$prefix}--dropdown__wrapper.#{$prefix}--dropdown__wrapper--inline {
     position: relative;
     left: -1.5rem;
     grid-gap: 0;
@@ -106,7 +106,7 @@ limitations under the License.
   max-height: 350px;
   overflow: auto;
 
-  .bx--overflow-menu-options__option {
+  .#{$prefix}--overflow-menu-options__option {
     flex-shrink: 0;
   }
 }

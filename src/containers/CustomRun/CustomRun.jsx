@@ -29,7 +29,12 @@ import {
   StatusIcon,
   Table
 } from '@tektoncd/dashboard-components';
-import { getStatus, urls, useTitleSync } from '@tektoncd/dashboard-utils';
+import {
+  getCarbonPrefix,
+  getStatus,
+  urls,
+  useTitleSync
+} from '@tektoncd/dashboard-utils';
 import { InlineNotification } from 'carbon-components-react';
 
 import {
@@ -40,6 +45,8 @@ import {
 } from '../../api';
 import { getViewChangeHandler } from '../../utils';
 import NotFound from '../NotFound';
+
+const carbonPrefix = getCarbonPrefix();
 
 function getRunDuration(run) {
   if (!run) {
@@ -290,7 +297,7 @@ function CustomRun() {
           actions={
             showNotification.logsURL ? (
               <Link
-                className="bx--inline-notification__text-wrapper"
+                className={`${carbonPrefix}--inline-notification__text-wrapper`}
                 to={showNotification.logsURL}
               >
                 {intl.formatMessage({

@@ -19,8 +19,11 @@ import {
   OverflowMenuItem
 } from 'carbon-components-react';
 import { CaretDown16 } from '@carbon/icons-react';
+import { getCarbonPrefix } from '@tektoncd/dashboard-utils';
 
 import Modal from '../Modal';
+
+const carbonPrefix = getCarbonPrefix();
 
 class Actions extends Component {
   state = { showDialog: false };
@@ -109,10 +112,10 @@ class Actions extends Component {
               ? iconProps => (
                   <span
                     {...iconProps}
-                    className="bx--btn bx--btn--md bx--btn--tertiary"
+                    className={`${carbonPrefix}--btn ${carbonPrefix}--btn--md ${carbonPrefix}--btn--tertiary`}
                   >
                     {title}
-                    <CaretDown16 className="bx--btn__icon" />
+                    <CaretDown16 className={`${carbonPrefix}--btn__icon`} />
                   </span>
                 )
               : undefined

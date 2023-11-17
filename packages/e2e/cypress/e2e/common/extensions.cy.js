@@ -11,6 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+const carbonPrefix = Cypress.env('carbonPrefix');
+
 const namespace = 'tekton-dashboard-e2e-extensions';
 describe('Extensions', () => {
   before(() => {
@@ -38,7 +40,7 @@ spec:
   displayname: Namespaces
 `);
 
-    cy.contains('.bx--side-nav a', 'Namespaces').click();
+    cy.contains(`.${carbonPrefix}--side-nav a`, 'Namespaces').click();
     cy.hash().should('equal', '#/core/v1/namespaces');
     cy.contains('h1', 'core/v1/namespaces');
     cy.get('table');

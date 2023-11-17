@@ -15,6 +15,9 @@ limitations under the License.
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { Loading as CarbonLoading } from 'carbon-components-react';
+import { getCarbonPrefix } from '@tektoncd/dashboard-utils';
+
+const carbonPrefix = getCarbonPrefix();
 
 export default function Loading({ message }) {
   const intl = useIntl();
@@ -27,7 +30,7 @@ export default function Loading({ message }) {
     });
   }
   return (
-    <div className="bx--loading-overlay tkn--loading-overlay">
+    <div className={`${carbonPrefix}--loading-overlay tkn--loading-overlay`}>
       <CarbonLoading description={messageToDisplay} withOverlay={false} />
       <span className="tkn--loading-text">{messageToDisplay}</span>
     </div>

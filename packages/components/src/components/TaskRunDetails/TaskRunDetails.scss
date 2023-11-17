@@ -18,15 +18,15 @@ limitations under the License.
   align-items: stretch;
   overflow: hidden;
 
-  .bx--content-switcher {
+  .#{$prefix}--content-switcher {
     margin-bottom: 1rem;
   }
 
   /*
     Allow columns in the params and results tables to grow to better fit their content
   */
-  .bx--data-table td {
-    &:not(.cell-actions):not(.bx--table-column-checkbox) {
+  .#{$prefix}--data-table td {
+    &:not(.cell-actions):not(.#{$prefix}--table-column-checkbox) {
       max-width: none;
     }
   }

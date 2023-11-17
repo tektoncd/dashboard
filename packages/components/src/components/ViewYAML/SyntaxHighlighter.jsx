@@ -14,6 +14,9 @@ limitations under the License.
 
 import React from 'react';
 import jsYaml from 'js-yaml';
+import { getCarbonPrefix } from '@tektoncd/dashboard-utils';
+
+const carbonPrefix = getCarbonPrefix();
 
 function addLine({ addBullet, key, level, lines, path, rawString, value }) {
   let valueNode;
@@ -193,7 +196,7 @@ export default function SyntaxHighlighter({ resource }) {
 
   return (
     <pre
-      className="tkn--syntax-highlighter bx--snippet--multi hljs"
+      className={`tkn--syntax-highlighter ${carbonPrefix}--snippet--multi hljs`}
       style={{ '--tkn--line-number--min-width': minWidth }}
     >
       <code>{lines}</code>
