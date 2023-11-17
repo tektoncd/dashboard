@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,35 +11,35 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-.bx--header ~ {
-  nav.bx--side-nav {
+.#{$prefix}--header ~ {
+  nav.#{$prefix}--side-nav {
     background-color: $gray-100;
     border-color: $gray-80;
     color: $gray-10;
 
-    .bx--side-nav__items {
+    .#{$prefix}--side-nav__items {
       display: flex;
       flex-direction: column;
 
-      .bx--side-nav__item {
+      .#{$prefix}--side-nav__item {
         flex-shrink: 0;
       }
 
-      .bx--side-nav__item.bx--side-nav__item--icon
-        + .bx--side-nav__item:not(.bx--side-nav__item--icon) {
+      .#{$prefix}--side-nav__item.#{$prefix}--side-nav__item--icon
+        + .#{$prefix}--side-nav__item:not(.#{$prefix}--side-nav__item--icon) {
         display: flex;
         flex-direction: column;
         flex-grow: 1;
         justify-content: flex-end;
       }
 
-      .bx--side-nav__item:last-child {
+      .#{$prefix}--side-nav__item:last-child {
         margin-bottom: 1rem;
       }
     }
 
-    .bx--side-nav__icon {
-      &:not(.bx--side-nav__submenu-chevron) {
+    .#{$prefix}--side-nav__icon {
+      &:not(.#{$prefix}--side-nav__submenu-chevron) {
         margin-right: 1rem;
       }
 
@@ -48,17 +48,17 @@ limitations under the License.
       }
     }
 
-    &:not(.bx--side-nav--expanded) {
-      .bx--side-nav__submenu {
+    &:not(.#{$prefix}--side-nav--expanded) {
+      .#{$prefix}--side-nav__submenu {
         padding: 0 .875rem;
       }
-      .bx--side-nav__icon:not(.bx--side-nav__submenu-chevron) > svg {
+      .#{$prefix}--side-nav__icon:not(.#{$prefix}--side-nav__submenu-chevron) > svg {
         width: 1.25rem;
         height: 1.25rem;
       }
     }
 
-    .bx--side-nav__submenu {
+    .#{$prefix}--side-nav__submenu {
       color: $gray-10;
 
       &:focus {
@@ -69,61 +69,61 @@ limitations under the License.
         background-color: $gray-90;
         color: white;
 
-        .bx--side-nav__icon > svg path {
+        .#{$prefix}--side-nav__icon > svg path {
           fill: white;
         }
       }
     }
 
-    .bx--side-nav__item.bx--side-nav__item--icon {
+    .#{$prefix}--side-nav__item.#{$prefix}--side-nav__item--icon {
       margin-bottom: 1rem;
 
-      a.bx--side-nav__link {
+      a.#{$prefix}--side-nav__link {
         padding-left: 3rem;
       }
     }
 
-    .bx--side-nav__link {
+    .#{$prefix}--side-nav__link {
       &:focus {
         outline-color: white;
       }
 
-      .bx--side-nav__link-text {
+      .#{$prefix}--side-nav__link-text {
         color: $gray-10;
       }
 
-      &:hover .bx--side-nav__link-text {
+      &:hover .#{$prefix}--side-nav__link-text {
         color: white;
       }
     }
 
-    .bx--side-nav__item--active {
-      .bx--side-nav__submenu[aria-expanded=false] {
+    .#{$prefix}--side-nav__item--active {
+      .#{$prefix}--side-nav__submenu[aria-expanded=false] {
         background-color: $gray-80;
       }
-      .bx--side-nav__submenu-title {
+      .#{$prefix}--side-nav__submenu-title {
         color: $gray-10;
       }
     }
 
-    .bx--side-nav__menu a.bx--side-nav__link--current,
-    .bx--side-nav__menu a.bx--side-nav__link[aria-current=page] {
+    .#{$prefix}--side-nav__menu a.#{$prefix}--side-nav__link--current,
+    .#{$prefix}--side-nav__menu a.#{$prefix}--side-nav__link[aria-current=page] {
       background-color: $gray-80;
     }
 
-    a.bx--side-nav__link[aria-current=page],
-    a.bx--side-nav__link--current {
+    a.#{$prefix}--side-nav__link[aria-current=page],
+    a.#{$prefix}--side-nav__link--current {
       background-color: $gray-90;
     }
 
-    .bx--side-nav__item:not(.bx--side-nav__item--active) > .bx--side-nav__link:hover > span,
-    .bx--side-nav__item:not(.bx--side-nav__item--active) .bx--side-nav__menu-item > .bx--side-nav__link:hover > span {
+    .#{$prefix}--side-nav__item:not(.#{$prefix}--side-nav__item--active) > .#{$prefix}--side-nav__link:hover > span,
+    .#{$prefix}--side-nav__item:not(.#{$prefix}--side-nav__item--active) .#{$prefix}--side-nav__menu-item > .#{$prefix}--side-nav__link:hover > span {
       color: white;
     }
 
-    .bx--side-nav__item:not(.bx--side-nav__item--active):hover .bx--side-nav__item:not(.bx--side-nav__item--active) > .bx--side-nav__submenu:hover,
-    .bx--side-nav__item:not(.bx--side-nav__item--active) > .bx--side-nav__link:hover, .bx--side-nav__menu a.bx--side-nav__link:not(.bx--side-nav__link--current):not([aria-current=page]):hover,
-    .bx--side-nav a.bx--header__menu-item:hover, .bx--side-nav .bx--header__menu-title[aria-expanded=true]:hover {
+    .#{$prefix}--side-nav__item:not(.#{$prefix}--side-nav__item--active):hover .#{$prefix}--side-nav__item:not(.#{$prefix}--side-nav__item--active) > .#{$prefix}--side-nav__submenu:hover,
+    .#{$prefix}--side-nav__item:not(.#{$prefix}--side-nav__item--active) > .#{$prefix}--side-nav__link:hover, .#{$prefix}--side-nav__menu a.#{$prefix}--side-nav__link:not(.#{$prefix}--side-nav__link--current):not([aria-current=page]):hover,
+    .#{$prefix}--side-nav a.#{$prefix}--header__menu-item:hover, .#{$prefix}--side-nav .#{$prefix}--header__menu-title[aria-expanded=true]:hover {
       background-color: $gray-90;
       color: white;
     }

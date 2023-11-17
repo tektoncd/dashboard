@@ -11,6 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+const carbonPrefix = Cypress.env('carbonPrefix');
+
 const namespace = 'tekton-dashboard-e2e-import-resources';
 describe('Import resources', () => {
   before(() => {
@@ -65,7 +67,7 @@ subjects:
     cy.get('#import-namespaces-dropdown').click();
     cy.contains(namespace).click();
 
-    cy.contains('button.bx--btn--primary', 'Import').click();
+    cy.contains(`button.${carbonPrefix}--btn--primary`, 'Import').click();
     cy.contains('a', 'View status of this run').click();
 
     cy.get('header[class="tkn--pipeline-run-header"]')

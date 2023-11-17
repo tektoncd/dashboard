@@ -19,7 +19,7 @@ limitations under the License.
   align-items: stretch;
   overflow: hidden;
 
-  .bx--tab-content {
+  .#{$prefix}--tab-content {
     padding-left: 0;
   }
 }

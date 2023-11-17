@@ -12,9 +12,12 @@ limitations under the License.
 */
 
 import React from 'react';
+import { getCarbonPrefix } from '@tektoncd/dashboard-utils';
 
 import { render, renderWithRouter } from '../../utils/test';
 import TaskRuns from './TaskRuns';
+
+const carbonPrefix = getCarbonPrefix();
 
 it('TaskRuns renders empty state', () => {
   const { queryByText } = render(<TaskRuns taskRuns={[]} />);
@@ -27,7 +30,9 @@ it('TaskRuns renders headers state', () => {
   expect(queryByText('Run')).toBeTruthy();
   expect(queryByText('Status')).toBeTruthy();
   expect(queryByText('Task')).toBeTruthy();
-  expect(document.getElementsByClassName('bx--overflow-menu')).toBeTruthy();
+  expect(
+    document.getElementsByClassName(`${carbonPrefix}--overflow-menu`)
+  ).toBeTruthy();
 });
 
 it('TaskRuns renders correct data', async () => {

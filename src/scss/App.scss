@@ -72,12 +72,12 @@ a {
   color: $link-01;
 }
 
-.bx--btn.link-btn.bx--btn--ghost {
+.#{$prefix}--btn.link-btn.#{$prefix}--btn--ghost {
   text-decoration: none;
 }
 
-.bx--header ~ {
-  .bx--content {
+.#{$prefix}--header ~ {
+  .#{$prefix}--content {
     position: relative;
     background-color: $ui-background;
     transform: none;
@@ -94,29 +94,29 @@ a {
   }
 }
 
-.bx--modal-header,
-.bx--modal-content {
+.#{$prefix}--modal-header,
+.#{$prefix}--modal-content {
   width: 100%;
 }
 
-.bx--modal-content,
-.bx--modal-header {
+.#{$prefix}--modal-content,
+.#{$prefix}--modal-header {
   padding-right: 1rem;
 }
 
-.bx--modal-content {
+.#{$prefix}--modal-content {
   margin-bottom: $spacing-07;
 }
 
-.bx--data-table-container {
+.#{$prefix}--data-table-container {
   margin-top: $spacing-07;
 }
 
-.bx--table-header-label {
+.#{$prefix}--table-header-label {
   white-space: nowrap;
 }
 
-.bx--list--unordered {
+.#{$prefix}--list--unordered {
   margin-top: 1rem;
 }
 
@@ -137,6 +137,6 @@ a {
   }
 }
 
-.bx--overflow-menu-options:after {
+.#{$prefix}--overflow-menu-options:after {
   display: none;
 }

@@ -21,7 +21,9 @@ module.exports = defineConfig({
     baseUrl: 'http://localhost:8000',
     experimentalRunAllSpecs: true,
     experimentalStudio: true,
-    setupNodeEvents(on, _config) {
+    setupNodeEvents(on, config) {
+      config.env.carbonPrefix = 'bx'; // eslint-disable-line no-param-reassign
+
       on('after:spec', (spec, results) => {
         if (isCI && results && results.video && results.stats.failures === 0) {
           console.log('Deleting video for passing test'); // eslint-disable-line no-console
@@ -30,6 +32,8 @@ module.exports = defineConfig({
 
         return null;
       });
+
+      return config;
     }
   },
   screenshotOnRunFailure: !isCI,

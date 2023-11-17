@@ -13,7 +13,7 @@ limitations under the License.
 
 .tkn--settings {
   .tkn--settings--content {
-    .bx--tile-group {
+    .#{$prefix}--tile-group {
       margin-bottom: 2rem;
       max-width: 400px;
 
@@ -21,15 +21,15 @@ limitations under the License.
         margin-bottom: 1rem;
       }
 
-      .bx--tile {
+      .#{$prefix}--tile {
         display: flex;
         align-items: center;
 
-        .bx--tile__checkmark {
+        .#{$prefix}--tile__checkmark {
           top: calc(50% - 0.5rem);
         }
 
-        .bx--tile-content {
+        .#{$prefix}--tile-content {
           display: flex;
           align-items: center;
 
@@ -40,12 +40,12 @@ limitations under the License.
         }
       }
 
-      .bx--tile:not(:last-child) {
+      .#{$prefix}--tile:not(:last-child) {
         margin-bottom: 0.5rem;
       }
     }
 
-    .bx--form-item + .bx--form-item {
+    .#{$prefix}--form-item + .#{$prefix}--form-item {
       margin-top: 2rem;
     }
   }

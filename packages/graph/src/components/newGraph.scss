@@ -18,7 +18,7 @@ limitations under the License.
 @import '@carbon/charts/styles/styles.scss';
 // }
 
-.bx--cc--card-node {
+.#{$prefix}--cc--card-node {
   &.card-status-success {
     border-color: $support-02;
   }
@@ -33,22 +33,22 @@ limitations under the License.
   }
 }
 
-.bx--cc--card-node__column {
+.#{$prefix}--cc--card-node__column {
   overflow: hidden;
 }
 
-.bx--cc--card-node__title {
+.#{$prefix}--cc--card-node__title {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
 }
 
-.bx--cc--shape-node__icon .bx--tooltip__label .bx--tooltip__trigger {
+.#{$prefix}--cc--shape-node__icon .#{$prefix}--tooltip__label .#{$prefix}--tooltip__trigger {
   margin-left: 0;
 }
 
 .status-icon {
-  .bx--cc--shape-node__icon & {
+  .#{$prefix}--cc--shape-node__icon & {
     width: 24px;
     height: 24px;
   }

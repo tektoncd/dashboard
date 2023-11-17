@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,26 +17,26 @@ limitations under the License.
     margin-top: $spacing-05;
   }
 
-  .bx--table-toolbar {
+  .#{$prefix}--table-toolbar {
     background: transparent;
   }
 
-  .bx--data-table.bx--data-table--short td.bx--table-expand {
+  .#{$prefix}--data-table.#{$prefix}--data-table--short td.#{$prefix}--table-expand {
     height: 2rem;
   }
 
-  .bx--data-table-header {
+  .#{$prefix}--data-table-header {
     padding-left: 0;
     padding-bottom: $spacing-03;
   }
 
-  .bx--data-table-container {
+  .#{$prefix}--data-table-container {
     margin-top: 0;
     width: 100%;
   }
 
-  .bx--data-table td {
-    &:not(.cell-actions):not(.bx--table-column-checkbox) {
+  .#{$prefix}--data-table td {
+    &:not(.cell-actions):not(.#{$prefix}--table-column-checkbox) {
       max-width: 10vw;
       vertical-align: middle;
 
@@ -48,12 +48,12 @@ limitations under the License.
       }
     }
 
-    &.bx--table-column-checkbox {
+    &.#{$prefix}--table-column-checkbox {
       padding-top: 0;
       padding-bottom: 0;
       vertical-align: middle;
 
-      .bx--checkbox-label {
+      .#{$prefix}--checkbox-label {
         padding-left: $spacing-05;
       }
     }
@@ -80,7 +80,7 @@ limitations under the License.
     }
 
     &.cell-actions {
-      .tkn--danger.bx--btn--ghost.bx--btn--icon-only {
+      .tkn--danger.#{$prefix}--btn--ghost.#{$prefix}--btn--icon-only {
         &:focus, &:hover {
           svg, path {
             fill: $danger;
@@ -98,7 +98,7 @@ limitations under the License.
   }
 
   &.tkn--table--inline-actions {
-    .bx--data-table td {
+    .#{$prefix}--data-table td {
       &.cell-actions {
         text-align: right;
         width: 8rem;
@@ -107,27 +107,27 @@ limitations under the License.
   }
 
   &.tkn--table-with-filters {
-    .bx--data-table-container {
+    .#{$prefix}--data-table-container {
       overflow: visible;
     }
 
-    .bx--table-toolbar {
+    .#{$prefix}--table-toolbar {
       overflow: visible;
       flex-direction: row;
 
-      .bx--multi-select__wrapper {
-        .bx--combo-box {
+      .#{$prefix}--multi-select__wrapper {
+        .#{$prefix}--combo-box {
           border: none;
         }
 
-        .bx--text-input {
+        .#{$prefix}--text-input {
           background-color: $ui-01;
           border: none;
         }
       }
 
-      .bx--multi-select__wrapper,
-      .bx--dropdown__wrapper {
+      .#{$prefix}--multi-select__wrapper,
+      .#{$prefix}--dropdown__wrapper {
         background-color: $ui-01;
         display: flex;
         align-items: center;
@@ -136,46 +136,46 @@ limitations under the License.
         padding-right: $spacing-03;
         white-space: nowrap;
 
-        .bx--label {
+        .#{$prefix}--label {
           padding-left: $spacing-05;
         }
 
-        .bx--text-input {
+        .#{$prefix}--text-input {
           padding: 0 $spacing-07 0 $spacing-03;
         }
 
-        .bx--list-box__menu-icon {
+        .#{$prefix}--list-box__menu-icon {
           right: $spacing-03;
         }
 
-        .bx--dropdown,
-        .bx--multi-select {
+        .#{$prefix}--dropdown,
+        .#{$prefix}--multi-select {
           width: 10rem;
         }
 
-        .bx--multi-select--inline,
-        .bx--list-box--inline {
+        .#{$prefix}--multi-select--inline,
+        .#{$prefix}--list-box--inline {
           background-color: $ui-01;
           height: 100%;
           max-height: 3rem;
         }
 
-        .bx--list-box__field {
+        .#{$prefix}--list-box__field {
           height: 100%;
 
-          input.bx--text-input {
+          input.#{$prefix}--text-input {
             &:placeholder-shown {
               text-overflow: ellipsis;
             }
           }
         }
 
-        &.bx--dropdown__wrapper--inline .bx--label {
+        &.#{$prefix}--dropdown__wrapper--inline .#{$prefix}--label {
           padding-left: 1rem;
         }
 
         @media (max-width: 672px) {
-          &.bx--list-box__wrapper--inline .bx--label {
+          &.#{$prefix}--list-box__wrapper--inline .#{$prefix}--label {
             display: none;
           }
         }
@@ -187,7 +187,7 @@ limitations under the License.
     padding-top: 14px;
     padding-bottom: 14px;
 
-    &:not(.cell-actions):not(.bx--table-column-checkbox) > div {
+    &:not(.cell-actions):not(.#{$prefix}--table-column-checkbox) > div {
       display: flex;
       flex-direction: column;
     }
@@ -196,7 +196,7 @@ limitations under the License.
       @include type-style('helper-text-01');
     }
 
-    &.bx--table-column-checkbox {
+    &.#{$prefix}--table-column-checkbox {
       padding-top: 12px;
       vertical-align: baseline;
     }
@@ -214,7 +214,7 @@ limitations under the License.
     }
   }
 
-  a.bx--link {
+  a.#{$prefix}--link {
     display: inline;
   }
 }

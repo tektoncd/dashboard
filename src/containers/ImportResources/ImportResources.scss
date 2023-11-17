@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,49 +12,49 @@ limitations under the License.
 */
 
 .tkn--importresources {
-  .bx--form__helper-text,
-  .bx--label--disabled {
+  .#{$prefix}--form__helper-text,
+  .#{$prefix}--label--disabled {
     color: $text-05; // Since by default the contrast/colour choice is barely readable.
   }
 
-  .bx--label {
+  .#{$prefix}--label {
     display: flex;
     align-items: center;
 
-    .bx--tooltip__trigger {
+    .#{$prefix}--tooltip__trigger {
       margin-left: 0.5rem;
     }
   }
 
-  .bx--combo-box.bx--list-box,
-  .bx--dropdown.bx--list-box,
-  .bx--text-input__field-wrapper {
+  .#{$prefix}--combo-box.#{$prefix}--list-box,
+  .#{$prefix}--dropdown.#{$prefix}--list-box,
+  .#{$prefix}--text-input__field-wrapper {
     width: 50%;
     min-width: 300px;
   }
 
-  .bx--combo-box.bx--list-box {
+  .#{$prefix}--combo-box.#{$prefix}--list-box {
     max-width: 350px;
   }
 
-  .bx--toast-notification {
+  .#{$prefix}--toast-notification {
     margin: 2rem 0 1rem 0;
   }
 
-  .bx--form-item,
-  .bx--list-box__wrapper {
+  .#{$prefix}--form-item,
+  .#{$prefix}--list-box__wrapper {
     margin-bottom: 1.5rem;
   }
 
-  .bx--btn {
+  .#{$prefix}--btn {
     margin-top: 1rem;
   }
 
-  .bx--accordion {
+  .#{$prefix}--accordion {
     margin-bottom: 1rem;
 
-    .bx--accordion__content,
-    .bx--accordion__item--active .bx--accordion__content {
+    .#{$prefix}--accordion__content,
+    .#{$prefix}--accordion__item--active .#{$prefix}--accordion__content {
       padding: .5rem 0;
       margin-left: 0;
     }

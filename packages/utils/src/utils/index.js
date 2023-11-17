@@ -11,6 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { settings } from 'carbon-components';
+
 import { labels as labelConstants } from './constants';
 import { getStatus } from './status';
 
@@ -528,4 +530,8 @@ export function taskRunHasWarning(taskRun) {
       step.terminated?.reason === 'Completed' && step.terminated?.exitCode !== 0
   );
   return !!onErrorContinueStep;
+}
+
+export function getCarbonPrefix() {
+  return settings.prefix;
 }

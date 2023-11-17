@@ -31,6 +31,7 @@ import {
   TaskTree
 } from '@tektoncd/dashboard-components';
 import {
+  getCarbonPrefix,
   getStatus,
   getStepDefinition,
   getStepStatus,
@@ -61,6 +62,7 @@ import {
 } from '../../api';
 import NotFound from '../NotFound';
 
+const carbonPrefix = getCarbonPrefix();
 const { STEP, RETRY, TASK_RUN_DETAILS, VIEW } = queryParamConstants;
 
 export function TaskRunContainer() {
@@ -440,7 +442,7 @@ export function TaskRunContainer() {
           actions={
             showNotification.logsURL ? (
               <Link
-                className="bx--inline-notification__text-wrapper"
+                className={`${carbonPrefix}--inline-notification__text-wrapper`}
                 to={showNotification.logsURL}
               >
                 {intl.formatMessage({

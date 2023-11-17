@@ -11,6 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+const carbonPrefix = Cypress.env('carbonPrefix');
+
 const namespace = 'tkn-dashboard-e2e-taskrun-edit';
 describe('Edit and run TaskRun', () => {
   before(() => {
@@ -52,7 +54,7 @@ spec:
     cy.contains('h1', 'TaskRuns');
 
     cy.get(
-      `td:has(.bx--link[title*=${taskName}-run]) + td:has(.tkn--status[data-reason=Succeeded])`,
+      `td:has(.${carbonPrefix}--link[title*=${taskName}-run]) + td:has(.tkn--status[data-reason=Succeeded])`,
       { timeout: 15000 }
     ).should('have.length', 1);
 
@@ -64,7 +66,7 @@ spec:
     cy.contains('h1', 'TaskRuns');
 
     cy.get(
-      `td:has(.bx--link[title*=${taskName}-run]) + td:has(.tkn--status[data-reason=Succeeded])`,
+      `td:has(.${carbonPrefix}--link[title*=${taskName}-run]) + td:has(.tkn--status[data-reason=Succeeded])`,
       { timeout: 15000 }
     ).should('have.length', 2);
   });

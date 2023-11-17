@@ -28,7 +28,7 @@ pre.tkn--log {
   word-break: normal;
   word-wrap: normal;
 
-  .bx--skeleton__text {
+  .#{$prefix}--skeleton__text {
     background-color: $skeleton-01;
 
     &::before {
@@ -45,7 +45,7 @@ pre.tkn--log {
     overflow-wrap: normal;
   }
 
-  .bx--btn-set {
+  .#{$prefix}--btn-set {
     position: absolute;
     top: 0;
     right: 0;
@@ -77,7 +77,7 @@ pre.tkn--log {
     bottom: var(--tkn-scroll-button-bottom);
   }
 
-  .bx--copy-btn {
+  .#{$prefix}--copy-btn {
     width: 2rem;
     height: 2rem;
     background-color: $ui-background;

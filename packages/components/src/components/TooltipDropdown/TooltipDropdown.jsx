@@ -14,7 +14,9 @@ limitations under the License.
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { ComboBox, DropdownSkeleton } from 'carbon-components-react';
-import { getTranslateWithId } from '@tektoncd/dashboard-utils';
+import { getCarbonPrefix, getTranslateWithId } from '@tektoncd/dashboard-utils';
+
+const carbonPrefix = getCarbonPrefix();
 
 const itemToString = item => (item ? item.text : '');
 
@@ -48,10 +50,12 @@ const TooltipDropdown = ({
   const intl = useIntl();
   if (loading) {
     return (
-      <div className="bx--list-box__wrapper">
-        {titleText && <span className="bx--label">{titleText}</span>}
+      <div className={`${carbonPrefix}--list-box__wrapper`}>
+        {titleText && (
+          <span className={`${carbonPrefix}--label`}>{titleText}</span>
+        )}
         <DropdownSkeleton
-          className={`bx--combo-box ${className || ''}`}
+          className={`${carbonPrefix}--combo-box ${className || ''}`}
           id={id}
           inline={inline}
         />

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -36,18 +36,18 @@ limitations under the License.
     align-items: center;
     margin-bottom: 5px;
 
-    .bx--form-item.bx--text-input-wrapper {
+    .#{$prefix}--form-item.#{$prefix}--text-input-wrapper {
       width: 48%;
       display: inline-flex;
       margin-bottom: 0;
       margin-right: $spacing-05;
     }
 
-    .bx--text-input-wrapper:first-child {
+    .#{$prefix}--text-input-wrapper:first-child {
       margin-right: $spacing-07;
     }
 
-    .bx--btn--ghost.bx--btn--icon-only {
+    .#{$prefix}--btn--ghost.#{$prefix}--btn--icon-only {
       &:focus, &:hover {
         svg, path {
           fill: $danger;

@@ -12,7 +12,7 @@ limitations under the License.
 */
 @import 'carbon-components/scss/globals/scss/helper-mixins';
 
-.tkn--data-table-skeleton.bx--data-table.bx--skeleton {
+.tkn--data-table-skeleton.#{$prefix}--data-table.#{$prefix}--skeleton {
   th {
     vertical-align: middle;
 

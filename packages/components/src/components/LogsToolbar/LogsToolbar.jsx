@@ -19,14 +19,17 @@ import {
   Maximize16,
   Minimize16
 } from '@carbon/icons-react';
+import { getCarbonPrefix } from '@tektoncd/dashboard-utils';
+
+const carbonPrefix = getCarbonPrefix();
 
 const LogsToolbar = ({ isMaximized, name, toggleMaximized, url }) => {
   const intl = useIntl();
   return (
-    <div className="bx--btn-set">
+    <div className={`${carbonPrefix}--btn-set`}>
       {toggleMaximized ? (
         <button
-          className="bx--copy-btn"
+          className={`${carbonPrefix}--copy-btn`}
           onClick={toggleMaximized}
           type="button"
         >
@@ -52,7 +55,7 @@ const LogsToolbar = ({ isMaximized, name, toggleMaximized, url }) => {
         </button>
       ) : null}
       <a
-        className="bx--copy-btn"
+        className={`${carbonPrefix}--copy-btn`}
         href={url}
         target="_blank"
         rel="noopener noreferrer"
@@ -66,7 +69,7 @@ const LogsToolbar = ({ isMaximized, name, toggleMaximized, url }) => {
           </title>
         </Launch16>
       </a>
-      <a className="bx--copy-btn" download={name} href={url}>
+      <a className={`${carbonPrefix}--copy-btn`} download={name} href={url}>
         <Download16>
           <title>
             {intl.formatMessage({
