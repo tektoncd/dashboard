@@ -60,7 +60,7 @@
     "@storybook/theming": "^7.5.0",
     "@testing-library/react": "^12.1.5",
     "@testing-library/react-hooks": "^8.0.1",
-    "@vitejs/plugin-react-swc": "^3.4.1",
+    "@vitejs/plugin-react-swc": "^3.5.0",
     "@vitest/coverage-istanbul": "^0.34.6",
     "dotenv": "^16.3.1",
     "eslint": "^8.54.0",
