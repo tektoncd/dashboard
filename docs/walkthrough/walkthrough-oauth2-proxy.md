@@ -64,7 +64,7 @@ Record the `Client ID` and `Client secret` somewhere secure, these will be neede
 
 ## Installing and configuring oauth2-proxy
 
-**Note:** [2022/11/08] This walk-through has been tested with oauth2-proxy 7.2.1 (helm chart version 6.3.0). There is a known issue with the GitHub provider in oauth2-proxy 7.3.0 and later.
+**Note:** This walk-through has been tested with oauth2-proxy 7.5.1 (helm chart version 6.19.1).
 
 Now you have the OAuth application created on GitHub, you can deploy [oauth2-proxy](https://github.com/oauth2-proxy/oauth2-proxy) in your cluster.
 
@@ -80,7 +80,7 @@ CLIENT_SECRET=__THE_CLIENT_SECRET_OF_YOUR_GITHUB_OAUTH_APP__
 
 helm repo add oauth2-proxy https://oauth2-proxy.github.io/manifests
 
-helm upgrade --install --wait --create-namespace --namespace tools oauth2-proxy oauth2-proxy/oauth2-proxy --version 6.2.1 --values - <<EOF
+helm upgrade --install --wait --create-namespace --namespace tools oauth2-proxy oauth2-proxy/oauth2-proxy --version 6.19.1 --values - <<EOF
 config:
   clientID: $CLIENT_ID
   clientSecret: $CLIENT_SECRET
