@@ -76,7 +76,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-storybook": "^0.6.15",
     "history": "^5.3.0",
-    "jsdom": "^22.1.0",
+    "jsdom": "^23.0.0",
     "lodash.difference": "^4.5.0",
     "lodash.omit": "^4.5.0",
     "msw": "^2.0.8",
