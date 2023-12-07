@@ -71,15 +71,17 @@ export default defineConfig(({ mode }) => ({
   test: {
     clearMocks: true,
     coverage: {
+      all: false,
       clean: true,
       enabled: true,
       provider: 'istanbul',
       reporter: ['text', 'html'],
-
-      branches: 90,
-      functions: 90,
-      lines: 90,
-      statements: 90
+      thresholds: {
+        branches: 90,
+        functions: 90,
+        lines: 90,
+        statements: 90
+      }
     },
     environment: 'jsdom',
     globals: true,
