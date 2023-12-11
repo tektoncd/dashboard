@@ -82,7 +82,7 @@
     "lodash.omit": "^4.5.0",
     "msw": "^2.0.9",
     "prettier": "^3.0.3",
-    "rollup-plugin-visualizer": "^5.10.0",
+    "rollup-plugin-visualizer": "^5.11.0",
     "sass": "npm:sass-embedded@^1.66.1",
     "storybook": "^7.6.4",
     "vite": "^4.5.1",
