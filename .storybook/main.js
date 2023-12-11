@@ -11,8 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-const path = require('path');
-
 const config = {
   addons: [
     '@storybook/addon-essentials',
@@ -52,7 +50,12 @@ const config = {
     configType === 'DEVELOPMENT' ? { directory: '../src', files: '**/*.stories.jsx', titlePrefix: 'Containers' } : null,
     { directory: '../packages/components', files: '**/*.stories.jsx', titlePrefix: 'Components' },
     { directory: '../packages/graph', files: '**/*.stories.jsx', titlePrefix: 'Experimental/Graph' }
-  ].filter(Boolean))
+  ].filter(Boolean)),
+  async viteFinal(config, { configType }) {
+    // fallback to default to resolve issue with MDX rendering
+    delete config.resolve?.extensions;
+    return config;
+  }
 };
 
 export default config;
