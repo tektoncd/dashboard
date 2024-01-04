@@ -64,7 +64,7 @@
     "@vitejs/plugin-react-swc": "^3.5.0",
     "@vitest/coverage-istanbul": "^1.0.2",
     "dotenv": "^16.3.1",
-    "eslint": "^8.54.0",
+    "eslint": "^8.56.0",
     "eslint-config-airbnb": "^19.0.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-cypress": "^2.15.1",
