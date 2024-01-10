@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -30,11 +30,12 @@ import StepDetails from '../StepDetails';
 import TaskRunDetails from '../TaskRunDetails';
 import TaskTree from '../TaskTree';
 
-function getPipelineTask({ pipelineRun, selectedTaskId, taskRun }) {
+function getPipelineTask({ pipeline, pipelineRun, selectedTaskId, taskRun }) {
   const memberOf = taskRun?.metadata?.labels?.[labelConstants.MEMBER_OF];
   const pipelineTask = (
     pipelineRun.spec?.pipelineSpec?.[memberOf] ||
-    pipelineRun.status?.pipelineSpec?.[memberOf]
+    pipelineRun.status?.pipelineSpec?.[memberOf] ||
+    pipeline?.spec?.[memberOf]
   )?.find(task => task.name === selectedTaskId);
 
   return pipelineTask;
@@ -141,7 +142,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     selectedTaskId,
     taskRunName
   }) => {
-    const { handleTaskSelected, pipelineRun } = this.props;
+    const { handleTaskSelected, pipeline, pipelineRun } = this.props;
     const taskRuns = this.loadTaskRuns();
     const taskRun =
       taskRuns.find(
@@ -150,6 +151,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       ) || {};
 
     const pipelineTask = getPipelineTask({
+      pipeline,
       pipelineRun,
       selectedTaskId,
       taskRun
@@ -171,6 +173,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       loading,
       onRetryChange,
       onViewChange,
+      pipeline,
       pipelineRun,
       pod,
       runActions,
@@ -275,6 +278,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       ) || {};
 
     const pipelineTask = getPipelineTask({
+      pipeline,
       pipelineRun,
       selectedTaskId,
       taskRun
