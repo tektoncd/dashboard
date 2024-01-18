@@ -99,7 +99,7 @@ const TaskTree = ({
             selectedStepId={selectedStepId}
             steps={steps}
             succeeded={status}
-            taskRun={taskRunToUse}
+            taskRun={taskRun}
           />
         );
       })}
