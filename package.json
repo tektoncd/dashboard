@@ -85,7 +85,7 @@
     "rollup-plugin-visualizer": "^5.11.0",
     "sass": "npm:sass-embedded@^1.66.1",
     "storybook": "^7.6.8",
-    "vite": "^4.5.1",
+    "vite": "^4.5.2",
     "vite-plugin-html": "^3.2.0",
     "vite-plugin-svgr": "^4.1.0",
     "vitest": "^1.1.1"
