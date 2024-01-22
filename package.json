@@ -49,7 +49,7 @@
   },
   "devDependencies": {
     "@formatjs/cli": "^6.2.4",
-    "@modyfi/vite-plugin-yaml": "^1.0.4",
+    "@modyfi/vite-plugin-yaml": "^1.1.0",
     "@storybook/addon-actions": "^7.6.10",
     "@storybook/addon-essentials": "^7.6.10",
     "@storybook/addon-links": "^7.6.10",
