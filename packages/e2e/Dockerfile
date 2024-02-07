@@ -1,4 +1,4 @@
-# Copyright 2022-2023 The Tekton Authors
+# Copyright 2022-2024 The Tekton Authors
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -9,17 +9,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM cypress/browsers:node18.12.0-chrome107
-RUN apt-get update && apt-get install -y gpg &&\
-    curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | gpg --dearmor -o /usr/share/keyrings/kubernetes-apt-keyring.gpg &&\
-    echo "deb [signed-by=/usr/share/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /" | tee /etc/apt/sources.list.d/kubernetes.list &&\
-    apt-get update && apt-get install -y \
-    kubectl \
-    && rm -rf /var/lib/apt/lists/*
-USER node
-WORKDIR /home/node
-ENV CI=true
-ENV NO_COLOR=true
+FROM gcr.io/tekton-releases/dogfooding/dashboard-e2e-base:node20.11.0-chrome121
+
 ENTRYPOINT ["npm", "run", "test:ci"]
 CMD ["--", "--browser", "chrome"]
 
