@@ -1,5 +1,5 @@
 ---
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1
 kind: Task
 metadata:
   name: build-dashboard
@@ -8,7 +8,7 @@ spec:
     - name: source
   steps:
     - name: build-static
-      image: node:18.17-slim
+      image: node:20.11-slim
       workingDir: $(workspaces.source.path)
       env:
         - name: CI
