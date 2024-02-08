@@ -38,8 +38,8 @@
     "react-router-dom": "^5.0.0"
   },
   "engines": {
-    "node": "^18.17.0",
-    "npm": "^9.6.7"
+    "node": "^20.11.0",
+    "npm": "^10.2.4"
   },
   "publishConfig": {
     "access": "public"
