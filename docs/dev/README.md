@@ -104,14 +104,13 @@ These options are documented below:
 | `--port` | Dashboard port number | `int` | `8080` |
 | `--read-only` | Enable or disable read-only mode | `bool` | `true` |
 | `--logout-url` | If set, enables logout on the frontend and binds the logout button to this url | `string` | `""` |
-| `--namespace` | Deprecated: use --namespaces instead. If set, limits the scope of resources displayed to this namespace only | `string` | `""` |
 | `--namespaces` | If set, limits the scope of resources displayed to this comma-separated list of namespaces only | `string` | `""` |
 | `--log-level` | Minimum log level output by the logger | `string` | `"info"` |
 | `--log-format` | Format for log output (json or console) | `string` | `"json"` |
 
 Run `dashboard --help` to show the supported command line arguments and their default values directly from the `dashboard` binary.
 
-**Important note:** using `--namespace` or `--namespaces` provides this list of namespaces to the frontend, but does not limit actions that can be performed to just these namespaces. It's important when these flags are used that RBAC rules are setup accordingly.
+**Important note:** using `--namespaces` provides this list of namespaces to the frontend, but does not limit actions that can be performed to just these namespaces. It's important when this flag is used that RBAC rules are setup accordingly.
 
 ## Build and deploy with the installer script
 

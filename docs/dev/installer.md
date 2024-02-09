@@ -74,7 +74,6 @@ Accepted options:
         [--read-write]                          Will build manifests for a read/write deployment
         [--stream-logs false]                   Will disable log streaming and use polling instead
         [--tag <tag>]                           Tag used for the image produced by ko
-        [--tenant-namespace <namespace>]        [DEPRECATED: use tenant-namespaces instead] Will limit the visibility to the specified namespace only
         [--tenant-namespaces <namespaces>]      Will limit the visibility to the specified comma-separated namespaces only
         [--triggers-namespace <namespace>]      Override the namespace where Tekton Triggers is installed (defaults to Dashboard install namespace)
         [--version <version>]                   Will download manifests for specified version or build everything using kustomize/ko
@@ -131,16 +130,16 @@ To install the Dashboard add the `--read-write` option when calling the `install
 ./scripts/installer install --read-write
 ```
 
-### Installing for single namespace visibility
+### Installing for limited namespace visibility
 
-Single namespace visibility restricts the Tekton Dashboard actions scope and resources that can be seen to a single namespace in the cluster.
+Limited namespace visibility restricts the Tekton Dashboard actions scope and resources that can be seen to a subset of namespaces in the cluster.
 
-To install for single namespace visibility run the following command:
+To install for limited namespace visibility run the following command:
 
 ```bash
-TENANT_NAMESPACE=my-namespace
+TENANT_NAMESPACES=my-namespace1,my-namespace2
 
-./scripts/installer install --tenant-namespace $TENANT_NAMESPACE
+./scripts/installer install --tenant-namespaces $TENANT_NAMESPACES
 ```
 
 ### Install ingress

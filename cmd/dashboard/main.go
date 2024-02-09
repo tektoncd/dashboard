@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -35,7 +35,6 @@ var (
 	portNumber         = flag.Int("port", 8080, "Dashboard port number")
 	readOnly           = flag.Bool("read-only", true, "Enable or disable read-only mode")
 	logoutURL          = flag.String("logout-url", "", "If set, enables logout on the frontend and binds the logout button to this url")
-	tenantNamespace    = flag.String("namespace", "", "Deprecated: use --namespaces instead. If set, limits the scope of resources displayed to this namespace only")
 	tenantNamespaces   = flag.String("namespaces", "", "If set, limits the scope of resources displayed to this comma-separated list of namespaces only")
 	logLevel           = flag.String("log-level", "info", "Minimum log level output by the logger")
 	logFormat          = flag.String("log-format", "json", "Format for log output (json or console)")
@@ -80,10 +79,6 @@ func main() {
 		logging.Log.Errorf("Error building k8s clientset: %s", err.Error())
 	}
 
-	if *tenantNamespace != "" {
-		logging.Log.Warn("DEPRECATION NOTICE: --namespace arg is deprecated, use --namespaces instead")
-	}
-
 	// use FieldsFunc instead of Split as Split returns an array containing an empty string
 	// instead of the desired empty array when there is no delimeter (i.e. empty string or single namespace)
 	splitByComma := func(c rune) bool {
@@ -95,7 +90,6 @@ func main() {
 		InstallNamespace:   installNamespace,
 		PipelinesNamespace: *pipelinesNamespace,
 		TriggersNamespace:  *triggersNamespace,
-		TenantNamespace:    *tenantNamespace,
 		TenantNamespaces:   tenants,
 		ReadOnly:           *readOnly,
 		LogoutURL:          *logoutURL,
