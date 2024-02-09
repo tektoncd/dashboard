@@ -28,7 +28,7 @@ The first thing to do is to create a Kubernetes cluster.
 
 Kind is an easy solution to run a local cluster, all it needs is to have `docker` installed.
 
-This walk-through has been tested on Kind v0.15 with Kubernetes v1.25.
+This walk-through has been tested on Kind v0.21 with Kubernetes v1.27.
 
 Create a cluster by running the following command:
 
@@ -38,7 +38,7 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
 - role: control-plane
-  image: kindest/node:v1.25.3@sha256:f52781bc0d7a19fb6c405c2af83abfeb311f130707a0e219175677e366cc45d1
+  image: kindest/node:v1.27.10@sha256:3700c811144e24a6c6181065265f69b9bf0b437c45741017182d7c82b908918f
   kubeadmConfigPatches:
   - |
     kind: InitConfiguration
@@ -207,8 +207,8 @@ EOF
 
 Open `http://tekton-dashboard.127.0.0.1.nip.io/#/importresources` and fill in the form:
 
-- **Repository URL**: https://github.com/tektoncd/pipeline
-- **Repository directory**: examples/v1beta1/pipelineruns/output-pipelinerun.yaml
+- **Repository URL**: https://github.com/tektoncd/dashboard
+- **Repository directory**: docs/tutorial
 - **Target namespace**: test
 - **Namespace**: test
 - **ServiceAccount**: default
