@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2021-2023 The Tekton Authors
+# Copyright 2021-2024 The Tekton Authors
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -172,7 +172,6 @@ patch() {
   replace "--log-format=--log-format" "--log-format=$LOG_FORMAT"
   replace "--logout-url=--logout-url" "--logout-url=$LOGOUT_URL"
   replace "--read-only=--read-only" "--read-only=$READONLY"
-  replace "--namespace=--tenant-namespace" "--namespace="
   replace "--namespaces=--tenant-namespaces" "--namespaces=$TENANT_NAMESPACES"
   replace "--stream-logs=--stream-logs" "--stream-logs=$STREAM_LOGS"
   replace "--external-logs=--external-logs" "--external-logs=$EXTERNAL_LOGS"
@@ -406,7 +405,6 @@ help () {
   echo -e "\t[--read-write]\t\t\t\tWill build manifests for a read/write deployment"
   echo -e "\t[--stream-logs false]\t\t\tWill disable log streaming and use polling instead"
   echo -e "\t[--tag <tag>]\t\t\t\tTag used for the image produced by ko"
-  echo -e "\t[--tenant-namespace <namespace>]\t[DEPRECATED: use tenant-namespaces instead] Will limit the visibility to the specified namespace only"
   echo -e "\t[--tenant-namespaces <namespaces>]\tWill limit the visibility to the specified comma-separated namespaces only"
   echo -e "\t[--triggers-namespace <namespace>]\tOverride the namespace where Tekton Triggers is installed (defaults to Dashboard install namespace)"
   echo -e "\t[--version <version>]\t\t\tWill download manifests for specified version or build everything using kustomize/ko"
@@ -504,11 +502,6 @@ while [[ $# -gt 0 ]]; do
     '--triggers-namespace')
       shift
       OVERRIDE_TRIGGERS_NAMESPACE="${1}"
-      ;;
-    '--tenant-namespace')
-      warning "--tenant-namespace is deprecated, use --tenant-namespaces instead"
-      shift
-      TENANT_NAMESPACES="${1}"
       ;;
     '--tenant-namespaces')
       shift

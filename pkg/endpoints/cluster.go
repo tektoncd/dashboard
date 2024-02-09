@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -30,7 +30,6 @@ type Properties struct {
 	PipelineVersion    string   `json:"pipelinesVersion"`
 	ReadOnly           bool     `json:"isReadOnly"`
 	StreamLogs         bool     `json:"streamLogs"`
-	TenantNamespace    string   `json:"tenantNamespace,omitempty"`
 	TenantNamespaces   []string `json:"tenantNamespaces,omitEmpty"`
 	TriggersNamespace  string   `json:"triggersNamespace,omitempty"`
 	TriggersVersion    string   `json:"triggersVersion,omitempty"`
@@ -52,7 +51,6 @@ func (r Resource) GetProperties(response http.ResponseWriter, _ *http.Request) {
 		PipelineVersion:    pipelineVersion,
 		ReadOnly:           r.Options.ReadOnly,
 		LogoutURL:          r.Options.LogoutURL,
-		TenantNamespace:    r.Options.TenantNamespace,
 		TenantNamespaces:   r.Options.TenantNamespaces,
 		StreamLogs:         r.Options.StreamLogs,
 	}
