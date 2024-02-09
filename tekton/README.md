@@ -25,12 +25,18 @@ Sometimes we'll find bugs that we want to backport fixes for into previous relea
 or discover things that were missing from a release that are required by upstream
 consumers of a project. In that case we'll make a patch release. To make one:
 
-1. Create a branch for the release named `release-<version number>.x`, e.g. [`release-v0.18.x`](https://github.com/tektoncd/dashboard/tree/release-v0.18.x)
-   and push it to the repo https://github.com/tektoncd/dashboard (you may need help from
-   [an OWNER](../OWNERS) with permission to push) if that release branch does not exist.
-1. Use [git cherry-pick](https://git-scm.com/docs/git-cherry-pick) to cherry pick the
-   fixes from main into the release branch you have created (use `-x` to include
-   the original commit information).
+1. On the PR for the change you want to backport add a comment:
+   ```
+   /cherrypick <branch>
+   ```
+   where `<branch>` is the target release branch.
+   For example, to backport a fix to v0.43.x:
+   ```
+   /cherrypick release-v0.43.x-lts
+   ```
+   This will create a new PR cherry picking the relevant change onto the target branch.
+1. Review the PR as normal
+1. Repeat steps above for any other changes to be backported
 1. [Create an official release](#create-an-official-release) for the patch, with the
    [patch version incremented](https://semver.org/)
 
