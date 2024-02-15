@@ -13,6 +13,7 @@ that we use.
 * [How to create a patch release](#create-a-patch-release)
 * [Automated nightly releases](#nightly-releases)
 * [Setup releases](#setup)
+* [Update dogfooding](#update-dogfooding)
 * [npm packages](#npm-packages)
 
 ## Create an official release
@@ -47,7 +48,7 @@ The nightly release pipeline is
 
 This uses the same `Pipeline` and `Task`s as an official release.
 
-If you need to manually trigger a nightly release, switch to the `dogfooding` context and run the following (substituting the date/time with current values):
+If you need to manually trigger a nightly release, switch to the `dogfooding` context and run the following:
 
 `kubectl create job --from=cronjob/nightly-cron-trigger-dashboard-nightly-release dashboard-nightly-$(date +"%Y%m%d-%H%M")`
 
@@ -143,6 +144,19 @@ kubectl create secret generic $GENERIC_SECRET --from-file=./$KEY_FILE
 kubectl patch serviceaccount $ACCOUNT \
   -p "{\"secrets\": [{\"name\": \"$GENERIC_SECRET\"}]}"
 ```
+
+## Update dogfooding
+
+To update the Dashboard release on the [`dogfooding` cluster](https://dashboard.dogfooding.tekton.dev/):
+
+1. Ensure you have a valid context for the `robocat` cluster in your kubeconfig
+1. Run the following script from `tektoncd/plumbing`:
+   ```
+   ./scripts/deploy-release.sh -p dashboard -v <version>
+   ```
+   where `<version>` is the desired Dashboard release version, e.g. `v0.43.0`
+1. Wait for the new pod to be ready, should only take a few seconds
+1. Ensure the Dashboard has been updated (check the About page) and is working correctly
 
 ## NPM Packages
 
