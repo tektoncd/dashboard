@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -73,7 +73,12 @@ export /* istanbul ignore next */ function TriggerTemplateContainer() {
       return null;
     }
 
-    const { params, resourcetemplates } = triggerTemplate.spec;
+    const {
+      params,
+      resourceTemplates: newResourceTemplates,
+      resourcetemplates: oldResourceTemplates
+    } = triggerTemplate.spec;
+    const resourceTemplates = oldResourceTemplates || newResourceTemplates;
 
     const headersForParameters = [
       {
@@ -130,12 +135,12 @@ export /* istanbul ignore next */ function TriggerTemplateContainer() {
           emptyTextAllNamespaces={emptyTextMessage}
           emptyTextSelectedNamespace={emptyTextMessage}
         />
-        {resourcetemplates && (
+        {resourceTemplates && (
           // This is a very customised expandable table so intentionally not the one used elsewhere
           // although it should look the same
           <div className="tkn--table">
             <DataTable
-              rows={resourcetemplates.map((item, index) => ({
+              rows={resourceTemplates.map((item, index) => ({
                 id: `${index}|${
                   item.metadata.name || item.metadata.generateName
                 }`,
@@ -191,9 +196,7 @@ export /* istanbul ignore next */ function TriggerTemplateContainer() {
                           {row.isExpanded && (
                             <TableExpandedRow colSpan={headers.length + 1}>
                               <ViewYAML
-                                resource={
-                                  triggerTemplate.spec.resourcetemplates[index]
-                                }
+                                resource={resourceTemplates[index]}
                                 dark
                               />
                             </TableExpandedRow>

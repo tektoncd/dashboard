@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -284,7 +284,7 @@ describe('Trigger', () => {
     expect(queryByText(/TriggerBindings/i)).toBeFalsy();
   });
 
-  it('handles embedded template spec', () => {
+  it('handles embedded template spec - resourcetemplates', () => {
     const props = {
       namespace: 'tekton-pipelines',
       trigger: {
@@ -293,6 +293,36 @@ describe('Trigger', () => {
           spec: {
             params: [{ name: 'foo' }],
             resourcetemplates: [
+              {
+                apiVersion: 'tekton.dev/v1beta1',
+                kind: 'TaskRun',
+                metadata: {
+                  generateName: 'pr-run-'
+                },
+                spec: {
+                  taskSpec: {
+                    steps: [{ image: 'ubuntu', script: 'echo "hello there"' }]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    };
+    const { getByText } = renderWithRouter(<Trigger {...props} />);
+    expect(getByText(/hello there/)).toBeTruthy();
+  });
+
+  it('handles embedded template spec - resourceTemplates', () => {
+    const props = {
+      namespace: 'tekton-pipelines',
+      trigger: {
+        ...fakeTrigger,
+        template: {
+          spec: {
+            params: [{ name: 'foo' }],
+            resourceTemplates: [
               {
                 apiVersion: 'tekton.dev/v1beta1',
                 kind: 'TaskRun',
