@@ -21,7 +21,7 @@
   "dependencies": {
     "@tektoncd/dashboard-utils": "file:../utils",
     "js-yaml": "^4.1.0",
-    "linkify-it": "^4.0.1",
+    "linkify-it": "^5.0.0",
     "prop-types": "^15.7.2",
     "react-intl-formatted-duration": "^4.0.0",
     "react-window": "^1.8.10",
