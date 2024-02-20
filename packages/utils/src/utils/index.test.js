@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -843,6 +843,51 @@ describe('getTaskRunsWithPlaceholders', () => {
     ];
     const runs = getTaskRunsWithPlaceholders({ pipelineRun, taskRuns });
     expect(runs).toEqual([taskRun, finallyTaskRun]);
+  });
+
+  it('handles displayName in childReferences', () => {
+    const displayName = 'aDisplayName';
+    const pipelineTaskName = 'aPipelineTaskName';
+    const taskRunName = 'aTaskRunName';
+
+    const pipelineRun = {
+      spec: {
+        pipelineRef: {
+          name: 'dummy-pipeline'
+        }
+      },
+      status: {
+        childReferences: [
+          {
+            displayName,
+            name: taskRunName,
+            pipelineTaskName
+          }
+        ],
+        pipelineSpec: {
+          tasks: [
+            {
+              name: pipelineTaskName
+            }
+          ]
+        }
+      }
+    };
+    const taskRun = {
+      metadata: {
+        labels: {
+          [labels.PIPELINE_TASK]: pipelineTaskName
+        },
+        name: taskRunName
+      }
+    };
+    const runs = getTaskRunsWithPlaceholders({
+      pipelineRun,
+      taskRuns: [taskRun]
+    });
+    expect(runs[0].metadata.labels[labels.DASHBOARD_DISPLAY_NAME]).toEqual(
+      displayName
+    );
   });
 });
 
