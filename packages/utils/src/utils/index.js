@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -448,8 +448,9 @@ export function getPlaceholderTaskRun({ clusterTasks, pipelineTask, tasks }) {
   };
 }
 
-function addDashboardLabels({ pipelineTask, taskRun }) {
-  const { description, displayName } = pipelineTask;
+function addDashboardLabels({ displayName, pipelineTask, taskRun }) {
+  const { description, displayName: pipelineTaskDisplayName } = pipelineTask;
+  const displayNameToUse = displayName || pipelineTaskDisplayName;
   // eslint-disable-next-line no-param-reassign
   taskRun.metadata.labels = {
     ...taskRun.metadata.labels,
@@ -458,9 +459,9 @@ function addDashboardLabels({ pipelineTask, taskRun }) {
           [labelConstants.DASHBOARD_DESCRIPTION]: description
         }
       : null),
-    ...(displayName
+    ...(displayNameToUse
       ? {
-          [labelConstants.DASHBOARD_DISPLAY_NAME]: displayName
+          [labelConstants.DASHBOARD_DISPLAY_NAME]: displayNameToUse
         }
       : null)
   };
@@ -475,6 +476,7 @@ export function getTaskRunsWithPlaceholders({
   tasks
 }) {
   let pipelineTasks = [];
+  const childReferences = pipelineRun?.status?.childReferences || [];
 
   if (pipelineRun?.status?.pipelineSpec?.tasks) {
     pipelineTasks = pipelineTasks.concat(pipelineRun.status.pipelineSpec.tasks);
@@ -502,8 +504,23 @@ export function getTaskRunsWithPlaceholders({
         pipelineTask.name
     );
 
+    const displayNames = childReferences.reduce((acc, childReference) => {
+      if (
+        childReference.displayName &&
+        childReference.pipelineTaskName === pipelineTask.name
+      ) {
+        acc[childReference.name] = childReference.displayName;
+      }
+      return acc;
+    }, {});
     realTaskRuns.forEach(taskRun => {
-      taskRunsToDisplay.push(addDashboardLabels({ pipelineTask, taskRun }));
+      taskRunsToDisplay.push(
+        addDashboardLabels({
+          displayName: displayNames[taskRun.metadata.name],
+          pipelineTask,
+          taskRun
+        })
+      );
     });
 
     if (!realTaskRuns.length) {
