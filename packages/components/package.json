@@ -25,7 +25,7 @@
     "prop-types": "^15.7.2",
     "react-intl-formatted-duration": "^4.0.0",
     "react-window": "^1.8.10",
-    "tlds": "^1.248.0"
+    "tlds": "^1.250.0"
   },
   "peerDependencies": {
     "@carbon/icons-react": "^10.49.2",
