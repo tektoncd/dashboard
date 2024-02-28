@@ -34,12 +34,13 @@ var (
 	kubeConfigPath     = flag.String("kube-config", "", "Path to kube config file")
 	portNumber         = flag.Int("port", 8080, "Dashboard port number")
 	readOnly           = flag.Bool("read-only", true, "Enable or disable read-only mode")
-	logoutURL          = flag.String("logout-url", "", "If set, enables logout on the frontend and binds the logout button to this url")
+	logoutURL          = flag.String("logout-url", "", "If set, enables logout on the frontend and binds the logout button to this URL")
+	defaultNamespace   = flag.String("default-namespace", "", "If set, configures the default selected namespace to the provided namespace instead of 'All Namespaces'")
 	tenantNamespaces   = flag.String("namespaces", "", "If set, limits the scope of resources displayed to this comma-separated list of namespaces only")
 	logLevel           = flag.String("log-level", "info", "Minimum log level output by the logger")
 	logFormat          = flag.String("log-format", "json", "Format for log output (json or console)")
 	streamLogs         = flag.Bool("stream-logs", true, "Enable log streaming instead of polling")
-	externalLogs       = flag.String("external-logs", "", "External logs provider url")
+	externalLogs       = flag.String("external-logs", "", "External logs provider URL")
 	xFrameOptions      = flag.String("x-frame-options", "DENY", "Value for the X-Frame-Options response header, set '' to omit it")
 )
 
@@ -91,6 +92,7 @@ func main() {
 		PipelinesNamespace: *pipelinesNamespace,
 		TriggersNamespace:  *triggersNamespace,
 		TenantNamespaces:   tenants,
+		DefaultNamespace:   *defaultNamespace,
 		ReadOnly:           *readOnly,
 		LogoutURL:          *logoutURL,
 		StreamLogs:         *streamLogs,

@@ -24,13 +24,14 @@ import (
 type Properties struct {
 	DashboardNamespace string   `json:"dashboardNamespace"`
 	DashboardVersion   string   `json:"dashboardVersion"`
+	DefaultNamespace   string   `json:"defaultNamespace,omitempty"`
 	ExternalLogsURL    string   `json:"externalLogsURL"`
 	LogoutURL          string   `json:"logoutURL,omitempty"`
 	PipelineNamespace  string   `json:"pipelinesNamespace"`
 	PipelineVersion    string   `json:"pipelinesVersion"`
 	ReadOnly           bool     `json:"isReadOnly"`
 	StreamLogs         bool     `json:"streamLogs"`
-	TenantNamespaces   []string `json:"tenantNamespaces,omitEmpty"`
+	TenantNamespaces   []string `json:"tenantNamespaces,omitempty"`
 	TriggersNamespace  string   `json:"triggersNamespace,omitempty"`
 	TriggersVersion    string   `json:"triggersVersion,omitempty"`
 }
@@ -47,6 +48,7 @@ func (r Resource) GetProperties(response http.ResponseWriter, _ *http.Request) {
 	properties := Properties{
 		DashboardNamespace: r.Options.InstallNamespace,
 		DashboardVersion:   dashboardVersion,
+		DefaultNamespace:   r.Options.DefaultNamespace,
 		PipelineNamespace:  pipelineNamespace,
 		PipelineVersion:    pipelineVersion,
 		ReadOnly:           r.Options.ReadOnly,

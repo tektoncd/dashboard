@@ -601,3 +601,26 @@ it('useTenantNamespaces', async () => {
   );
   expect(tenantNamespacesResult.current).toEqual(tenantNamespaces);
 });
+
+it('useDefaultNamespace', async () => {
+  const queryClient = getQueryClient();
+
+  const defaultNamespace = 'fake_defaultNamespace';
+
+  const properties = { defaultNamespace };
+  server.use(http.get(/\/properties$/, () => HttpResponse.json(properties)));
+  const { result, waitFor } = renderHook(() => API.useProperties(), {
+    wrapper: getAPIWrapper({ queryClient })
+  });
+  await waitFor(() => result.current.isFetching);
+  await waitFor(() => !result.current.isFetching);
+  expect(result.current.data).toEqual(properties);
+
+  const { result: defaultNamespacesResult } = renderHook(
+    () => API.useDefaultNamespace(),
+    {
+      wrapper: getAPIWrapper({ queryClient })
+    }
+  );
+  expect(defaultNamespacesResult.current).toEqual(defaultNamespace);
+});

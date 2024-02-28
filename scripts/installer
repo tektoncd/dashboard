@@ -23,6 +23,7 @@ EXTENSIONS_RBAC="false"
 LOGOUT_URL=""
 LOG_LEVEL="info"
 LOG_FORMAT="json"
+DEFAULT_NAMESPACE=""
 TENANT_NAMESPACES=""
 STREAM_LOGS="true"
 EXTERNAL_LOGS=""
@@ -172,6 +173,7 @@ patch() {
   replace "--log-format=--log-format" "--log-format=$LOG_FORMAT"
   replace "--logout-url=--logout-url" "--logout-url=$LOGOUT_URL"
   replace "--read-only=--read-only" "--read-only=$READONLY"
+  replace "--default-namespace=--default-namespace" "--default-namespace=$DEFAULT_NAMESPACE"
   replace "--namespaces=--tenant-namespaces" "--namespaces=$TENANT_NAMESPACES"
   replace "--stream-logs=--stream-logs" "--stream-logs=$STREAM_LOGS"
   replace "--external-logs=--external-logs" "--external-logs=$EXTERNAL_LOGS"
@@ -502,6 +504,10 @@ while [[ $# -gt 0 ]]; do
     '--triggers-namespace')
       shift
       OVERRIDE_TRIGGERS_NAMESPACE="${1}"
+      ;;
+    '--default-namespace')
+      shift
+      DEFAULT_NAMESPACE="${1}"
       ;;
     '--tenant-namespaces')
       shift
