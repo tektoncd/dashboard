@@ -24,6 +24,7 @@ type Options struct {
 	PipelinesNamespace string
 	TriggersNamespace  string
 	TenantNamespaces   []string
+	DefaultNamespace   string
 	ReadOnly           bool
 	LogoutURL          string
 	StreamLogs         bool

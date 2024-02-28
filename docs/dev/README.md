@@ -103,7 +103,8 @@ These options are documented below:
 | `--triggers-namespace` | Namespace where Tekton triggers is installed (assumes same namespace as dashboard if not set) | `string` | `""` |
 | `--port` | Dashboard port number | `int` | `8080` |
 | `--read-only` | Enable or disable read-only mode | `bool` | `true` |
-| `--logout-url` | If set, enables logout on the frontend and binds the logout button to this url | `string` | `""` |
+| `--logout-url` | If set, enables logout on the frontend and binds the logout button to this URL | `string` | `""` |
+| `--default-namespace` | If set, configures the default selected namespace to the provided namespace instead of 'All Namespaces' | `string` | `""` |
 | `--namespaces` | If set, limits the scope of resources displayed to this comma-separated list of namespaces only | `string` | `""` |
 | `--log-level` | Minimum log level output by the logger | `string` | `"info"` |
 | `--log-format` | Format for log output (json or console) | `string` | `"json"` |

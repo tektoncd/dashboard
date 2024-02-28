@@ -78,6 +78,7 @@ import {
 
 import {
   NamespaceContext,
+  useDefaultNamespace,
   useExtensions,
   useLogoutURL,
   useNamespaces,
@@ -145,6 +146,7 @@ export function App({ lang }) {
   } = useProperties();
   const logoutURL = useLogoutURL();
   const tenantNamespaces = useTenantNamespaces();
+  const defaultNamespace = useDefaultNamespace();
 
   const [isSideNavExpanded, setIsSideNavExpanded] = useState(true);
   const [selectedNamespace, setSelectedNamespace] = useState(
@@ -210,6 +212,13 @@ export function App({ lang }) {
     </Header>
   );
 
+  function HandleDefaultNamespace() {
+    if (defaultNamespace) {
+      setTimeout(() => setSelectedNamespace(defaultNamespace), 0);
+    }
+    return null;
+  }
+
   return (
     <NamespaceContext.Provider value={namespaceContext}>
       <IntlProvider
@@ -241,7 +250,10 @@ export function App({ lang }) {
                   <PageErrorBoundary>
                     <Switch>
                       <CompatRoute path="/" exact>
-                        <Redirect to={urls.about()} />
+                        <>
+                          <HandleDefaultNamespace />
+                          <Redirect to={urls.about()} />
+                        </>
                       </CompatRoute>
                       <CompatRoute path={paths.pipelines.all()} exact>
                         <NamespacedRoute>

@@ -340,3 +340,8 @@ export function useTenantNamespaces() {
   const { data } = useProperties();
   return data.tenantNamespaces || [];
 }
+
+export function useDefaultNamespace() {
+  const { data } = useProperties();
+  return data.defaultNamespace;
+}
