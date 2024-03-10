@@ -68,7 +68,7 @@
     "eslint-config-airbnb": "^19.0.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-cypress": "^2.15.1",
-    "eslint-plugin-formatjs": "^4.11.3",
+    "eslint-plugin-formatjs": "^4.12.2",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jsx-a11y": "^6.8.0",
     "eslint-plugin-notice": "^0.9.10",
