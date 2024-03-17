@@ -23,7 +23,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@carbon/icons-react": "^10.49.2",
+    "@carbon/icons-react": "^10.49.4",
     "@carbon/themes": "^10.55.3",
     "@codemirror/legacy-modes": "^6.3.3",
     "@tanstack/react-query": "^4.36.1",
