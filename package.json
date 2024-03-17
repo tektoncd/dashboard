@@ -32,7 +32,7 @@
     "@tektoncd/dashboard-utils": "*",
     "@uiw/react-codemirror": "^4.21.24",
     "carbon-components": "^10.58.12",
-    "carbon-components-react": "^7.59.20",
+    "carbon-components-react": "^7.59.21",
     "carbon-icons": "^7.0.7",
     "git-url-parse": "^14.0.0",
     "js-yaml": "^4.1.0",
