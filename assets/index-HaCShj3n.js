@@ -1,0 +1,1 @@
+import{F as a}from"./index-7Q--xhFC.js";import{P as e}from"./index-MRYFjIDu.js";import{r}from"./index-HKyOzZPI.js";var s=r.createContext(a);e.node,e.objectOf(e.bool);function F(t){var o=r.useContext(s);return o.enabled(t)}export{s as F,F as u};

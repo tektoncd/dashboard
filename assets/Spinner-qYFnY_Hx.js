@@ -1,0 +1,1 @@
+import{j as r}from"./jsx-runtime-HUm0hl9X.js";import"./index-HKyOzZPI.js";import{R as o}from"./bucket-25-O-KA0EH0.js";function s({children:n,className:e}){return r.jsx(o,{className:`tkn--spinner ${e}`,children:n})}s.__docgenInfo={description:"",methods:[],displayName:"Spinner"};export{s as S};
