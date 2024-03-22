@@ -224,6 +224,7 @@
   "dashboard.skipToContent": "Skip to main content",
   "dashboard.startPipelineRun.actionText": "Start",
   "dashboard.step.definitionNotAvailable": "Step definition not available",
+  "dashboard.stepActions.errorLoading": "Error loading StepActions",
   "dashboard.tableHeader.createdTime": "Created",
   "dashboard.tableHeader.default": "Default",
   "dashboard.tableHeader.expression": "Expression",

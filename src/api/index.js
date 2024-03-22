@@ -43,6 +43,7 @@ export * from './interceptors';
 export * from './pipelineRuns';
 export * from './pipelines';
 export * from './serviceAccounts';
+export * from './stepActions';
 export * from './taskRuns';
 export * from './tasks';
 export * from './triggerBindings';

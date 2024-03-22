@@ -224,6 +224,7 @@
   "dashboard.skipToContent": "",
   "dashboard.startPipelineRun.actionText": "",
   "dashboard.step.definitionNotAvailable": "Beschreibung: Die Schrittdefinition ist nicht verfügbar",
+  "dashboard.stepActions.errorLoading": "",
   "dashboard.tableHeader.createdTime": "Erstellt",
   "dashboard.tableHeader.default": "",
   "dashboard.tableHeader.expression": "",

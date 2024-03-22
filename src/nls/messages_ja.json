@@ -224,6 +224,7 @@
   "dashboard.skipToContent": "メインコンテンツへ",
   "dashboard.startPipelineRun.actionText": "",
   "dashboard.step.definitionNotAvailable": "利用可能な定義がありません",
+  "dashboard.stepActions.errorLoading": "",
   "dashboard.tableHeader.createdTime": "作成日",
   "dashboard.tableHeader.default": "デフォルト値",
   "dashboard.tableHeader.expression": "",

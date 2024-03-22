@@ -65,6 +65,7 @@ import {
   ResourceList,
   Settings,
   SideNav,
+  StepActions,
   TaskRun,
   TaskRuns,
   Tasks,
@@ -291,6 +292,16 @@ export function App({ lang }) {
                       <CompatRoute path={paths.pipelineRuns.byName()}>
                         <NamespacedRoute isResourceDetails>
                           <PipelineRun />
+                        </NamespacedRoute>
+                      </CompatRoute>
+                      <CompatRoute path={paths.stepActions.all()} exact>
+                        <NamespacedRoute>
+                          <StepActions />
+                        </NamespacedRoute>
+                      </CompatRoute>
+                      <CompatRoute path={paths.stepActions.byNamespace()} exact>
+                        <NamespacedRoute>
+                          <StepActions />
                         </NamespacedRoute>
                       </CompatRoute>
                       <CompatRoute path={paths.tasks.all()} exact>
