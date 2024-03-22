@@ -2,22 +2,102 @@ linters-settings:
   errcheck:
     exclude: .errcheck.txt
 linters:
-  disable-all: true
   enable:
-  - deadcode
+  - bodyclose
+  - containedctx
+  - decorder
+  - dogsled
+  - dupword
   - errcheck
+  - errchkjson
+  - errname
+  - errorlint
+  - exhaustive
+  - goconst
+  - gocritic
   - gofmt
   - goimports
   - gomodguard
   - gosec
-  - gocritic
-  - revive
+  - gosimple
+  - govet
+  - maintidx
+  - makezero
   - misspell
+  - musttag
+  - nakedret
+  - nilerr
+  - nilnil
+  - noctx
+  - nolintlint
+  - nosprintfhostport
+  - thelper
+  - typecheck
   - unconvert
+  - unused
+  - usestdlibvars
+  - whitespace
+  disable:
+  - contextcheck
+  - cyclop
   - depguard
+  - dupl
+  - exhaustruct
+  - forcetypeassert
+  - funlen
+  - gci
+  - gochecknoglobals
+  - gochecknoinits
+  - gocognit
+  - gocyclo
+  - godot
+  - godox
+  - goerr113
+  - gofumpt
+  - gomnd
+  - gomoddirectives
+  - ireturn
+  - lll
+  - mirror
+  - nestif
+  - nlreturn
+  - nonamedreturns
+  - paralleltest
+  - prealloc
+  - predeclared
+  - revive
+  - staticcheck
+  - stylecheck
+  - tagliatelle
+  - testpackage
+  - tparallel
+  - unparam
+  - varnamelen
+  - wastedassign
+  - wrapcheck
+  - wsl
+  # Enabling presets means that new linters that we automatically adopt new
+  # linters that augment a preset. This also opts us in for replacement linters
+  # when a linter is deprecated.
+  presets:
+  - bugs
+  - comment
+  - complexity
+  - error
+  - format
+  - import
+  - metalinter
+  - module
+  - performance
+  - sql
+  - style
+  - test
+  - unused
 output:
   uniq-by-line: false
 issues:
+  exclude-dirs:
+  - vendor
   exclude-rules:
   - path: _test\.go
     linters:
@@ -33,7 +113,5 @@ run:
   issues-exit-code: 1
   build-tags:
   - e2e
-  skip-dirs:
-  - vendor
   timeout: 10m
   modules-download-mode: mod

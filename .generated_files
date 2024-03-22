@@ -14,4 +14,3 @@
 
 file-name     package-lock.json
 file-name     go.sum
-path-prefix   pkg/client

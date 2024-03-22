@@ -15,7 +15,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"os"
 	"strings"
 
@@ -24,14 +23,11 @@ import (
 	"github.com/tektoncd/dashboard/pkg/router"
 	k8sclientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
-	"k8s.io/client-go/tools/clientcmd"
 )
 
 var (
-	help               = flag.Bool("help", false, "Prints defaults")
 	pipelinesNamespace = flag.String("pipelines-namespace", "", "Namespace where Tekton pipelines is installed (assumes same namespace as dashboard if not specified)")
 	triggersNamespace  = flag.String("triggers-namespace", "", "Namespace where Tekton triggers is installed (assumes same namespace as dashboard if not specified)")
-	kubeConfigPath     = flag.String("kube-config", "", "Path to kube config file")
 	portNumber         = flag.Int("port", 8080, "Dashboard port number")
 	readOnly           = flag.Bool("read-only", true, "Enable or disable read-only mode")
 	logoutURL          = flag.String("logout-url", "", "If set, enables logout on the frontend and binds the logout button to this URL")
@@ -46,33 +42,13 @@ var (
 
 func main() {
 	flag.Parse()
-
 	installNamespace := os.Getenv("INSTALLED_NAMESPACE")
-
-	if *help {
-		fmt.Println("dashboard starts Tekton dashboard backend.")
-		fmt.Println()
-		fmt.Println("find more information at: https://github.com/tektoncd/dashboard")
-		fmt.Println()
-		fmt.Println("options:")
-		fmt.Println()
-		flag.PrintDefaults()
-		return
-	}
-
 	logging.InitLogger(*logLevel, *logFormat)
 
 	var cfg *rest.Config
 	var err error
-	if *kubeConfigPath != "" {
-		cfg, err = clientcmd.BuildConfigFromFlags("", *kubeConfigPath)
-		if err != nil {
-			logging.Log.Errorf("Error building kubeconfig from %s: %s", *kubeConfigPath, err.Error())
-		}
-	} else {
-		if cfg, err = rest.InClusterConfig(); err != nil {
-			logging.Log.Errorf("Error building kubeconfig: %s", err.Error())
-		}
+	if cfg, err = rest.InClusterConfig(); err != nil {
+		logging.Log.Errorf("Error building kubeconfig: %s", err.Error())
 	}
 
 	k8sClient, err := k8sclientset.NewForConfig(cfg)
