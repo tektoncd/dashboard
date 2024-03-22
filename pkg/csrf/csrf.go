@@ -1,5 +1,5 @@
 /*
-Copyright 2021-2023 The Tekton Authors
+Copyright 2021-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -20,8 +20,8 @@ import (
 )
 
 var (
-	errorNoHeader = errors.New("CSRF header not found in request")
-	headerName    = "Tekton-Client"
+	errNoHeader = errors.New("CSRF header not found in request")
+	headerName  = "Tekton-Client"
 	// Idempotent (safe) methods as defined by RFC7231 section 4.2.2.
 	safeMethods = map[string]bool{
 		"GET":     true,
@@ -76,7 +76,7 @@ func (cs *csrf) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func unauthorizedHandler(w http.ResponseWriter, _ *http.Request) {
 	http.Error(w, fmt.Sprintf("%s - %s",
-		http.StatusText(http.StatusForbidden), errorNoHeader),
+		http.StatusText(http.StatusForbidden), errNoHeader),
 		http.StatusForbidden)
 }
 

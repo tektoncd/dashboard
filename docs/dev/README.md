@@ -25,12 +25,12 @@ This guide explains how to build, deploy and test the Tekton Dashboard. It cover
 In order to run the Tekton Dashboard, please make sure the requirements in [the install doc](../install.md) are met.
 
 You will also need the following tools in order to build the Dashboard locally and deploy it:
-1. [`go`](https://golang.org/doc/install): The language the Tekton Dashboard backend is built in. `go` version 1.20.x
+1. [`go`](https://golang.org/doc/install): The language the Tekton Dashboard backend is built in. `go` version 1.22.x
 1. [`git`](https://help.github.com/articles/set-up-git/): For source control
 1. [Node.js & npm](https://nodejs.org/): For building and running the frontend locally. See [`.nvmrc`](/.nvmrc) for version, or run `nvm use`
-1. [`ko`](https://github.com/google/ko): For building the backend locally. `ko` version v0.14.x
+1. [`ko`](https://github.com/google/ko): For building the backend locally. `ko` version v0.15.x
 1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/): For interacting with your kube cluster
-1. [`kustomize`](https://kubectl.docs.kubernetes.io/installation/kustomize/): For building the Dashboard manifests. v4.5.4 is known to work
+1. [`kustomize`](https://kubectl.docs.kubernetes.io/installation/kustomize/): For building the Dashboard manifests. v5.3.0 is known to work
 
 ## Checkout your fork
 
@@ -75,20 +75,6 @@ npm run preview
 
 **Note**: To help ensure the build process is efficient and content is transformed as required for current browser support, JSX processing is only performed on files with a `.jsx` extension. This means that if a file contains JSX expressions (e.g. `<MyComponent … />` or `<span>…</span>`), it must be named with a `.jsx` extension. This applies to all files containing JSX, including tests, stories, etc.
 
-## Build the backend (optional: for local debugging)
-
-The backend uses `go modules` to manage its dependencies. To build the go backend, run:
-
-```bash
-go build ./cmd/dashboard
-```
-
-This generates a binary named `dashboard` which you can run on your local computer by invoking it with the `--kube-config` flag:
-
-```bash
-./dashboard --kube-config $HOME/.kube/config
-```
-
 ### Command line arguments
 
 The dashboard backend supports a number of options through command line arguments.
@@ -98,7 +84,6 @@ These options are documented below:
 | Argument | Description | Type | Default value |
 |---|---|---|---|
 | `--help` | Print help message and exit | `bool` | `false` |
-| `--kube-config` | Path to kube config file, uses in cluster config if empty | `string` | `""` |
 | `--pipelines-namespace` | Namespace where Tekton pipelines is installed (assumes same namespace as dashboard if not set) | `string` | `""` |
 | `--triggers-namespace` | Namespace where Tekton triggers is installed (assumes same namespace as dashboard if not set) | `string` | `""` |
 | `--port` | Dashboard port number | `int` | `8080` |
