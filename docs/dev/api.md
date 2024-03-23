@@ -1,9 +1,9 @@
 # Tekton Dashboard - Backend API
 
+> [!WARNING]
+> The Dashboard's HTTP API is considered an implementation detail and is not intended for consumption by third parties. It may change in unexpected ways without notice between releases.
 
-The backend API provides the following endpoints:
-
-__GET endpoints__
+The Dashboard provides the following endpoint:
 
 __Dashboard Properties__
 ```
@@ -11,9 +11,9 @@ GET /v1/properties
 ```
 
 Get the install properties of the Tekton Dashboard back end which includes the 
-namespace and version of each of Tekton Dashboard, Pipelines, and Triggers.
+namespace and version of each of Tekton Dashboard, Pipelines, and Triggers if installed.
 
-Example payload response is formatted as so:
+The response is provided as a JSON object, for example:
 
 ```
 {
@@ -27,6 +27,9 @@ Example payload response is formatted as so:
 }
 ```
 
+Full details in [pkg/endpoints/cluster.go](/pkg/endpoints/cluster.go).
+
 ---
 
-All other APIs consumed by the Dashboard client are provided by the Kubernetes API server, Dashboard extensions, or external log providers.
+> [!NOTE]
+> All other APIs consumed by the Dashboard client are provided by the Kubernetes API server, Dashboard extensions, or external log providers. See their respective documentation for details.
