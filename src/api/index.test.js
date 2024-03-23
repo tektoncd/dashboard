@@ -483,7 +483,7 @@ describe('getInstallProperties', () => {
       http.get(/\/properties$/, () => new HttpResponse(null, { status: 500 }))
     );
     const properties = await API.getInstallProperties();
-    expect(properties).toBeUndefined();
+    expect(properties).toEqual({ isReadOnly: true });
   });
 });
 
