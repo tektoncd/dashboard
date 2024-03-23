@@ -59,7 +59,7 @@ kind: Extension
 metadata:
   name: cronjobs
 spec:
-  apiVersion: batch/v1beta1
+  apiVersion: batch/v1
   name: cronjobs
   displayname: k8s cronjobs
 EOF
@@ -88,7 +88,7 @@ metadata:
 rules:
   - apiGroups: ["batch"]
     resources: ["cronjobs"]
-    verbs: ["get", "list"]
+    verbs: ["get", "list", "watch"]
 EOF
 ```
 
