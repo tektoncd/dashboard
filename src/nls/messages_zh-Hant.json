@@ -224,6 +224,7 @@
   "dashboard.skipToContent": "",
   "dashboard.startPipelineRun.actionText": "",
   "dashboard.step.definitionNotAvailable": "說明：步驟定義無法使用",
+  "dashboard.stepActions.errorLoading": "",
   "dashboard.tableHeader.createdTime": "已建立",
   "dashboard.tableHeader.default": "",
   "dashboard.tableHeader.expression": "",

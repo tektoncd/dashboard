@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -28,6 +28,7 @@ import {
   useCustomResource,
   useInterceptor,
   usePipeline,
+  useStepAction,
   useTask
 } from '../../api';
 
@@ -41,6 +42,8 @@ function useResource({ group, name, namespace, type, version }) {
       return useInterceptor({ name, namespace });
     case 'pipelines':
       return usePipeline({ name, namespace });
+    case 'stepactions':
+      return useStepAction({ name, namespace });
     case 'tasks':
       return useTask({ name, namespace });
     default:

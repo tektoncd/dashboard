@@ -224,6 +224,7 @@
   "dashboard.skipToContent": "跳转到主要内容",
   "dashboard.startPipelineRun.actionText": "",
   "dashboard.step.definitionNotAvailable": "步骤定义不可用",
+  "dashboard.stepActions.errorLoading": "",
   "dashboard.tableHeader.createdTime": "创建日期",
   "dashboard.tableHeader.default": "默认",
   "dashboard.tableHeader.expression": "表达式",
