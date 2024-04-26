@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
-import React from 'react';
+import { Children, cloneElement } from 'react';
 import {
   TabContent as CarbonTabContent,
   Tabs as CarbonTabs
@@ -27,11 +27,11 @@ const TabContent = ({ selected, ...other }) =>
 
 const Tabs = ({ children, ...other }) => (
   <CarbonTabs {...other}>
-    {React.Children.map(children, tab => {
+    {Children.map(children, tab => {
       if (!tab) {
         return null;
       }
-      return React.cloneElement(tab, {
+      return cloneElement(tab, {
         renderContent: TabContent
       });
     }).filter(Boolean)}

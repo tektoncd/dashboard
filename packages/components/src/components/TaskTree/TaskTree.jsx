@@ -11,7 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
 import { getStatus, labels as labelConstants } from '@tektoncd/dashboard-utils';
 import Task from '../Task';
 

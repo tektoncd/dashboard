@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
+import { Fragment } from 'react';
 import {
   useLocation,
   useNavigate,
@@ -187,7 +187,7 @@ export /* istanbul ignore next */ function TriggerTemplateContainer() {
                     </TableHead>
                     <TableBody>
                       {rows.map((row, index) => (
-                        <React.Fragment key={row.id}>
+                        <Fragment key={row.id}>
                           <TableExpandRow {...getRowProps({ row })}>
                             {row.cells.map(cell => (
                               <TableCell key={cell.id}>{cell.value}</TableCell>
@@ -201,7 +201,7 @@ export /* istanbul ignore next */ function TriggerTemplateContainer() {
                               />
                             </TableExpandedRow>
                           )}
-                        </React.Fragment>
+                        </Fragment>
                       ))}
                     </TableBody>
                   </Table>

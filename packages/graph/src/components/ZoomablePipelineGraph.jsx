@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
-import React from 'react';
+import { Component } from 'react';
 import { injectIntl } from 'react-intl';
 
 import { Button } from 'carbon-components-react';
@@ -32,7 +32,7 @@ const height = 600;
 const minZoom = 0.1;
 const maxZoom = 10;
 
-class ZoomablePipelineGraph extends React.Component {
+class ZoomablePipelineGraph extends Component {
   state = {
     isPanningEnabled: false
   };

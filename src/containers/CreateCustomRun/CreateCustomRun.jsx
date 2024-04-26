@@ -1,5 +1,5 @@
 /*
-Copyright 2023 The Tekton Authors
+Copyright 2023-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
-import React, { Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import yaml from 'js-yaml';
 import { ALL_NAMESPACES, urls, useTitleSync } from '@tektoncd/dashboard-utils';
@@ -26,7 +26,7 @@ import {
   useSelectedNamespace
 } from '../../api';
 
-const YAMLEditor = React.lazy(() => import('../YAMLEditor'));
+const YAMLEditor = lazy(() => import('../YAMLEditor'));
 
 function CreateCustomRun() {
   const intl = useIntl();

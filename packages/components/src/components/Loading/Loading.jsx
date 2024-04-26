@@ -1,5 +1,5 @@
 /*
-Copyright 2023 The Tekton Authors
+Copyright 2023-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,6 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
-import React from 'react';
 import { useIntl } from 'react-intl';
 import { Loading as CarbonLoading } from 'carbon-components-react';
 import { getCarbonPrefix } from '@tektoncd/dashboard-utils';
