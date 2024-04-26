@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,7 @@ limitations under the License.
 import { Logout20 as LogoutIcon } from '@carbon/icons-react';
 import { HeaderGlobalAction } from 'carbon-components-react';
 import { injectIntl } from 'react-intl';
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 export class LogoutButton extends Component {
   state = {

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
@@ -126,7 +126,7 @@ export function getTektonAPI(
   );
 }
 
-export const NamespaceContext = React.createContext();
+export const NamespaceContext = createContext();
 NamespaceContext.displayName = 'Namespace';
 
 function getResourceVersion(resource) {

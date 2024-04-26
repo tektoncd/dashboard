@@ -1,5 +1,5 @@
 /*
-Copyright 2022-2023 The Tekton Authors
+Copyright 2022-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -18,7 +18,7 @@ import {
   InlineNotification
 } from 'carbon-components-react';
 import yaml from 'js-yaml';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { StreamLanguage } from '@codemirror/language';
 import { yaml as yamlMode } from '@codemirror/legacy-modes/mode/yaml';

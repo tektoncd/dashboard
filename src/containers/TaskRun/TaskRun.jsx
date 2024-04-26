@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
-import React, { useRef, useState } from 'react';
+import { Fragment, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import {
@@ -155,7 +155,7 @@ export function TaskRunContainer() {
       onFallback: setIsUsingExternalLogs
     });
 
-    const LogsRoot = isLogsMaximized ? Portal : React.Fragment;
+    const LogsRoot = isLogsMaximized ? Portal : Fragment;
 
     return (
       <LogsRoot

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { Component } from 'react';
+import { Component, createRef } from 'react';
 import { Button, SkeletonText } from 'carbon-components-react';
 import { FixedSizeList as List } from 'react-window';
 import { injectIntl } from 'react-intl';
@@ -46,8 +46,8 @@ export class LogContainer extends Component {
   constructor(props) {
     super(props);
     this.state = { loading: true };
-    this.logRef = React.createRef();
-    this.textRef = React.createRef();
+    this.logRef = createRef();
+    this.textRef = createRef();
   }
 
   componentDidMount() {

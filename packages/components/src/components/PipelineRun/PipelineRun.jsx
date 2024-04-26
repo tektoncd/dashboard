@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { Component } from 'react';
+import { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { InlineNotification, SkeletonText } from 'carbon-components-react';
 import { injectIntl } from 'react-intl';
@@ -86,7 +86,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     }
 
     const LogsRoot =
-      isLogsMaximized && maximizedLogsContainer ? Portal : React.Fragment;
+      isLogsMaximized && maximizedLogsContainer ? Portal : Fragment;
 
     return (
       <LogsRoot
