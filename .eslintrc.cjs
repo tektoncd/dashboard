@@ -91,7 +91,7 @@ module.exports = {
     'react/forbid-prop-types': 'off',
     'react/function-component-definition': 'off',
     'react/jsx-curly-newline': 'off',
-    'react/jsx-filename-extension': 'off',
+    'react/jsx-filename-extension': ['error', { allow: 'as-needed' }],
     'react/jsx-no-bind': 'off',
     'react/jsx-props-no-spreading': 'off',
     'react/no-unstable-nested-components': 'off',

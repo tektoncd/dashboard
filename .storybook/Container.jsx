@@ -11,6 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { StrictMode } from 'react';
 import { IntlProvider } from 'react-intl';
 import { createMemoryHistory } from 'history';
 import { Router, Switch } from 'react-router-dom';

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,16 +11,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import LogsToolbar from './LogsToolbar';
+import FormattedDate from './FormattedDate';
+
+const now = new Date();
 
 export default {
-  component: LogsToolbar,
-  title: 'LogsToolbar'
+  args: {
+    date: now
+  },
+  argTypes: {
+    date: { control: { type: 'date' } }
+  },
+  component: FormattedDate,
+  title: 'FormattedDate'
 };
 
-export const Default = {
+export const Relative = {
   args: {
-    name: 'some_filename.txt',
-    url: '/some/logs/url'
+    relative: true
   }
 };
+
+export const Absolute = {};
