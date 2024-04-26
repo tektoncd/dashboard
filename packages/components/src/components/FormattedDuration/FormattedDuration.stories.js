@@ -1,5 +1,5 @@
 /*
-Copyright 2021-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,11 +11,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import Spinner from './Spinner';
+import FormattedDuration from './FormattedDuration';
 
 export default {
-  component: Spinner,
-  title: 'Spinner'
+  component: FormattedDuration,
+  title: 'FormattedDuration'
 };
 
-export const Default = {};
+export const OneSecond = {
+  args: { milliseconds: 1000 },
+  name: '1 second'
+};
+
+export const OneMinuteOneSecond = {
+  args: { milliseconds: 61000 },
+  name: '1 minute 1 second'
+};
+
+export const Other = {
+  args: {
+    milliseconds: 2 * 60 * 60 * 1000 + 1 * 60 * 1000 + 10 * 1000 // 2h 1m 10s
+  }
+};

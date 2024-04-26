@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2021-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,25 +11,29 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import FormattedDate from './FormattedDate';
+import { action } from '@storybook/addon-actions';
 
-const now = new Date();
+import DeleteModal from './DeleteModal';
 
 export default {
-  args: {
-    date: now
-  },
-  argTypes: {
-    date: { control: { type: 'date' } }
-  },
-  component: FormattedDate,
-  title: 'FormattedDate'
+  component: DeleteModal,
+  title: 'DeleteModal'
 };
 
-export const Relative = {
+export const Default = {
   args: {
-    relative: true
+    kind: 'Pipelines',
+    onClose: action('onClose'),
+    onSubmit: action('onSubmit'),
+    resources: [
+      {
+        metadata: {
+          name: 'my-pipeline',
+          namespace: 'my-namespace',
+          uid: '700c9915-65f0-4309-b7e0-54d2e4dc8bea'
+        }
+      }
+    ],
+    showNamespace: false
   }
 };
-
-export const Absolute = {};
