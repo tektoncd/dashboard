@@ -202,10 +202,12 @@ describe('Log', () => {
       />
     );
     await waitFor(() => {
-      expect(container.querySelector('#log-scroll-to-top-btn')).not.toBeNull();
+      expect(
+        container.querySelector('#log-scroll-to-start-btn')
+      ).not.toBeNull();
     });
-    expect(container.querySelector('#log-scroll-to-bottom-btn')).toBeNull();
-    fireEvent.click(container.querySelector('#log-scroll-to-top-btn'));
+    expect(container.querySelector('#log-scroll-to-end-btn')).toBeNull();
+    fireEvent.click(container.querySelector('#log-scroll-to-start-btn'));
 
     await waitFor(() => expect(spiedFn).toHaveBeenCalled());
   });
@@ -232,10 +234,12 @@ describe('Log', () => {
       />
     );
     await waitFor(() => {
-      expect(container.querySelector('#log-scroll-to-top-btn')).not.toBeNull();
+      expect(
+        container.querySelector('#log-scroll-to-start-btn')
+      ).not.toBeNull();
     });
-    expect(container.querySelector('#log-scroll-to-bottom-btn')).not.toBeNull();
-    fireEvent.click(container.querySelector('#log-scroll-to-bottom-btn'));
+    expect(container.querySelector('#log-scroll-to-end-btn')).not.toBeNull();
+    fireEvent.click(container.querySelector('#log-scroll-to-end-btn'));
 
     await waitFor(() => expect(spiedFn).toHaveBeenCalled());
   });

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,12 +13,12 @@ limitations under the License.
 
 .tkn--create {
   .#{$prefix}--fieldset:not(:last-of-type) {
-    margin-bottom: 0;
+    margin-block-end: 0;
   }
 
   .#{$prefix}--form__helper-text {
     color: $text-05; // Since by default the contrast/colour choice is barely readable.
-    max-width: 100%;
+    max-inline-size: 100%;
   }
 
   .#{$prefix}--label--disabled {
@@ -26,17 +26,17 @@ limitations under the License.
   }
 
   .#{$prefix}--text-input__field-wrapper {
-    width: 100%;
+    inline-size: 100%;
   }
 
   .#{$prefix}--list-box__wrapper,
   .#{$prefix}--form-item {
-    margin-bottom: $spacing-06;
-    max-width: 40rem;
+    margin-block-end: $spacing-06;
+    max-inline-size: 40rem;
   }
 
   .#{$prefix}--btn.#{$prefix}--btn--secondary {
-    margin-left: $spacing-03;
+    margin-inline-start: $spacing-03;
   }
 }
 

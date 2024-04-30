@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2023 The Tekton Authors
+Copyright 2020-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -18,10 +18,10 @@ limitations under the License.
 
 .tkn--view-yaml--title {
   display: inline-block;
-  margin-bottom: .5rem;
+  margin-block-end: .5rem;
 
   &:not(:first-child) {
-    margin-top: 1rem;
+    margin-block-start: 1rem;
   }
 }
 
@@ -32,15 +32,15 @@ pre.tkn--syntax-highlighter {
 .tkn--code-line {
   counter-increment: tkn--code-line;
   display: inline-flex;
-  width: 100%;
+  inline-size: 100%;
 }
 
 .tkn--code-line::before {
   content: counter(tkn--code-line);
   display: inline-block;
-  text-align: right;
-  min-width: var(--tkn--line-number--min-width, 1rem);
-  padding-right: 1rem;
+  text-align: end;
+  min-inline-size: var(--tkn--line-number--min-width, 1rem);
+  padding-inline-end: 1rem;
   user-select: none;
 }
 
@@ -50,7 +50,7 @@ pre.tkn--syntax-highlighter {
 }
 
 .#{$prefix}--snippet--multi {
-  max-width: none;
+  max-inline-size: none;
 
   // Styles based on a11y-dark by @ericwbailey
   &.hljs {

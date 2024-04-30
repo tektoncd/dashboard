@@ -217,7 +217,7 @@ export class LogContainer extends Component {
             className={`${carbonPrefix}--copy-btn`}
             hasIconOnly
             iconDescription={scrollButtonTopMessage}
-            id="log-scroll-to-top-btn"
+            id="log-scroll-to-start-btn"
             onClick={this.scrollToTopLog}
             renderIcon={() => (
               <UpToTop16>
@@ -233,7 +233,7 @@ export class LogContainer extends Component {
             className={`${carbonPrefix}--copy-btn`}
             iconDescription={scrollButtonBottomMessage}
             hasIconOnly
-            id="log-scroll-to-bottom-btn"
+            id="log-scroll-to-end-btn"
             onClick={this.scrollToBottomLog}
             renderIcon={() => (
               <DownToBottom16>

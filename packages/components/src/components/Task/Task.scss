@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -19,33 +19,38 @@ limitations under the License.
     display: flex;
     align-items: center;
     position: relative;
-    padding: 0 1rem 0 .75rem;
+    padding-block: 0;
+    padding-inline-start: 0.75rem;
+    padding-inline-end: 1rem;
     font-size: 0.76rem;
     letter-spacing: 0.06rem;
     font-weight: bold;
     line-height: 2.2rem;
     text-decoration: none;
     color: inherit;
-    margin: 1rem 1rem 0 0;
+    margin-block-start: 1rem;
+    margin-inline-end: 1rem;
+    margin-block-end: 0;
+    margin-inline-start: 0;
     white-space: nowrap;
     background-color: $ui-01;
-    border-left: 3px solid transparent;
+    border-inline-start: 3px solid transparent;
 
     > .tkn--status-icon {
-      margin-right: 0.75rem;
+      margin-inline-end: 0.75rem;
 
       &.tkn--status-icon--warning {
-        width: 24px;
-        height: 24px;
-        margin-top: 2px;
-        margin-right: 0.5rem;
+        inline-size: 24px;
+        block-size: 24px;
+        margin-block-start: 2px;
+        margin-inline-end: 0.5rem;
       }
     }
 
     &:focus, &:hover {
       background-color: $hover-ui;
       text-decoration: none;
-      border-left-color: $hover-ui;
+      border-inline-start-color: $hover-ui;
     }
 
     .tkn--task-link--name {
@@ -61,29 +66,29 @@ limitations under the License.
 
     > .#{$prefix}--overflow-menu {
       flex-shrink: 0;
-      margin-right: 10px;
+      margin-inline-end: 10px;
     }
   }
 
   &[data-selected] > .tkn--task-link {
-    border-left: 3px solid $interactive-04;
-    margin-right: 0;
+    border-inline-start: 3px solid $interactive-04;
+    margin-inline-end: 0;
   }
 
   &[data-active] > .tkn--task-link {
-    margin-right: 0;
+    margin-inline-end: 0;
 
     .tkn--task--expand-icon {
       /* needed when we support expanding multiple tasks */
-      margin-right: 1rem;
+      margin-inline-end: 1rem;
     }
   }
 
   .#{$prefix}--dropdown__wrapper.#{$prefix}--dropdown__wrapper--inline {
     position: relative;
-    left: -1.5rem;
+    inset-inline-start: -1.5rem;
     grid-gap: 0;
-    margin-left: 0.5rem;
+    margin-inline-start: 0.5rem;
   }
 
   &:not([data-succeeded]) > .tkn--task-link {
@@ -94,7 +99,7 @@ limitations under the License.
   }
 
   &:first-child > .tkn--task-link {
-    margin-top: 0;
+    margin-block-start: 0;
   }
 
   .tkn--step-list {
@@ -103,7 +108,7 @@ limitations under the License.
 }
 
 .tkn--task--retries-menu-options {
-  max-height: 350px;
+  max-block-size: 350px;
   overflow: auto;
 
   .#{$prefix}--overflow-menu-options__option {

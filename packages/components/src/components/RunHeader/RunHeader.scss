@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,39 +17,42 @@ header.tkn--pipeline-run-header {
   @include type-style('body-short-01');
   line-height: 1;
   background: $ui-01;
-  margin-bottom: 2em;
-  padding: .4em 0 .4em 1.5em;
+  margin-block-end: 2em;
+  padding-block: 0.4em;
+  padding-inline-start: 1.5em;
+  padding-inline-end: 0;
 
   .tkn--header-skeleton {
-    margin-top: 0.9rem;
-    height: 2rem;
-    width: 15rem;
+    margin-block-start: 0.9rem;
+    block-size: 2rem;
+    inline-size: 15rem;
   }
 
   h1.tkn--run-header--heading {
     @include type-style('productive-heading-04');
     display: flex;
     align-items: baseline;
-    height: 3rem;
-    margin-bottom: 0;
+    block-size: 3rem;
+    margin-block-end: 0;
 
     .tkn--run-name {
-      min-width: 5rem;
+      min-inline-size: 5rem;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
     .tkn--time {
-      margin: 0 1.15rem;
+      margin-block: 0;
+      margin-inline: 1.15rem;
       font-size: 0.875rem;
       font-weight: 300;
       white-space: nowrap;
     }
 
     .tkn--actions-dropdown {
-      margin-left: auto;
-      margin-right: 0.5rem;
+      margin-inline-start: auto;
+      margin-inline-end: 0.5rem;
     }
   }
 
@@ -58,7 +61,7 @@ header.tkn--pipeline-run-header {
     align-items: baseline;
 
     .tkn--status-label {
-      margin-right: 1.15rem;
+      margin-inline-end: 1.15rem;
       font-size: 0.95rem;
       font-weight: 400;
       letter-spacing: 0.02em;
@@ -67,7 +70,7 @@ header.tkn--pipeline-run-header {
     .tkn--status-message {
       line-height: 1rem;
       vertical-align: bottom;
-      max-width: 500px;
+      max-inline-size: 500px;
       display: inline-block;
       white-space: nowrap;
       overflow: hidden;
