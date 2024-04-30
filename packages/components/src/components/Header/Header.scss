@@ -13,15 +13,15 @@ limitations under the License.
 
 header.#{$prefix}--header.tkn--header {
   .#{$prefix}--list-box__wrapper {
-    margin-top: 0.5rem;
-    margin-right: 1rem;
+    margin-block-start: 0.5rem;
+    margin-inline-end: 1rem;
 
     &:last-child {
-      margin-right: 2rem;
+      margin-inline-end: 2rem;
     }
   }
 
   .tkn--logout-btn {
-    padding-right: 2px;
+    padding-inline-end: 2px;
   }
 }

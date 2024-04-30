@@ -12,20 +12,20 @@ limitations under the License.
 */
 
 .tkn--trigger-interceptors {
-  margin-top: $spacing-05;
+  margin-block-start: $spacing-05;
 
   .tkn--trigger-interceptors-accordion {
-    margin-top: $spacing-03;
+    margin-block-start: $spacing-03;
   }
 }
 
 .tkn--trigger-details {
-  margin-top: $spacing-05;
+  margin-block-start: $spacing-05;
 }
 
 .tkn--trigger-resourcelinks {
   display: grid;
-  margin-top: $spacing-03;
+  margin-block-start: $spacing-03;
   grid-template-columns: 100px 500px;
   grid-gap: 30px;
   line-height: 1.5rem;
@@ -45,11 +45,11 @@ limitations under the License.
 }
 
 .tkn--trigger-interceptor-secret-details {
-  margin-left: $spacing-04;
+  margin-inline-start: $spacing-04;
 }
 
 .tkn--trigger-interceptor-service-details {
-  margin-left: $spacing-04;
+  margin-inline-start: $spacing-04;
 
   .tkn--trigger .tkn--details & {
     p span:first-child {

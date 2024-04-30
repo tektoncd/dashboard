@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -23,11 +23,11 @@ limitations under the License.
 
   &:hover > .tkn--step-link,
   > .tkn--step-link:hover {
-    border-left-color: $hover-ui;
+    border-inline-start-color: $hover-ui;
   }
 
   &[data-selected] > .tkn--step-link {
-    border-left: 3px solid $interactive-04;
+    border-inline-start: 3px solid $interactive-04;
   }
 
   > .tkn--step-link {
@@ -35,18 +35,20 @@ limitations under the License.
     display: flex;
     align-items: baseline;
     position: relative;
-    padding: 0 1rem 0 .75rem;
+    padding-block: 0;
+    padding-inline-start: 0.75rem;
+    padding-inline-end: 1rem;
     line-height: 2.2rem;
     font-size: 0.78rem;
     letter-spacing: 0.02rem;
     text-decoration: none;
-    border-left: 3px solid $ui-01;
+    border-inline-start: 3px solid $ui-01;
   }
 
   .tkn--status-icon {
     flex-shrink: 0;
     align-self: center;
-    margin-right: 0.75rem;
+    margin-inline-end: 0.75rem;
   }
 
   .tkn--step-name {

@@ -13,19 +13,19 @@ limitations under the License.
 
 .status-icons-list {
   h3 {
-    margin-bottom: 1rem;
+    margin-block-end: 1rem;
   }
 
   ul {
-    margin-bottom: 2rem;
+    margin-block-end: 2rem;
   }
 
   li {
-    margin-bottom: 0.25rem;
+    margin-block-end: 0.25rem;
   }
   
   .tkn--status-icon {
-    margin-right: 0.5rem;
+    margin-inline-end: 0.5rem;
     vertical-align: middle;
   }  
 }

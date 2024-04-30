@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,7 @@ limitations under the License.
 .tkn--table {
   // add space between adjacent tables
   ~ .tkn--table {
-    margin-top: $spacing-05;
+    margin-block-start: $spacing-05;
   }
 
   .#{$prefix}--table-toolbar {
@@ -22,22 +22,22 @@ limitations under the License.
   }
 
   .#{$prefix}--data-table.#{$prefix}--data-table--short td.#{$prefix}--table-expand {
-    height: 2rem;
+    block-size: 2rem;
   }
 
   .#{$prefix}--data-table-header {
-    padding-left: 0;
-    padding-bottom: $spacing-03;
+    padding-inline-start: 0;
+    padding-block-end: $spacing-03;
   }
 
   .#{$prefix}--data-table-container {
-    margin-top: 0;
-    width: 100%;
+    margin-block-start: 0;
+    inline-size: 100%;
   }
 
   .#{$prefix}--data-table td {
     &:not(.cell-actions):not(.#{$prefix}--table-column-checkbox) {
-      max-width: 10vw;
+      max-inline-size: 10vi;
       vertical-align: middle;
 
       span {
@@ -49,34 +49,34 @@ limitations under the License.
     }
 
     &.#{$prefix}--table-column-checkbox {
-      padding-top: 0;
-      padding-bottom: 0;
+      padding-block-start: 0;
+      padding-block-end: 0;
       vertical-align: middle;
 
       .#{$prefix}--checkbox-label {
-        padding-left: $spacing-05;
+        padding-inline-start: $spacing-05;
       }
     }
 
     &.cell-actions {
-      width: 3rem;
+      inline-size: 3rem;
     }
 
     &.cell-run, &.cell-time {
       svg {
-        margin-right: 6px;
+        margin-inline-end: 6px;
         vertical-align: middle;
       }
     }
 
     &.cell-run svg {
-      width: 14px;
-      height: 14px;
+      inline-size: 14px;
+      block-size: 14px;
     }
 
     &.cell-time svg {
-      width: 12px;
-      height: 12px;
+      inline-size: 12px;
+      block-size: 12px;
     }
 
     &.cell-actions {
@@ -91,7 +91,7 @@ limitations under the License.
   }
 
   .noRows {
-    width: 100%;
+    inline-size: 100%;
     text-align: center;
     font-style: italic;
     font-size: 1rem;
@@ -100,8 +100,8 @@ limitations under the License.
   &.tkn--table--inline-actions {
     .#{$prefix}--data-table td {
       &.cell-actions {
-        text-align: right;
-        width: 8rem;
+        text-align: end;
+        inline-size: 8rem;
       }
     }
   }
@@ -131,37 +131,39 @@ limitations under the License.
         background-color: $ui-01;
         display: flex;
         align-items: center;
-        border-right: 1px solid $ui-03;
-        margin-right: 0;
-        padding-right: $spacing-03;
+        border-inline-end: 1px solid $ui-03;
+        margin-inline-end: 0;
+        padding-inline-end: $spacing-03;
         white-space: nowrap;
 
         .#{$prefix}--label {
-          padding-left: $spacing-05;
+          padding-inline-start: $spacing-05;
         }
 
         .#{$prefix}--text-input {
-          padding: 0 $spacing-07 0 $spacing-03;
+          padding-block: 0;
+          padding-inline-start: $spacing-03;
+          padding-inline-end: $spacing-07;
         }
 
         .#{$prefix}--list-box__menu-icon {
-          right: $spacing-03;
+          inset-inline-end: $spacing-03;
         }
 
         .#{$prefix}--dropdown,
         .#{$prefix}--multi-select {
-          width: 10rem;
+          inline-size: 10rem;
         }
 
         .#{$prefix}--multi-select--inline,
         .#{$prefix}--list-box--inline {
           background-color: $ui-01;
-          height: 100%;
-          max-height: 3rem;
+          block-size: 100%;
+          max-block-size: 3rem;
         }
 
         .#{$prefix}--list-box__field {
-          height: 100%;
+          block-size: 100%;
 
           input.#{$prefix}--text-input {
             &:placeholder-shown {
@@ -171,7 +173,7 @@ limitations under the License.
         }
 
         &.#{$prefix}--dropdown__wrapper--inline .#{$prefix}--label {
-          padding-left: 1rem;
+          padding-inline-start: 1rem;
         }
 
         @media (max-width: 672px) {
@@ -184,8 +186,8 @@ limitations under the License.
   }
 
   &.tkn--table-with-details tbody td {
-    padding-top: 14px;
-    padding-bottom: 14px;
+    padding-block-start: 14px;
+    padding-block-end: 14px;
 
     &:not(.cell-actions):not(.#{$prefix}--table-column-checkbox) > div {
       display: flex;
@@ -197,20 +199,20 @@ limitations under the License.
     }
 
     &.#{$prefix}--table-column-checkbox {
-      padding-top: 12px;
+      padding-block-start: 12px;
       vertical-align: baseline;
     }
 
     &.cell-actions {
-      padding-top: 2px;
+      padding-block-start: 2px;
     }
 
     &.cell-status .tkn--table--sub {
-      margin-left: 1.7rem;
+      margin-inline-start: 1.7rem;
     }
 
     .tkn--table--sub {
-      margin-top: 2px;
+      margin-block-start: 2px;
     }
   }
 

@@ -1,5 +1,5 @@
 /*
-Copyright 2021 The Tekton Authors
+Copyright 2021-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -37,10 +37,9 @@ $tkn--breakpoint-max: 1584px;
 
 .tkn--css-grid {
   display: grid;
-  max-width: 99rem;
-  padding-right: calc(var(--tkn-grid-margin) + var(--tkn-grid-gutter) / 2);
-  padding-left: calc(var(--tkn-grid-margin) + var(--tkn-grid-gutter) / 2);
-  margin-right: auto;
+  max-inline-size: 99rem;
+  padding-inline: calc(var(--tkn-grid-margin) + var(--tkn-grid-gutter) / 2);
+  margin-inline-end: auto;
   column-gap: var(--tkn-grid-gutter);
   grid-template-columns: repeat(
     var(--tkn-grid-columns),

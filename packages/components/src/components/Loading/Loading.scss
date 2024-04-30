@@ -1,5 +1,5 @@
 /*
-Copyright 2023 The Tekton Authors
+Copyright 2023-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,12 +12,12 @@ limitations under the License.
 */
 
 .#{$prefix}--loading-overlay.tkn--loading-overlay {
-  top: 3rem;
+  inset-block-start: 3rem;
   flex-direction: column;
 
   .#{$prefix}--loading {
-    margin-top: -3rem;
-    margin-bottom: $spacing-05;
+    margin-block-start: -3rem;
+    margin-block-end: $spacing-05;
   }
 
   .tkn--loading-text {

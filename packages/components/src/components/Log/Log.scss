@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,7 +13,9 @@ limitations under the License.
 
 pre.tkn--log {
   position: relative;
-  padding: 2rem 1.6rem 1.3rem 1.6rem;
+  padding-block-start: 2rem;
+  padding-block-end: 1.3rem;
+  padding-inline: 1.6rem;
   @include carbon--font-family('mono');
   font-size: 0.75rem;
   @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
@@ -47,39 +49,39 @@ pre.tkn--log {
 
   .#{$prefix}--btn-set {
     position: absolute;
-    top: 0;
-    right: 0;
+    inset-block-start: 0;
+    inset-inline-end: 0;
   }
 
   .button-container {
     position: absolute;
     clip-path: inset(0); // ensure the children with position:fixed are not shown outside this element.
-    top: 3.125rem; //equals the maximum between padding-top of pre.tkn--log and between the page header height
-    bottom: 0;
-    right: 0;
-    width: 1.6rem; //equals the padding-right of pre.tkn--log
+    inset-block-start: 3.125rem; //equals the maximum between padding-block-start of pre.tkn--log and between the page header height
+    inset-block-end: 0;
+    inset-inline-end: 0;
+    inline-size: 1.6rem; //equals the padding-inline-end of pre.tkn--log
   }
 
-  #log-scroll-to-top-btn, #log-scroll-to-bottom-btn {
+  #log-scroll-to-start-btn, #log-scroll-to-end-btn {
     position: fixed;
-    right: var(--tkn-log-element-right);
+    inset-inline-end: var(--tkn-log-element-right);
 
     &::before { // the tooltip is not shown because it is outside of its parent .button-container (which has clip-path inset) But fin still appears.
       content: none; // To remove fin of truncated tooltip. To  obtain higher specificity than Carbon css, id selector is needed.
     }
   }
   
-  #log-scroll-to-top-btn {
-    top: calc(var(--tkn-scroll-button-top) + 3.125rem); //3.125 rem is the maximum between padding-top of pre.tkn--log and between the page header height
+  #log-scroll-to-start-btn {
+    inset-block-start: calc(var(--tkn-scroll-button-top) + 3.125rem); //3.125 rem is the maximum between padding-block-start of pre.tkn--log and between the page header height
   }
 
-  #log-scroll-to-bottom-btn {
-    bottom: var(--tkn-scroll-button-bottom);
+  #log-scroll-to-end-btn {
+    inset-block-end: var(--tkn-scroll-button-bottom);
   }
 
   .#{$prefix}--copy-btn {
-    width: 2rem;
-    height: 2rem;
+    inline-size: 2rem;
+    block-size: 2rem;
     background-color: $ui-background;
 
     &:hover {
@@ -112,6 +114,6 @@ pre.tkn--log {
   }
 
   .tkn--log-container:not(:empty) + .tkn--log-trailer {
-    margin-top: 1rem;
+    margin-block-start: 1rem;
   }
 }

@@ -15,28 +15,28 @@ limitations under the License.
   display: flex;
 
   .tkn--status-icon {
-    margin-right: 0.5em;
+    margin-inline-end: 0.5em;
     vertical-align: sub;
     flex-shrink: 0;
 
     &.tkn--status-icon--warning {
-      width: 24px;
-      height: 24px;
-      margin-right: 0.25em;
+      inline-size: 24px;
+      block-size: 24px;
+      margin-inline-end: 0.25em;
     }
   }
 }
 
 .#{$prefix}--modal .#{$prefix}--tile-group {
-  margin-top: 2rem;
+  margin-block-start: 2rem;
 
   .#{$prefix}--tile {
     &:not(:last-child) {
-      margin-bottom: 0.5rem;
+      margin-block-end: 0.5rem;
     }
 
     .tkn--tile--description {
-      margin-top: 1rem;
+      margin-block-start: 1rem;
       @include type-style('helper-text-01');
     }
   }
