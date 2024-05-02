@@ -27,6 +27,7 @@ import {
   useCustomResource,
   useInterceptor,
   usePipeline,
+  useStepAction,
   useTask
 } from '../../api';
 
@@ -40,6 +41,8 @@ function useResource({ group, name, namespace, type, version }) {
       return useInterceptor({ name, namespace });
     case 'pipelines':
       return usePipeline({ name, namespace });
+    case 'stepactions':
+      return useStepAction({ name, namespace });
     case 'tasks':
       return useTask({ name, namespace });
     default:

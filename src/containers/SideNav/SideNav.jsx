@@ -123,6 +123,11 @@ function SideNav({ expanded, showKubernetesResources = false }) {
           >
             CustomRuns
           </SideNavMenuItem>
+          <SideNavMenuItem
+            {...getMenuItemProps(getPath(urls.stepActions.all()))}
+          >
+            StepActions
+          </SideNavMenuItem>
           {isTriggersInstalled && (
             <SideNavMenuItem
               {...getMenuItemProps(getPath(urls.eventListeners.all()))}

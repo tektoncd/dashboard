@@ -224,6 +224,7 @@
   "dashboard.skipToContent": "주요 콘텐츠로 건너뛰기",
   "dashboard.startPipelineRun.actionText": "시작",
   "dashboard.step.definitionNotAvailable": "설명: 단계 정의를 사용할 수 없음",
+  "dashboard.stepActions.errorLoading": "",
   "dashboard.tableHeader.createdTime": "작성일",
   "dashboard.tableHeader.default": "기본값",
   "dashboard.tableHeader.expression": "표현",

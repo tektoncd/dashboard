@@ -5,6 +5,7 @@
     { "label": "ClusterTasks", "path": "/clustertasks" },
     { "label": "TaskRuns", "path": "/taskruns" },
     { "label": "CustomRuns", "path": "/customruns" },
+    { "label": "StepActions", "path": "/stepactions" },
     { "label": "EventListeners", "path": "/eventlisteners" },
     { "label": "Triggers", "path": "/triggers" },
     { "label": "TriggerBindings", "path": "/triggerbindings" },

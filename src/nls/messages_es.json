@@ -224,6 +224,7 @@
   "dashboard.skipToContent": "",
   "dashboard.startPipelineRun.actionText": "",
   "dashboard.step.definitionNotAvailable": "descripción: la definición del paso no está disponible",
+  "dashboard.stepActions.errorLoading": "",
   "dashboard.tableHeader.createdTime": "Creado",
   "dashboard.tableHeader.default": "",
   "dashboard.tableHeader.expression": "",
