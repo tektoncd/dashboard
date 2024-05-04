@@ -270,27 +270,19 @@ export function App({ lang }) {
                           <CreatePipelineRun />
                         </ReadWriteRoute>
                       </CompatRoute>
+                      <CompatRoute path={paths.pipelineRuns.byName()}>
+                        <NamespacedRoute isResourceDetails>
+                          <PipelineRun />
+                        </NamespacedRoute>
+                      </CompatRoute>
                       <CompatRoute path={paths.pipelineRuns.all()}>
                         <NamespacedRoute>
                           <PipelineRuns />
                         </NamespacedRoute>
                       </CompatRoute>
-                      <CompatRoute
-                        path={paths.pipelineRuns.byNamespace()}
-                        exact
-                      >
+                      <CompatRoute path={paths.pipelineRuns.byNamespace()}>
                         <NamespacedRoute>
                           <PipelineRuns />
-                        </NamespacedRoute>
-                      </CompatRoute>
-                      <CompatRoute path={paths.pipelineRuns.byPipeline()} exact>
-                        <NamespacedRoute>
-                          <PipelineRuns />
-                        </NamespacedRoute>
-                      </CompatRoute>
-                      <CompatRoute path={paths.pipelineRuns.byName()}>
-                        <NamespacedRoute isResourceDetails>
-                          <PipelineRun />
                         </NamespacedRoute>
                       </CompatRoute>
                       <CompatRoute path={paths.tasks.all()} exact>
@@ -308,24 +300,19 @@ export function App({ lang }) {
                           <CreateTaskRun />
                         </ReadWriteRoute>
                       </CompatRoute>
+                      <CompatRoute path={paths.taskRuns.byName()}>
+                        <NamespacedRoute isResourceDetails>
+                          <TaskRun />
+                        </NamespacedRoute>
+                      </CompatRoute>
                       <CompatRoute path={paths.taskRuns.all()}>
                         <NamespacedRoute>
                           <TaskRuns />
                         </NamespacedRoute>
                       </CompatRoute>
-                      <CompatRoute path={paths.taskRuns.byNamespace()} exact>
+                      <CompatRoute path={paths.taskRuns.byNamespace()}>
                         <NamespacedRoute>
                           <TaskRuns />
-                        </NamespacedRoute>
-                      </CompatRoute>
-                      <CompatRoute path={paths.taskRuns.byTask()} exact>
-                        <NamespacedRoute>
-                          <TaskRuns />
-                        </NamespacedRoute>
-                      </CompatRoute>
-                      <CompatRoute path={paths.taskRuns.byName()} exact>
-                        <NamespacedRoute isResourceDetails>
-                          <TaskRun />
                         </NamespacedRoute>
                       </CompatRoute>
                       <CompatRoute path={paths.customRuns.create()} exact>

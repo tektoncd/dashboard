@@ -44,7 +44,7 @@
     "react-hot-loader": "^4.13.1",
     "react-intl": "^6.6.5",
     "react-router-dom": "^5.3.4",
-    "react-router-dom-v5-compat": "^6.4.5",
+    "react-router-dom-v5-compat": "^6.23.0",
     "reconnecting-websocket": "^4.4.0"
   },
   "devDependencies": {

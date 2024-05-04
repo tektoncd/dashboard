@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,6 +12,7 @@ limitations under the License.
 */
 import { generatePath } from 'react-router-dom-v5-compat';
 import { paths, urls } from './router';
+import { labels } from './constants';
 
 const clusterInterceptorName = 'fake_clusterInterceptorName';
 const clusterTriggerBindingName = 'fake_clusterTriggerBindingName';
@@ -209,8 +210,16 @@ describe('pipelineRuns', () => {
   });
 
   it('byPipeline', () => {
-    expect(urls.pipelineRuns.byPipeline({ namespace, pipelineName })).toEqual(
-      generatePath(paths.pipelineRuns.byPipeline(), { namespace, pipelineName })
+    const base = 'http://localhost';
+    const url = new URL(
+      urls.pipelineRuns.byPipeline({ namespace, pipelineName }),
+      base
+    );
+    expect(url.pathname).toEqual(
+      generatePath(paths.pipelineRuns.byNamespace(), { namespace })
+    );
+    expect(url.searchParams.get('labelSelector')).toEqual(
+      `${labels.PIPELINE}=${pipelineName}`
     );
   });
 });
@@ -283,11 +292,13 @@ describe('taskRuns', () => {
   });
 
   it('byClusterTask', () => {
-    expect(urls.taskRuns.byClusterTask({ namespace, taskName })).toEqual(
-      generatePath(paths.taskRuns.byClusterTask(), {
-        namespace,
-        taskName
-      })
+    const base = 'http://localhost';
+    const url = new URL(urls.taskRuns.byClusterTask({ taskName }), base);
+    expect(url.pathname).toEqual(
+      generatePath(paths.taskRuns.all(), { namespace })
+    );
+    expect(url.searchParams.get('labelSelector')).toEqual(
+      `${labels.CLUSTER_TASK}=${taskName}`
     );
   });
 
@@ -304,8 +315,13 @@ describe('taskRuns', () => {
   });
 
   it('byTask', () => {
-    expect(urls.taskRuns.byTask({ namespace, taskName })).toEqual(
-      generatePath(paths.taskRuns.byTask(), { namespace, taskName })
+    const base = 'http://localhost';
+    const url = new URL(urls.taskRuns.byTask({ namespace, taskName }), base);
+    expect(url.pathname).toEqual(
+      generatePath(paths.taskRuns.byNamespace(), { namespace })
+    );
+    expect(url.searchParams.get('labelSelector')).toEqual(
+      `${labels.TASK}=${taskName}`
     );
   });
 
