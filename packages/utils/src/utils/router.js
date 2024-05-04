@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,6 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import { generatePath } from 'react-router-dom-v5-compat';
+import { labels } from './constants';
 
 function byNamespace({ path = '' } = {}) {
   return `/namespaces/:namespace${path}`;
@@ -115,11 +116,6 @@ export const paths = {
     byNamespace() {
       return byNamespace({ path: '/pipelineruns' });
     },
-    byPipeline() {
-      return byNamespace({
-        path: '/pipelineruns?labelSelector=tekton.dev%2Fpipeline%3D:pipelineName'
-      });
-    },
     create() {
       return '/pipelineruns/create';
     }
@@ -155,14 +151,6 @@ export const paths = {
     },
     byNamespace() {
       return byNamespace({ path: '/taskruns' });
-    },
-    byClusterTask() {
-      return '/taskruns?labelSelector=tekton.dev%2FclusterTask%3D:taskName';
-    },
-    byTask() {
-      return byNamespace({
-        path: '/taskruns?labelSelector=tekton.dev%2Ftask%3D:taskName'
-      });
     },
     create() {
       return '/taskruns/create';
@@ -221,4 +209,27 @@ const reducer = target =>
     return accumulator;
   }, {});
 
-export const urls = reducer(paths);
+const urls = reducer(paths);
+
+function filteredURL({ baseURL, label, name }) {
+  const labelSelector = `${label}=${name}`;
+  const searchParams = new URLSearchParams({ labelSelector }).toString();
+  return `${baseURL}?${searchParams}`;
+}
+
+urls.pipelineRuns.byPipeline = ({ namespace, pipelineName: name }) => {
+  const baseURL = urls.pipelineRuns.byNamespace({ namespace });
+  return filteredURL({ baseURL, label: labels.PIPELINE, name });
+};
+
+urls.taskRuns.byClusterTask = ({ taskName: name }) => {
+  const baseURL = urls.taskRuns.all();
+  return filteredURL({ baseURL, label: labels.CLUSTER_TASK, name });
+};
+
+urls.taskRuns.byTask = ({ namespace, taskName: name }) => {
+  const baseURL = urls.taskRuns.byNamespace({ namespace });
+  return filteredURL({ baseURL, label: labels.TASK, name });
+};
+
+export { urls };
