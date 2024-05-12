@@ -48,7 +48,7 @@
     "reconnecting-websocket": "^4.4.0"
   },
   "devDependencies": {
-    "@formatjs/cli": "^6.2.9",
+    "@formatjs/cli": "^6.2.10",
     "@modyfi/vite-plugin-yaml": "^1.1.0",
     "@storybook/addon-actions": "^8.0.10",
     "@storybook/addon-essentials": "^8.0.10",
