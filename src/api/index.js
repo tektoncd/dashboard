@@ -22,7 +22,6 @@ import {
   apiRoot,
   getKubeAPI,
   getQueryParams,
-  getResourcesAPI,
   getTektonAPI,
   getTektonPipelinesAPIVersion,
   isLogTimestampsEnabled,
@@ -49,26 +48,37 @@ export * from './triggerBindings';
 export * from './triggers';
 export * from './triggerTemplates';
 
-function getCustomResourcesAPI({
-  filters,
+export function getCustomResources({
+  filters = [],
   involvedObjectKind,
   involvedObjectName,
   name,
   ...rest
 }) {
-  return getResourcesAPI(
-    rest,
-    getQueryParams({ filters, involvedObjectKind, involvedObjectName, name })
-  );
-}
-
-export function getCustomResources({ filters = [], ...rest }) {
-  const uri = getCustomResourcesAPI({ filters, ...rest });
+  const { isWebSocket, group, namespace, type, version } = rest;
+  const uri = getKubeAPI({
+    group,
+    kind: type,
+    params: { isWebSocket, name, namespace },
+    queryParams: getQueryParams({
+      filters,
+      involvedObjectKind,
+      involvedObjectName,
+      name
+    }),
+    version
+  });
   return get(uri);
 }
 
 export function useCustomResources(params, queryConfig) {
-  const webSocketURL = getCustomResourcesAPI({ ...params, isWebSocket: true });
+  const webSocketURL = getKubeAPI({
+    group: params.group,
+    kind: params.type,
+    params: { isWebSocket: true, namespace: params.namespace },
+    queryParams: getQueryParams({ filters: params.filters }),
+    version: params.version
+  });
   return useCollection({
     api: getCustomResources,
     kind: params.type,
@@ -78,13 +88,27 @@ export function useCustomResources(params, queryConfig) {
   });
 }
 
-export function getCustomResource(params) {
-  const uri = getResourcesAPI(params);
+export function getCustomResource({ group, name, namespace, type, version }) {
+  const uri = getKubeAPI({
+    group,
+    kind: type,
+    params: { name, namespace },
+    version
+  });
   return get(uri);
 }
 
 export function useCustomResource(params) {
-  const webSocketURL = getCustomResourcesAPI({ ...params, isWebSocket: true });
+  const webSocketURL = getKubeAPI({
+    group: params.group,
+    kind: params.type,
+    params: {
+      isWebSocket: true,
+      name: params.name,
+      namespace: params.namespace
+    },
+    version: params.version
+  });
   return useResource({
     api: getCustomResource,
     kind: params.type,
@@ -133,7 +157,12 @@ export async function getInstallProperties() {
 }
 
 function getNamespacesAPI({ isWebSocket } = {}) {
-  return getKubeAPI('namespaces', { isWebSocket });
+  return getKubeAPI({
+    group: 'core',
+    version: 'v1',
+    kind: 'namespaces',
+    params: { isWebSocket }
+  });
 }
 
 export function getNamespaces() {
@@ -152,16 +181,19 @@ export function useNamespaces(queryConfig) {
 }
 
 export function usePod(params, queryConfig) {
-  const gvt = { group: 'core', type: 'pods', version: 'v1' };
-  const webSocketURL = getCustomResourcesAPI({
-    ...gvt,
-    ...params,
-    isWebSocket: true
+  const group = 'core';
+  const type = 'pods';
+  const version = 'v1';
+  const webSocketURL = getKubeAPI({
+    group,
+    kind: type,
+    params: { ...params, isWebSocket: true },
+    version
   });
   return useResource({
     api: getCustomResource,
     kind: 'customResource',
-    params: { ...gvt, ...params },
+    params: { group, type, version, ...params },
     queryConfig,
     webSocketURL
   });
@@ -179,9 +211,12 @@ export function useEvents(
     type: 'events',
     version: 'v1'
   };
-  const webSocketURL = getCustomResourcesAPI({
-    ...params,
-    isWebSocket: true
+  const webSocketURL = getKubeAPI({
+    group: params.group,
+    kind: params.type,
+    params: { isWebSocket: true, namespace },
+    queryParams: getQueryParams({ involvedObjectKind, involvedObjectName }),
+    version: params.version
   });
   return useCollection({
     api: getCustomResources,
@@ -221,11 +256,13 @@ export function getPodLogURL({ container, name, namespace, follow }) {
     ...(follow && { follow }),
     ...(timestamps && { timestamps })
   };
-  const uri = `${getKubeAPI(
-    'pods',
-    { name, namespace, subResource: 'log' },
-    queryParams
-  )}`;
+  const uri = `${getKubeAPI({
+    group: 'core',
+    kind: 'pods',
+    params: { name, namespace, subResource: 'log' },
+    queryParams,
+    version: 'v1'
+  })}`;
   return uri;
 }
 
