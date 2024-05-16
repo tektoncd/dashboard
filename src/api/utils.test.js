@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -55,67 +55,6 @@ describe('getTektonAPI', () => {
     expect(uri).toContain('clustertasks');
     expect(uri).toContain('somename');
     expect(uri).not.toContain('namespaces');
-  });
-});
-
-describe('getResourcesAPI', () => {
-  it('returns a URI containing the given type', () => {
-    const uri = utils.getResourcesAPI({
-      group: 'test.dev',
-      version: 'testversion',
-      type: 'testtype'
-    });
-    expect(uri).toContain('test.dev');
-    expect(uri).toContain('testversion');
-    expect(uri).toContain('testtype');
-  });
-
-  it('returns a URI containing the given type and name without namespace', () => {
-    const uri = utils.getResourcesAPI({
-      group: 'test.dev',
-      version: 'testversion',
-      type: 'testtype',
-      name: 'testname'
-    });
-    expect(uri).toContain('test.dev');
-    expect(uri).toContain('testversion');
-    expect(uri).toContain('testtype');
-    expect(uri).toContain('testname');
-    expect(uri).not.toContain('namespaces');
-  });
-
-  it('returns a URI containing the given type, name and namespace', () => {
-    const uri = utils.getResourcesAPI({
-      group: 'test.dev',
-      version: 'testversion',
-      type: 'testtype',
-      namespace: 'testnamespace',
-      name: 'testname'
-    });
-    expect(uri).toContain('test.dev');
-    expect(uri).toContain('testversion');
-    expect(uri).toContain('testtype');
-    expect(uri).toContain('testname');
-    expect(uri).toContain('namespaces');
-    expect(uri).toContain('testnamespace');
-  });
-
-  it('handles the core group correctly', () => {
-    const uri = utils.getResourcesAPI({
-      group: 'core',
-      version: 'testversion',
-      type: 'testtype',
-      namespace: 'testnamespace',
-      name: 'testname'
-    });
-    expect(uri).not.toContain('core');
-    expect(uri).toContain('api');
-    expect(uri).not.toContain('apis');
-    expect(uri).toContain('testversion');
-    expect(uri).toContain('testtype');
-    expect(uri).toContain('testname');
-    expect(uri).toContain('namespaces');
-    expect(uri).toContain('testnamespace');
   });
 });
 

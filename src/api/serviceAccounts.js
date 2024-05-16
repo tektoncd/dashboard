@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,14 +15,24 @@ import { get } from './comms';
 import { getKubeAPI, useCollection } from './utils';
 
 export function getServiceAccounts({ namespace } = {}) {
-  const uri = getKubeAPI('serviceaccounts', { namespace });
+  const uri = getKubeAPI({
+    group: 'core',
+    kind: 'serviceaccounts',
+    params: { namespace },
+    version: 'v1'
+  });
   return get(uri);
 }
 
 export function useServiceAccounts(params, queryConfig) {
-  const webSocketURL = getKubeAPI('serviceaccounts', {
-    ...params,
-    isWebSocket: true
+  const webSocketURL = getKubeAPI({
+    group: 'core',
+    kind: 'serviceaccounts',
+    params: {
+      ...params,
+      isWebSocket: true
+    },
+    version: 'v1'
   });
   return useCollection({
     api: getServiceAccounts,

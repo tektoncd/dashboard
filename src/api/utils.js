@@ -22,41 +22,19 @@ export const tektonAPIGroup = 'tekton.dev';
 export const triggersAPIGroup = 'triggers.tekton.dev';
 export const dashboardAPIGroup = 'dashboard.tekton.dev';
 
-export function getKubeAPI(
-  type,
-  { isWebSocket, name = '', namespace, subResource } = {},
-  queryParams
-) {
+export function getKubeAPI({
+  group,
+  kind,
+  params: { isWebSocket, name = '', namespace, subResource } = {},
+  queryParams,
+  version
+}) {
   const queryParamsToUse = {
     ...queryParams,
     ...(isWebSocket
       ? { [subResource === 'log' ? 'follow' : 'watch']: true }
-      : null)
-  };
-
-  return [
-    isWebSocket ? apiRoot.replace('http', 'ws') : apiRoot,
-    '/api/v1/',
-    namespace && namespace !== ALL_NAMESPACES
-      ? `namespaces/${encodeURIComponent(namespace)}/`
-      : '',
-    type,
-    '/',
-    encodeURIComponent(name),
-    subResource ? `/${subResource}` : '',
-    Object.keys(queryParamsToUse).length > 0
-      ? `?${new URLSearchParams(queryParamsToUse).toString()}`
-      : ''
-  ].join('');
-}
-
-export function getResourcesAPI(
-  { isWebSocket, group, name = '', namespace, type, version },
-  queryParams
-) {
-  const queryParamsToUse = {
-    ...queryParams,
-    ...(isWebSocket ? { watch: true } : null)
+      : null),
+    ...(isWebSocket && name ? { fieldSelector: `metadata.name=${name}` } : null)
   };
 
   return [
@@ -65,9 +43,10 @@ export function getResourcesAPI(
     namespace && namespace !== ALL_NAMESPACES
       ? `namespaces/${encodeURIComponent(namespace)}/`
       : '',
-    type,
+    kind,
     '/',
-    encodeURIComponent(name),
+    isWebSocket ? '' : encodeURIComponent(name),
+    subResource ? `/${subResource}` : '',
     Object.keys(queryParamsToUse).length > 0
       ? `?${new URLSearchParams(queryParamsToUse).toString()}`
       : ''
@@ -109,8 +88,9 @@ export function getTektonPipelinesAPIVersion() {
   return isPipelinesV1ResourcesEnabled() ? 'v1' : 'v1beta1';
 }
 
+// TODO: remove this and replace usage with getKubeAPI directly
 export function getTektonAPI(
-  type,
+  kind,
   {
     group = tektonAPIGroup,
     isWebSocket,
@@ -120,10 +100,13 @@ export function getTektonAPI(
   } = {},
   queryParams
 ) {
-  return getResourcesAPI(
-    { group, isWebSocket, name, namespace, type, version },
-    queryParams
-  );
+  return getKubeAPI({
+    group,
+    kind,
+    params: { isWebSocket, name, namespace },
+    queryParams,
+    version
+  });
 }
 
 export const NamespaceContext = createContext();
