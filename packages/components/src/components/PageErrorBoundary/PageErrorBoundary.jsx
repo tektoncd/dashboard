@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import { useIntl } from 'react-intl';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router-dom';
 
 import ErrorBoundary from '../ErrorBoundary';
 

@@ -12,14 +12,9 @@ limitations under the License.
 */
 /* istanbul ignore file */
 import { useIntl } from 'react-intl';
-import { Link } from 'react-router-dom';
-import { useLocation, useParams } from 'react-router-dom-v5-compat';
+import { useLocation, useParams } from 'react-router-dom';
 import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
-import {
-  Link as CustomLink,
-  FormattedDate,
-  Table
-} from '@tektoncd/dashboard-components';
+import { FormattedDate, Link, Table } from '@tektoncd/dashboard-components';
 
 import ListPageLayout from '../ListPageLayout';
 import {
@@ -130,7 +125,6 @@ export function ResourceListContainer() {
               id: uid,
               name: (
                 <Link
-                  component={CustomLink}
                   to={
                     resourceNamespace
                       ? urls.kubernetesResources.byName({

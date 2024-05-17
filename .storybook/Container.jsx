@@ -13,9 +13,7 @@ limitations under the License.
 
 import { StrictMode } from 'react';
 import { IntlProvider } from 'react-intl';
-import { createMemoryHistory } from 'history';
-import { Router, Switch } from 'react-router-dom';
-import { CompatRoute, CompatRouter } from 'react-router-dom-v5-compat';
+import { Route, MemoryRouter as Router, Routes } from 'react-router-dom';
 
 import messages from '../src/nls/messages_en.json';
 
@@ -31,16 +29,17 @@ export default function Container({
     <IntlProvider locale="en" defaultLocale="en" messages={messages['en']}>
       {notes && <p>{notes}</p>}
       <div data-floating-menu-container role="main">
-        <Router history={createMemoryHistory({ initialEntries: [route] })}>
-          <CompatRouter>
-            <Switch>
-              <CompatRoute path={path}>
+        <Router initialEntries={[route]}>
+          <Routes>
+            <Route
+              path={path}
+              element={
                 <StrictMode>
                   <Story />
                 </StrictMode>
-              </CompatRoute>
-            </Switch>
-          </CompatRouter>
+              }
+            />
+          </Routes>
         </Router>
       </div>
     </IntlProvider>

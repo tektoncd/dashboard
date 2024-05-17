@@ -13,8 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useLocation, useParams } from 'react-router-dom-v5-compat';
+import { useLocation, useParams } from 'react-router-dom';
 import {
   TrashCan16 as DeleteIcon,
   PlayOutline16 as RunIcon,
@@ -30,9 +29,9 @@ import {
   useTitleSync
 } from '@tektoncd/dashboard-utils';
 import {
-  Link as CustomLink,
   DeleteModal,
   FormattedDate,
+  Link,
   Table
 } from '@tektoncd/dashboard-components';
 
@@ -54,7 +53,6 @@ function getFormattedResources({
     id: pipeline.metadata.uid,
     name: (
       <Link
-        component={CustomLink}
         to={urls.rawCRD.byNamespace({
           namespace: pipeline.metadata.namespace,
           type: 'pipelines',

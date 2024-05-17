@@ -46,16 +46,13 @@ describe('HeaderBarContent', () => {
       selectedNamespace: ALL_NAMESPACES,
       selectNamespace: () => {}
     }));
-    vi.spyOn(window.history, 'pushState');
     const { getByText, getByDisplayValue } = renderWithRouter(
       <HeaderBarContent />,
       { path, route: path }
     );
     fireEvent.click(getByDisplayValue(/All Namespaces/i));
     fireEvent.click(getByText(otherNamespace));
-    expect(window.history.pushState).toHaveBeenCalledWith(
-      expect.anything(),
-      null,
+    expect(window.location.pathname).toEqual(
       `/namespaces/${otherNamespace}${path}`
     );
   });
@@ -76,7 +73,6 @@ describe('HeaderBarContent', () => {
       selectNamespace: () => {}
     }));
     const selectNamespace = vi.fn();
-    vi.spyOn(window.history, 'pushState');
     const { getByText, getByDisplayValue } = renderWithRouter(
       <HeaderBarContent />,
       { path, route: `/namespaces/${namespace}/fake/path` }
@@ -84,9 +80,7 @@ describe('HeaderBarContent', () => {
     fireEvent.click(getByDisplayValue(namespace));
     fireEvent.click(getByText(otherNamespace));
     expect(selectNamespace).not.toHaveBeenCalled();
-    expect(window.history.pushState).toHaveBeenCalledWith(
-      expect.anything(),
-      null,
+    expect(window.location.pathname).toEqual(
       `/namespaces/${otherNamespace}/fake/path`
     );
   });
@@ -103,7 +97,6 @@ describe('HeaderBarContent', () => {
       selectedNamespace: namespace,
       selectNamespace
     }));
-    vi.spyOn(window.history, 'pushState');
     const { getByText, getByDisplayValue } = renderWithRouter(
       <HeaderBarContent />,
       {
@@ -114,11 +107,7 @@ describe('HeaderBarContent', () => {
     fireEvent.click(getByDisplayValue(namespace));
     fireEvent.click(getByText(/All Namespaces/i));
     expect(selectNamespace).toHaveBeenCalledWith(ALL_NAMESPACES);
-    expect(window.history.pushState).toHaveBeenCalledWith(
-      expect.anything(),
-      null,
-      '/fake/path'
-    );
+    expect(window.location.pathname).toEqual('/fake/path');
   });
 
   it('removes namespace from URL when clearing selection', async () => {
@@ -133,18 +122,13 @@ describe('HeaderBarContent', () => {
       selectedNamespace: namespace,
       selectNamespace
     }));
-    vi.spyOn(window.history, 'pushState');
     const { getByTitle } = renderWithRouter(<HeaderBarContent />, {
       path,
       route: `/namespaces/${namespace}/fake/path`
     });
     fireEvent.click(getByTitle(/clear selected item/i));
     expect(selectNamespace).toHaveBeenCalledWith(ALL_NAMESPACES);
-    expect(window.history.pushState).toHaveBeenCalledWith(
-      expect.anything(),
-      null,
-      '/fake/path'
-    );
+    expect(window.location.pathname).toEqual('/fake/path');
   });
 
   it('selects first namespace when clearing selection in tenant namespace visibility mode', async () => {
@@ -161,7 +145,6 @@ describe('HeaderBarContent', () => {
       selectedNamespace: tenantNamespace2,
       selectNamespace
     }));
-    vi.spyOn(window.history, 'pushState');
     const { getByDisplayValue, getByTitle } = renderWithRouter(
       <HeaderBarContent />,
       {
@@ -172,9 +155,7 @@ describe('HeaderBarContent', () => {
     await waitFor(() => getByDisplayValue(tenantNamespace2));
     fireEvent.click(getByTitle(/clear selected item/i));
     expect(selectNamespace).toHaveBeenCalledWith(tenantNamespace1);
-    expect(window.history.pushState).toHaveBeenCalledWith(
-      expect.anything(),
-      null,
+    expect(window.location.pathname).toEqual(
       `/namespaces/${tenantNamespace1}/fake/path`
     );
   });

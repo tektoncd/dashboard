@@ -12,23 +12,23 @@ limitations under the License.
 */
 /* istanbul ignore file */
 import { Fragment } from 'react';
-import { BrowserRouter, Switch } from 'react-router-dom';
-import { CompatRoute, CompatRouter } from 'react-router-dom-v5-compat';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { render as baseRender } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 
 function RouterWrapper({ children, path }) {
   return (
     <BrowserRouter>
-      <CompatRouter>
-        <Switch>
-          <CompatRoute path={path}>
+      <Routes>
+        <Route
+          path={path}
+          element={
             <IntlProvider locale="en" defaultLocale="en" messages={{}}>
               {children}
             </IntlProvider>
-          </CompatRoute>
-        </Switch>
-      </CompatRouter>
+          }
+        />
+      </Routes>
     </BrowserRouter>
   );
 }

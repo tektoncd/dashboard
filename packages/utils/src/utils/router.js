@@ -10,7 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { generatePath } from 'react-router-dom-v5-compat';
+import { generatePath } from 'react-router-dom';
 import { labels } from './constants';
 
 function byNamespace({ path = '' } = {}) {

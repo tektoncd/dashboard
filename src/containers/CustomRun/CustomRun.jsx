@@ -13,12 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import {
-  useLocation,
-  useNavigate,
-  useParams
-} from 'react-router-dom-v5-compat';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 import { UndefinedFilled20 as UndefinedIcon } from '@carbon/icons-react';
 import {

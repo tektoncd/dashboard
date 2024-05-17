@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import { useIntl } from 'react-intl';
-import { Link } from 'react-router-dom';
 import {
   Accordion,
   AccordionItem,
@@ -21,7 +20,7 @@ import {
 } from 'carbon-components-react';
 import { getCarbonPrefix, urls } from '@tektoncd/dashboard-utils';
 
-import CustomLink from '../Link';
+import Link from '../Link';
 import Table from '../Table';
 import ViewYAML from '../ViewYAML';
 
@@ -71,7 +70,6 @@ const Trigger = ({ namespace, trigger }) => {
                   {binding.ref ? (
                     <Link
                       className="tkn--trigger-resourcelink"
-                      component={CustomLink}
                       to={
                         binding.kind === 'ClusterTriggerBinding'
                           ? urls.clusterTriggerBindings.byName({
@@ -106,7 +104,6 @@ const Trigger = ({ namespace, trigger }) => {
           ) : (
             <Link
               className="tkn--trigger-resourcelink"
-              component={CustomLink}
               to={urls.triggerTemplates.byName({
                 namespace,
                 triggerTemplateName
@@ -326,7 +323,6 @@ const Trigger = ({ namespace, trigger }) => {
                 const clusterInterceptorName = interceptor.ref.name;
                 content = (
                   <Link
-                    component={CustomLink}
                     to={urls.clusterInterceptors.byName({
                       clusterInterceptorName
                     })}
