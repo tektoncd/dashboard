@@ -12,19 +12,10 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
-import { Link } from 'react-router-dom';
-import {
-  useLocation,
-  useNavigate,
-  useParams
-} from 'react-router-dom-v5-compat';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 import { urls, useTitleSync } from '@tektoncd/dashboard-utils';
-import {
-  Link as CustomLink,
-  ResourceDetails,
-  Trigger
-} from '@tektoncd/dashboard-components';
+import { Link, ResourceDetails, Trigger } from '@tektoncd/dashboard-components';
 
 import { useEventListener } from '../../api';
 import { getViewChangeHandler } from '../../utils';
@@ -117,7 +108,6 @@ export function EventListenerContainer() {
               <div className="tkn--trigger-resourcelinks">
                 <span>Trigger:</span>
                 <Link
-                  component={CustomLink}
                   to={urls.triggers.byName({
                     namespace,
                     triggerName: trigger.triggerRef

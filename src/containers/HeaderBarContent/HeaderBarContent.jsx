@@ -16,7 +16,7 @@ import {
   useLocation,
   useNavigate,
   useParams
-} from 'react-router-dom-v5-compat';
+} from 'react-router-dom';
 import { ALL_NAMESPACES, paths, urls } from '@tektoncd/dashboard-utils';
 
 import NamespacesDropdown from '../NamespacesDropdown';

@@ -13,7 +13,7 @@ limitations under the License.
 
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 import { InlineNotification, Pagination } from 'carbon-components-react';
 import { getErrorMessage } from '@tektoncd/dashboard-utils';

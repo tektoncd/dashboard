@@ -11,15 +11,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Link } from 'react-router-dom';
-import { useLocation, useParams } from 'react-router-dom-v5-compat';
+import { useLocation, useParams } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
-import {
-  Link as CustomLink,
-  FormattedDate,
-  Table
-} from '@tektoncd/dashboard-components';
+import { FormattedDate, Link, Table } from '@tektoncd/dashboard-components';
 
 import ListPageLayout from '../ListPageLayout';
 import { useInterceptors, useSelectedNamespace } from '../../api';
@@ -29,7 +24,6 @@ function getFormattedResources(resources) {
     id: `${interceptor.metadata.namespace}:${interceptor.metadata.name}`,
     name: (
       <Link
-        component={CustomLink}
         to={urls.interceptors.byName({
           namespace: interceptor.metadata.namespace,
           interceptorName: interceptor.metadata.name

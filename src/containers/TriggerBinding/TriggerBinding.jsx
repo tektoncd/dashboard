@@ -11,11 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {
-  useLocation,
-  useNavigate,
-  useParams
-} from 'react-router-dom-v5-compat';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 import { ResourceDetails, Table } from '@tektoncd/dashboard-components';
 import { useTitleSync } from '@tektoncd/dashboard-utils';

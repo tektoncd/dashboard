@@ -12,11 +12,7 @@ limitations under the License.
 */
 
 import { useEffect, useState } from 'react';
-import {
-  useLocation,
-  useNavigate,
-  useParams
-} from 'react-router-dom-v5-compat';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
 import {

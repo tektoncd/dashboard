@@ -11,8 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { matchPath } from 'react-router-dom';
-import { NavLink, useLocation } from 'react-router-dom-v5-compat';
+import { matchPath, NavLink, useLocation } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 import {
   SideNav as CarbonSideNav,
@@ -60,9 +59,12 @@ function SideNav({ expanded, showKubernetesResources = false }) {
   function getMenuItemProps(to) {
     return {
       element: NavLink,
-      isActive: !!matchPath(location.pathname, {
-        path: to
-      }),
+      isActive: !!matchPath(
+        {
+          path: to
+        },
+        location.pathname
+      ),
       to
     };
   }

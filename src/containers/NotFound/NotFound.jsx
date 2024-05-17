@@ -13,9 +13,8 @@ limitations under the License.
 /* istanbul ignore file */
 
 import { useIntl } from 'react-intl';
-import { Link } from 'react-router-dom';
 import { Column, Grid, Row } from 'carbon-components-react';
-import { Link as CustomLink } from '@tektoncd/dashboard-components';
+import { Link } from '@tektoncd/dashboard-components';
 import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 
 import { useSelectedNamespace } from '../../api';
@@ -66,13 +65,11 @@ function NotFound({ suggestions = [] }) {
           <ul>
             {suggestions.map(({ text, to }) => (
               <li key={text}>
-                <Link component={CustomLink} to={to}>
-                  {text}
-                </Link>
+                <Link to={to}>{text}</Link>
               </li>
             ))}
             <li>
-              <Link component={CustomLink} to="/">
+              <Link to="/">
                 {intl.formatMessage({
                   id: 'dashboard.home.title',
                   defaultMessage: 'Home'
@@ -83,7 +80,6 @@ function NotFound({ suggestions = [] }) {
               <>
                 <li>
                   <Link
-                    component={CustomLink}
                     to={
                       namespace !== ALL_NAMESPACES
                         ? urls.pipelineRuns.byNamespace({ namespace })
@@ -95,7 +91,6 @@ function NotFound({ suggestions = [] }) {
                 </li>
                 <li>
                   <Link
-                    component={CustomLink}
                     to={
                       namespace !== ALL_NAMESPACES
                         ? urls.taskRuns.byNamespace({ namespace })

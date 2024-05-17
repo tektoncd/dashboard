@@ -12,8 +12,34 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
+import { forwardRef } from 'react';
+import { useHref, useLinkClickHandler } from 'react-router-dom';
 import { Link as CarbonLink } from 'carbon-components-react';
 
-export default function Link({ navigate, ...rest }) {
-  return <CarbonLink {...rest} />;
-}
+const Link = forwardRef(
+  ({ onClick, replace = false, state, target, to, ...rest }, ref) => {
+    const href = useHref(to);
+    const handleClick = useLinkClickHandler(to, {
+      replace,
+      state,
+      target
+    });
+
+    return (
+      <CarbonLink
+        {...rest}
+        href={href}
+        onClick={event => {
+          onClick?.(event);
+          if (!event.defaultPrevented) {
+            handleClick(event);
+          }
+        }}
+        ref={ref}
+        target={target}
+      />
+    );
+  }
+);
+
+export default Link;

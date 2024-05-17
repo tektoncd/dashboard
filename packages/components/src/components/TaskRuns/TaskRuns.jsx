@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import { useIntl } from 'react-intl';
-import { Link } from 'react-router-dom';
 import {
   Calendar16 as CalendarIcon,
   Time16 as TimeIcon,
@@ -21,9 +20,9 @@ import {
 import { getStatus, taskRunHasWarning, urls } from '@tektoncd/dashboard-utils';
 
 import Actions from '../Actions';
-import CustomLink from '../Link';
 import FormattedDate from '../FormattedDate';
 import FormattedDuration from '../FormattedDuration';
+import Link from '../Link';
 import StatusIcon from '../StatusIcon';
 import Table from '../Table';
 
@@ -172,7 +171,7 @@ const TaskRuns = ({
         <div>
           <span>
             {taskRunURL ? (
-              <Link component={CustomLink} to={taskRunURL} title={taskRunName}>
+              <Link to={taskRunURL} title={taskRunName}>
                 {taskRunName}
               </Link>
             ) : (
@@ -188,7 +187,7 @@ const TaskRuns = ({
         <div>
           <span>
             {taskRefName ? (
-              <Link component={CustomLink} to={taskRunsURL} title={taskRefName}>
+              <Link to={taskRunsURL} title={taskRefName}>
                 {taskRefName}
               </Link>
             ) : (

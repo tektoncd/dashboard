@@ -13,14 +13,13 @@ limitations under the License.
 /* istanbul ignore file */
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
 import {
-  Link as CustomLink,
   DeleteModal,
   FormattedDate,
+  Link,
   Table
 } from '@tektoncd/dashboard-components';
 import { Button } from 'carbon-components-react';
@@ -44,7 +43,6 @@ function getFormattedResources({
     id: clusterTask.metadata.uid,
     name: (
       <Link
-        component={CustomLink}
         to={urls.rawCRD.cluster({
           type: 'clustertasks',
           name: clusterTask.metadata.name

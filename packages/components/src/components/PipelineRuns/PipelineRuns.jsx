@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import { useIntl } from 'react-intl';
-import { Link } from 'react-router-dom';
 import { getStatus, urls } from '@tektoncd/dashboard-utils';
 import {
   Calendar16 as CalendarIcon,
@@ -22,9 +21,9 @@ import {
 } from '@carbon/icons-react';
 
 import Actions from '../Actions';
-import CustomLink from '../Link';
 import FormattedDate from '../FormattedDate';
 import FormattedDuration from '../FormattedDuration';
+import Link from '../Link';
 import StatusIcon from '../StatusIcon';
 import Table from '../Table';
 
@@ -196,11 +195,7 @@ const PipelineRuns = ({
         <div>
           <span>
             {pipelineRunURL ? (
-              <Link
-                component={CustomLink}
-                to={pipelineRunURL}
-                title={pipelineRunNameTooltip}
-              >
+              <Link to={pipelineRunURL} title={pipelineRunNameTooltip}>
                 {pipelineRunName}
               </Link>
             ) : (
@@ -220,11 +215,7 @@ const PipelineRuns = ({
           <span>
             {(pipelineRefName &&
               (pipelineRunsByPipelineURL ? (
-                <Link
-                  component={CustomLink}
-                  to={pipelineRunsByPipelineURL}
-                  title={pipelineRefName}
-                >
+                <Link to={pipelineRunsByPipelineURL} title={pipelineRefName}>
                   {pipelineRefName}
                 </Link>
               ) : (
