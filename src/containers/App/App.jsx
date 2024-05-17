@@ -50,8 +50,6 @@ import {
   CustomRuns,
   EventListener,
   EventListeners,
-  Extension,
-  Extensions,
   HeaderBarContent,
   ImportResources,
   Interceptors,
@@ -166,7 +164,7 @@ export function App({ lang }) {
   const showLoadingState = isPropertiesPlaceholder || isMessagesPlaceholder;
   const isFetchingConfig = isFetchingProperties || isFetchingMessages;
 
-  const { data: extensions = [], isWebSocketConnected } = useExtensions(
+  const { isWebSocketConnected } = useExtensions(
     { namespace: tenantNamespaces[0] || ALL_NAMESPACES },
     { enabled: !isFetchingConfig }
   );
@@ -446,22 +444,6 @@ export function App({ lang }) {
                       <CompatRoute path={paths.clusterInterceptors.all()} exact>
                         <ClusterInterceptors />
                       </CompatRoute>
-                      <CompatRoute path={paths.extensions.all()} exact>
-                        <Extensions />
-                      </CompatRoute>
-                      {extensions
-                        .filter(extension => !extension.type)
-                        .map(({ displayName, name, source }) => (
-                          <CompatRoute
-                            key={name}
-                            path={paths.extensions.byName({ name })}
-                          >
-                            <Extension
-                              displayName={displayName}
-                              source={source}
-                            />
-                          </CompatRoute>
-                        ))}
                       <CompatRoute path={paths.rawCRD.byNamespace()} exact>
                         <NamespacedRoute isResourceDetails>
                           <CustomResourceDefinition />

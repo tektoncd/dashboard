@@ -111,19 +111,6 @@ describe('eventListeners', () => {
   });
 });
 
-describe('extensions', () => {
-  it('all', () => {
-    expect(urls.extensions.all()).toEqual(generatePath(paths.extensions.all()));
-  });
-
-  it('byName', () => {
-    const name = 'name';
-    expect(urls.extensions.byName({ name })).toEqual(
-      generatePath(paths.extensions.byName({ name }), { name })
-    );
-  });
-});
-
 it('importResources', () => {
   expect(urls.importResources()).toEqual(generatePath(paths.importResources()));
 });
