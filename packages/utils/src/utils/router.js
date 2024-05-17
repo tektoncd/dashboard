@@ -68,14 +68,6 @@ export const paths = {
       return byNamespace({ path: '/eventlisteners' });
     }
   },
-  extensions: {
-    all() {
-      return '/extensions';
-    },
-    byName({ name }) {
-      return `/extensions/${name}`;
-    }
-  },
   importResources() {
     return '/importresources';
   },
