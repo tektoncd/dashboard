@@ -13,7 +13,6 @@ limitations under the License.
 
 import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { hot } from 'react-hot-loader/root';
 import {
   Link,
   Navigate,
@@ -573,4 +572,4 @@ export function App({ lang }) {
   );
 }
 
-export default hot(App);
+export default App;
