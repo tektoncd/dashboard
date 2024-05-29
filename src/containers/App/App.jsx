@@ -21,12 +21,12 @@ import {
   Routes
 } from 'react-router-dom';
 import { IntlProvider, useIntl } from 'react-intl';
-import { Content, InlineNotification } from 'carbon-components-react';
 import {
-  Header,
-  LogoutButton,
-  PageErrorBoundary
-} from '@tektoncd/dashboard-components';
+  Content,
+  HeaderContainer,
+  InlineNotification
+} from 'carbon-components-react';
+import { PageErrorBoundary } from '@tektoncd/dashboard-components';
 import {
   ALL_NAMESPACES,
   getErrorMessage,
@@ -49,6 +49,7 @@ import {
   CustomRuns,
   EventListener,
   EventListeners,
+  Header,
   HeaderBarContent,
   ImportResources,
   Interceptors,
@@ -61,7 +62,6 @@ import {
   ReadWriteRoute,
   ResourceList,
   Settings,
-  SideNav,
   TaskRun,
   TaskRuns,
   Tasks,
@@ -77,7 +77,6 @@ import {
   NamespaceContext,
   useDefaultNamespace,
   useExtensions,
-  useLogoutURL,
   useNamespaces,
   useProperties,
   useTenantNamespaces
@@ -141,11 +140,9 @@ export function App({ lang }) {
     isFetching: isFetchingProperties,
     isPlaceholderData: isPropertiesPlaceholder
   } = useProperties();
-  const logoutURL = useLogoutURL();
   const tenantNamespaces = useTenantNamespaces();
   const defaultNamespace = useDefaultNamespace();
 
-  const [isSideNavExpanded, setIsSideNavExpanded] = useState(true);
   const [selectedNamespace, setSelectedNamespace] = useState(
     tenantNamespaces[0] || ALL_NAMESPACES
   );
@@ -180,8 +177,6 @@ export function App({ lang }) {
     isWebSocketConnected
   );
 
-  const logoutButton = <LogoutButton getLogoutURL={() => logoutURL} />;
-
   const namespaceContext = useMemo(
     () => ({
       namespacedMatch,
@@ -193,20 +188,20 @@ export function App({ lang }) {
   );
 
   const header = (
-    <Header
-      headerNameProps={{
-        element: HeaderNameLink
-      }}
-      isSideNavExpanded={isSideNavExpanded}
-      onHeaderMenuButtonClick={() => {
-        setIsSideNavExpanded(prevIsSideNavExpanded => !prevIsSideNavExpanded);
-      }}
-    >
-      <HeaderBarContent
-        isFetchingConfig={isFetchingConfig}
-        logoutButton={logoutButton}
-      />
-    </Header>
+    <HeaderContainer
+      isSideNavExpanded
+      render={({ isSideNavExpanded, onClickSideNavExpand }) => (
+        <Header
+          headerNameProps={{
+            element: HeaderNameLink
+          }}
+          isSideNavExpanded={isSideNavExpanded}
+          onHeaderMenuButtonClick={onClickSideNavExpand}
+        >
+          <HeaderBarContent isFetchingConfig={isFetchingConfig} />
+        </Header>
+      )}
+    />
   );
 
   function HandleDefaultNamespace() {
@@ -234,7 +229,6 @@ export function App({ lang }) {
                 />
                 <Route path="*" element={header} />
               </Routes>
-              <SideNav expanded={isSideNavExpanded} />
 
               <Content
                 id="main-content"

@@ -21,7 +21,9 @@ limitations under the License.
 @import '../containers/Settings/Settings.scss';
 @import '../containers/NotFound/NotFound.scss';
 @import '../containers/EventListener/EventListener.scss';
+@import '../containers/Header/Header.scss';
 @import '../containers/ImportResources/ImportResources.scss';
+@import '../containers/LogoutButton/LogoutButton.scss';
 @import '../containers/SideNav/SideNav.scss';
 @import '../containers/LoadingShell/LoadingShell.scss';
 
@@ -31,13 +33,11 @@ limitations under the License.
 @import '@tektoncd/dashboard-components/src/components/DeleteModal/DeleteModal.scss';
 @import '@tektoncd/dashboard-components/src/components/DetailsHeader/DetailsHeader.scss';
 @import '@tektoncd/dashboard-components/src/components/DotSpinner/DotSpinner.scss';
-@import '@tektoncd/dashboard-components/src/components/Header/Header.scss';
 @import '@tektoncd/dashboard-components/src/components/KeyValueList/KeyValueList.scss';
 @import '@tektoncd/dashboard-components/src/components/LabelFilter/LabelFilter.scss';
 @import '@tektoncd/dashboard-components/src/components/Loading/Loading.scss';
 @import '@tektoncd/dashboard-components/src/components/Log/Log.scss';
 @import '@tektoncd/dashboard-components/src/components/LogFormat/LogFormat.scss';
-@import '@tektoncd/dashboard-components/src/components/LogoutButton/LogoutButton.scss';
 @import '@tektoncd/dashboard-components/src/components/Param/Param.scss';
 @import '@tektoncd/dashboard-components/src/components/PipelineRuns/PipelineRuns.scss';
 @import '@tektoncd/dashboard-components/src/components/RunHeader/RunHeader.scss';
@@ -92,6 +92,10 @@ a {
       @include type-style('heading-01');
     }
   }
+}
+
+.#{$prefix}--header:has(.#{$prefix}--side-nav--expanded) ~ .#{$prefix}--content {
+  margin-inline-start: mini-units(32);
 }
 
 .#{$prefix}--modal-header,

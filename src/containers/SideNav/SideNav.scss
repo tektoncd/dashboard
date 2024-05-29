@@ -11,11 +11,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-.#{$prefix}--header ~ {
+.#{$prefix}--header {
   nav.#{$prefix}--side-nav {
     background-color: $gray-100;
     border-color: $gray-80;
     color: $gray-10;
+    height: auto;
 
     .#{$prefix}--side-nav__items {
       display: flex;

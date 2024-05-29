@@ -16,12 +16,15 @@ import { useIntl } from 'react-intl';
 import {
   SkeletonText as CarbonSkeletonText,
   Content,
+  HeaderContainer,
   SideNav,
   SideNavItems,
   SideNavLink,
   SideNavMenu
 } from 'carbon-components-react';
-import { Header, Loading } from '@tektoncd/dashboard-components';
+import { Loading } from '@tektoncd/dashboard-components';
+
+import { Header } from '..';
 
 const SkeletonText = ({ heading, paragraph }) => (
   <CarbonSkeletonText heading={heading} paragraph={paragraph} width="80%" />
@@ -36,45 +39,50 @@ const LoadingShell = () => {
 
   return (
     <div className="tkn--config-loading-shell">
-      <Header />
-      <SideNav
-        isFixedNav
-        expanded
-        isChildOfHeader={false}
-        aria-label="Main navigation"
-        className="tkn--config-loading-nav-skeleton"
-      >
-        <SideNavItems>
-          <SideNavMenu
-            defaultExpanded
-            title={intl.formatMessage({
-              id: 'dashboard.sideNav.tektonResources',
-              defaultMessage: 'Tekton resources'
-            })}
-          >
-            <li>
-              <SkeletonText paragraph />
-            </li>
-          </SideNavMenu>
+      <HeaderContainer
+        isSideNavExpanded
+        render={() => (
+          <Header>
+            <SideNav
+              aria-label="Main navigation"
+              className="tkn--config-loading-nav-skeleton"
+              expanded
+              isFixedNav
+            >
+              <SideNavItems>
+                <SideNavMenu
+                  defaultExpanded
+                  title={intl.formatMessage({
+                    id: 'dashboard.sideNav.tektonResources',
+                    defaultMessage: 'Tekton resources'
+                  })}
+                >
+                  <li>
+                    <SkeletonText paragraph />
+                  </li>
+                </SideNavMenu>
 
-          <SkeletonText heading />
-          <SkeletonText paragraph />
+                <SkeletonText heading />
+                <SkeletonText paragraph />
 
-          <SideNavLink icon={<span />}>
-            {intl.formatMessage({
-              id: 'dashboard.about.title',
-              defaultMessage: 'About Tekton'
-            })}
-          </SideNavLink>
+                <SideNavLink icon={<span />}>
+                  {intl.formatMessage({
+                    id: 'dashboard.about.title',
+                    defaultMessage: 'About Tekton'
+                  })}
+                </SideNavLink>
 
-          <SideNavLink icon={<span />}>
-            {intl.formatMessage({
-              id: 'dashboard.settings.title',
-              defaultMessage: 'Settings'
-            })}
-          </SideNavLink>
-        </SideNavItems>
-      </SideNav>
+                <SideNavLink icon={<span />}>
+                  {intl.formatMessage({
+                    id: 'dashboard.settings.title',
+                    defaultMessage: 'Settings'
+                  })}
+                </SideNavLink>
+              </SideNavItems>
+            </SideNav>
+          </Header>
+        )}
+      />
       <Content>
         <Loading message={loadingMessage} />
       </Content>

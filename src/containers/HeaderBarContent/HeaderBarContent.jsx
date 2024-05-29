@@ -19,10 +19,11 @@ import {
 } from 'react-router-dom';
 import { ALL_NAMESPACES, paths, urls } from '@tektoncd/dashboard-utils';
 
+import LogoutButton from '../LogoutButton';
 import NamespacesDropdown from '../NamespacesDropdown';
 import { useSelectedNamespace, useTenantNamespaces } from '../../api';
 
-export default function HeaderBarContent({ isFetchingConfig, logoutButton }) {
+export default function HeaderBarContent({ isFetchingConfig }) {
   const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
@@ -96,7 +97,7 @@ export default function HeaderBarContent({ isFetchingConfig, logoutButton }) {
         size="sm"
         titleText=""
       />
-      {logoutButton}
+      <LogoutButton />
     </>
   );
 }
