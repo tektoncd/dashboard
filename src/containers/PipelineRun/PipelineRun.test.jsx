@@ -16,10 +16,11 @@ import { createIntl } from 'react-intl';
 import { paths, urls } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
+import * as ClusterTasksAPI from '../../api/clusterTasks';
 import * as PipelineRunsAPI from '../../api/pipelineRuns';
+import * as PipelinesAPI from '../../api/pipelines';
 import * as TaskRunsAPI from '../../api/taskRuns';
 import * as TasksAPI from '../../api/tasks';
-import * as ClusterTasksAPI from '../../api/clusterTasks';
 import { PipelineRunContainer } from './PipelineRun';
 
 const intl = createIntl({
@@ -55,6 +56,22 @@ it('PipelineRunContainer renders not found state', async () => {
     data: null,
     error: null
   }));
+  vi.spyOn(TaskRunsAPI, 'useTaskRuns').mockImplementation(() => ({
+    data: [],
+    error: null
+  }));
+  vi.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({
+    data: [],
+    error: null
+  }));
+  vi.spyOn(ClusterTasksAPI, 'useClusterTasks').mockImplementation(() => ({
+    data: [],
+    error: null
+  }));
+  vi.spyOn(PipelinesAPI, 'usePipeline').mockImplementation(() => ({
+    data: null,
+    error: null
+  }));
 
   const { findByText } = renderWithRouter(
     <PipelineRunContainer intl={intl} />,
@@ -72,6 +89,22 @@ it('PipelineRunContainer renders error state', async () => {
   vi.spyOn(PipelineRunsAPI, 'usePipelineRun').mockImplementation(() => ({
     data: null,
     error: 'some error'
+  }));
+  vi.spyOn(TaskRunsAPI, 'useTaskRuns').mockImplementation(() => ({
+    data: [],
+    error: null
+  }));
+  vi.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({
+    data: [],
+    error: null
+  }));
+  vi.spyOn(ClusterTasksAPI, 'useClusterTasks').mockImplementation(() => ({
+    data: [],
+    error: null
+  }));
+  vi.spyOn(PipelinesAPI, 'usePipeline').mockImplementation(() => ({
+    data: null,
+    error: null
   }));
 
   const { findByText } = renderWithRouter(
