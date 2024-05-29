@@ -20,6 +20,8 @@ import {
   SkipToContent
 } from 'carbon-components-react';
 
+import { SideNav } from '..';
+
 /* istanbul ignore next */
 function skipToContentClick(event) {
   event.preventDefault();
@@ -55,6 +57,7 @@ function Header({
                   defaultMessage: 'Open menu'
                 })
           }
+          isActive={isSideNavExpanded}
           isCollapsible
           onClick={onHeaderMenuButtonClick}
         />
@@ -63,6 +66,7 @@ function Header({
         Dashboard
       </HeaderName>
       <HeaderGlobalBar>{children}</HeaderGlobalBar>
+      <SideNav expanded={isSideNavExpanded} />
     </CarbonHeader>
   );
 }

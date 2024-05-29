@@ -88,12 +88,7 @@ function SideNav({ expanded, showKubernetesResources = false }) {
   const isTriggersInstalled = useIsTriggersInstalled();
 
   return (
-    <CarbonSideNav
-      aria-label="Main navigation"
-      expanded
-      isChildOfHeader={false}
-      isFixedNav
-    >
+    <CarbonSideNav aria-label="Main navigation" expanded={expanded} isFixedNav>
       <SideNavItems>
         <SideNavMenu
           defaultExpanded
