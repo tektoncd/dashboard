@@ -35,7 +35,8 @@ function install_kustomize() {
     curl -s -O -L https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v5.3.0/$tar
     tar xzf ./$tar
 
-    cp ./kustomize /usr/local/bin
+    mv ./kustomize /usr/local/bin
+    rm ./$tar
   fi
 }
 
