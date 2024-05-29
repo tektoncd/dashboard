@@ -136,6 +136,7 @@ describe('HeaderBarContent', () => {
     const tenantNamespace2 = 'fake_tenantNamespace2';
     const path = '/namespaces/:namespace/fake/path';
     const selectNamespace = vi.fn();
+    vi.spyOn(API, 'useNamespaces').mockImplementation(() => []);
     vi.spyOn(API, 'useTenantNamespaces').mockImplementation(() => [
       tenantNamespace1,
       tenantNamespace2
