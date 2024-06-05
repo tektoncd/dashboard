@@ -57,7 +57,7 @@ spec:
             - name: repo
           steps:
             - name: clone
-              image: cgr.dev/chainguard/git:latest@sha256:2c70afb3b34ca5feab37c5826c32dae6e0c48549486fdf6be93faf928b658efe  # 2.41
+              image: ghcr.io/wolfi-dev/git:alpine@sha256:3a118879b998f146812c11630805863f8a769587460938cbcc1daca874d9b57c  # 2.45
               env:
                 - name: PARAM_URL
                   value: $(params.repositoryURL)

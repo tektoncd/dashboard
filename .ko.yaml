@@ -1,1 +1,1 @@
-defaultBaseImage: cgr.dev/chainguard/static@sha256:67a1b00e0134e2b3a614c7198a26f7deed9d11b7acad4d52c79c0cfd47a2eae7
+defaultBaseImage: ghcr.io/wolfi-dev/static:alpine@sha256:2a0e1651c779fd24cea09a5ec6a0437117ff5d1fbe5fafe78020dfb8cc757018
