@@ -23,7 +23,7 @@ import LogoutButton from '../LogoutButton';
 import NamespacesDropdown from '../NamespacesDropdown';
 import { useSelectedNamespace, useTenantNamespaces } from '../../api';
 
-export default function HeaderBarContent({ isFetchingConfig }) {
+export default function HeaderBarContent() {
   const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
@@ -87,7 +87,7 @@ export default function HeaderBarContent({ isFetchingConfig }) {
     setPath(newURL);
   }
 
-  return isFetchingConfig ? null : (
+  return (
     <>
       <NamespacesDropdown
         id="header-namespace-dropdown"

@@ -16,15 +16,15 @@ import { useIntl } from 'react-intl';
 import {
   SkeletonText as CarbonSkeletonText,
   Content,
+  Header,
   HeaderContainer,
+  HeaderName,
   SideNav,
   SideNavItems,
   SideNavLink,
   SideNavMenu
 } from 'carbon-components-react';
 import { Loading } from '@tektoncd/dashboard-components';
-
-import { Header } from '..';
 
 const SkeletonText = ({ heading, paragraph }) => (
   <CarbonSkeletonText heading={heading} paragraph={paragraph} width="80%" />
@@ -42,7 +42,8 @@ const LoadingShell = () => {
       <HeaderContainer
         isSideNavExpanded
         render={() => (
-          <Header>
+          <Header aria-label="Tekton Dashboard" className="tkn--header">
+            <HeaderName prefix="Tekton">Dashboard</HeaderName>
             <SideNav
               aria-label="Main navigation"
               className="tkn--config-loading-nav-skeleton"

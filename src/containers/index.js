@@ -23,6 +23,7 @@ export { default as CreatePipelineRun } from './CreatePipelineRun';
 export { default as CreateTaskRun } from './CreateTaskRun';
 export { default as CustomRun } from './CustomRun';
 export { default as CustomRuns } from './CustomRuns';
+export { default as ErrorPage } from './ErrorPage';
 export { default as EventListener } from './EventListener';
 export { default as EventListeners } from './EventListeners';
 export { default as Header } from './Header';

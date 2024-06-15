@@ -35,6 +35,10 @@ limitations under the License.
     color: $text-02;
   }
 
+  p + p {
+    margin-block-start: $spacing-05;
+  }
+
   ul li {
     margin-block-start: $spacing-03;
 
