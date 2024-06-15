@@ -17,7 +17,7 @@ import ReactDOM from 'react-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import { getLocale, setTheme } from './src/utils';
+import { setTheme } from './src/utils';
 
 import App from './src/containers/App';
 
@@ -40,7 +40,7 @@ const enableReactQueryDevTools =
 ReactDOM.render(
   <QueryClientProvider client={queryClient}>
     <StrictMode>
-      <App lang={getLocale(navigator.language)} />
+      <App />
     </StrictMode>
     {enableReactQueryDevTools && <ReactQueryDevtools initialIsOpen={false} />}
   </QueryClientProvider>,
