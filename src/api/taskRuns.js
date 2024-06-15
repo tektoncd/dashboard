@@ -14,10 +14,9 @@ limitations under the License.
 import { getGenerateNamePrefixForRerun } from '@tektoncd/dashboard-utils';
 import deepClone from 'lodash.clonedeep';
 
-import { deleteRequest, get, patch, post } from './comms';
+import { deleteRequest, patch, post } from './comms';
 import {
   getKubeAPI,
-  getQueryParams,
   getTektonPipelinesAPIVersion,
   removeSystemAnnotations,
   removeSystemLabels,
@@ -36,49 +35,22 @@ export function deleteTaskRun({ name, namespace }) {
   return deleteRequest(uri);
 }
 
-function getTaskRunsAPI({ filters, isWebSocket, name, namespace }) {
-  return getKubeAPI({
-    group: tektonAPIGroup,
-    kind: 'taskruns',
-    params: { isWebSocket, name, namespace },
-    queryParams: getQueryParams({ filters }),
-    version: getTektonPipelinesAPIVersion()
-  });
-}
-
-export function getTaskRuns({ filters = [], namespace } = {}) {
-  const uri = getTaskRunsAPI({ filters, namespace });
-  return get(uri);
-}
-
-export function getTaskRun({ name, namespace }) {
-  const uri = getKubeAPI({
-    group: tektonAPIGroup,
-    kind: 'taskruns',
-    params: { name, namespace },
-    version: getTektonPipelinesAPIVersion()
-  });
-  return get(uri);
-}
-
 export function useTaskRuns(params) {
-  const webSocketURL = getTaskRunsAPI({ ...params, isWebSocket: true });
   return useCollection({
-    api: getTaskRuns,
-    kind: 'TaskRun',
+    group: tektonAPIGroup,
+    kind: 'taskruns',
     params,
-    webSocketURL
+    version: getTektonPipelinesAPIVersion()
   });
 }
 
 export function useTaskRun(params, queryConfig) {
-  const webSocketURL = getTaskRunsAPI({ ...params, isWebSocket: true });
   return useResource({
-    api: getTaskRun,
-    kind: 'TaskRun',
+    group: tektonAPIGroup,
+    kind: 'taskruns',
     params,
     queryConfig,
-    webSocketURL
+    version: getTektonPipelinesAPIVersion()
   });
 }
 

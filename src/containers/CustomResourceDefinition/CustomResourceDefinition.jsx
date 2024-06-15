@@ -26,8 +26,8 @@ import {
   useTask
 } from '../../api';
 
-function useResource({ group, name, namespace, type, version }) {
-  switch (type) {
+function useResource({ group, kind, name, namespace, version }) {
+  switch (kind) {
     case 'clusterinterceptors':
       return useClusterInterceptor({ name });
     case 'clustertasks':
@@ -39,7 +39,7 @@ function useResource({ group, name, namespace, type, version }) {
     case 'tasks':
       return useTask({ name, namespace });
     default:
-      return useCustomResource({ group, name, namespace, type, version });
+      return useCustomResource({ group, kind, name, namespace, version });
   }
 }
 
@@ -47,21 +47,21 @@ function CustomResourceDefinition() {
   const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
-  const { group, name, namespace, type, version } = params;
+  const { group, kind, name, namespace, version } = params;
 
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');
 
   const { data, error, isFetching } = useResource({
     group,
+    kind,
     name,
     namespace,
-    type,
     version
   });
 
   useTitleSync({
-    page: type,
+    page: kind,
     resourceName: name
   });
 

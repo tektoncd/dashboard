@@ -11,56 +11,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { get } from './comms';
-import {
-  getKubeAPI,
-  getQueryParams,
-  triggersAPIGroup,
-  useCollection,
-  useResource
-} from './utils';
-
-function getTriggerBindingsAPI({ filters, isWebSocket, name, namespace }) {
-  return getKubeAPI({
-    group: triggersAPIGroup,
-    kind: 'triggerbindings',
-    params: { group: isWebSocket, name, namespace },
-    queryParams: getQueryParams({ filters }),
-    version: 'v1beta1'
-  });
-}
-
-export function getTriggerBindings({ filters = [], namespace } = {}) {
-  const uri = getTriggerBindingsAPI({ filters, namespace });
-  return get(uri);
-}
-
-export function getTriggerBinding({ name, namespace }) {
-  const uri = getKubeAPI({
-    group: triggersAPIGroup,
-    kind: 'triggerbindings',
-    params: { name, namespace },
-    version: 'v1beta1'
-  });
-  return get(uri);
-}
+import { triggersAPIGroup, useCollection, useResource } from './utils';
 
 export function useTriggerBindings(params) {
-  const webSocketURL = getTriggerBindingsAPI({ ...params, isWebSocket: true });
   return useCollection({
-    api: getTriggerBindings,
-    kind: 'TriggerBinding',
+    group: triggersAPIGroup,
+    kind: 'triggerbindings',
     params,
-    webSocketURL
+    version: 'v1beta1'
   });
 }
 
 export function useTriggerBinding(params) {
-  const webSocketURL = getTriggerBindingsAPI({ ...params, isWebSocket: true });
   return useResource({
-    api: getTriggerBinding,
-    kind: 'TriggerBinding',
+    group: triggersAPIGroup,
+    kind: 'triggerbindings',
     params,
-    webSocketURL
+    version: 'v1beta1'
   });
 }

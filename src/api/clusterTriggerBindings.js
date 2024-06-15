@@ -11,62 +11,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { get } from './comms';
-import {
-  getKubeAPI,
-  getQueryParams,
-  triggersAPIGroup,
-  useCollection,
-  useResource
-} from './utils';
-
-function getClusterTriggerBindingsAPI({ filters, isWebSocket, name }) {
-  return getKubeAPI({
-    group: triggersAPIGroup,
-    kind: 'clustertriggerbindings',
-    params: { isWebSocket, name },
-    queryParams: getQueryParams({ filters }),
-    version: 'v1beta1'
-  });
-}
-
-export function getClusterTriggerBindings({ filters = [] } = {}) {
-  const uri = getClusterTriggerBindingsAPI({ filters });
-  return get(uri);
-}
-
-export function getClusterTriggerBinding({ name }) {
-  const uri = getKubeAPI({
-    group: triggersAPIGroup,
-    kind: 'clustertriggerbindings',
-    params: { name },
-    version: 'v1beta1'
-  });
-  return get(uri);
-}
+import { triggersAPIGroup, useCollection, useResource } from './utils';
 
 export function useClusterTriggerBindings(params) {
-  const webSocketURL = getClusterTriggerBindingsAPI({
-    ...params,
-    isWebSocket: true
-  });
   return useCollection({
-    api: getClusterTriggerBindings,
-    kind: 'ClusterTriggerBinding',
+    group: triggersAPIGroup,
+    kind: 'clustertriggerbindings',
     params,
-    webSocketURL
+    version: 'v1beta1'
   });
 }
 
 export function useClusterTriggerBinding(params) {
-  const webSocketURL = getClusterTriggerBindingsAPI({
-    ...params,
-    isWebSocket: true
-  });
   return useResource({
-    api: getClusterTriggerBinding,
-    kind: 'ClusterTriggerBinding',
+    group: triggersAPIGroup,
+    kind: 'clustertriggerbindings',
     params,
-    webSocketURL
+    version: 'v1beta1'
   });
 }

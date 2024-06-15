@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,27 +17,7 @@ import * as API from './clusterTasks';
 import * as utils from './utils';
 import { server } from '../../config_frontend/msw';
 
-it('getClusterTasks', () => {
-  const data = {
-    items: 'clustertasks'
-  };
-  server.use(http.get(/\/clustertasks\//, () => HttpResponse.json(data)));
-
-  return API.getClusterTasks().then(tasks => {
-    expect(tasks).toEqual(data);
-  });
-});
-
-it('getClusterTask', () => {
-  const name = 'foo';
-  const data = { fake: 'clustertask' };
-  server.use(http.get(new RegExp(`/${name}$`), () => HttpResponse.json(data)));
-  return API.getClusterTask({ name }).then(task => {
-    expect(task).toEqual(data);
-  });
-});
-
-it('deletePipelineRun', () => {
+it('deleteClusterTask', () => {
   const name = 'foo';
   const data = { fake: 'clusterTask' };
   server.use(
@@ -55,9 +35,10 @@ it('useClusterTasks', () => {
   expect(API.useClusterTasks(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getClusterTasks,
-      kind: 'ClusterTask',
-      params
+      group: utils.tektonAPIGroup,
+      kind: 'clustertasks',
+      params,
+      version: 'v1beta1'
     })
   );
 });
@@ -69,9 +50,10 @@ it('useClusterTask', () => {
   expect(API.useClusterTask(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getClusterTask,
-      kind: 'ClusterTask',
-      params
+      group: utils.tektonAPIGroup,
+      kind: 'clustertasks',
+      params,
+      version: 'v1beta1'
     })
   );
 
@@ -79,10 +61,11 @@ it('useClusterTask', () => {
   API.useClusterTask(params, queryConfig);
   expect(utils.useResource).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getClusterTask,
-      kind: 'ClusterTask',
+      group: utils.tektonAPIGroup,
+      kind: 'clustertasks',
       params,
-      queryConfig
+      queryConfig,
+      version: 'v1beta1'
     })
   );
 });

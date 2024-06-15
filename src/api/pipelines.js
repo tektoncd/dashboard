@@ -11,40 +11,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { deleteRequest, get } from './comms';
+import { deleteRequest } from './comms';
 import {
   getKubeAPI,
-  getQueryParams,
   getTektonPipelinesAPIVersion,
   tektonAPIGroup,
   useCollection,
   useResource
 } from './utils';
-
-function getPipelinesAPI({ filters, isWebSocket, name, namespace }) {
-  return getKubeAPI({
-    group: tektonAPIGroup,
-    kind: 'pipelines',
-    params: { isWebSocket, name, namespace },
-    queryParams: getQueryParams({ filters }),
-    version: getTektonPipelinesAPIVersion()
-  });
-}
-
-export function getPipelines({ filters = [], namespace } = {}) {
-  const uri = getPipelinesAPI({ filters, namespace });
-  return get(uri);
-}
-
-export function getPipeline({ name, namespace }) {
-  const uri = getKubeAPI({
-    group: tektonAPIGroup,
-    kind: 'pipelines',
-    params: { name, namespace },
-    version: getTektonPipelinesAPIVersion()
-  });
-  return get(uri);
-}
 
 export function deletePipeline({ name, namespace }) {
   const uri = getKubeAPI({
@@ -57,23 +31,21 @@ export function deletePipeline({ name, namespace }) {
 }
 
 export function usePipelines(params, queryConfig) {
-  const webSocketURL = getPipelinesAPI({ ...params, isWebSocket: true });
   return useCollection({
-    api: getPipelines,
-    kind: 'Pipeline',
+    group: tektonAPIGroup,
+    kind: 'pipelines',
     params,
     queryConfig,
-    webSocketURL
+    version: getTektonPipelinesAPIVersion()
   });
 }
 
 export function usePipeline(params, queryConfig) {
-  const webSocketURL = getPipelinesAPI({ ...params, isWebSocket: true });
   return useResource({
-    api: getPipeline,
-    kind: 'Pipeline',
+    group: tektonAPIGroup,
+    kind: 'pipelines',
     params,
     queryConfig,
-    webSocketURL
+    version: getTektonPipelinesAPIVersion()
   });
 }

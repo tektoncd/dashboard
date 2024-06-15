@@ -11,56 +11,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { get } from './comms';
-import {
-  getKubeAPI,
-  getQueryParams,
-  triggersAPIGroup,
-  useCollection,
-  useResource
-} from './utils';
-
-function getEventListenersAPI({ filters, isWebSocket, name, namespace }) {
-  return getKubeAPI({
-    group: triggersAPIGroup,
-    kind: 'eventlisteners',
-    params: { isWebSocket, name, namespace },
-    queryParams: getQueryParams({ filters }),
-    version: 'v1beta1'
-  });
-}
-
-export function getEventListeners({ filters = [], namespace } = {}) {
-  const uri = getEventListenersAPI({ filters, namespace });
-  return get(uri);
-}
-
-export function getEventListener({ name, namespace }) {
-  const uri = getKubeAPI({
-    group: triggersAPIGroup,
-    kind: 'eventlisteners',
-    params: { name, namespace },
-    version: 'v1beta1'
-  });
-  return get(uri);
-}
+import { triggersAPIGroup, useCollection, useResource } from './utils';
 
 export function useEventListeners(params) {
-  const webSocketURL = getEventListenersAPI({ ...params, isWebSocket: true });
   return useCollection({
-    api: getEventListeners,
-    kind: 'EventListener',
+    group: triggersAPIGroup,
+    kind: 'eventlisteners',
     params,
-    webSocketURL
+    version: 'v1beta1'
   });
 }
 
 export function useEventListener(params) {
-  const webSocketURL = getEventListenersAPI({ ...params, isWebSocket: true });
   return useResource({
-    api: getEventListener,
-    kind: 'EventListener',
+    group: triggersAPIGroup,
+    kind: 'eventlisteners',
     params,
-    webSocketURL
+    version: 'v1beta1'
   });
 }

@@ -24,47 +24,23 @@ import * as TasksAPI from './tasks';
 import * as comms from './comms';
 import * as utils from './utils';
 
-it('getCustomResource', () => {
-  const group = 'testgroup';
-  const version = 'testversion';
-  const type = 'testtype';
-  const name = 'testresource';
-  const namespace = 'testnamespace';
-  const data = { fake: 'resourcedata' };
-  server.use(http.get(new RegExp(`/${name}$`), () => HttpResponse.json(data)));
-  return API.getCustomResource({ group, version, type, namespace, name }).then(
-    resource => {
-      expect(resource).toEqual(data);
-    }
-  );
-});
-
-it('getCustomResources', () => {
-  const group = 'testgroup';
-  const version = 'testversion';
-  const type = 'testtype';
-  const namespace = 'testnamespace';
-  const data = { items: 'resourcedata' };
-  server.use(http.get(new RegExp(`/${type}/$`), () => HttpResponse.json(data)));
-  return API.getCustomResources({ group, version, type, namespace }).then(
-    resources => {
-      expect(resources).toEqual(data);
-    }
-  );
-});
-
 it('useCustomResource', () => {
-  const type = 'fake_type';
-  const params = { fake: 'params', type };
+  const group = 'fake_group';
+  const kind = 'fake_kind';
+  const version = 'fake_version';
+  const params = { fake: 'params', group, kind, version };
   const query = { fake: 'query' };
   vi.spyOn(utils, 'useResource').mockImplementation(() => query);
   const returnValue = API.useCustomResource(params);
 
   expect(utils.useResource).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getCustomResource,
-      kind: type,
-      params
+      group,
+      kind,
+      params: {
+        fake: 'params'
+      },
+      version
     })
   );
   expect(returnValue).toEqual(query);
@@ -72,7 +48,7 @@ it('useCustomResource', () => {
 
 it('useCustomResources', async () => {
   const group = 'fake_group';
-  const type = 'fake_type';
+  const kind = 'fake_kind';
   const version = 'fake_version';
   const resources = {
     metadata: {},
@@ -81,9 +57,9 @@ it('useCustomResources', async () => {
       { metadata: { name: 'resource2' } }
     ]
   };
-  server.use(http.get(/\/fake_type\//, () => HttpResponse.json(resources)));
+  server.use(http.get(/\/fake_kind\//, () => HttpResponse.json(resources)));
   const { result, waitFor } = renderHook(
-    () => API.useCustomResources({ group, type, version }),
+    () => API.useCustomResources({ group, kind, version }),
     {
       wrapper: getAPIWrapper()
     }
@@ -93,21 +69,20 @@ it('useCustomResources', async () => {
   expect(result.current.data).toEqual(resources.items);
 });
 
-it('useAPIResource', () => {
-  const type = 'fake_type';
-  const params = { fake: 'params', type };
-  const query = { fake: 'query' };
-  vi.spyOn(utils, 'useResource').mockImplementation(() => query);
-  const returnValue = API.useAPIResource(params);
+it('useAPIResource', async () => {
+  const group = 'fake_group';
+  const kind = 'fake_kind';
+  const version = 'fake_version';
+  const params = { group, kind, version };
+  const apiResource = { fake: 'apiResource', name: kind };
+  vi.spyOn(comms, 'get').mockResolvedValue({ resources: [apiResource] });
 
-  expect(utils.useResource).toHaveBeenCalledWith(
-    expect.objectContaining({
-      api: API.getAPIResource,
-      kind: type,
-      params
-    })
-  );
-  expect(returnValue).toEqual(query);
+  const { result, waitFor } = renderHook(() => API.useAPIResource(params), {
+    wrapper: getAPIWrapper()
+  });
+  await waitFor(() => result.current.isFetching);
+  await waitFor(() => !result.current.isFetching);
+  expect(result.current.data).toEqual(apiResource);
 });
 
 it('useTaskByKind', () => {
@@ -143,16 +118,6 @@ it('useTaskByKind', () => {
     undefined
   );
   expect(returnValue).toEqual(taskQuery);
-});
-
-it('getNamespaces returns the correct data', () => {
-  const data = {
-    items: 'namespaces'
-  };
-  server.use(http.get(/\/namespaces\//, () => HttpResponse.json(data)));
-  return API.getNamespaces().then(response => {
-    expect(response).toEqual(data);
-  });
 });
 
 it('useNamespaces', async () => {
@@ -421,15 +386,15 @@ describe('getAPIResource', () => {
   it('handles non-core group', () => {
     const group = 'testgroup';
     const version = 'testversion';
-    const type = 'testtype';
-    const apiResource = { name: type };
+    const kind = 'testkind';
+    const apiResource = { name: kind };
     const data = { resources: [apiResource] };
     server.use(
       http.get(new RegExp(`/apis/${group}/${version}$`), () =>
         HttpResponse.json(data)
       )
     );
-    return API.getAPIResource({ group, version, type }).then(resource => {
+    return API.getAPIResource({ group, kind, version }).then(resource => {
       expect(resource).toEqual(apiResource);
     });
   });
@@ -437,13 +402,13 @@ describe('getAPIResource', () => {
   it('handles core group', () => {
     const group = 'core';
     const version = 'testversion';
-    const type = 'testtype';
-    const apiResource = { name: type };
+    const kind = 'testkind';
+    const apiResource = { name: kind };
     const data = { resources: [apiResource] };
     server.use(
       http.get(new RegExp(`/api/${version}$`), () => HttpResponse.json(data))
     );
-    return API.getAPIResource({ group, version, type }).then(resource => {
+    return API.getAPIResource({ group, kind, version }).then(resource => {
       expect(resource).toEqual(apiResource);
     });
   });

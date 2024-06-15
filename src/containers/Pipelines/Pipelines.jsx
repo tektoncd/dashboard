@@ -54,9 +54,9 @@ function getFormattedResources({
     name: (
       <Link
         to={urls.rawCRD.byNamespace({
-          namespace: pipeline.metadata.namespace,
-          type: 'pipelines',
-          name: pipeline.metadata.name
+          kind: 'pipelines',
+          name: pipeline.metadata.name,
+          namespace: pipeline.metadata.namespace
         })}
         title={pipeline.metadata.name}
       >

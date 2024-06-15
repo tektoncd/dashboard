@@ -198,38 +198,6 @@ it('deletePipelineRun', () => {
   });
 });
 
-it('getPipelineRun', () => {
-  const name = 'foo';
-  const data = { fake: 'pipelineRun' };
-  server.use(http.get(new RegExp(`/${name}$`), () => HttpResponse.json(data)));
-  return API.getPipelineRun({ name }).then(pipelineRun => {
-    expect(pipelineRun).toEqual(data);
-  });
-});
-
-it('getPipelineRuns', () => {
-  const data = {
-    items: 'pipelineRuns'
-  };
-  server.use(http.get(/\/pipelineruns\//, () => HttpResponse.json(data)));
-  return API.getPipelineRuns({ filters: [] }).then(pipelineRuns => {
-    expect(pipelineRuns).toEqual(data);
-  });
-});
-
-it('getPipelineRuns With Query Params', () => {
-  const pipelineName = 'pipelineName';
-  const data = {
-    items: 'pipelineRuns'
-  };
-  server.use(http.get(/\/pipelineruns\//, () => HttpResponse.json(data)));
-  return API.getPipelineRuns({ pipelineName, filters: [] }).then(
-    pipelineRuns => {
-      expect(pipelineRuns).toEqual(data);
-    }
-  );
-});
-
 it('usePipelineRuns', () => {
   const query = { fake: 'query' };
   const params = { fake: 'params' };
@@ -237,9 +205,10 @@ it('usePipelineRuns', () => {
   expect(API.usePipelineRuns(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getPipelineRuns,
-      kind: 'PipelineRun',
-      params
+      group: utils.tektonAPIGroup,
+      kind: 'pipelineruns',
+      params,
+      version: 'v1'
     })
   );
 });
@@ -251,9 +220,10 @@ it('usePipelineRun', () => {
   expect(API.usePipelineRun(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getPipelineRun,
-      kind: 'PipelineRun',
-      params
+      group: utils.tektonAPIGroup,
+      kind: 'pipelineruns',
+      params,
+      version: 'v1'
     })
   );
 
@@ -261,10 +231,11 @@ it('usePipelineRun', () => {
   API.usePipelineRun(params, queryConfig);
   expect(utils.useResource).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getPipelineRun,
-      kind: 'PipelineRun',
+      group: utils.tektonAPIGroup,
+      kind: 'pipelineruns',
       params,
-      queryConfig
+      queryConfig,
+      version: 'v1'
     })
   );
 });

@@ -18,13 +18,14 @@ import {
   renderWithRouter as baseRenderWithRouter
 } from '@tektoncd/dashboard-components/src/utils/test';
 
-import { NamespaceContext } from '../api/utils';
+import { defaultQueryFn, NamespaceContext } from '../api/utils';
 
 export function getQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
         cacheTime: 1000 * 60 * 5, // 5 minutes
+        queryFn: defaultQueryFn,
         refetchOnWindowFocus: false,
         retry: false,
         staleTime: Infinity

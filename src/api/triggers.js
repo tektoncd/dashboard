@@ -11,56 +11,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { get } from './comms';
-import {
-  getKubeAPI,
-  getQueryParams,
-  triggersAPIGroup,
-  useCollection,
-  useResource
-} from './utils';
-
-function getTriggersAPI({ filters, isWebSocket, name, namespace }) {
-  return getKubeAPI({
-    group: triggersAPIGroup,
-    kind: 'triggers',
-    params: { isWebSocket, name, namespace },
-    queryParams: getQueryParams({ filters }),
-    version: 'v1beta1'
-  });
-}
-
-export function getTriggers({ filters = [], namespace } = {}) {
-  const uri = getTriggersAPI({ filters, namespace });
-  return get(uri);
-}
-
-export function getTrigger({ name, namespace }) {
-  const uri = getKubeAPI({
-    group: triggersAPIGroup,
-    kind: 'triggers',
-    params: { name, namespace },
-    version: 'v1beta1'
-  });
-  return get(uri);
-}
+import { triggersAPIGroup, useCollection, useResource } from './utils';
 
 export function useTriggers(params) {
-  const webSocketURL = getTriggersAPI({ ...params, isWebSocket: true });
   return useCollection({
-    api: getTriggers,
-    kind: 'Trigger',
+    group: triggersAPIGroup,
+    kind: 'triggers',
     params,
-    webSocketURL
+    version: 'v1beta1'
   });
 }
 
 export function useTrigger(params) {
-  const webSocketURL = getTriggersAPI({ ...params, isWebSocket: true });
   return useResource({
-    api: getTrigger,
-    kind: 'Trigger',
+    group: triggersAPIGroup,
+    kind: 'triggers',
     params,
-    webSocketURL
+    version: 'v1beta1'
   });
 }

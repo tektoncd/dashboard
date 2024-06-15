@@ -11,31 +11,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { get } from './comms';
-import { dashboardAPIGroup, getKubeAPI, useCollection } from './utils';
-
-function getExtensionsAPI({ isWebSocket, namespace }) {
-  return getKubeAPI({
-    group: dashboardAPIGroup,
-    kind: 'extensions',
-    params: { isWebSocket, namespace },
-    version: 'v1alpha1'
-  });
-}
-
-export function getExtensions({ namespace } = {}) {
-  const resourceExtensionsUri = getExtensionsAPI({ namespace });
-  return get(resourceExtensionsUri);
-}
+import { dashboardAPIGroup, useCollection } from './utils';
 
 export function useExtensions(params, queryConfig) {
-  const webSocketURL = getExtensionsAPI({ ...params, isWebSocket: true });
   const { data, ...query } = useCollection({
-    api: getExtensions,
-    kind: 'Extension',
+    group: dashboardAPIGroup,
+    kind: 'extensions',
     params,
     queryConfig,
-    webSocketURL
+    version: 'v1alpha1'
   });
 
   return {

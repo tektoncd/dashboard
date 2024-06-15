@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,19 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { http, HttpResponse } from 'msw';
-
 import * as API from './serviceAccounts';
 import * as utils from './utils';
-import { server } from '../../config_frontend/msw';
-
-it('getServiceAccounts returns the correct data', () => {
-  const data = { items: 'serviceaccounts' };
-  server.use(http.get(/\/serviceaccounts\//, () => HttpResponse.json(data)));
-  return API.getServiceAccounts().then(response => {
-    expect(response).toEqual(data);
-  });
-});
 
 it('useServiceAccounts', () => {
   const query = { fake: 'query' };
@@ -32,9 +21,10 @@ it('useServiceAccounts', () => {
   expect(API.useServiceAccounts(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getServiceAccounts,
-      kind: 'ServiceAccount',
-      params
+      group: 'core',
+      kind: 'serviceaccounts',
+      params,
+      version: 'v1'
     })
   );
 });

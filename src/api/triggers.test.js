@@ -1,5 +1,5 @@
 /*
-Copyright 2021-2023 The Tekton Authors
+Copyright 2021-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,30 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { http, HttpResponse } from 'msw';
-
 import * as API from './triggers';
 import * as utils from './utils';
-import { server } from '../../config_frontend/msw';
-
-it('getTrigger', () => {
-  const name = 'foo';
-  const data = { fake: 'trigger' };
-  server.use(http.get(new RegExp(`/${name}$`), () => HttpResponse.json(data)));
-  return API.getTrigger({ name }).then(trigger => {
-    expect(trigger).toEqual(data);
-  });
-});
-
-it('getTriggers', () => {
-  const data = {
-    items: 'triggers'
-  };
-  server.use(http.get(/\/triggers\//, () => HttpResponse.json(data)));
-  return API.getTriggers().then(triggers => {
-    expect(triggers).toEqual(data);
-  });
-});
 
 it('useTriggers', () => {
   const query = { fake: 'query' };
@@ -43,9 +21,10 @@ it('useTriggers', () => {
   expect(API.useTriggers(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getTriggers,
-      kind: 'Trigger',
-      params
+      group: utils.triggersAPIGroup,
+      kind: 'triggers',
+      params,
+      version: 'v1beta1'
     })
   );
 });
@@ -57,9 +36,10 @@ it('useTrigger', () => {
   expect(API.useTrigger(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getTrigger,
-      kind: 'Trigger',
-      params
+      group: utils.triggersAPIGroup,
+      kind: 'triggers',
+      params,
+      version: 'v1beta1'
     })
   );
 });

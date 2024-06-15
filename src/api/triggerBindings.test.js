@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,30 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { http, HttpResponse } from 'msw';
-
 import * as API from './triggerBindings';
 import * as utils from './utils';
-import { server } from '../../config_frontend/msw';
-
-it('getTriggerBinding', () => {
-  const name = 'foo';
-  const data = { fake: 'triggerBinding' };
-  server.use(http.get(new RegExp(`/${name}$`), () => HttpResponse.json(data)));
-  return API.getTriggerBinding({ name }).then(triggerBinding => {
-    expect(triggerBinding).toEqual(data);
-  });
-});
-
-it('getTriggerBindings', () => {
-  const data = {
-    items: 'triggerBindings'
-  };
-  server.use(http.get(/\/triggerbindings\//, () => HttpResponse.json(data)));
-  return API.getTriggerBindings().then(triggerBindings => {
-    expect(triggerBindings).toEqual(data);
-  });
-});
 
 it('useTriggerBindings', () => {
   const query = { fake: 'query' };
@@ -43,9 +21,10 @@ it('useTriggerBindings', () => {
   expect(API.useTriggerBindings(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getTriggerBindings,
-      kind: 'TriggerBinding',
-      params
+      group: utils.triggersAPIGroup,
+      kind: 'triggerbindings',
+      params,
+      version: 'v1beta1'
     })
   );
 });
@@ -57,9 +36,10 @@ it('useTriggerBinding', () => {
   expect(API.useTriggerBinding(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getTriggerBinding,
-      kind: 'TriggerBinding',
-      params
+      group: utils.triggersAPIGroup,
+      kind: 'triggerbindings',
+      params,
+      version: 'v1beta1'
     })
   );
 });

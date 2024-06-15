@@ -11,62 +11,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { get } from './comms';
-import {
-  getKubeAPI,
-  getQueryParams,
-  triggersAPIGroup,
-  useCollection,
-  useResource
-} from './utils';
-
-function getClusterInterceptorsAPI({ filters, isWebSocket, name }) {
-  return getKubeAPI({
-    group: triggersAPIGroup,
-    kind: 'clusterinterceptors',
-    params: { isWebSocket, name },
-    queryParams: getQueryParams({ filters }),
-    version: 'v1alpha1'
-  });
-}
-
-export function getClusterInterceptors({ filters = [] } = {}) {
-  const uri = getClusterInterceptorsAPI({ filters });
-  return get(uri);
-}
-
-export function getClusterInterceptor({ name }) {
-  const uri = getKubeAPI({
-    group: triggersAPIGroup,
-    kind: 'clusterinterceptors',
-    params: { name },
-    version: 'v1alpha1'
-  });
-  return get(uri);
-}
+import { triggersAPIGroup, useCollection, useResource } from './utils';
 
 export function useClusterInterceptors(params) {
-  const webSocketURL = getClusterInterceptorsAPI({
-    ...params,
-    isWebSocket: true
-  });
   return useCollection({
-    api: getClusterInterceptors,
-    kind: 'ClusterInterceptor',
+    group: triggersAPIGroup,
+    kind: 'clusterinterceptors',
     params,
-    webSocketURL
+    version: 'v1alpha1'
   });
 }
 
 export function useClusterInterceptor(params) {
-  const webSocketURL = getClusterInterceptorsAPI({
-    ...params,
-    isWebSocket: true
-  });
   return useResource({
-    api: getClusterInterceptor,
-    kind: 'ClusterInterceptor',
+    group: triggersAPIGroup,
+    kind: 'clusterinterceptors',
     params,
-    webSocketURL
+    version: 'v1alpha1'
   });
 }

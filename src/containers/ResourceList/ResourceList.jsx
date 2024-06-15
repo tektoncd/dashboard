@@ -26,19 +26,19 @@ import {
 export function ResourceListContainer() {
   const intl = useIntl();
   const location = useLocation();
-  const { group, namespace: namespaceParam, version, type } = useParams();
+  const { group, kind, namespace: namespaceParam, version } = useParams();
 
   const { selectedNamespace } = useSelectedNamespace();
   const namespace = namespaceParam || selectedNamespace;
   const filters = getFilters(location);
 
-  useTitleSync({ page: `${group}/${version}/${type}` });
+  useTitleSync({ page: `${group}/${version}/${kind}` });
 
   const {
     data: apiResource,
     error: apiResourceError,
     isLoading: isLoadingAPIResource
-  } = useAPIResource({ group, type, version });
+  } = useAPIResource({ group, kind, version });
   const isNamespaced = !isLoadingAPIResource && apiResource?.namespaced;
 
   const {
@@ -49,8 +49,8 @@ export function ResourceListContainer() {
     {
       filters,
       group,
+      kind,
       namespace: isNamespaced ? namespace : null,
-      type,
       version
     },
     {
@@ -69,7 +69,7 @@ export function ResourceListContainer() {
           id: 'dashboard.resourceList.errorLoading',
           defaultMessage: 'Error loading {type}'
         },
-        { type }
+        { type: kind }
       )
     };
   }
@@ -79,7 +79,7 @@ export function ResourceListContainer() {
       id: 'dashboard.resourceList.emptyState',
       defaultMessage: 'No matching resources found for type {type}'
     },
-    { type }
+    { type: kind }
   );
 
   return (
@@ -87,7 +87,7 @@ export function ResourceListContainer() {
       error={getError()}
       filters={filters}
       resources={resources}
-      title={`${group}/${version}/${type}`}
+      title={`${group}/${version}/${kind}`}
     >
       {({ resources: paginatedResources }) => (
         <Table
@@ -128,17 +128,17 @@ export function ResourceListContainer() {
                   to={
                     resourceNamespace
                       ? urls.kubernetesResources.byName({
-                          namespace: resourceNamespace,
                           group,
-                          version,
-                          type,
-                          name
+                          kind,
+                          name,
+                          namespace: resourceNamespace,
+                          version
                         })
                       : urls.kubernetesResources.cluster({
                           group,
-                          version,
-                          type,
-                          name
+                          kind,
+                          name,
+                          version
                         })
                   }
                   title={name}

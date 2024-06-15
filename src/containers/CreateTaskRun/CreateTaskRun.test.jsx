@@ -20,7 +20,6 @@ import CreateTaskRun from './CreateTaskRun';
 import * as API from '../../api';
 import * as APIUtils from '../../api/utils';
 import * as ServiceAccountsAPI from '../../api/serviceAccounts';
-import * as TaskRunsAPI from '../../api/taskRuns';
 import * as ClusterTasksAPI from '../../api/clusterTasks';
 import * as TasksAPI from '../../api/tasks';
 
@@ -84,12 +83,6 @@ const serviceAccount = {
   }
 };
 
-const taskRuns = {
-  isFetching: false,
-  byId: {},
-  byNamespace: {}
-};
-
 const submitButton = allByText => allByText('Create')[0];
 
 describe('CreateTaskRun', () => {
@@ -101,9 +94,6 @@ describe('CreateTaskRun', () => {
     vi.spyOn(ClusterTasksAPI, 'useClusterTasks').mockImplementation(() => ({
       data: clusterTasks
     }));
-    vi.spyOn(TaskRunsAPI, 'getTaskRuns').mockImplementation(
-      () => taskRuns.byId
-    );
 
     vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [

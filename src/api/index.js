@@ -21,7 +21,6 @@ import { get, getAPIRoot, post } from './comms';
 import {
   apiRoot,
   getKubeAPI,
-  getQueryParams,
   getTektonPipelinesAPIVersion,
   isLogTimestampsEnabled,
   tektonAPIGroup,
@@ -48,71 +47,25 @@ export * from './triggerBindings';
 export * from './triggers';
 export * from './triggerTemplates';
 
-export function getCustomResources({
-  filters = [],
-  involvedObjectKind,
-  involvedObjectName,
-  name,
-  ...rest
-}) {
-  const { isWebSocket, group, namespace, type, version } = rest;
-  const uri = getKubeAPI({
-    group,
-    kind: type,
-    params: { isWebSocket, name, namespace },
-    queryParams: getQueryParams({
-      filters,
-      involvedObjectKind,
-      involvedObjectName
-    }),
-    version
-  });
-  return get(uri);
-}
-
-export function useCustomResources(params, queryConfig) {
-  const webSocketURL = getKubeAPI({
-    group: params.group,
-    kind: params.type,
-    params: { isWebSocket: true, namespace: params.namespace },
-    queryParams: getQueryParams({ filters: params.filters }),
-    version: params.version
-  });
+export function useCustomResources(
+  { group, kind, version, ...params },
+  queryConfig
+) {
   return useCollection({
-    api: getCustomResources,
-    kind: params.type,
+    group,
+    kind,
     params,
     queryConfig,
-    webSocketURL
-  });
-}
-
-export function getCustomResource({ group, name, namespace, type, version }) {
-  const uri = getKubeAPI({
-    group,
-    kind: type,
-    params: { name, namespace },
     version
   });
-  return get(uri);
 }
 
-export function useCustomResource(params) {
-  const webSocketURL = getKubeAPI({
-    group: params.group,
-    kind: params.type,
-    params: {
-      isWebSocket: true,
-      name: params.name,
-      namespace: params.namespace
-    },
-    version: params.version
-  });
+export function useCustomResource({ group, kind, version, ...params }) {
   return useResource({
-    api: getCustomResource,
-    kind: params.type,
+    group,
+    kind,
     params,
-    webSocketURL
+    version
   });
 }
 
@@ -155,46 +108,22 @@ export async function getInstallProperties() {
   return data;
 }
 
-function getNamespacesAPI({ isWebSocket } = {}) {
-  return getKubeAPI({
-    group: 'core',
-    version: 'v1',
-    kind: 'namespaces',
-    params: { isWebSocket }
-  });
-}
-
-export function getNamespaces() {
-  const uri = getNamespacesAPI();
-  return get(uri);
-}
-
 export function useNamespaces(queryConfig) {
-  const webSocketURL = getNamespacesAPI({ isWebSocket: true });
   return useCollection({
-    api: getNamespaces,
-    kind: 'Namespace',
+    group: 'core',
+    kind: 'namespaces',
     queryConfig,
-    webSocketURL
+    version: 'v1'
   });
 }
 
 export function usePod(params, queryConfig) {
-  const group = 'core';
-  const type = 'pods';
-  const version = 'v1';
-  const webSocketURL = getKubeAPI({
-    group,
-    kind: type,
-    params: { ...params, isWebSocket: true },
-    version
-  });
   return useResource({
-    api: getCustomResource,
-    kind: 'customResource',
-    params: { group, type, version, ...params },
+    group: 'core',
+    kind: 'pods',
+    params,
     queryConfig,
-    webSocketURL
+    version: 'v1'
   });
 }
 
@@ -203,26 +132,16 @@ export function useEvents(
   queryConfig
 ) {
   const params = {
-    group: 'core',
     involvedObjectKind,
     involvedObjectName,
-    namespace,
-    type: 'events',
-    version: 'v1'
+    namespace
   };
-  const webSocketURL = getKubeAPI({
-    group: params.group,
-    kind: params.type,
-    params: { isWebSocket: true, namespace },
-    queryParams: getQueryParams({ involvedObjectKind, involvedObjectName }),
-    version: params.version
-  });
   return useCollection({
-    api: getCustomResources,
-    kind: 'customResource',
+    group: 'core',
+    kind: 'events',
     params,
     queryConfig,
-    webSocketURL
+    version: 'v1'
   });
 }
 
@@ -330,27 +249,31 @@ export function importResources({
   return post(uri, pipelineRun).then(({ body }) => body);
 }
 
-export function getAPIResource({ group, version, type }) {
+export function getAPIResource({ group, kind, version }) {
   const uri = [
     apiRoot,
     group === 'core' ? `/api/${version}` : `/apis/${group}/${version}`
   ].join('');
 
   return get(uri).then(
-    ({ resources }) => resources.find(({ name }) => name === type) || {}
+    ({ resources }) => resources.find(({ name }) => name === kind) || {}
   );
 }
 
 export function useAPIResource(params) {
   return useResource({
-    api: getAPIResource,
-    kind: params.type,
-    params
+    group: params.group,
+    queryConfig: {
+      queryFn: () => getAPIResource(params)
+    },
+    version: params.version
   });
 }
 
 export function useProperties() {
-  return useQuery(['properties'], getInstallProperties, {
+  return useQuery({
+    queryKey: ['properties'],
+    queryFn: getInstallProperties,
     placeholderData: { isReadOnly: true }
   });
 }

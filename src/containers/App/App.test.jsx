@@ -58,7 +58,6 @@ describe('App', () => {
   });
 
   it('does not call namespaces API in tenant namespace mode', async () => {
-    vi.spyOn(API, 'getNamespaces');
     vi.spyOn(API, 'useTenantNamespaces').mockImplementation(() => ['fake']);
     const { queryByText } = render(<App lang="en" />);
 
@@ -69,7 +68,6 @@ describe('App', () => {
   });
 
   it('calls namespaces API in full cluster mode', async () => {
-    vi.spyOn(API, 'getNamespaces').mockImplementation(() => {});
     vi.spyOn(API, 'useTenantNamespaces').mockImplementation(() => []);
     const { queryByText } = render(<App lang="en" />);
 

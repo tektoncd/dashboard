@@ -44,7 +44,7 @@ function getFormattedResources({
     name: (
       <Link
         to={urls.rawCRD.cluster({
-          type: 'clustertasks',
+          kind: 'clustertasks',
           name: clusterTask.metadata.name
         })}
         title={clusterTask.metadata.name}
