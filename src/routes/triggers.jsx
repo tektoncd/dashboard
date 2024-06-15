@@ -20,7 +20,6 @@ import {
   EventListener,
   EventListeners,
   Interceptors,
-  NamespacedRoute,
   Trigger,
   TriggerBinding,
   TriggerBindings,
@@ -44,114 +43,118 @@ export default [
   },
   {
     path: paths.eventListeners.all(),
-    element: (
-      <NamespacedRoute>
-        <EventListeners />
-      </NamespacedRoute>
-    )
+    element: <EventListeners />,
+    handle: {
+      isNamespaced: true,
+      path: paths.eventListeners.all()
+    }
   },
   {
     path: paths.eventListeners.byNamespace(),
-    element: (
-      <NamespacedRoute>
-        <EventListeners />
-      </NamespacedRoute>
-    )
+    element: <EventListeners />,
+    handle: {
+      isNamespaced: true,
+      path: paths.eventListeners.byNamespace()
+    }
   },
   {
     path: paths.eventListeners.byName(),
-    element: (
-      <NamespacedRoute isResourceDetails>
-        <EventListener />
-      </NamespacedRoute>
-    )
+    element: <EventListener />,
+    handle: {
+      isNamespaced: true,
+      isResourceDetails: true,
+      path: paths.eventListeners.byName()
+    }
   },
   {
     path: paths.triggers.all(),
-    element: (
-      <NamespacedRoute>
-        <Triggers />
-      </NamespacedRoute>
-    )
+    element: <Triggers />,
+    handle: {
+      isNamespaced: true,
+      path: paths.triggers.all()
+    }
   },
   {
     path: paths.triggers.byNamespace(),
-    element: (
-      <NamespacedRoute>
-        <Triggers />
-      </NamespacedRoute>
-    )
+    element: <Triggers />,
+    handle: {
+      isNamespaced: true,
+      path: paths.triggers.byNamespace()
+    }
   },
   {
     path: paths.triggers.byName(),
-    element: (
-      <NamespacedRoute isResourceDetails>
-        <Trigger />
-      </NamespacedRoute>
-    )
+    element: <Trigger />,
+    handle: {
+      isNamespaced: true,
+      isResourceDetails: true,
+      path: paths.triggers.byName()
+    }
   },
   {
     path: paths.triggerBindings.all(),
-    element: (
-      <NamespacedRoute>
-        <TriggerBindings />
-      </NamespacedRoute>
-    )
+    element: <TriggerBindings />,
+    handle: {
+      isNamespaced: true,
+      path: paths.triggerBindings.all()
+    }
   },
   {
     path: paths.triggerBindings.byNamespace(),
-    element: (
-      <NamespacedRoute>
-        <TriggerBindings />
-      </NamespacedRoute>
-    )
+    element: <TriggerBindings />,
+    handle: {
+      isNamespaced: true,
+      path: paths.triggerBindings.byNamespace()
+    }
   },
   {
     path: paths.triggerBindings.byName(),
-    element: (
-      <NamespacedRoute isResourceDetails>
-        <TriggerBinding />
-      </NamespacedRoute>
-    )
+    element: <TriggerBinding />,
+    handle: {
+      isNamespaced: true,
+      isResourceDetails: true,
+      path: paths.triggerBindings.byName()
+    }
   },
   {
     path: paths.triggerTemplates.all(),
-    element: (
-      <NamespacedRoute>
-        <TriggerTemplates />
-      </NamespacedRoute>
-    )
+    element: <TriggerTemplates />,
+    handle: {
+      isNamespaced: true,
+      path: paths.triggerTemplates.all()
+    }
   },
   {
     path: paths.triggerTemplates.byNamespace(),
-    element: (
-      <NamespacedRoute>
-        <TriggerTemplates />
-      </NamespacedRoute>
-    )
+    element: <TriggerTemplates />,
+    handle: {
+      isNamespaced: true,
+      path: paths.triggerTemplates.byNamespace()
+    }
   },
   {
     path: paths.triggerTemplates.byName(),
-    element: (
-      <NamespacedRoute isResourceDetails>
-        <TriggerTemplate />
-      </NamespacedRoute>
-    )
+    element: <TriggerTemplate />,
+    handle: {
+      isNamespaced: true,
+      isResourceDetails: true,
+      path: paths.triggerTemplates.byName()
+    }
   },
   {
     path: paths.interceptors.all(),
-    element: (
-      <NamespacedRoute>
-        <Interceptors />
-      </NamespacedRoute>
-    )
+    element: <Interceptors />,
+    handle: {
+      isNamespaced: true,
+      path: paths.interceptors.all()
+    }
   },
   {
     path: paths.interceptors.byNamespace(),
-    element: (
-      <NamespacedRoute>
-        <Interceptors />
-      </NamespacedRoute>
-    )
+    element: <Interceptors />,
+    handle: {
+      isNamespaced: true,
+      path: paths.interceptors.byNamespace()
+    }
   }
 ];

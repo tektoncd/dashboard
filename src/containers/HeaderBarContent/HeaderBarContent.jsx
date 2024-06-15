@@ -14,6 +14,7 @@ import { useEffect } from 'react';
 import {
   generatePath,
   useLocation,
+  useMatches,
   useNavigate,
   useParams
 } from 'react-router-dom';
@@ -25,15 +26,15 @@ import { useSelectedNamespace, useTenantNamespaces } from '../../api';
 
 export default function HeaderBarContent() {
   const location = useLocation();
+  const matches = useMatches();
+  const match = matches.at(-1);
+
   const navigate = useNavigate();
   const params = useParams();
   const tenantNamespaces = useTenantNamespaces();
 
-  const {
-    namespacedMatch,
-    selectedNamespace: namespace,
-    selectNamespace
-  } = useSelectedNamespace();
+  const { selectedNamespace: namespace, selectNamespace } =
+    useSelectedNamespace();
 
   useEffect(() => {
     if (params.namespace) {
@@ -52,12 +53,12 @@ export default function HeaderBarContent() {
       event.selectedItem?.id || tenantNamespaces[0] || ALL_NAMESPACES;
     selectNamespace(newNamespace);
 
-    if (!namespacedMatch) {
+    if (!match.handle?.isNamespaced) {
       return;
     }
 
     if (newNamespace === ALL_NAMESPACES) {
-      if (namespacedMatch.isResourceDetails) {
+      if (match.handle?.isResourceDetails) {
         setPath(
           location.pathname
             .replace(urls.byNamespace({ namespace }), '')
@@ -70,18 +71,18 @@ export default function HeaderBarContent() {
         );
       } else {
         setPath(
-          generatePath(namespacedMatch.path.replace(paths.byNamespace(), ''), {
-            ...namespacedMatch.params
+          generatePath(match.handle.path.replace(paths.byNamespace(), ''), {
+            ...match.params
           })
         );
       }
       return;
     }
 
-    const prefix = namespacedMatch.params?.namespace ? '' : paths.byNamespace();
+    const prefix = match.params?.namespace ? '' : paths.byNamespace();
 
-    const newURL = generatePath(`${prefix}${namespacedMatch.path}`, {
-      ...namespacedMatch.params,
+    const newURL = generatePath(`${prefix}${match.handle.path}`, {
+      ...match.params,
       namespace: newNamespace
     });
     setPath(newURL);

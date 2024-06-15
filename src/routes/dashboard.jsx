@@ -17,7 +17,6 @@ import {
   About,
   CustomResourceDefinition,
   ImportResources,
-  NamespacedRoute,
   ReadWriteRoute,
   ResourceList,
   Settings
@@ -42,11 +41,12 @@ export default [
   },
   {
     path: paths.rawCRD.byNamespace(),
-    element: (
-      <NamespacedRoute isResourceDetails>
-        <CustomResourceDefinition />
-      </NamespacedRoute>
-    )
+    element: <CustomResourceDefinition />,
+    handle: {
+      isNamespaced: true,
+      isResourceDetails: true,
+      path: paths.rawCRD.byNamespace()
+    }
   },
   {
     path: paths.rawCRD.cluster(),
@@ -54,27 +54,28 @@ export default [
   },
   {
     path: paths.kubernetesResources.all(),
-    element: (
-      <NamespacedRoute>
-        <ResourceList />
-      </NamespacedRoute>
-    )
+    element: <ResourceList />,
+    handle: {
+      isNamespaced: true,
+      path: paths.kubernetesResources.all()
+    }
   },
   {
     path: paths.kubernetesResources.byNamespace(),
-    element: (
-      <NamespacedRoute>
-        <ResourceList />
-      </NamespacedRoute>
-    )
+    element: <ResourceList />,
+    handle: {
+      isNamespaced: true,
+      path: paths.kubernetesResources.byNamespace()
+    }
   },
   {
     path: paths.kubernetesResources.byName(),
-    element: (
-      <NamespacedRoute isResourceDetails>
-        <CustomResourceDefinition />
-      </NamespacedRoute>
-    )
+    element: <CustomResourceDefinition />,
+    handle: {
+      isNamespaced: true,
+      isResourceDetails: true,
+      path: paths.kubernetesResources.byName()
+    }
   },
   {
     path: paths.kubernetesResources.cluster(),
