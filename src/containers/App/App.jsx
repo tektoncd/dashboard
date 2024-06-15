@@ -18,9 +18,7 @@ import {
   Link,
   Navigate,
   Outlet,
-  Route,
   RouterProvider,
-  Routes,
   useLocation,
   useNavigate
 } from 'react-router-dom';
@@ -34,7 +32,6 @@ import { PageErrorBoundary } from '@tektoncd/dashboard-components';
 import {
   ALL_NAMESPACES,
   getErrorMessage,
-  paths,
   urls,
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
@@ -131,29 +128,22 @@ function Root() {
     }, 0);
   }
 
-  const header = (
-    <HeaderContainer
-      isSideNavExpanded
-      render={({ isSideNavExpanded, onClickSideNavExpand }) => (
-        <Header
-          headerNameProps={{
-            element: HeaderNameLink
-          }}
-          isSideNavExpanded={isSideNavExpanded}
-          onHeaderMenuButtonClick={onClickSideNavExpand}
-        >
-          <HeaderBarContent />
-        </Header>
-      )}
-    />
-  );
-
   return (
     <>
-      <Routes>
-        <Route path={paths.byNamespace({ path: '/*' })} element={header} />
-        <Route path="*" element={header} />
-      </Routes>
+      <HeaderContainer
+        isSideNavExpanded
+        render={({ isSideNavExpanded, onClickSideNavExpand }) => (
+          <Header
+            headerNameProps={{
+              element: HeaderNameLink
+            }}
+            isSideNavExpanded={isSideNavExpanded}
+            onHeaderMenuButtonClick={onClickSideNavExpand}
+          >
+            <HeaderBarContent />
+          </Header>
+        )}
+      />
 
       <Content
         id="main-content"
@@ -214,7 +204,6 @@ export function App() {
   const [selectedNamespace, setSelectedNamespace] = useState(
     tenantNamespaces[0] || ALL_NAMESPACES
   );
-  const [namespacedMatch, setNamespacedMatch] = useState(null);
 
   const {
     data: messages,
@@ -244,12 +233,10 @@ export function App() {
 
   const namespaceContext = useMemo(
     () => ({
-      namespacedMatch,
       selectedNamespace,
-      selectNamespace: setSelectedNamespace,
-      setNamespacedMatch
+      selectNamespace: setSelectedNamespace
     }),
-    [namespacedMatch, selectedNamespace]
+    [selectedNamespace]
   );
 
   return (

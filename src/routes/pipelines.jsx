@@ -20,7 +20,6 @@ import {
   CreateTaskRun,
   CustomRun,
   CustomRuns,
-  NamespacedRoute,
   PipelineRun,
   PipelineRuns,
   Pipelines,
@@ -37,27 +36,28 @@ export default [
   },
   {
     path: paths.customRuns.all(),
-    element: (
-      <NamespacedRoute>
-        <CustomRuns />
-      </NamespacedRoute>
-    )
+    element: <CustomRuns />,
+    handle: {
+      isNamespaced: true,
+      path: paths.customRuns.all()
+    }
   },
   {
     path: paths.customRuns.byNamespace(),
-    element: (
-      <NamespacedRoute>
-        <CustomRuns />
-      </NamespacedRoute>
-    )
+    element: <CustomRuns />,
+    handle: {
+      isNamespaced: true,
+      path: paths.customRuns.byNamespace()
+    }
   },
   {
     path: paths.customRuns.byName(),
-    element: (
-      <NamespacedRoute isResourceDetails>
-        <CustomRun />
-      </NamespacedRoute>
-    )
+    element: <CustomRun />,
+    handle: {
+      isNamespaced: true,
+      isResourceDetails: true,
+      path: paths.customRuns.byName()
+    }
   },
   {
     path: paths.customRuns.create(),
@@ -69,43 +69,44 @@ export default [
   },
   {
     path: paths.pipelines.all(),
-    element: (
-      <NamespacedRoute>
-        <Pipelines />
-      </NamespacedRoute>
-    )
+    element: <Pipelines />,
+    handle: {
+      isNamespaced: true,
+      path: paths.pipelines.all()
+    }
   },
   {
     path: paths.pipelines.byNamespace(),
-    element: (
-      <NamespacedRoute>
-        <Pipelines />
-      </NamespacedRoute>
-    )
+    element: <Pipelines />,
+    handle: {
+      isNamespaced: true,
+      path: paths.pipelines.byNamespace()
+    }
   },
   {
     path: paths.pipelineRuns.all(),
-    element: (
-      <NamespacedRoute>
-        <PipelineRuns />
-      </NamespacedRoute>
-    )
+    element: <PipelineRuns />,
+    handle: {
+      isNamespaced: true,
+      path: paths.pipelineRuns.all()
+    }
   },
   {
     path: paths.pipelineRuns.byNamespace(),
-    element: (
-      <NamespacedRoute>
-        <PipelineRuns />
-      </NamespacedRoute>
-    )
+    element: <PipelineRuns />,
+    handle: {
+      isNamespaced: true,
+      path: paths.pipelineRuns.byNamespace()
+    }
   },
   {
     path: paths.pipelineRuns.byName(),
-    element: (
-      <NamespacedRoute isResourceDetails>
-        <PipelineRun />
-      </NamespacedRoute>
-    )
+    element: <PipelineRun />,
+    handle: {
+      isNamespaced: true,
+      isResourceDetails: true,
+      path: paths.pipelineRuns.byName()
+    }
   },
   {
     path: paths.pipelineRuns.create(),
@@ -117,43 +118,44 @@ export default [
   },
   {
     path: paths.tasks.all(),
-    element: (
-      <NamespacedRoute>
-        <Tasks />
-      </NamespacedRoute>
-    )
+    element: <Tasks />,
+    handle: {
+      isNamespaced: true,
+      path: paths.tasks.all()
+    }
   },
   {
     path: paths.tasks.byNamespace(),
-    element: (
-      <NamespacedRoute>
-        <Tasks />
-      </NamespacedRoute>
-    )
+    element: <Tasks />,
+    handle: {
+      isNamespaced: true,
+      path: paths.tasks.byNamespace()
+    }
   },
   {
     path: paths.taskRuns.all(),
-    element: (
-      <NamespacedRoute>
-        <TaskRuns />
-      </NamespacedRoute>
-    )
+    element: <TaskRuns />,
+    handle: {
+      isNamespaced: true,
+      path: paths.taskRuns.all()
+    }
   },
   {
     path: paths.taskRuns.byNamespace(),
-    element: (
-      <NamespacedRoute>
-        <TaskRuns />
-      </NamespacedRoute>
-    )
+    element: <TaskRuns />,
+    handle: {
+      isNamespaced: true,
+      path: paths.taskRuns.byNamespace()
+    }
   },
   {
     path: paths.taskRuns.byName(),
-    element: (
-      <NamespacedRoute isResourceDetails>
-        <TaskRun />
-      </NamespacedRoute>
-    )
+    element: <TaskRun />,
+    handle: {
+      isNamespaced: true,
+      isResourceDetails: true,
+      path: paths.taskRuns.byName()
+    }
   },
   {
     path: paths.taskRuns.create(),

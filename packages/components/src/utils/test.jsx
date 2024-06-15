@@ -12,30 +12,32 @@ limitations under the License.
 */
 /* istanbul ignore file */
 import { Fragment } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { render as baseRender } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 
-function RouterWrapper({ children, path }) {
+function RouterWrapper({ children, handle, path }) {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path={path}
-          element={
+    <RouterProvider
+      router={createBrowserRouter([
+        {
+          path,
+          element: (
             <IntlProvider locale="en" defaultLocale="en" messages={{}}>
               {children}
             </IntlProvider>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+          ),
+          handle
+        }
+      ])}
+    />
   );
 }
 
 export function renderWithRouter(
   ui,
   {
+    handle,
     path = '/',
     rerender,
     route = '/',
@@ -49,7 +51,9 @@ export function renderWithRouter(
     route,
     wrapper: ({ children }) => (
       <Wrapper>
-        <RouterWrapper path={path}>{children}</RouterWrapper>
+        <RouterWrapper handle={handle} path={path}>
+          {children}
+        </RouterWrapper>
       </Wrapper>
     ),
     ...otherOptions

@@ -53,10 +53,8 @@ export function getWebSocket() {
 }
 
 const namespaceContext = {
-  namespacedMatch: null,
   selectedNamespace: null,
-  selectNamespace: () => {},
-  setNamespacedMatch: () => {}
+  selectNamespace: () => {}
 };
 
 export function getAPIWrapper({ queryClient = getQueryClient() } = {}) {
