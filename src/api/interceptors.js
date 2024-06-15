@@ -1,5 +1,5 @@
 /*
-Copyright 2022 The Tekton Authors
+Copyright 2022-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,19 +13,21 @@ limitations under the License.
 
 import { get } from './comms';
 import {
+  getKubeAPI,
   getQueryParams,
-  getTektonAPI,
   triggersAPIGroup,
   useCollection,
   useResource
 } from './utils';
 
 function getInterceptorsAPI({ filters, isWebSocket, name, namespace }) {
-  return getTektonAPI(
-    'interceptors',
-    { group: triggersAPIGroup, isWebSocket, namespace, version: 'v1alpha1' },
-    getQueryParams({ filters, name })
-  );
+  return getKubeAPI({
+    group: triggersAPIGroup,
+    kind: 'interceptors',
+    params: { isWebSocket, name, namespace },
+    queryParams: getQueryParams({ filters }),
+    version: 'v1alpha1'
+  });
 }
 
 export function getInterceptors({ filters = [], namespace } = {}) {
@@ -34,10 +36,10 @@ export function getInterceptors({ filters = [], namespace } = {}) {
 }
 
 export function getInterceptor({ name, namespace }) {
-  const uri = getTektonAPI('interceptors', {
+  const uri = getKubeAPI({
     group: triggersAPIGroup,
-    name,
-    namespace,
+    kind: 'interceptors',
+    params: { name, namespace },
     version: 'v1alpha1'
   });
   return get(uri);

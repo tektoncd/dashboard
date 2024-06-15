@@ -56,14 +56,10 @@ export function getKubeAPI({
 export function getQueryParams({
   filters,
   involvedObjectKind,
-  involvedObjectName,
-  name
+  involvedObjectName
 }) {
   if (filters?.length) {
     return { labelSelector: filters };
-  }
-  if (name) {
-    return { fieldSelector: `metadata.name=${name}` };
   }
   if (involvedObjectKind && involvedObjectName) {
     return {
@@ -86,27 +82,6 @@ export function setPipelinesV1ResourcesEnabled(enabled) {
 
 export function getTektonPipelinesAPIVersion() {
   return isPipelinesV1ResourcesEnabled() ? 'v1' : 'v1beta1';
-}
-
-// TODO: remove this and replace usage with getKubeAPI directly
-export function getTektonAPI(
-  kind,
-  {
-    group = tektonAPIGroup,
-    isWebSocket,
-    name = '',
-    namespace,
-    version = getTektonPipelinesAPIVersion()
-  } = {},
-  queryParams
-) {
-  return getKubeAPI({
-    group,
-    kind,
-    params: { isWebSocket, name, namespace },
-    queryParams,
-    version
-  });
 }
 
 export const NamespaceContext = createContext();

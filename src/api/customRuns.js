@@ -1,5 +1,5 @@
 /*
-Copyright 2022-2023 The Tekton Authors
+Copyright 2022-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,29 +16,33 @@ import deepClone from 'lodash.clonedeep';
 
 import { deleteRequest, get, patch, post } from './comms';
 import {
+  getKubeAPI,
   getQueryParams,
-  getTektonAPI,
   removeSystemAnnotations,
   removeSystemLabels,
+  tektonAPIGroup,
   useCollection,
   useResource
 } from './utils';
 
 export function deleteCustomRun({ name, namespace }) {
-  const uri = getTektonAPI('customruns', {
-    name,
-    namespace,
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'customruns',
+    params: { name, namespace },
     version: 'v1beta1'
   });
   return deleteRequest(uri);
 }
 
 function getCustomRunsAPI({ filters, isWebSocket, name, namespace }) {
-  return getTektonAPI(
-    'customruns',
-    { isWebSocket, namespace, version: 'v1beta1' },
-    getQueryParams({ filters, name })
-  );
+  return getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'customruns',
+    params: { isWebSocket, name, namespace },
+    queryParams: getQueryParams({ filters }),
+    version: 'v1beta1'
+  });
 }
 
 export function getCustomRunPayload({ namespace }) {
@@ -66,9 +70,10 @@ export function getCustomRuns({ filters = [], namespace } = {}) {
 }
 
 export function getCustomRun({ name, namespace }) {
-  const uri = getTektonAPI('customruns', {
-    name,
-    namespace,
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'customruns',
+    params: { name, namespace },
     version: 'v1beta1'
   });
   return get(uri);
@@ -100,16 +105,22 @@ export function cancelCustomRun({ name, namespace }) {
     { op: 'replace', path: '/spec/status', value: 'RunCancelled' }
   ];
 
-  const uri = getTektonAPI('customruns', {
-    name,
-    namespace,
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'customruns',
+    params: { name, namespace },
     version: 'v1beta1'
   });
   return patch(uri, payload);
 }
 
 export function createCustomRunRaw({ namespace, payload }) {
-  const uri = getTektonAPI('customruns', { namespace, version: 'v1beta1' });
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'customruns',
+    params: { namespace },
+    version: 'v1beta1'
+  });
   return post(uri, payload).then(({ body }) => body);
 }
 
@@ -158,6 +169,11 @@ export function rerunCustomRun(customRun) {
     rerun: true
   });
 
-  const uri = getTektonAPI('customruns', { namespace, version: 'v1beta1' });
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'customruns',
+    params: { namespace },
+    version: 'v1beta1'
+  });
   return post(uri, payload).then(({ body }) => body);
 }

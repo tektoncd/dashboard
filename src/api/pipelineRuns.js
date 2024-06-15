@@ -16,20 +16,23 @@ import deepClone from 'lodash.clonedeep';
 
 import { deleteRequest, get, patch, post } from './comms';
 import {
+  getKubeAPI,
   getQueryParams,
-  getTektonAPI,
   getTektonPipelinesAPIVersion,
   removeSystemLabels,
+  tektonAPIGroup,
   useCollection,
   useResource
 } from './utils';
 
 function getPipelineRunsAPI({ filters, isWebSocket, name, namespace }) {
-  return getTektonAPI(
-    'pipelineruns',
-    { isWebSocket, namespace },
-    getQueryParams({ filters, name })
-  );
+  return getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'pipelineruns',
+    params: { isWebSocket, name, namespace },
+    queryParams: getQueryParams({ filters }),
+    version: getTektonPipelinesAPIVersion()
+  });
 }
 
 export function getPipelineRuns({ filters = [], namespace } = {}) {
@@ -38,7 +41,12 @@ export function getPipelineRuns({ filters = [], namespace } = {}) {
 }
 
 export function getPipelineRun({ name, namespace }) {
-  const uri = getTektonAPI('pipelineruns', { name, namespace });
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'pipelineruns',
+    params: { name, namespace },
+    version: getTektonPipelinesAPIVersion()
+  });
   return get(uri);
 }
 
@@ -66,17 +74,32 @@ export function usePipelineRun(params, queryConfig) {
 export function cancelPipelineRun({ name, namespace, status = 'Cancelled' }) {
   const payload = [{ op: 'replace', path: '/spec/status', value: status }];
 
-  const uri = getTektonAPI('pipelineruns', { name, namespace });
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'pipelineruns',
+    params: { name, namespace },
+    version: getTektonPipelinesAPIVersion()
+  });
   return patch(uri, payload);
 }
 
 export function deletePipelineRun({ name, namespace }) {
-  const uri = getTektonAPI('pipelineruns', { name, namespace });
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'pipelineruns',
+    params: { name, namespace },
+    version: getTektonPipelinesAPIVersion()
+  });
   return deleteRequest(uri);
 }
 
 export function createPipelineRunRaw({ namespace, payload }) {
-  const uri = getTektonAPI('pipelineruns', { namespace });
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'pipelineruns',
+    params: { namespace },
+    version: getTektonPipelinesAPIVersion()
+  });
   return post(uri, payload).then(({ body }) => body);
 }
 
@@ -175,7 +198,12 @@ export function createPipelineRun({
     timeoutsPipeline,
     timeoutsTasks
   });
-  const uri = getTektonAPI('pipelineruns', { namespace });
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'pipelineruns',
+    params: { namespace },
+    version: getTektonPipelinesAPIVersion()
+  });
   return post(uri, payload).then(({ body }) => body);
 }
 
@@ -240,7 +268,12 @@ export function rerunPipelineRun(pipelineRun) {
     rerun: true
   });
 
-  const uri = getTektonAPI('pipelineruns', { namespace });
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'pipelineruns',
+    params: { namespace },
+    version: getTektonPipelinesAPIVersion()
+  });
   return post(uri, payload).then(({ body }) => body);
 }
 
@@ -249,6 +282,11 @@ export function startPipelineRun(pipelineRun) {
 
   const payload = [{ op: 'remove', path: '/spec/status' }];
 
-  const uri = getTektonAPI('pipelineruns', { name, namespace });
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'pipelineruns',
+    params: { name, namespace },
+    version: getTektonPipelinesAPIVersion()
+  });
   return patch(uri, payload);
 }

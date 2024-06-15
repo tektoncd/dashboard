@@ -318,7 +318,7 @@ describe('importResources', () => {
     };
 
     const fakeAPI = 'fake_api';
-    vi.spyOn(utils, 'getTektonAPI').mockImplementation(() => fakeAPI);
+    vi.spyOn(utils, 'getKubeAPI').mockImplementation(() => fakeAPI);
     vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
       Promise.resolve(body)
     );
@@ -378,7 +378,7 @@ describe('importResources', () => {
     };
 
     const fakeAPI = 'fake_api';
-    vi.spyOn(utils, 'getTektonAPI').mockImplementation(() => fakeAPI);
+    vi.spyOn(utils, 'getKubeAPI').mockImplementation(() => fakeAPI);
     vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
       Promise.resolve(body)
     );
