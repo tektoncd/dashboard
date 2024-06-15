@@ -118,24 +118,24 @@ it('importResources', () => {
 describe('kubernetesResources', () => {
   const group = 'fake_group';
   const name = 'fake_name';
-  const type = 'fake_type';
+  const kind = 'fake_kind';
   const version = 'fake_version';
 
   it('all', () => {
-    expect(urls.kubernetesResources.all({ group, type, version })).toEqual(
-      generatePath(paths.kubernetesResources.all(), { group, type, version })
+    expect(urls.kubernetesResources.all({ group, kind, version })).toEqual(
+      generatePath(paths.kubernetesResources.all(), { group, kind, version })
     );
   });
 
   it('byName', () => {
     expect(
-      urls.kubernetesResources.byName({ group, name, namespace, type, version })
+      urls.kubernetesResources.byName({ group, kind, name, namespace, version })
     ).toEqual(
       generatePath(paths.kubernetesResources.byName(), {
         group,
+        kind,
         name,
         namespace,
-        type,
         version
       })
     );
@@ -143,12 +143,12 @@ describe('kubernetesResources', () => {
 
   it('byNamespace', () => {
     expect(
-      urls.kubernetesResources.byNamespace({ group, namespace, type, version })
+      urls.kubernetesResources.byNamespace({ group, kind, namespace, version })
     ).toEqual(
       generatePath(paths.kubernetesResources.byNamespace(), {
         group,
+        kind,
         namespace,
-        type,
         version
       })
     );
@@ -156,12 +156,12 @@ describe('kubernetesResources', () => {
 
   it('cluster', () => {
     expect(
-      urls.kubernetesResources.cluster({ group, name, type, version })
+      urls.kubernetesResources.cluster({ group, kind, name, version })
     ).toEqual(
       generatePath(paths.kubernetesResources.cluster(), {
         group,
+        kind,
         name,
-        type,
         version
       })
     );
@@ -225,25 +225,25 @@ describe('pipelines', () => {
 
 describe('rawCRD', () => {
   it('all', () => {
-    const type = 'tasks';
-    expect(urls.rawCRD.all({ type })).toEqual(
-      generatePath(paths.rawCRD.all(), { type })
+    const kind = 'tasks';
+    expect(urls.rawCRD.all({ kind })).toEqual(
+      generatePath(paths.rawCRD.all(), { kind })
     );
   });
 
   it('byNamespace', () => {
-    const type = 'tasks';
+    const kind = 'tasks';
     const name = taskName;
-    expect(urls.rawCRD.byNamespace({ namespace, type, name })).toEqual(
-      generatePath(paths.rawCRD.byNamespace(), { namespace, type, name })
+    expect(urls.rawCRD.byNamespace({ namespace, kind, name })).toEqual(
+      generatePath(paths.rawCRD.byNamespace(), { kind, name, namespace })
     );
   });
 
   it('cluster', () => {
-    const type = 'tasks';
+    const kind = 'tasks';
     const name = taskName;
-    expect(urls.rawCRD.cluster({ type, name })).toEqual(
-      generatePath(paths.rawCRD.cluster(), { type, name })
+    expect(urls.rawCRD.cluster({ kind, name })).toEqual(
+      generatePath(paths.rawCRD.cluster(), { kind, name })
     );
   });
 });

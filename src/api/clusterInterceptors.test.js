@@ -1,5 +1,5 @@
 /*
-Copyright 2021-2023 The Tekton Authors
+Copyright 2021-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,35 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { http, HttpResponse } from 'msw';
-
 import * as API from './clusterInterceptors';
 import * as utils from './utils';
-import { server } from '../../config_frontend/msw';
-
-it('getClusterInterceptors', () => {
-  const data = {
-    items: 'clusterinterceptors'
-  };
-
-  server.use(
-    http.get(/\/clusterinterceptors\/$/, () => HttpResponse.json(data))
-  );
-
-  return API.getClusterInterceptors().then(tasks => {
-    expect(tasks).toEqual(data);
-  });
-});
-
-it('getClusterInterceptor', () => {
-  const name = 'foo';
-  const data = { fake: 'clusterinterceptor' };
-  server.use(http.get(new RegExp(`/${name}$`), () => HttpResponse.json(data)));
-
-  return API.getClusterInterceptor({ name }).then(task => {
-    expect(task).toEqual(data);
-  });
-});
 
 it('useClusterInterceptors', () => {
   const query = { fake: 'query' };
@@ -48,9 +21,10 @@ it('useClusterInterceptors', () => {
   expect(API.useClusterInterceptors(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getClusterInterceptors,
-      kind: 'ClusterInterceptor',
-      params
+      group: utils.triggersAPIGroup,
+      kind: 'clusterinterceptors',
+      params,
+      version: 'v1alpha1'
     })
   );
 });
@@ -62,9 +36,10 @@ it('useClusterInterceptor', () => {
   expect(API.useClusterInterceptor(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getClusterInterceptor,
-      kind: 'ClusterInterceptor',
-      params
+      group: utils.triggersAPIGroup,
+      kind: 'clusterinterceptors',
+      params,
+      version: 'v1alpha1'
     })
   );
 });

@@ -84,16 +84,16 @@ export const paths = {
   },
   kubernetesResources: {
     all() {
-      return '/:group/:version/:type';
+      return '/:group/:version/:kind';
     },
     byName() {
-      return byNamespace({ path: '/:group/:version/:type/:name' });
+      return byNamespace({ path: '/:group/:version/:kind/:name' });
     },
     byNamespace() {
-      return byNamespace({ path: '/:group/:version/:type' });
+      return byNamespace({ path: '/:group/:version/:kind' });
     },
     cluster() {
-      return '/:group/:version/:type/:name';
+      return '/:group/:version/:kind/:name';
     }
   },
   pipelineRuns: {
@@ -122,13 +122,13 @@ export const paths = {
   },
   rawCRD: {
     all() {
-      return '/:type';
+      return '/:kind';
     },
     byNamespace() {
-      return byNamespace({ path: '/:type/:name' });
+      return byNamespace({ path: '/:kind/:name' });
     },
     cluster() {
-      return '/:type/:name';
+      return '/:kind/:name';
     }
   },
   settings() {

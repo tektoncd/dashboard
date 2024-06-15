@@ -209,7 +209,9 @@ export function App() {
     data: messages,
     isFetching: isFetchingMessages,
     isPlaceholderData: isMessagesPlaceholder
-  } = useQuery(['i18n', lang], () => loadMessages(lang), {
+  } = useQuery({
+    queryKey: ['i18n', lang],
+    queryFn: () => loadMessages(lang),
     placeholderData: {}
   });
 

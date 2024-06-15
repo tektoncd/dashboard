@@ -14,10 +14,9 @@ limitations under the License.
 import { getGenerateNamePrefixForRerun } from '@tektoncd/dashboard-utils';
 import deepClone from 'lodash.clonedeep';
 
-import { deleteRequest, get, patch, post } from './comms';
+import { deleteRequest, patch, post } from './comms';
 import {
   getKubeAPI,
-  getQueryParams,
   removeSystemAnnotations,
   removeSystemLabels,
   tektonAPIGroup,
@@ -33,16 +32,6 @@ export function deleteCustomRun({ name, namespace }) {
     version: 'v1beta1'
   });
   return deleteRequest(uri);
-}
-
-function getCustomRunsAPI({ filters, isWebSocket, name, namespace }) {
-  return getKubeAPI({
-    group: tektonAPIGroup,
-    kind: 'customruns',
-    params: { isWebSocket, name, namespace },
-    queryParams: getQueryParams({ filters }),
-    version: 'v1beta1'
-  });
 }
 
 export function getCustomRunPayload({ namespace }) {
@@ -64,39 +53,22 @@ export function getCustomRunPayload({ namespace }) {
   return payload;
 }
 
-export function getCustomRuns({ filters = [], namespace } = {}) {
-  const uri = getCustomRunsAPI({ filters, namespace });
-  return get(uri);
-}
-
-export function getCustomRun({ name, namespace }) {
-  const uri = getKubeAPI({
+export function useCustomRuns(params) {
+  return useCollection({
     group: tektonAPIGroup,
     kind: 'customruns',
-    params: { name, namespace },
-    version: 'v1beta1'
-  });
-  return get(uri);
-}
-
-export function useCustomRuns(params) {
-  const webSocketURL = getCustomRunsAPI({ ...params, isWebSocket: true });
-  return useCollection({
-    api: getCustomRuns,
-    kind: 'CustomRun',
     params,
-    webSocketURL
+    version: 'v1beta1'
   });
 }
 
 export function useCustomRun(params, queryConfig) {
-  const webSocketURL = getCustomRunsAPI({ ...params, isWebSocket: true });
   return useResource({
-    api: getCustomRun,
-    kind: 'CustomRun',
+    group: tektonAPIGroup,
+    kind: 'customruns',
     params,
     queryConfig,
-    webSocketURL
+    version: 'v1beta1'
   });
 }
 

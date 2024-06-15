@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,25 +16,6 @@ import { http, HttpResponse } from 'msw';
 import * as API from './tasks';
 import * as utils from './utils';
 import { server } from '../../config_frontend/msw';
-
-it('getTasks', () => {
-  const data = {
-    items: 'tasks'
-  };
-  server.use(http.get(/\/tasks\//, () => HttpResponse.json(data)));
-  return API.getTasks().then(tasks => {
-    expect(tasks).toEqual(data);
-  });
-});
-
-it('getTask', () => {
-  const name = 'foo';
-  const data = { fake: 'task' };
-  server.use(http.get(new RegExp(`/${name}$`), () => HttpResponse.json(data)));
-  return API.getTask({ name }).then(task => {
-    expect(task).toEqual(data);
-  });
-});
 
 it('deleteTask', () => {
   const name = 'foo';
@@ -54,9 +35,10 @@ it('useTasks', () => {
   expect(API.useTasks(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getTasks,
-      kind: 'Task',
-      params
+      group: utils.tektonAPIGroup,
+      kind: 'tasks',
+      params,
+      version: 'v1'
     })
   );
 });
@@ -68,9 +50,10 @@ it('useTask', () => {
   expect(API.useTask(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getTask,
-      kind: 'Task',
-      params
+      group: utils.tektonAPIGroup,
+      kind: 'tasks',
+      params,
+      version: 'v1'
     })
   );
 
@@ -78,10 +61,11 @@ it('useTask', () => {
   API.useTask(params, queryConfig);
   expect(utils.useResource).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getTask,
-      kind: 'Task',
+      group: utils.tektonAPIGroup,
+      kind: 'tasks',
       params,
-      queryConfig
+      queryConfig,
+      version: 'v1'
     })
   );
 });

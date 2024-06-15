@@ -11,40 +11,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { deleteRequest, get } from './comms';
+import { deleteRequest } from './comms';
 import {
   getKubeAPI,
-  getQueryParams,
   getTektonPipelinesAPIVersion,
   tektonAPIGroup,
   useCollection,
   useResource
 } from './utils';
-
-function getTasksAPI({ filters, isWebSocket, name, namespace }) {
-  return getKubeAPI({
-    group: tektonAPIGroup,
-    kind: 'tasks',
-    params: { isWebSocket, name, namespace },
-    queryParams: getQueryParams({ filters }),
-    version: getTektonPipelinesAPIVersion()
-  });
-}
-
-export function getTasks({ filters = [], namespace } = {}) {
-  const uri = getTasksAPI({ filters, namespace });
-  return get(uri);
-}
-
-export function getTask({ name, namespace }) {
-  const uri = getKubeAPI({
-    group: tektonAPIGroup,
-    kind: 'tasks',
-    params: { name, namespace },
-    version: getTektonPipelinesAPIVersion()
-  });
-  return get(uri);
-}
 
 export function deleteTask({ name, namespace }) {
   const uri = getKubeAPI({
@@ -57,17 +31,20 @@ export function deleteTask({ name, namespace }) {
 }
 
 export function useTasks(params) {
-  const webSocketURL = getTasksAPI({ ...params, isWebSocket: true });
-  return useCollection({ api: getTasks, kind: 'Task', params, webSocketURL });
+  return useCollection({
+    group: tektonAPIGroup,
+    kind: 'tasks',
+    params,
+    version: getTektonPipelinesAPIVersion()
+  });
 }
 
 export function useTask(params, queryConfig) {
-  const webSocketURL = getTasksAPI({ ...params, isWebSocket: true });
   return useResource({
-    api: getTask,
-    kind: 'Task',
+    group: tektonAPIGroup,
+    kind: 'tasks',
     params,
     queryConfig,
-    webSocketURL
+    version: getTektonPipelinesAPIVersion()
   });
 }

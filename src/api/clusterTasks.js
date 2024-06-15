@@ -11,39 +11,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { deleteRequest, get } from './comms';
+import { deleteRequest } from './comms';
 import {
   getKubeAPI,
-  getQueryParams,
   tektonAPIGroup,
   useCollection,
   useResource
 } from './utils';
-
-function getClusterTasksAPI({ filters, isWebSocket, name }) {
-  return getKubeAPI({
-    group: tektonAPIGroup,
-    kind: 'clustertasks',
-    params: { isWebSocket, name },
-    queryParams: getQueryParams({ filters }),
-    version: 'v1beta1'
-  });
-}
-
-export function getClusterTasks({ filters = [] } = {}) {
-  const uri = getClusterTasksAPI({ filters });
-  return get(uri);
-}
-
-export function getClusterTask({ name }) {
-  const uri = getKubeAPI({
-    group: tektonAPIGroup,
-    kind: 'clustertasks',
-    params: { name },
-    version: 'v1beta1'
-  });
-  return get(uri);
-}
 
 export function deleteClusterTask({ name }) {
   const uri = getKubeAPI({
@@ -56,22 +30,20 @@ export function deleteClusterTask({ name }) {
 }
 
 export function useClusterTasks(params) {
-  const webSocketURL = getClusterTasksAPI({ ...params, isWebSocket: true });
   return useCollection({
-    api: getClusterTasks,
-    kind: 'ClusterTask',
+    group: tektonAPIGroup,
+    kind: 'clustertasks',
     params,
-    webSocketURL
+    version: 'v1beta1'
   });
 }
 
 export function useClusterTask(params, queryConfig) {
-  const webSocketURL = getClusterTasksAPI({ ...params, isWebSocket: true });
   return useResource({
-    api: getClusterTask,
-    kind: 'ClusterTask',
+    group: tektonAPIGroup,
+    kind: 'clustertasks',
     params,
     queryConfig,
-    webSocketURL
+    version: 'v1beta1'
   });
 }

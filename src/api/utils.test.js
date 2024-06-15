@@ -45,9 +45,10 @@ describe('getQueryParams', () => {
 });
 
 describe('useWebSocket', () => {
-  const kind = 'TaskRun';
+  const group = 'fake_group';
+  const kind = 'taskruns';
   const resourceVersion = 'fake_resourceVersion';
-  const url = 'http://localhost/fake_url';
+  const version = 'fake_version';
 
   it('should handle ADDED events', () => {
     const queryClient = getQueryClient();
@@ -57,17 +58,19 @@ describe('useWebSocket', () => {
     const existingResource = { metadata: { uid: 'existing-id' } };
     const newResource = { kind, metadata: { uid: 'new-uid' } };
 
-    queryClient.setQueryData([kind], () => ({
+    queryClient.setQueryData([group, version, kind], () => ({
       items: [existingResource],
       metadata: {}
     }));
 
-    renderHook(() => useWebSocket({ kind, resourceVersion, url }), {
+    renderHook(() => useWebSocket({ group, kind, resourceVersion, version }), {
       wrapper: getAPIWrapper({ queryClient })
     });
 
     expect(comms.createWebSocket).toHaveBeenCalledWith(
-      `${url}?resourceVersion=${resourceVersion}`
+      expect.stringMatching(
+        `${group}/${version}/${kind}/\\?watch=true&resourceVersion=${resourceVersion}`
+      )
     );
 
     act(() => {
@@ -79,7 +82,11 @@ describe('useWebSocket', () => {
         })
       });
     });
-    expect(queryClient.invalidateQueries).toHaveBeenCalledWith([kind]);
+    expect(queryClient.invalidateQueries).toHaveBeenCalledWith([
+      group,
+      version,
+      kind
+    ]);
   });
 
   it('should handle DELETED events', () => {
@@ -100,19 +107,22 @@ describe('useWebSocket', () => {
       metadata: { name: otherName, namespace, uid: 'existing-id-3' }
     };
 
-    queryClient.setQueryData([kind], () => ({
+    queryClient.setQueryData([group, version, kind], () => ({
       items: [resource1, resource2, resource3],
       metadata: {}
     }));
-    queryClient.setQueryData([kind, { name, namespace }], () => resource2);
     queryClient.setQueryData(
-      [kind, { name: otherName, namespace }],
+      [group, version, kind, { name, namespace }],
+      () => resource2
+    );
+    queryClient.setQueryData(
+      [group, version, kind, { name: otherName, namespace }],
       () => resource3
     );
 
     vi.spyOn(queryClient, 'removeQueries');
 
-    renderHook(() => useWebSocket({ kind, resourceVersion, url }), {
+    renderHook(() => useWebSocket({ group, kind, resourceVersion, version }), {
       wrapper: getAPIWrapper({ queryClient })
     });
 
@@ -125,14 +135,21 @@ describe('useWebSocket', () => {
         })
       });
     });
-    expect(queryClient.getQueryData([kind])).toEqual({
+    expect(queryClient.getQueryData([group, version, kind])).toEqual({
       items: [resource1, resource3],
       metadata: {}
     });
     expect(
-      queryClient.getQueryData([kind, { name: otherName, namespace }])
+      queryClient.getQueryData([
+        group,
+        version,
+        kind,
+        { name: otherName, namespace }
+      ])
     ).toEqual(resource3);
     expect(queryClient.removeQueries).toHaveBeenCalledWith([
+      group,
+      version,
       kind,
       { name, namespace }
     ]);
@@ -157,13 +174,16 @@ describe('useWebSocket', () => {
       metadata: { ...existingResource.metadata, resourceVersion: '11' }
     };
 
-    queryClient.setQueryData([kind], () => ({
+    queryClient.setQueryData([group, version, kind], () => ({
       items: [existingResource],
       metadata: {}
     }));
-    queryClient.setQueryData([kind, { name }], () => existingResource);
+    queryClient.setQueryData(
+      [group, version, kind, { name }],
+      () => existingResource
+    );
 
-    renderHook(() => useWebSocket({ kind, resourceVersion, url }), {
+    renderHook(() => useWebSocket({ group, kind, resourceVersion, version }), {
       wrapper: getAPIWrapper({ queryClient })
     });
 
@@ -177,11 +197,11 @@ describe('useWebSocket', () => {
         })
       });
     });
-    expect(queryClient.getQueryData([kind])).toEqual({
+    expect(queryClient.getQueryData([group, version, kind])).toEqual({
       items: [existingResource],
       metadata: {}
     });
-    expect(queryClient.getQueryData([kind, { name }])).toEqual(
+    expect(queryClient.getQueryData([group, version, kind, { name }])).toEqual(
       existingResource
     );
 
@@ -195,11 +215,13 @@ describe('useWebSocket', () => {
         })
       });
     });
-    expect(queryClient.getQueryData([kind])).toEqual({
+    expect(queryClient.getQueryData([group, version, kind])).toEqual({
       items: [updatedResource],
       metadata: {}
     });
-    expect(queryClient.getQueryData([kind, { name }])).toEqual(updatedResource);
+    expect(queryClient.getQueryData([group, version, kind, { name }])).toEqual(
+      updatedResource
+    );
   });
 
   it('should handle unsupported events', () => {
@@ -211,12 +233,12 @@ describe('useWebSocket', () => {
       metadata: { uid: 'existing-id' }
     };
 
-    queryClient.setQueryData([kind], () => ({
+    queryClient.setQueryData([group, version, kind], () => ({
       items: [existingResource],
       metadata: {}
     }));
 
-    renderHook(() => useWebSocket({ kind, resourceVersion, url }), {
+    renderHook(() => useWebSocket({ group, kind, resourceVersion, version }), {
       wrapper: getAPIWrapper({ queryClient })
     });
 
@@ -229,7 +251,7 @@ describe('useWebSocket', () => {
         })
       });
     });
-    expect(queryClient.getQueryData([kind])).toEqual({
+    expect(queryClient.getQueryData([group, version, kind])).toEqual({
       items: [existingResource],
       metadata: {}
     });
@@ -239,7 +261,7 @@ describe('useWebSocket', () => {
         type: 'non-message-event'
       });
     });
-    expect(queryClient.getQueryData([kind])).toEqual({
+    expect(queryClient.getQueryData([group, version, kind])).toEqual({
       items: [existingResource],
       metadata: {}
     });
@@ -247,9 +269,10 @@ describe('useWebSocket', () => {
 });
 
 describe('useCollection', () => {
+  const group = 'fake_group';
   const kind = 'TaskRun';
   const resourceVersion = 'fake_resourceVersion';
-  const webSocketURL = 'http://localhost/fake_url';
+  const version = 'fake_version';
 
   it('should return a valid query response', async () => {
     const queryClient = getQueryClient();
@@ -264,13 +287,13 @@ describe('useCollection', () => {
       kind,
       metadata: { ...existingResource.metadata, resourceVersion: '11' }
     };
-
-    const api = () => ({
+    queryClient.setQueryData([group, version, kind], () => ({
       items: [existingResource],
       metadata: { resourceVersion }
-    });
+    }));
+
     const { result, waitFor, waitForNextUpdate } = renderHook(
-      () => useCollection({ api, kind, webSocketURL }),
+      () => useCollection({ group, kind, version }),
       {
         wrapper: getAPIWrapper({ queryClient })
       }
@@ -292,14 +315,15 @@ describe('useCollection', () => {
 });
 
 describe('useResource', () => {
-  const kind = 'TaskRun';
+  const kind = 'taskruns';
   it('should return a valid query response', async () => {
     const queryClient = getQueryClient();
     const webSocket = getWebSocket();
-    const webSocketURL = 'http://localhost/fake_url';
     vi.spyOn(comms, 'createWebSocket').mockImplementation(() => webSocket);
 
+    const group = 'fake_group';
     const name = 'resource-name';
+    const version = 'fake_version';
     const existingResource = {
       kind,
       metadata: { name, uid: 'existing-id', resourceVersion: '10' }
@@ -308,10 +332,13 @@ describe('useResource', () => {
       kind,
       metadata: { ...existingResource.metadata, resourceVersion: '11' }
     };
+    queryClient.setQueryData(
+      [group, version, kind, { name }],
+      () => existingResource
+    );
 
-    const api = () => existingResource;
     const { result, waitFor, waitForNextUpdate } = renderHook(
-      () => useResource({ api, kind, params: { name }, webSocketURL }),
+      () => useResource({ group, kind, params: { name }, version }),
       {
         wrapper: getAPIWrapper({ queryClient })
       }

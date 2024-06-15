@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -202,36 +202,6 @@ it('deleteTaskRun', () => {
   });
 });
 
-it('getTaskRun', () => {
-  const name = 'foo';
-  const data = { fake: 'taskRun' };
-  server.use(http.get(new RegExp(`/${name}$`), () => HttpResponse.json(data)));
-  return API.getTaskRun({ name }).then(taskRun => {
-    expect(taskRun).toEqual(data);
-  });
-});
-
-it('getTaskRuns', () => {
-  const data = {
-    items: 'taskRuns'
-  };
-  server.use(http.get(/\/taskruns\//, () => HttpResponse.json(data)));
-  return API.getTaskRuns().then(taskRuns => {
-    expect(taskRuns).toEqual(data);
-  });
-});
-
-it('getTaskRuns With Query Params', () => {
-  const taskName = 'taskName';
-  const data = {
-    items: 'taskRuns'
-  };
-  server.use(http.get(/\/taskruns\//, () => HttpResponse.json(data)));
-  return API.getTaskRuns({ taskName }).then(taskRuns => {
-    expect(taskRuns).toEqual(data);
-  });
-});
-
 it('useTaskRuns', () => {
   const query = { fake: 'query' };
   const params = { fake: 'params' };
@@ -239,9 +209,10 @@ it('useTaskRuns', () => {
   expect(API.useTaskRuns(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getTaskRuns,
-      kind: 'TaskRun',
-      params
+      group: utils.tektonAPIGroup,
+      kind: 'taskruns',
+      params,
+      version: 'v1'
     })
   );
 });
@@ -253,9 +224,10 @@ it('useTaskRun', () => {
   expect(API.useTaskRun(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getTaskRun,
-      kind: 'TaskRun',
-      params
+      group: utils.tektonAPIGroup,
+      kind: 'taskruns',
+      params,
+      version: 'v1'
     })
   );
 
@@ -263,10 +235,11 @@ it('useTaskRun', () => {
   API.useTaskRun(params, queryConfig);
   expect(utils.useResource).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getTaskRun,
-      kind: 'TaskRun',
+      group: utils.tektonAPIGroup,
+      kind: 'taskruns',
       params,
-      queryConfig
+      queryConfig,
+      version: 'v1'
     })
   );
 });

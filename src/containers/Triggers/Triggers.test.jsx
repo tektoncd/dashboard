@@ -18,10 +18,6 @@ import * as API from '../../api/triggers';
 import TriggersContainer from './Triggers';
 
 describe('Triggers', () => {
-  beforeEach(() => {
-    vi.spyOn(API, 'getTriggers').mockImplementation(() => []);
-  });
-
   it('renders loading state', async () => {
     vi.spyOn(API, 'useTriggers').mockImplementation(() => ({
       isLoading: true

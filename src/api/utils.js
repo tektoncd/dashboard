@@ -15,43 +15,12 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
-import { createWebSocket, getAPIRoot } from './comms';
+import { createWebSocket, get, getAPIRoot } from './comms';
 
 export const apiRoot = getAPIRoot();
 export const tektonAPIGroup = 'tekton.dev';
 export const triggersAPIGroup = 'triggers.tekton.dev';
 export const dashboardAPIGroup = 'dashboard.tekton.dev';
-
-export function getKubeAPI({
-  group,
-  kind,
-  params: { isWebSocket, name = '', namespace, subResource } = {},
-  queryParams,
-  version
-}) {
-  const queryParamsToUse = {
-    ...queryParams,
-    ...(isWebSocket
-      ? { [subResource === 'log' ? 'follow' : 'watch']: true }
-      : null),
-    ...(isWebSocket && name ? { fieldSelector: `metadata.name=${name}` } : null)
-  };
-
-  return [
-    isWebSocket ? apiRoot.replace('http', 'ws') : apiRoot,
-    group === 'core' ? `/api/${version}/` : `/apis/${group}/${version}/`,
-    namespace && namespace !== ALL_NAMESPACES
-      ? `namespaces/${encodeURIComponent(namespace)}/`
-      : '',
-    kind,
-    '/',
-    isWebSocket ? '' : encodeURIComponent(name),
-    subResource ? `/${subResource}` : '',
-    Object.keys(queryParamsToUse).length > 0
-      ? `?${new URLSearchParams(queryParamsToUse).toString()}`
-      : ''
-  ].join('');
-}
 
 export function getQueryParams({
   filters,
@@ -70,6 +39,58 @@ export function getQueryParams({
     };
   }
   return '';
+}
+
+export function getKubeAPI({
+  group,
+  kind,
+  params: {
+    filters,
+    involvedObjectKind,
+    involvedObjectName,
+    isWebSocket,
+    name = '',
+    namespace,
+    subResource
+  } = {},
+  queryParams,
+  version
+}) {
+  const queryParamsToUse = {
+    ...queryParams,
+    ...(isWebSocket
+      ? { [subResource === 'log' ? 'follow' : 'watch']: true }
+      : null),
+    ...(isWebSocket && name
+      ? { fieldSelector: `metadata.name=${name}` }
+      : null),
+    ...getQueryParams({ filters, involvedObjectKind, involvedObjectName })
+  };
+
+  return [
+    isWebSocket ? apiRoot.replace('http', 'ws') : apiRoot,
+    group === 'core' ? `/api/${version}/` : `/apis/${group}/${version}/`,
+    namespace && namespace !== ALL_NAMESPACES
+      ? `namespaces/${encodeURIComponent(namespace)}/`
+      : '',
+    kind,
+    '/',
+    isWebSocket ? '' : encodeURIComponent(name),
+    subResource ? `/${subResource}` : '',
+    Object.keys(queryParamsToUse).length > 0
+      ? `?${new URLSearchParams(queryParamsToUse).toString()}`
+      : ''
+  ].join('');
+}
+
+export async function defaultQueryFn({ queryKey }) {
+  const [group, version, kind, params] = queryKey;
+  const url = getKubeAPI({ group, kind, params, version });
+  const response = await get(url);
+  if (typeof response === 'undefined') {
+    return null;
+  }
+  return response;
 }
 
 export function isPipelinesV1ResourcesEnabled() {
@@ -91,18 +112,23 @@ function getResourceVersion(resource) {
   return parseInt(resource.metadata.resourceVersion, 10);
 }
 
-function handleCreated({ kind, payload: _, queryClient }) {
-  queryClient.invalidateQueries([kind]);
+function handleCreated({ group, kind, payload: _, queryClient, version }) {
+  queryClient.invalidateQueries([group, version, kind]);
 }
 
-function handleDeleted({ kind, payload, queryClient }) {
+function handleDeleted({ group, kind, payload, queryClient, version }) {
   const {
     metadata: { name, namespace }
   } = payload;
   // remove any matching details page cache
-  queryClient.removeQueries([kind, { name, ...(namespace && { namespace }) }]);
+  queryClient.removeQueries([
+    group,
+    version,
+    kind,
+    { name, ...(namespace && { namespace }) }
+  ]);
   // remove resource from any list page caches
-  queryClient.setQueriesData([kind], data => {
+  queryClient.setQueriesData([group, version, kind], data => {
     if (!Array.isArray(data?.items)) {
       // another details page cache, but not the one we're looking for
       // since we've just deleted its query above
@@ -125,11 +151,11 @@ function updateResource({ existing, incoming }) {
     : existing;
 }
 
-function handleUpdated({ kind, payload, queryClient }) {
+function handleUpdated({ group, kind, payload, queryClient, version }) {
   const {
     metadata: { uid }
   } = payload;
-  queryClient.setQueriesData([kind], data => {
+  queryClient.setQueriesData([group, version, kind], data => {
     if (data?.metadata?.uid === uid) {
       // it's a details page cache (i.e. a single resource)
       return updateResource({ existing: data, incoming: payload });
@@ -148,10 +174,17 @@ function handleUpdated({ kind, payload, queryClient }) {
   });
 }
 
-export function useWebSocket({ enabled, kind, resourceVersion, url }) {
+export function useWebSocket({
+  enabled,
+  group,
+  kind,
+  params,
+  resourceVersion,
+  version
+}) {
   const queryClient = useQueryClient();
   const [isWebSocketConnected, setWebSocketConnected] = useState(null);
-  let { current: webSocket } = useRef(null);
+  const webSocketRef = useRef(null);
 
   useEffect(() => {
     if (enabled === false) {
@@ -171,37 +204,45 @@ export function useWebSocket({ enabled, kind, resourceVersion, url }) {
       const { type: operation, object: payload } = JSON.parse(event.data);
       switch (operation) {
         case 'ADDED':
-          handleCreated({ kind, payload, queryClient });
+          handleCreated({ group, kind, payload, queryClient, version });
           break;
         case 'DELETED':
-          handleDeleted({ kind, payload, queryClient });
+          handleDeleted({ group, kind, payload, queryClient, version });
           break;
         case 'MODIFIED':
-          handleUpdated({ kind, payload, queryClient });
+          handleUpdated({ group, kind, payload, queryClient, version });
           break;
         default:
       }
     }
 
+    const url = getKubeAPI({
+      group,
+      kind,
+      version,
+      params: { ...params, isWebSocket: true }
+    });
     const webSocketURL = new URL(url);
     const queryParams = new URLSearchParams(webSocketURL.search);
     queryParams.set('resourceVersion', resourceVersion);
     webSocketURL.search = queryParams.toString();
-    webSocket = createWebSocket(webSocketURL.toString());
+    const webSocket = createWebSocket(webSocketURL.toString());
+    webSocketRef.current = webSocket;
 
     webSocket.addEventListener('close', handleClose);
     webSocket.addEventListener('open', handleOpen);
     webSocket.addEventListener('message', handleMessage);
 
     return () => {
-      if (webSocket) {
-        webSocket.removeEventListener('close', handleClose);
-        webSocket.removeEventListener('open', handleOpen);
-        webSocket.removeEventListener('message', handleMessage);
-        webSocket.close();
+      if (webSocketRef.current) {
+        const socket = webSocketRef.current;
+        socket.removeEventListener('close', handleClose);
+        socket.removeEventListener('open', handleOpen);
+        socket.removeEventListener('message', handleMessage);
+        socket.close();
       }
     };
-  }, [enabled, url]);
+  }, [enabled, group, kind, JSON.stringify(params), version]);
 
   return { isWebSocketConnected };
 }
@@ -210,19 +251,12 @@ export function useSelectedNamespace() {
   return useContext(NamespaceContext);
 }
 
-export function useCollection({
-  api,
-  kind,
-  params,
-  queryConfig,
-  webSocketURL
-}) {
+export function useCollection({ group, kind, params, queryConfig, version }) {
   const { disableWebSocket, ...reactQueryConfig } = queryConfig || {};
-  const query = useQuery(
-    [kind, params].filter(Boolean),
-    () => api(params),
-    reactQueryConfig
-  );
+  const query = useQuery({
+    queryKey: [group, version, kind, params].filter(Boolean),
+    ...reactQueryConfig
+  });
 
   let data = [];
   let resourceVersion;
@@ -237,26 +271,27 @@ export function useCollection({
       queryConfig?.enabled !== false &&
       query.isSuccess &&
       !!resourceVersion,
+    group,
     kind,
+    params,
     resourceVersion,
-    url: webSocketURL
+    version
   });
   return { ...query, data, isWebSocketConnected };
 }
 
 export function useResource({
-  api,
+  group,
   kind,
   params,
   queryConfig = {},
-  webSocketURL
+  version
 }) {
   const { disableWebSocket, ...reactQueryConfig } = queryConfig;
-  const query = useQuery(
-    [kind, params].filter(Boolean),
-    () => api(params),
-    reactQueryConfig
-  );
+  const query = useQuery({
+    queryKey: [group, version, kind, params].filter(Boolean),
+    ...reactQueryConfig
+  });
 
   let resourceVersion;
   if (query.data?.metadata) {
@@ -268,9 +303,11 @@ export function useResource({
       queryConfig?.enabled !== false &&
       query.isSuccess &&
       !!resourceVersion,
+    group,
     kind,
+    params,
     resourceVersion,
-    url: webSocketURL
+    version
   });
   return { ...query, isWebSocketConnected };
 }

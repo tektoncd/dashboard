@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,27 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { http, HttpResponse } from 'msw';
-
 import * as API from './extensions';
 import * as utils from './utils';
-import { server } from '../../config_frontend/msw';
-
-it('getExtensions', () => {
-  const displayName = 'displayName';
-  const name = 'name';
-  const extensions = {
-    spec: {
-      items: [
-        { spec: { apiVersion: 'v1alpha1', displayname: displayName, name } }
-      ]
-    }
-  };
-  server.use(http.get(/\/extensions\//, () => HttpResponse.json(extensions)));
-  return API.getExtensions().then(response => {
-    expect(response).toEqual(extensions);
-  });
-});
 
 it('useExtensions', () => {
   const name = 'fake_name';
@@ -48,9 +29,10 @@ it('useExtensions', () => {
   const extensions = API.useExtensions(params);
   expect(utils.useCollection).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getExtensions,
-      kind: 'Extension',
-      params
+      group: utils.dashboardAPIGroup,
+      kind: 'extensions',
+      params,
+      version: 'v1alpha1'
     })
   );
   expect(extensions).toEqual({

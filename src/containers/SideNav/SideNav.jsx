@@ -198,8 +198,8 @@ function SideNav({ expanded, showKubernetesResources = false }) {
                 const to = getPath(
                   urls.kubernetesResources.all({
                     group: apiGroup,
-                    version: apiVersion,
-                    type: name
+                    kind: name,
+                    version: apiVersion
                   }),
                   namespaced
                 );

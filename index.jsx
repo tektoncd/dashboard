@@ -17,14 +17,15 @@ import ReactDOM from 'react-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
+import { defaultQueryFn } from './src/api/utils';
 import { setTheme } from './src/utils';
-
 import App from './src/containers/App';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       cacheTime: 1000 * 60 * 5, // 5 minutes
+      queryFn: defaultQueryFn,
       refetchOnWindowFocus: false,
       retry: false,
       staleTime: Infinity

@@ -14,10 +14,9 @@ limitations under the License.
 import { getGenerateNamePrefixForRerun } from '@tektoncd/dashboard-utils';
 import deepClone from 'lodash.clonedeep';
 
-import { deleteRequest, get, patch, post } from './comms';
+import { deleteRequest, patch, post } from './comms';
 import {
   getKubeAPI,
-  getQueryParams,
   getTektonPipelinesAPIVersion,
   removeSystemLabels,
   tektonAPIGroup,
@@ -25,49 +24,22 @@ import {
   useResource
 } from './utils';
 
-function getPipelineRunsAPI({ filters, isWebSocket, name, namespace }) {
-  return getKubeAPI({
-    group: tektonAPIGroup,
-    kind: 'pipelineruns',
-    params: { isWebSocket, name, namespace },
-    queryParams: getQueryParams({ filters }),
-    version: getTektonPipelinesAPIVersion()
-  });
-}
-
-export function getPipelineRuns({ filters = [], namespace } = {}) {
-  const uri = getPipelineRunsAPI({ filters, namespace });
-  return get(uri);
-}
-
-export function getPipelineRun({ name, namespace }) {
-  const uri = getKubeAPI({
-    group: tektonAPIGroup,
-    kind: 'pipelineruns',
-    params: { name, namespace },
-    version: getTektonPipelinesAPIVersion()
-  });
-  return get(uri);
-}
-
 export function usePipelineRuns(params) {
-  const webSocketURL = getPipelineRunsAPI({ ...params, isWebSocket: true });
   return useCollection({
-    api: getPipelineRuns,
-    kind: 'PipelineRun',
+    group: tektonAPIGroup,
+    kind: 'pipelineruns',
     params,
-    webSocketURL
+    version: getTektonPipelinesAPIVersion()
   });
 }
 
 export function usePipelineRun(params, queryConfig) {
-  const webSocketURL = getPipelineRunsAPI({ ...params, isWebSocket: true });
   return useResource({
-    api: getPipelineRun,
-    kind: 'PipelineRun',
+    group: tektonAPIGroup,
+    kind: 'pipelineruns',
     params,
     queryConfig,
-    webSocketURL
+    version: getTektonPipelinesAPIVersion()
   });
 }
 

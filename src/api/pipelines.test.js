@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,25 +16,6 @@ import { http, HttpResponse } from 'msw';
 import * as API from './pipelines';
 import * as utils from './utils';
 import { server } from '../../config_frontend/msw';
-
-it('getPipelines', () => {
-  const data = {
-    items: 'pipelines'
-  };
-  server.use(http.get(/\/pipelines\//, () => HttpResponse.json(data)));
-  return API.getPipelines().then(pipelines => {
-    expect(pipelines).toEqual(data);
-  });
-});
-
-it('getPipeline', () => {
-  const name = 'foo';
-  const data = { fake: 'pipeline' };
-  server.use(http.get(new RegExp(`/${name}$`), () => HttpResponse.json(data)));
-  return API.getPipeline({ name }).then(pipeline => {
-    expect(pipeline).toEqual(data);
-  });
-});
 
 it('deletePipeline', () => {
   const name = 'foo';
@@ -54,9 +35,10 @@ it('usePipelines', () => {
   expect(API.usePipelines(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getPipelines,
-      kind: 'Pipeline',
-      params
+      group: utils.tektonAPIGroup,
+      kind: 'pipelines',
+      params,
+      version: 'v1'
     })
   );
 });
@@ -68,9 +50,10 @@ it('usePipeline', () => {
   expect(API.usePipeline(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getPipeline,
-      kind: 'Pipeline',
-      params
+      group: utils.tektonAPIGroup,
+      kind: 'pipelines',
+      params,
+      version: 'v1'
     })
   );
 
@@ -78,10 +61,11 @@ it('usePipeline', () => {
   API.usePipeline(params, queryConfig);
   expect(utils.useResource).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getPipeline,
-      kind: 'Pipeline',
+      group: utils.tektonAPIGroup,
+      kind: 'pipelines',
       params,
-      queryConfig
+      queryConfig,
+      version: 'v1'
     })
   );
 });

@@ -11,34 +11,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { get } from './comms';
-import { getKubeAPI, useCollection } from './utils';
-
-export function getServiceAccounts({ namespace } = {}) {
-  const uri = getKubeAPI({
-    group: 'core',
-    kind: 'serviceaccounts',
-    params: { namespace },
-    version: 'v1'
-  });
-  return get(uri);
-}
+import { useCollection } from './utils';
 
 export function useServiceAccounts(params, queryConfig) {
-  const webSocketURL = getKubeAPI({
+  return useCollection({
     group: 'core',
     kind: 'serviceaccounts',
-    params: {
-      ...params,
-      isWebSocket: true
-    },
-    version: 'v1'
-  });
-  return useCollection({
-    api: getServiceAccounts,
-    kind: 'ServiceAccount',
     params,
     queryConfig,
-    webSocketURL
+    version: 'v1'
   });
 }

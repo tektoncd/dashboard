@@ -1,5 +1,5 @@
 /*
-Copyright 2022-2023 The Tekton Authors
+Copyright 2022-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -44,25 +44,6 @@ it('deleteCustomRun', () => {
   });
 });
 
-it('getCustomRun', () => {
-  const name = 'foo';
-  const data = { fake: 'CustomRun' };
-  server.use(http.get(new RegExp(`/${name}$`), () => HttpResponse.json(data)));
-  return API.getCustomRun({ name }).then(run => {
-    expect(run).toEqual(data);
-  });
-});
-
-it('getCustomRuns', () => {
-  const data = {
-    items: 'Runs'
-  };
-  server.use(http.get(/\/customruns\//, () => HttpResponse.json(data)));
-  return API.getCustomRuns({ filters: [] }).then(runs => {
-    expect(runs).toEqual(data);
-  });
-});
-
 it('useCustomRuns', () => {
   const query = { fake: 'query' };
   const params = { fake: 'params' };
@@ -70,9 +51,10 @@ it('useCustomRuns', () => {
   expect(API.useCustomRuns(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getCustomRuns,
-      kind: 'CustomRun',
-      params
+      group: utils.tektonAPIGroup,
+      kind: 'customruns',
+      params,
+      version: 'v1beta1'
     })
   );
 });
@@ -84,9 +66,10 @@ it('useCustomRun', () => {
   expect(API.useCustomRun(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getCustomRun,
-      kind: 'CustomRun',
-      params
+      group: utils.tektonAPIGroup,
+      kind: 'customruns',
+      params,
+      version: 'v1beta1'
     })
   );
 
@@ -94,10 +77,11 @@ it('useCustomRun', () => {
   API.useCustomRun(params, queryConfig);
   expect(utils.useResource).toHaveBeenCalledWith(
     expect.objectContaining({
-      api: API.getCustomRun,
-      kind: 'CustomRun',
+      group: utils.tektonAPIGroup,
+      kind: 'customruns',
       params,
-      queryConfig
+      queryConfig,
+      version: 'v1beta1'
     })
   );
 });

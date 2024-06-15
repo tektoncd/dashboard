@@ -11,56 +11,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { get } from './comms';
-import {
-  getKubeAPI,
-  getQueryParams,
-  triggersAPIGroup,
-  useCollection,
-  useResource
-} from './utils';
-
-function getInterceptorsAPI({ filters, isWebSocket, name, namespace }) {
-  return getKubeAPI({
-    group: triggersAPIGroup,
-    kind: 'interceptors',
-    params: { isWebSocket, name, namespace },
-    queryParams: getQueryParams({ filters }),
-    version: 'v1alpha1'
-  });
-}
-
-export function getInterceptors({ filters = [], namespace } = {}) {
-  const uri = getInterceptorsAPI({ filters, namespace });
-  return get(uri);
-}
-
-export function getInterceptor({ name, namespace }) {
-  const uri = getKubeAPI({
-    group: triggersAPIGroup,
-    kind: 'interceptors',
-    params: { name, namespace },
-    version: 'v1alpha1'
-  });
-  return get(uri);
-}
+import { triggersAPIGroup, useCollection, useResource } from './utils';
 
 export function useInterceptors(params) {
-  const webSocketURL = getInterceptorsAPI({ ...params, isWebSocket: true });
   return useCollection({
-    api: getInterceptors,
-    kind: 'Interceptor',
+    group: triggersAPIGroup,
+    kind: 'interceptors',
     params,
-    webSocketURL
+    version: 'v1alpha1'
   });
 }
 
 export function useInterceptor(params) {
-  const webSocketURL = getInterceptorsAPI({ ...params, isWebSocket: true });
   return useResource({
-    api: getInterceptor,
-    kind: 'Interceptor',
+    group: triggersAPIGroup,
+    kind: 'interceptors',
     params,
-    webSocketURL
+    version: 'v1alpha1'
   });
 }

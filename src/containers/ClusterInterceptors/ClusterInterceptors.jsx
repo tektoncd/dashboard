@@ -25,8 +25,8 @@ function getFormattedResources(resources) {
     name: (
       <Link
         to={urls.rawCRD.cluster({
-          name: clusterInterceptor.metadata.name,
-          type: 'clusterinterceptors'
+          kind: 'clusterinterceptors',
+          name: clusterInterceptor.metadata.name
         })}
         title={clusterInterceptor.metadata.name}
       >
