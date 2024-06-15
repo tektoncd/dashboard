@@ -1,5 +1,5 @@
 /*
-Copyright 2021 The Tekton Authors
+Copyright 2021-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,19 +13,21 @@ limitations under the License.
 
 import { get } from './comms';
 import {
+  getKubeAPI,
   getQueryParams,
-  getTektonAPI,
   triggersAPIGroup,
   useCollection,
   useResource
 } from './utils';
 
 function getClusterInterceptorsAPI({ filters, isWebSocket, name }) {
-  return getTektonAPI(
-    'clusterinterceptors',
-    { group: triggersAPIGroup, isWebSocket, version: 'v1alpha1' },
-    getQueryParams({ filters, name })
-  );
+  return getKubeAPI({
+    group: triggersAPIGroup,
+    kind: 'clusterinterceptors',
+    params: { isWebSocket, name },
+    queryParams: getQueryParams({ filters }),
+    version: 'v1alpha1'
+  });
 }
 
 export function getClusterInterceptors({ filters = [] } = {}) {
@@ -34,9 +36,10 @@ export function getClusterInterceptors({ filters = [] } = {}) {
 }
 
 export function getClusterInterceptor({ name }) {
-  const uri = getTektonAPI('clusterinterceptors', {
+  const uri = getKubeAPI({
     group: triggersAPIGroup,
-    name,
+    kind: 'clusterinterceptors',
+    params: { name },
     version: 'v1alpha1'
   });
   return get(uri);

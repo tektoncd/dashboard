@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,19 +13,21 @@ limitations under the License.
 
 import { get } from './comms';
 import {
+  getKubeAPI,
   getQueryParams,
-  getTektonAPI,
   triggersAPIGroup,
   useCollection,
   useResource
 } from './utils';
 
 function getTriggerBindingsAPI({ filters, isWebSocket, name, namespace }) {
-  return getTektonAPI(
-    'triggerbindings',
-    { group: triggersAPIGroup, isWebSocket, namespace, version: 'v1beta1' },
-    getQueryParams({ filters, name })
-  );
+  return getKubeAPI({
+    group: triggersAPIGroup,
+    kind: 'triggerbindings',
+    params: { group: isWebSocket, name, namespace },
+    queryParams: getQueryParams({ filters }),
+    version: 'v1beta1'
+  });
 }
 
 export function getTriggerBindings({ filters = [], namespace } = {}) {
@@ -34,10 +36,10 @@ export function getTriggerBindings({ filters = [], namespace } = {}) {
 }
 
 export function getTriggerBinding({ name, namespace }) {
-  const uri = getTektonAPI('triggerbindings', {
+  const uri = getKubeAPI({
     group: triggersAPIGroup,
-    name,
-    namespace,
+    kind: 'triggerbindings',
+    params: { name, namespace },
     version: 'v1beta1'
   });
   return get(uri);

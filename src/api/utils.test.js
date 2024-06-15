@@ -25,51 +25,11 @@ import {
 } from './utils';
 import { getAPIWrapper, getQueryClient, getWebSocket } from '../utils/test';
 
-describe('getTektonAPI', () => {
-  it('returns a URI containing the given type', () => {
-    const uri = utils.getTektonAPI('pipelines');
-    expect(uri).toContain('pipelines');
-  });
-
-  it('returns a URI containing the given type and name', () => {
-    const uri = utils.getTektonAPI('pipelines', { name: 'somename' });
-    expect(uri).toContain('pipelines');
-    expect(uri).toContain('somename');
-  });
-
-  it('returns a URI containing the given type, name, and namespace', () => {
-    const uri = utils.getTektonAPI('pipelines', {
-      name: 'somename',
-      namespace: 'customnamespace'
-    });
-    expect(uri).toContain('pipelines');
-    expect(uri).toContain('somename');
-    expect(uri).toContain('namespaces');
-    expect(uri).toContain('customnamespace');
-  });
-
-  it('returns a URI without namespace when omitted', () => {
-    const uri = utils.getTektonAPI('clustertasks', {
-      name: 'somename'
-    });
-    expect(uri).toContain('clustertasks');
-    expect(uri).toContain('somename');
-    expect(uri).not.toContain('namespaces');
-  });
-});
-
 describe('getQueryParams', () => {
   it('should handle label filters', () => {
     const filters = ['fakeLabel=fakeValue'];
     expect(getQueryParams({ filters })).toEqual({ labelSelector: filters });
     expect(getQueryParams({ filters: [] })).toEqual('');
-  });
-
-  it('should handle name for a single resource', () => {
-    const name = 'fake_name';
-    expect(getQueryParams({ name })).toEqual({
-      fieldSelector: `metadata.name=${name}`
-    });
   });
 
   it('should handle involvedObject for events', () => {

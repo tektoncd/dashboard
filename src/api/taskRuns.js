@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,26 +16,34 @@ import deepClone from 'lodash.clonedeep';
 
 import { deleteRequest, get, patch, post } from './comms';
 import {
+  getKubeAPI,
   getQueryParams,
-  getTektonAPI,
   getTektonPipelinesAPIVersion,
   removeSystemAnnotations,
   removeSystemLabels,
+  tektonAPIGroup,
   useCollection,
   useResource
 } from './utils';
 
 export function deleteTaskRun({ name, namespace }) {
-  const uri = getTektonAPI('taskruns', { name, namespace });
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'taskruns',
+    params: { name, namespace },
+    version: getTektonPipelinesAPIVersion()
+  });
   return deleteRequest(uri);
 }
 
 function getTaskRunsAPI({ filters, isWebSocket, name, namespace }) {
-  return getTektonAPI(
-    'taskruns',
-    { isWebSocket, namespace },
-    getQueryParams({ filters, name })
-  );
+  return getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'taskruns',
+    params: { isWebSocket, name, namespace },
+    queryParams: getQueryParams({ filters }),
+    version: getTektonPipelinesAPIVersion()
+  });
 }
 
 export function getTaskRuns({ filters = [], namespace } = {}) {
@@ -44,7 +52,12 @@ export function getTaskRuns({ filters = [], namespace } = {}) {
 }
 
 export function getTaskRun({ name, namespace }) {
-  const uri = getTektonAPI('taskruns', { name, namespace });
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'taskruns',
+    params: { name, namespace },
+    version: getTektonPipelinesAPIVersion()
+  });
   return get(uri);
 }
 
@@ -74,7 +87,12 @@ export function cancelTaskRun({ name, namespace }) {
     { op: 'replace', path: '/spec/status', value: 'TaskRunCancelled' }
   ];
 
-  const uri = getTektonAPI('taskruns', { name, namespace });
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'taskruns',
+    params: { name, namespace },
+    version: getTektonPipelinesAPIVersion()
+  });
   return patch(uri, payload);
 }
 
@@ -147,12 +165,22 @@ export function createTaskRun({
     taskRunName,
     timeout
   });
-  const uri = getTektonAPI('taskruns', { namespace });
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'taskruns',
+    params: { namespace },
+    version: getTektonPipelinesAPIVersion()
+  });
   return post(uri, payload).then(({ body }) => body);
 }
 
 export function createTaskRunRaw({ namespace, payload }) {
-  const uri = getTektonAPI('taskruns', { namespace });
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'taskruns',
+    params: { namespace },
+    version: getTektonPipelinesAPIVersion()
+  });
   return post(uri, payload).then(({ body }) => body);
 }
 
@@ -202,6 +230,11 @@ export function rerunTaskRun(taskRun) {
     rerun: true
   });
 
-  const uri = getTektonAPI('taskruns', { namespace });
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'taskruns',
+    params: { namespace },
+    version: getTektonPipelinesAPIVersion()
+  });
   return post(uri, payload).then(({ body }) => body);
 }

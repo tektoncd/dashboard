@@ -22,9 +22,9 @@ import {
   apiRoot,
   getKubeAPI,
   getQueryParams,
-  getTektonAPI,
   getTektonPipelinesAPIVersion,
   isLogTimestampsEnabled,
+  tektonAPIGroup,
   useCollection,
   useResource
 } from './utils';
@@ -63,8 +63,7 @@ export function getCustomResources({
     queryParams: getQueryParams({
       filters,
       involvedObjectKind,
-      involvedObjectName,
-      name
+      involvedObjectName
     }),
     version
   });
@@ -322,8 +321,10 @@ export function importResources({
     }
   }
 
-  const uri = getTektonAPI('pipelineruns', {
-    namespace: importerNamespace,
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'pipelineruns',
+    params: { namespace: importerNamespace },
     version: pipelinesAPIVersion
   });
   return post(uri, pipelineRun).then(({ body }) => body);

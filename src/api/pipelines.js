@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,18 +13,22 @@ limitations under the License.
 
 import { deleteRequest, get } from './comms';
 import {
+  getKubeAPI,
   getQueryParams,
-  getTektonAPI,
+  getTektonPipelinesAPIVersion,
+  tektonAPIGroup,
   useCollection,
   useResource
 } from './utils';
 
 function getPipelinesAPI({ filters, isWebSocket, name, namespace }) {
-  return getTektonAPI(
-    'pipelines',
-    { isWebSocket, namespace },
-    getQueryParams({ filters, name })
-  );
+  return getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'pipelines',
+    params: { isWebSocket, name, namespace },
+    queryParams: getQueryParams({ filters }),
+    version: getTektonPipelinesAPIVersion()
+  });
 }
 
 export function getPipelines({ filters = [], namespace } = {}) {
@@ -33,12 +37,22 @@ export function getPipelines({ filters = [], namespace } = {}) {
 }
 
 export function getPipeline({ name, namespace }) {
-  const uri = getTektonAPI('pipelines', { name, namespace });
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'pipelines',
+    params: { name, namespace },
+    version: getTektonPipelinesAPIVersion()
+  });
   return get(uri);
 }
 
 export function deletePipeline({ name, namespace }) {
-  const uri = getTektonAPI('pipelines', { name, namespace });
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'pipelines',
+    params: { name, namespace },
+    version: getTektonPipelinesAPIVersion()
+  });
   return deleteRequest(uri);
 }
 

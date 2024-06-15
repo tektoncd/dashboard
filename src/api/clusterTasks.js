@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,18 +13,21 @@ limitations under the License.
 
 import { deleteRequest, get } from './comms';
 import {
+  getKubeAPI,
   getQueryParams,
-  getTektonAPI,
+  tektonAPIGroup,
   useCollection,
   useResource
 } from './utils';
 
 function getClusterTasksAPI({ filters, isWebSocket, name }) {
-  return getTektonAPI(
-    'clustertasks',
-    { isWebSocket, version: 'v1beta1' },
-    getQueryParams({ filters, name })
-  );
+  return getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'clustertasks',
+    params: { isWebSocket, name },
+    queryParams: getQueryParams({ filters }),
+    version: 'v1beta1'
+  });
 }
 
 export function getClusterTasks({ filters = [] } = {}) {
@@ -33,12 +36,22 @@ export function getClusterTasks({ filters = [] } = {}) {
 }
 
 export function getClusterTask({ name }) {
-  const uri = getTektonAPI('clustertasks', { name, version: 'v1beta1' });
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'clustertasks',
+    params: { name },
+    version: 'v1beta1'
+  });
   return get(uri);
 }
 
 export function deleteClusterTask({ name }) {
-  const uri = getTektonAPI('clustertasks', { name, version: 'v1beta1' });
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'clustertasks',
+    params: { name },
+    version: 'v1beta1'
+  });
   return deleteRequest(uri);
 }
 
