@@ -87,8 +87,8 @@
     "vitest": "^1.1.1"
   },
   "engines": {
-    "node": "^20.11.0",
-    "npm": "^10.2.4"
+    "node": "^20.14.0",
+    "npm": "^10.7.0"
   },
   "//": "Workspaces must be listed explicitly to ensure they're processed in the correct order until npm natively supports detecting the topological order",
   "workspaces": [

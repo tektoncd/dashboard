@@ -22,7 +22,7 @@ spec:
     - name: source
   steps:
     - name: build-static
-      image: node:20.11-slim
+      image: node:20.14-slim
       workingDir: $(workspaces.source.path)
       env:
         - name: CI
