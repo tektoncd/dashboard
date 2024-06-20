@@ -34,7 +34,7 @@ metadata:
 spec:
   steps:
     - name: echo
-      image: busybox
+      image: docker.io/library/busybox
       script: |
         #!/bin/ash
         echo "Hello World!"
