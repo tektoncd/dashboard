@@ -170,7 +170,7 @@ spec:
         taskSpec:
           steps:
             - name: gen-log
-              image: ubuntu
+              image: docker.io/library/ubuntu
               script: |
                 #!/usr/bin/env bash
                 for i in {1..10}
@@ -179,7 +179,7 @@ spec:
                   sleep 1s
                 done
             - name: gen-log-2
-              image: ubuntu
+              image: docker.io/library/ubuntu
               script: |
                 #!/usr/bin/env bash
                 for i in {1..20}
@@ -220,7 +220,7 @@ spec:
     spec:
       containers:
       - name: node
-        image: node:14
+        image: docker.io/library/node:14
         ports:
         - containerPort: 3000
         command:

@@ -8,7 +8,7 @@ spec:
       default: Hello World
   steps:
     - name: echo
-      image: alpine
+      image: docker.io/library/alpine
       script: |
         #!/bin/sh
         echo "$(params.greeting)"
@@ -20,7 +20,7 @@ metadata:
 spec:
   steps:
     - name: echo
-      image: alpine
+      image: docker.io/library/alpine
       script: |
         #!/bin/sh
         echo "Goodbye World!"
