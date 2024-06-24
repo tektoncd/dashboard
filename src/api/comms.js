@@ -122,7 +122,8 @@ export function get(uri, headers, options = {}) {
     uri,
     {
       method: 'GET',
-      headers: getHeaders(headers)
+      headers: getHeaders(headers),
+      signal: options.signal
     },
     options.stream
   );
