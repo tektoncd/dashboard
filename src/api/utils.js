@@ -83,10 +83,10 @@ export function getKubeAPI({
   ].join('');
 }
 
-export async function defaultQueryFn({ queryKey }) {
+export async function defaultQueryFn({ queryKey, signal }) {
   const [group, version, kind, params] = queryKey;
   const url = getKubeAPI({ group, kind, params, version });
-  const response = await get(url);
+  const response = await get(url, undefined, { signal });
   if (typeof response === 'undefined') {
     return null;
   }
