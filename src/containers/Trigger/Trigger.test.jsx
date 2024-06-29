@@ -47,7 +47,7 @@ describe('TriggerContainer', () => {
       }
     }));
 
-    const path = '/namespaces/:namespace/triggers/:triggerName';
+    const path = '/namespaces/:namespace/triggers/:name';
     const { queryByText } = renderWithRouter(<TriggerContainer intl={intl} />, {
       path,
       route: `/namespaces/${namespace}/triggers/${triggerName}`

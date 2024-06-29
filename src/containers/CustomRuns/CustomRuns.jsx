@@ -437,8 +437,8 @@ function CustomRuns() {
                 <span>
                   <Link
                     to={urls.customRuns.byName({
-                      namespace: run.metadata.namespace,
-                      runName: run.metadata.name
+                      name: run.metadata.name,
+                      namespace: run.metadata.namespace
                     })}
                     title={run.metadata.name}
                   >

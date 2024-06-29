@@ -61,9 +61,11 @@ describe('clusterInterceptors', () => {
     );
   });
   it('byName', () => {
-    expect(urls.clusterInterceptors.byName({ clusterInterceptorName })).toEqual(
+    expect(
+      urls.clusterInterceptors.byName({ name: clusterInterceptorName })
+    ).toEqual(
       generatePath(paths.clusterInterceptors.byName(), {
-        clusterInterceptorName
+        name: clusterInterceptorName
       })
     );
   });
@@ -77,10 +79,10 @@ describe('clusterTriggerBindings', () => {
   });
   it('byName', () => {
     expect(
-      urls.clusterTriggerBindings.byName({ clusterTriggerBindingName })
+      urls.clusterTriggerBindings.byName({ name: clusterTriggerBindingName })
     ).toEqual(
       generatePath(paths.clusterTriggerBindings.byName(), {
-        clusterTriggerBindingName
+        name: clusterTriggerBindingName
       })
     );
   });
@@ -95,11 +97,11 @@ describe('eventListeners', () => {
 
   it('byName', () => {
     expect(
-      urls.eventListeners.byName({ namespace, eventListenerName })
+      urls.eventListeners.byName({ name: eventListenerName, namespace })
     ).toEqual(
       generatePath(paths.eventListeners.byName(), {
-        namespace,
-        eventListenerName
+        name: eventListenerName,
+        namespace
       })
     );
   });
@@ -176,10 +178,12 @@ describe('pipelineRuns', () => {
   });
 
   it('byName', () => {
-    expect(urls.pipelineRuns.byName({ namespace, pipelineRunName })).toEqual(
+    expect(
+      urls.pipelineRuns.byName({ name: pipelineRunName, namespace })
+    ).toEqual(
       generatePath(paths.pipelineRuns.byName(), {
-        namespace,
-        pipelineRunName
+        name: pipelineRunName,
+        namespace
       })
     );
   });
@@ -223,41 +227,16 @@ describe('pipelines', () => {
   });
 });
 
-describe('rawCRD', () => {
-  it('all', () => {
-    const kind = 'tasks';
-    expect(urls.rawCRD.all({ kind })).toEqual(
-      generatePath(paths.rawCRD.all(), { kind })
-    );
-  });
-
-  it('byNamespace', () => {
-    const kind = 'tasks';
-    const name = taskName;
-    expect(urls.rawCRD.byNamespace({ namespace, kind, name })).toEqual(
-      generatePath(paths.rawCRD.byNamespace(), { kind, name, namespace })
-    );
-  });
-
-  it('cluster', () => {
-    const kind = 'tasks';
-    const name = taskName;
-    expect(urls.rawCRD.cluster({ kind, name })).toEqual(
-      generatePath(paths.rawCRD.cluster(), { kind, name })
-    );
-  });
-});
-
 describe('customRuns', () => {
   it('all', () => {
     expect(urls.customRuns.all()).toEqual(generatePath(paths.customRuns.all()));
   });
 
   it('byName', () => {
-    expect(urls.customRuns.byName({ namespace, runName })).toEqual(
+    expect(urls.customRuns.byName({ name: runName, namespace })).toEqual(
       generatePath(paths.customRuns.byName(), {
-        namespace,
-        runName
+        name: runName,
+        namespace
       })
     );
   });
@@ -290,8 +269,8 @@ describe('taskRuns', () => {
   });
 
   it('byName', () => {
-    expect(urls.taskRuns.byName({ namespace, taskRunName })).toEqual(
-      generatePath(paths.taskRuns.byName(), { namespace, taskRunName })
+    expect(urls.taskRuns.byName({ name: taskRunName, namespace })).toEqual(
+      generatePath(paths.taskRuns.byName(), { name: taskRunName, namespace })
     );
   });
 
@@ -340,11 +319,11 @@ describe('triggerBindings', () => {
 
   it('byName', () => {
     expect(
-      urls.triggerBindings.byName({ namespace, triggerBindingName })
+      urls.triggerBindings.byName({ name: triggerBindingName, namespace })
     ).toEqual(
       generatePath(paths.triggerBindings.byName(), {
-        namespace,
-        triggerBindingName
+        name: triggerBindingName,
+        namespace
       })
     );
   });
@@ -362,10 +341,10 @@ describe('triggers', () => {
   });
 
   it('byName', () => {
-    expect(urls.triggers.byName({ namespace, triggerName })).toEqual(
+    expect(urls.triggers.byName({ name: triggerName, namespace })).toEqual(
       generatePath(paths.triggers.byName(), {
-        namespace,
-        triggerName
+        name: triggerName,
+        namespace
       })
     );
   });
@@ -386,11 +365,11 @@ describe('triggerTemplates', () => {
 
   it('byName', () => {
     expect(
-      urls.triggerTemplates.byName({ namespace, triggerTemplateName })
+      urls.triggerTemplates.byName({ name: triggerTemplateName, namespace })
     ).toEqual(
       generatePath(paths.triggerTemplates.byName(), {
-        namespace,
-        triggerTemplateName
+        name: triggerTemplateName,
+        namespace
       })
     );
   });

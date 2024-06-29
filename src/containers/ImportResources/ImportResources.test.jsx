@@ -139,8 +139,8 @@ describe('ImportResources component', () => {
       )[0].innerHTML
     ).toContain(
       urls.pipelineRuns.byName({
-        namespace: 'tekton-dashboard',
-        pipelineRunName
+        name: pipelineRunName,
+        namespace: 'tekton-dashboard'
       })
     );
   });

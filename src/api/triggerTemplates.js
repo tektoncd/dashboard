@@ -11,16 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { triggersAPIGroup, useCollection, useResource } from './utils';
-
-export function useTriggerTemplates(params) {
-  return useCollection({
-    group: triggersAPIGroup,
-    kind: 'triggertemplates',
-    params,
-    version: 'v1beta1'
-  });
-}
+import { triggersAPIGroup, useResource } from './utils';
 
 export function useTriggerTemplate(params) {
   return useResource({

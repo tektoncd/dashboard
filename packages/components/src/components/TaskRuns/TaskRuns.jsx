@@ -137,8 +137,8 @@ const TaskRuns = ({
     } = getStatus(taskRun);
     const statusIcon = getTaskRunStatusIcon(taskRun);
     const taskRunURL = getTaskRunURL({
-      namespace,
-      taskRunName
+      name: taskRunName,
+      namespace
     });
 
     const taskRunsURL =

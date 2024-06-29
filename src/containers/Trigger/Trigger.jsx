@@ -22,14 +22,14 @@ export function TriggerContainer() {
   const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
-  const { triggerName, namespace } = params;
+  const { name, namespace } = params;
 
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');
 
   useTitleSync({
     page: 'Trigger',
-    resourceName: triggerName
+    resourceName: name
   });
 
   const {
@@ -37,7 +37,7 @@ export function TriggerContainer() {
     error,
     isFetching
   } = useTrigger({
-    name: triggerName,
+    name,
     namespace
   });
 

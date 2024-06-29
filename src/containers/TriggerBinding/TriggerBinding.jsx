@@ -24,7 +24,7 @@ export function TriggerBindingContainer() {
   const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
-  const { namespace, triggerBindingName: resourceName } = params;
+  const { namespace, name: resourceName } = params;
 
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');

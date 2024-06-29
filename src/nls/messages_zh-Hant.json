@@ -209,7 +209,6 @@
   "dashboard.resourceDetails.errorloading": "",
   "dashboard.resourceDetails.spec.description": "",
   "dashboard.resourceDetails.spec.displayName": "",
-  "dashboard.resourceList.emptyState": "",
   "dashboard.resourceList.errorLoading": "",
   "dashboard.resourceList.viewRuns": "",
   "dashboard.run.duration": "持續時間: {duration}",

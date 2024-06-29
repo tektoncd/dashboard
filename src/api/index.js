@@ -31,13 +31,11 @@ import {
 import importResourcesPipelineRunTemplate from './resources/import-resources-pipelinerun.yaml';
 
 export { NamespaceContext, useSelectedNamespace } from './utils';
-export * from './clusterInterceptors';
 export * from './clusterTasks';
 export * from './clusterTriggerBindings';
 export * from './customRuns';
 export * from './eventListeners';
 export * from './extensions';
-export * from './interceptors';
 export * from './pipelineRuns';
 export * from './pipelines';
 export * from './serviceAccounts';
@@ -56,15 +54,6 @@ export function useCustomResources(
     kind,
     params,
     queryConfig,
-    version
-  });
-}
-
-export function useCustomResource({ group, kind, version, ...params }) {
-  return useResource({
-    group,
-    kind,
-    params,
     version
   });
 }
@@ -260,10 +249,11 @@ export function getAPIResource({ group, kind, version }) {
   );
 }
 
-export function useAPIResource(params) {
+export function useAPIResource(params, queryConfig) {
   return useResource({
     group: params.group,
     queryConfig: {
+      ...queryConfig,
       queryFn: () => getAPIResource(params)
     },
     version: params.version

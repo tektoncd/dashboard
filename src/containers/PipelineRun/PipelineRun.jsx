@@ -66,7 +66,7 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
   const navigate = useNavigate();
   const params = useParams();
 
-  const { namespace, pipelineRunName } = params;
+  const { name, namespace } = params;
 
   const queryParams = new URLSearchParams(location.search);
   const currentPipelineTaskName = queryParams.get(PIPELINE_TASK);
@@ -94,7 +94,7 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
 
   useTitleSync({
     page: 'PipelineRun',
-    resourceName: pipelineRunName
+    resourceName: name
   });
 
   useEffect(() => {
@@ -114,14 +114,14 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
     data: pipelineRun,
     error: pipelineRunError,
     isLoading: isLoadingPipelineRun
-  } = usePipelineRun({ name: pipelineRunName, namespace });
+  } = usePipelineRun({ name, namespace });
 
   const {
     data: taskRunsResponse = [],
     error: taskRunsError,
     isLoading: isLoadingTaskRuns
   } = useTaskRuns({
-    filters: [`${labelConstants.PIPELINE_RUN}=${pipelineRunName}`],
+    filters: [`${labelConstants.PIPELINE_RUN}=${name}`],
     namespace
   });
 
@@ -219,10 +219,9 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
     const savedCancelStatus = localStorage.getItem(
       preferences.CANCEL_STATUS_KEY
     );
-    const { name, namespace: resourceNamespace } = pipelineRun.metadata;
     cancelPipelineRun({
       name,
-      namespace: resourceNamespace,
+      namespace,
       status: savedCancelStatus
     }).catch(err => {
       err.response.text().then(text => {
@@ -237,8 +236,7 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
   }
 
   function deleteRun() {
-    const { name, namespace: resourceNamespace } = pipelineRun.metadata;
-    deletePipelineRun({ name, namespace: resourceNamespace })
+    deletePipelineRun({ name, namespace })
       .then(() => {
         navigate(urls.pipelineRuns.byNamespace({ namespace }));
       })

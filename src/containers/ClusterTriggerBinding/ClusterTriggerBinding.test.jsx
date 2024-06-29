@@ -102,7 +102,7 @@ it('ClusterTriggerBindingContainer renders YAML', async () => {
     {
       path: paths.clusterTriggerBindings.byName(),
       route: urls.clusterTriggerBindings.byName({
-        clusterTriggerBindingName
+        name: clusterTriggerBindingName
       })
     }
   );

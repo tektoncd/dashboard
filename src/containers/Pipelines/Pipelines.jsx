@@ -53,8 +53,7 @@ function getFormattedResources({
     id: pipeline.metadata.uid,
     name: (
       <Link
-        to={urls.rawCRD.byNamespace({
-          kind: 'pipelines',
+        to={urls.pipelines.byName({
           name: pipeline.metadata.name,
           namespace: pipeline.metadata.namespace
         })}

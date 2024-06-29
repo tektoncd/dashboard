@@ -12,8 +12,13 @@ limitations under the License.
 */
 /* istanbul ignore file */
 import { useIntl } from 'react-intl';
-import { useLocation, useParams } from 'react-router-dom';
-import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
+import { useLocation, useMatches, useParams } from 'react-router-dom';
+import {
+  ALL_NAMESPACES,
+  getFilters,
+  urls,
+  useTitleSync
+} from '@tektoncd/dashboard-utils';
 import { FormattedDate, Link, Table } from '@tektoncd/dashboard-components';
 
 import ListPageLayout from '../ListPageLayout';
@@ -26,20 +31,44 @@ import {
 export function ResourceListContainer() {
   const intl = useIntl();
   const location = useLocation();
-  const { group, kind, namespace: namespaceParam, version } = useParams();
+
+  const matches = useMatches();
+  const params = useParams();
+
+  const { namespace: namespaceParam } = params;
+  const match = matches.at(-1);
+  const handle = match.handle || {};
+  let { group, kind, version } = handle;
+  const { resourceURL, title } = handle;
+
+  let isExtension = false;
+  if (!(group && kind && version)) {
+    // we're on a kubernetes resource extension page
+    // grab values directly from the URL
+    ({ group, kind, version } = params);
+    isExtension = true;
+  }
 
   const { selectedNamespace } = useSelectedNamespace();
   const namespace = namespaceParam || selectedNamespace;
   const filters = getFilters(location);
 
-  useTitleSync({ page: `${group}/${version}/${kind}` });
+  useTitleSync({ page: title || `${group}/${version}/${kind}` });
 
   const {
     data: apiResource,
     error: apiResourceError,
     isLoading: isLoadingAPIResource
-  } = useAPIResource({ group, kind, version });
-  const isNamespaced = !isLoadingAPIResource && apiResource?.namespaced;
+  } = useAPIResource({ group, kind, version }, { enabled: isExtension });
+  const isNamespaced = isExtension
+    ? !isLoadingAPIResource && apiResource?.namespaced
+    : handle?.isNamespaced;
+
+  if (isExtension && typeof apiResource?.namespaced !== 'undefined') {
+    // dynamically toggle the namespace dropdown behaviour depending on
+    // whether the kind is namespaced or cluster-scoped
+    match.handle.isNamespaced = isNamespaced;
+  }
 
   const {
     data: resources,
@@ -54,7 +83,7 @@ export function ResourceListContainer() {
       version
     },
     {
-      enabled: !isLoadingAPIResource && !apiResourceError
+      enabled: !isExtension || (!isLoadingAPIResource && !apiResourceError)
     }
   );
 
@@ -74,23 +103,57 @@ export function ResourceListContainer() {
     };
   }
 
-  const emptyText = intl.formatMessage(
-    {
-      id: 'dashboard.resourceList.emptyState',
-      defaultMessage: 'No matching resources found for type {type}'
-    },
-    { type: kind }
-  );
+  function getResourceURL({ name, resourceNamespace }) {
+    if (resourceURL) {
+      return resourceURL({
+        group,
+        kind,
+        name,
+        namespace: resourceNamespace,
+        version
+      });
+    }
+
+    return resourceNamespace
+      ? urls.kubernetesResources.byName({
+          group,
+          kind,
+          name,
+          namespace: resourceNamespace,
+          version
+        })
+      : urls.kubernetesResources.cluster({
+          group,
+          kind,
+          name,
+          version
+        });
+  }
 
   return (
     <ListPageLayout
       error={getError()}
       filters={filters}
       resources={resources}
-      title={`${group}/${version}/${kind}`}
+      title={title || `${group}/${version}/${kind}`}
     >
       {({ resources: paginatedResources }) => (
         <Table
+          emptyTextAllNamespaces={intl.formatMessage(
+            {
+              id: 'dashboard.emptyState.allNamespaces',
+              defaultMessage: 'No matching {kind} found'
+            },
+            { kind: title || kind }
+          )}
+          emptyTextSelectedNamespace={intl.formatMessage(
+            {
+              id: 'dashboard.emptyState.selectedNamespace',
+              defaultMessage:
+                'No matching {kind} found in namespace {selectedNamespace}'
+            },
+            { kind: title || kind, selectedNamespace: namespace }
+          )}
           headers={[
             {
               key: 'name',
@@ -113,6 +176,7 @@ export function ResourceListContainer() {
               })
             }
           ].filter(Boolean)}
+          loading={(isExtension && isLoadingAPIResource) || isLoadingResources}
           rows={paginatedResources.map(resource => {
             const {
               creationTimestamp,
@@ -125,22 +189,7 @@ export function ResourceListContainer() {
               id: uid,
               name: (
                 <Link
-                  to={
-                    resourceNamespace
-                      ? urls.kubernetesResources.byName({
-                          group,
-                          kind,
-                          name,
-                          namespace: resourceNamespace,
-                          version
-                        })
-                      : urls.kubernetesResources.cluster({
-                          group,
-                          kind,
-                          name,
-                          version
-                        })
-                  }
+                  to={getResourceURL({ name, resourceNamespace })}
                   title={name}
                 >
                   {name}
@@ -150,9 +199,7 @@ export function ResourceListContainer() {
               createdTime: <FormattedDate date={creationTimestamp} relative />
             };
           })}
-          loading={isLoadingAPIResource || isLoadingResources}
-          emptyTextAllNamespaces={emptyText}
-          emptyTextSelectedNamespace={emptyText}
+          selectedNamespace={isNamespaced ? namespace : ALL_NAMESPACES}
         />
       )}
     </ListPageLayout>

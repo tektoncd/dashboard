@@ -42,7 +42,7 @@ export /* istanbul ignore next */ function TriggerTemplateContainer() {
   const intl = useIntl();
   const location = useLocation();
   const navigate = useNavigate();
-  const { namespace, triggerTemplateName: resourceName } = useParams();
+  const { namespace, name: resourceName } = useParams();
 
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');

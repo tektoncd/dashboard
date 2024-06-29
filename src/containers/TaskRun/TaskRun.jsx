@@ -66,7 +66,7 @@ export function TaskRunContainer() {
   const navigate = useNavigate();
   const params = useParams();
 
-  const { namespace: namespaceParam, taskRunName } = params;
+  const { name, namespace: namespaceParam } = params;
 
   const queryParams = new URLSearchParams(location.search);
   let currentRetry = queryParams.get(RETRY);
@@ -93,7 +93,7 @@ export function TaskRunContainer() {
 
   useTitleSync({
     page: 'TaskRun',
-    resourceName: taskRunName
+    resourceName: name
   });
 
   const {
@@ -101,7 +101,7 @@ export function TaskRunContainer() {
     error,
     isLoading: isLoadingTaskRun
   } = useTaskRun({
-    name: taskRunName,
+    name,
     namespace
   });
 
@@ -246,8 +246,8 @@ export function TaskRunContainer() {
         setShowNotification({
           kind: 'success',
           logsURL: urls.taskRuns.byName({
-            namespace,
-            taskRunName: newRun.metadata.name
+            name: newRun.metadata.name,
+            namespace
           }),
           message: intl.formatMessage({
             id: 'dashboard.rerun.triggered',

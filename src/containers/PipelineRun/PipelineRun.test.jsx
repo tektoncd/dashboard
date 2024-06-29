@@ -77,7 +77,7 @@ it('PipelineRunContainer renders not found state', async () => {
     <PipelineRunContainer intl={intl} />,
     {
       path: paths.pipelineRuns.byName(),
-      route: urls.pipelineRuns.byName({ pipelineRunName, namespace })
+      route: urls.pipelineRuns.byName({ name: pipelineRunName, namespace })
     }
   );
   await findByText(/Page not found/);
@@ -111,7 +111,7 @@ it('PipelineRunContainer renders error state', async () => {
     <PipelineRunContainer intl={intl} />,
     {
       path: paths.pipelineRuns.byName(),
-      route: urls.pipelineRuns.byName({ pipelineRunName, namespace })
+      route: urls.pipelineRuns.byName({ name: pipelineRunName, namespace })
     }
   );
   await findByText(/Page not found/);

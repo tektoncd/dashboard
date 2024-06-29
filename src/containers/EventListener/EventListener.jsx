@@ -25,14 +25,14 @@ export function EventListenerContainer() {
   const navigate = useNavigate();
   const location = useLocation();
   const params = useParams();
-  const { eventListenerName, namespace } = params;
+  const { name, namespace } = params;
 
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');
 
   useTitleSync({
     page: 'EventListener',
-    resourceName: eventListenerName
+    resourceName: name
   });
 
   const {
@@ -40,7 +40,7 @@ export function EventListenerContainer() {
     error,
     isFetching
   } = useEventListener({
-    name: eventListenerName,
+    name,
     namespace
   });
 
@@ -109,8 +109,8 @@ export function EventListenerContainer() {
                 <span>Trigger:</span>
                 <Link
                   to={urls.triggers.byName({
-                    namespace,
-                    triggerName: trigger.triggerRef
+                    name: trigger.triggerRef,
+                    namespace
                   })}
                   title={trigger.triggerRef}
                 >

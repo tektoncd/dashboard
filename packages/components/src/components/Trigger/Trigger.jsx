@@ -73,11 +73,11 @@ const Trigger = ({ namespace, trigger }) => {
                       to={
                         binding.kind === 'ClusterTriggerBinding'
                           ? urls.clusterTriggerBindings.byName({
-                              clusterTriggerBindingName: binding.ref
+                              name: binding.ref
                             })
                           : urls.triggerBindings.byName({
-                              namespace,
-                              triggerBindingName: binding.ref
+                              name: binding.ref,
+                              namespace
                             })
                       }
                     >
@@ -105,8 +105,8 @@ const Trigger = ({ namespace, trigger }) => {
             <Link
               className="tkn--trigger-resourcelink"
               to={urls.triggerTemplates.byName({
-                namespace,
-                triggerTemplateName
+                name: triggerTemplateName,
+                namespace
               })}
             >
               <span title={triggerTemplateName}>{triggerTemplateName}</span>
@@ -324,7 +324,7 @@ const Trigger = ({ namespace, trigger }) => {
                 content = (
                   <Link
                     to={urls.clusterInterceptors.byName({
-                      clusterInterceptorName
+                      name: clusterInterceptorName
                     })}
                     title={clusterInterceptorName}
                   >
