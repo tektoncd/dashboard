@@ -209,7 +209,6 @@
   "dashboard.resourceDetails.errorloading": "리소스를 로드하는 중에 오류가 발생했습니다.",
   "dashboard.resourceDetails.spec.description": "설명:",
   "dashboard.resourceDetails.spec.displayName": "보여지는 이름:",
-  "dashboard.resourceList.emptyState": "유형 {type}에 대해 일치하는 리소스가 없습니다.",
   "dashboard.resourceList.errorLoading": "{type} 로드 오류",
   "dashboard.resourceList.viewRuns": "{resource}의 {kind} 보기",
   "dashboard.run.duration": "지속 기간: {duration}",

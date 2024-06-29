@@ -168,8 +168,8 @@ export function ImportResources() {
         const pipelineRunName = body.metadata.name;
 
         const finalURL = urls.pipelineRuns.byName({
-          namespace: importerNamespace,
-          pipelineRunName
+          name: pipelineRunName,
+          namespace: importerNamespace
         });
 
         setLogsURL(finalURL);

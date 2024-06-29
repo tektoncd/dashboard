@@ -14,21 +14,6 @@ limitations under the License.
 import * as API from './triggers';
 import * as utils from './utils';
 
-it('useTriggers', () => {
-  const query = { fake: 'query' };
-  const params = { fake: 'params' };
-  vi.spyOn(utils, 'useCollection').mockImplementation(() => query);
-  expect(API.useTriggers(params)).toEqual(query);
-  expect(utils.useCollection).toHaveBeenCalledWith(
-    expect.objectContaining({
-      group: utils.triggersAPIGroup,
-      kind: 'triggers',
-      params,
-      version: 'v1beta1'
-    })
-  );
-});
-
 it('useTrigger', () => {
   const query = { fake: 'query' };
   const params = { fake: 'params' };

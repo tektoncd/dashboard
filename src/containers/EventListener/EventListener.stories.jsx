@@ -141,7 +141,7 @@ const props = { intl };
 
 export default {
   args: {
-    path: '/namespaces/:namespace/eventlisteners/:eventListenerName',
+    path: '/namespaces/:namespace/eventlisteners/:name',
     route: `/namespaces/${namespace}/eventlisteners/${name}`
   },
   component: EventListenerContainer,

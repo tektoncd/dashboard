@@ -24,21 +24,21 @@ export function ClusterTriggerBindingContainer() {
   const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
-  const { clusterTriggerBindingName } = params;
+  const { name } = params;
 
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');
 
   useTitleSync({
     page: 'ClusterTriggerBinding',
-    resourceName: clusterTriggerBindingName
+    resourceName: name
   });
 
   const {
     data: clusterTriggerBinding,
     error,
     isFetching
-  } = useClusterTriggerBinding({ name: clusterTriggerBindingName });
+  } = useClusterTriggerBinding({ name });
 
   const headersForParameters = [
     {
@@ -58,9 +58,9 @@ export function ClusterTriggerBindingContainer() {
   ];
 
   const rowsForParameters =
-    clusterTriggerBinding?.spec.params.map(({ name, value }) => ({
-      id: name,
-      name,
+    clusterTriggerBinding?.spec.params.map(({ name: paramName, value }) => ({
+      id: paramName,
+      name: paramName,
       value
     })) || [];
 

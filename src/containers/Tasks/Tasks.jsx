@@ -53,8 +53,7 @@ function getFormattedResources({
     id: task.metadata.uid,
     name: (
       <Link
-        to={urls.rawCRD.byNamespace({
-          kind: 'tasks',
+        to={urls.tasks.byName({
           name: task.metadata.name,
           namespace: task.metadata.namespace
         })}

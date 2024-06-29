@@ -25,22 +25,25 @@ export const paths = {
   clusterTasks: {
     all() {
       return '/clustertasks';
+    },
+    byName() {
+      return '/clustertasks/:name';
     }
   },
   clusterInterceptors: {
     all() {
       return '/clusterinterceptors';
     },
-    byName: function byName() {
-      return '/clusterinterceptors/:clusterInterceptorName';
+    byName() {
+      return '/clusterinterceptors/:name';
     }
   },
   clusterTriggerBindings: {
     all() {
       return '/clustertriggerbindings';
     },
-    byName: function byName() {
-      return '/clustertriggerbindings/:clusterTriggerBindingName';
+    byName() {
+      return '/clustertriggerbindings/:name';
     }
   },
   customRuns: {
@@ -48,7 +51,7 @@ export const paths = {
       return '/customruns';
     },
     byName() {
-      return byNamespace({ path: '/customruns/:runName' });
+      return byNamespace({ path: '/customruns/:name' });
     },
     byNamespace() {
       return byNamespace({ path: '/customruns' });
@@ -62,7 +65,7 @@ export const paths = {
       return '/eventlisteners';
     },
     byName() {
-      return byNamespace({ path: '/eventlisteners/:eventListenerName' });
+      return byNamespace({ path: '/eventlisteners/:name' });
     },
     byNamespace() {
       return byNamespace({ path: '/eventlisteners' });
@@ -76,7 +79,7 @@ export const paths = {
       return '/interceptors';
     },
     byName() {
-      return byNamespace({ path: '/interceptors/:interceptorName' });
+      return byNamespace({ path: '/interceptors/:name' });
     },
     byNamespace() {
       return byNamespace({ path: '/interceptors' });
@@ -102,7 +105,7 @@ export const paths = {
     },
     byName() {
       return byNamespace({
-        path: '/pipelineruns/:pipelineRunName'
+        path: '/pipelineruns/:name'
       });
     },
     byNamespace() {
@@ -116,19 +119,11 @@ export const paths = {
     all() {
       return '/pipelines';
     },
+    byName() {
+      return byNamespace({ path: '/pipelines/:name' });
+    },
     byNamespace() {
       return byNamespace({ path: '/pipelines' });
-    }
-  },
-  rawCRD: {
-    all() {
-      return '/:kind';
-    },
-    byNamespace() {
-      return byNamespace({ path: '/:kind/:name' });
-    },
-    cluster() {
-      return '/:kind/:name';
     }
   },
   settings() {
@@ -139,7 +134,7 @@ export const paths = {
       return '/taskruns';
     },
     byName() {
-      return byNamespace({ path: '/taskruns/:taskRunName' });
+      return byNamespace({ path: '/taskruns/:name' });
     },
     byNamespace() {
       return byNamespace({ path: '/taskruns' });
@@ -152,6 +147,9 @@ export const paths = {
     all() {
       return '/tasks';
     },
+    byName() {
+      return byNamespace({ path: '/tasks/:name' });
+    },
     byNamespace() {
       return byNamespace({ path: '/tasks' });
     }
@@ -161,7 +159,7 @@ export const paths = {
       return '/triggerbindings';
     },
     byName() {
-      return byNamespace({ path: '/triggerbindings/:triggerBindingName' });
+      return byNamespace({ path: '/triggerbindings/:name' });
     },
     byNamespace() {
       return byNamespace({ path: '/triggerbindings' });
@@ -172,7 +170,7 @@ export const paths = {
       return '/triggers';
     },
     byName() {
-      return byNamespace({ path: '/triggers/:triggerName' });
+      return byNamespace({ path: '/triggers/:name' });
     },
     byNamespace() {
       return byNamespace({ path: '/triggers' });
@@ -183,7 +181,7 @@ export const paths = {
       return '/triggertemplates';
     },
     byName() {
-      return byNamespace({ path: '/triggertemplates/:triggerTemplateName' });
+      return byNamespace({ path: '/triggertemplates/:name' });
     },
     byNamespace() {
       return byNamespace({ path: '/triggertemplates' });

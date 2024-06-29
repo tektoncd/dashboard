@@ -12,42 +12,34 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import {
+  useLocation,
+  useMatches,
+  useNavigate,
+  useParams
+} from 'react-router-dom';
 import { useTitleSync } from '@tektoncd/dashboard-utils';
 import { ResourceDetails } from '@tektoncd/dashboard-components';
 
 import { getViewChangeHandler } from '../../utils';
-import {
-  useClusterInterceptor,
-  useClusterTask,
-  useCustomResource,
-  useInterceptor,
-  usePipeline,
-  useTask
-} from '../../api';
-
-function useResource({ group, kind, name, namespace, version }) {
-  switch (kind) {
-    case 'clusterinterceptors':
-      return useClusterInterceptor({ name });
-    case 'clustertasks':
-      return useClusterTask({ name });
-    case 'interceptors':
-      return useInterceptor({ name, namespace });
-    case 'pipelines':
-      return usePipeline({ name, namespace });
-    case 'tasks':
-      return useTask({ name, namespace });
-    default:
-      return useCustomResource({ group, kind, name, namespace, version });
-  }
-}
+import { useResource } from '../../api/utils';
 
 function CustomResourceDefinition() {
   const location = useLocation();
   const navigate = useNavigate();
+
+  const matches = useMatches();
   const params = useParams();
-  const { group, kind, name, namespace, version } = params;
+
+  const { name, namespace } = params;
+  const match = matches.at(-1);
+  let { group, kind, version } = match.handle || {};
+
+  if (!(group && kind && version)) {
+    // we're on a kubernetes resource extension page
+    // grab values directly from the URL
+    ({ group, kind, version } = params);
+  }
 
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');
@@ -55,8 +47,10 @@ function CustomResourceDefinition() {
   const { data, error, isFetching } = useResource({
     group,
     kind,
-    name,
-    namespace,
+    params: {
+      name,
+      namespace
+    },
     version
   });
 

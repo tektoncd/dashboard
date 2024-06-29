@@ -104,8 +104,8 @@ it('TriggerBindingContainer renders YAML', async () => {
     {
       path: paths.triggerBindings.byName(),
       route: urls.triggerBindings.byName({
-        namespace,
-        triggerBindingName
+        name: triggerBindingName,
+        namespace
       })
     }
   );

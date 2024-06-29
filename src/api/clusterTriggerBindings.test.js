@@ -14,21 +14,6 @@ limitations under the License.
 import * as API from './clusterTriggerBindings';
 import * as utils from './utils';
 
-it('useClusterTriggerBindings', () => {
-  const query = { fake: 'query' };
-  const params = { fake: 'params' };
-  vi.spyOn(utils, 'useCollection').mockImplementation(() => query);
-  expect(API.useClusterTriggerBindings(params)).toEqual(query);
-  expect(utils.useCollection).toHaveBeenCalledWith(
-    expect.objectContaining({
-      group: utils.triggersAPIGroup,
-      kind: 'clustertriggerbindings',
-      params,
-      version: 'v1beta1'
-    })
-  );
-});
-
 it('useClusterTriggerBinding', () => {
   const query = { fake: 'query' };
   const params = { fake: 'params' };

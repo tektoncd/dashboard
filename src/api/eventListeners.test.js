@@ -14,21 +14,6 @@ limitations under the License.
 import * as API from './eventListeners';
 import * as utils from './utils';
 
-it('useEventListeners', () => {
-  const query = { fake: 'query' };
-  const params = { fake: 'params' };
-  vi.spyOn(utils, 'useCollection').mockImplementation(() => query);
-  expect(API.useEventListeners(params)).toEqual(query);
-  expect(utils.useCollection).toHaveBeenCalledWith(
-    expect.objectContaining({
-      group: utils.triggersAPIGroup,
-      kind: 'eventlisteners',
-      params,
-      version: 'v1beta1'
-    })
-  );
-});
-
 it('useEventListener', () => {
   const query = { fake: 'query' };
   const params = { fake: 'params' };

@@ -14,21 +14,6 @@ limitations under the License.
 import * as API from './triggerBindings';
 import * as utils from './utils';
 
-it('useTriggerBindings', () => {
-  const query = { fake: 'query' };
-  const params = { fake: 'params' };
-  vi.spyOn(utils, 'useCollection').mockImplementation(() => query);
-  expect(API.useTriggerBindings(params)).toEqual(query);
-  expect(utils.useCollection).toHaveBeenCalledWith(
-    expect.objectContaining({
-      group: utils.triggersAPIGroup,
-      kind: 'triggerbindings',
-      params,
-      version: 'v1beta1'
-    })
-  );
-});
-
 it('useTriggerBinding', () => {
   const query = { fake: 'query' };
   const params = { fake: 'params' };

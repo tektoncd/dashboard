@@ -135,7 +135,7 @@ it('EventListener displays with formatted labels', async () => {
     <EventListenerContainer {...props} />,
     {
       path: paths.eventListeners.byName(),
-      route: urls.eventListeners.byName({ eventListenerName, namespace })
+      route: urls.eventListeners.byName({ name: eventListenerName, namespace })
     }
   );
 
@@ -178,7 +178,7 @@ it('EventListener handles no serviceAccountName', async () => {
     <EventListenerContainer {...props} />,
     {
       path: paths.eventListeners.byName(),
-      route: urls.eventListeners.byName({ eventListenerName, namespace })
+      route: urls.eventListeners.byName({ name: eventListenerName, namespace })
     }
   );
 
@@ -201,7 +201,7 @@ it('EventListener handles no service type', async () => {
     <EventListenerContainer {...props} />,
     {
       path: paths.eventListeners.byName(),
-      route: urls.eventListeners.byName({ eventListenerName, namespace })
+      route: urls.eventListeners.byName({ name: eventListenerName, namespace })
     }
   );
 

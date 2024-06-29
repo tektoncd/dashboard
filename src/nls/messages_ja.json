@@ -209,7 +209,6 @@
   "dashboard.resourceDetails.errorloading": "リソースのロード中にエラーが発生しました",
   "dashboard.resourceDetails.spec.description": "",
   "dashboard.resourceDetails.spec.displayName": "",
-  "dashboard.resourceList.emptyState": "{type}のリソースがありません",
   "dashboard.resourceList.errorLoading": "{type}のロード中にエラーが発生しました",
   "dashboard.resourceList.viewRuns": "{resource}の{kind}を表示",
   "dashboard.run.duration": "実行時間：{duration}",

@@ -24,28 +24,6 @@ import * as TasksAPI from './tasks';
 import * as comms from './comms';
 import * as utils from './utils';
 
-it('useCustomResource', () => {
-  const group = 'fake_group';
-  const kind = 'fake_kind';
-  const version = 'fake_version';
-  const params = { fake: 'params', group, kind, version };
-  const query = { fake: 'query' };
-  vi.spyOn(utils, 'useResource').mockImplementation(() => query);
-  const returnValue = API.useCustomResource(params);
-
-  expect(utils.useResource).toHaveBeenCalledWith(
-    expect.objectContaining({
-      group,
-      kind,
-      params: {
-        fake: 'params'
-      },
-      version
-    })
-  );
-  expect(returnValue).toEqual(query);
-});
-
 it('useCustomResources', async () => {
   const group = 'fake_group';
   const kind = 'fake_kind';

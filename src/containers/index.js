@@ -12,11 +12,9 @@ limitations under the License.
 */
 /* istanbul ignore file */
 export { default as About } from './About';
-export { default as ClusterInterceptors } from './ClusterInterceptors';
 export { default as ClusterTasks } from './ClusterTasks';
 export { default as ClusterTasksDropdown } from './ClusterTasksDropdown';
 export { default as ClusterTriggerBinding } from './ClusterTriggerBinding';
-export { default as ClusterTriggerBindings } from './ClusterTriggerBindings';
 export { default as CustomResourceDefinition } from './CustomResourceDefinition';
 export { default as CreateCustomRun } from './CreateCustomRun';
 export { default as CreatePipelineRun } from './CreatePipelineRun';
@@ -25,11 +23,9 @@ export { default as CustomRun } from './CustomRun';
 export { default as CustomRuns } from './CustomRuns';
 export { default as ErrorPage } from './ErrorPage';
 export { default as EventListener } from './EventListener';
-export { default as EventListeners } from './EventListeners';
 export { default as Header } from './Header';
 export { default as HeaderBarContent } from './HeaderBarContent';
 export { default as ImportResources } from './ImportResources';
-export { default as Interceptors } from './Interceptors';
 export { default as LabelFilter } from './LabelFilter';
 export { default as ListPageLayout } from './ListPageLayout';
 export { default as LoadingShell } from './LoadingShell';
@@ -50,8 +46,5 @@ export { default as TasksDropdown } from './TasksDropdown';
 export { default as TaskRun } from './TaskRun';
 export { default as TaskRuns } from './TaskRuns';
 export { default as TriggerBinding } from './TriggerBinding';
-export { default as TriggerBindings } from './TriggerBindings';
 export { default as Trigger } from './Trigger';
-export { default as Triggers } from './Triggers';
 export { default as TriggerTemplate } from './TriggerTemplate';
-export { default as TriggerTemplates } from './TriggerTemplates';

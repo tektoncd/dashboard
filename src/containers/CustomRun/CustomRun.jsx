@@ -99,7 +99,7 @@ function CustomRun() {
   const intl = useIntl();
   const location = useLocation();
   const navigate = useNavigate();
-  const { namespace, runName: resourceName } = useParams();
+  const { namespace, name: resourceName } = useParams();
 
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');
@@ -177,8 +177,8 @@ function CustomRun() {
         setShowNotification({
           kind: 'success',
           logsURL: urls.customRuns.byName({
-            namespace,
-            runName: newRun.metadata.name
+            name: newRun.metadata.name,
+            namespace
           }),
           message: intl.formatMessage({
             id: 'dashboard.rerun.triggered',

@@ -40,23 +40,9 @@ export default [
     )
   },
   {
-    path: paths.rawCRD.byNamespace(),
-    element: <CustomResourceDefinition />,
-    handle: {
-      isNamespaced: true,
-      isResourceDetails: true,
-      path: paths.rawCRD.byNamespace()
-    }
-  },
-  {
-    path: paths.rawCRD.cluster(),
-    element: <CustomResourceDefinition />
-  },
-  {
     path: paths.kubernetesResources.all(),
     element: <ResourceList />,
     handle: {
-      isNamespaced: true,
       path: paths.kubernetesResources.all()
     }
   },
@@ -64,7 +50,6 @@ export default [
     path: paths.kubernetesResources.byNamespace(),
     element: <ResourceList />,
     handle: {
-      isNamespaced: true,
       path: paths.kubernetesResources.byNamespace()
     }
   },
@@ -79,6 +64,9 @@ export default [
   },
   {
     path: paths.kubernetesResources.cluster(),
-    element: <CustomResourceDefinition />
+    element: <CustomResourceDefinition />,
+    handle: {
+      isResourceDetails: true
+    }
   }
 ];

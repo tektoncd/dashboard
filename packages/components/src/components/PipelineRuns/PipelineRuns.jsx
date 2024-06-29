@@ -165,8 +165,8 @@ const PipelineRuns = ({
     const { reason, status } = getStatus(pipelineRun);
     const statusIcon = getPipelineRunStatusIcon(pipelineRun);
     const pipelineRunURL = getPipelineRunURL({
+      name: pipelineRunName,
       namespace,
-      pipelineRunName,
       annotations
     });
     const pipelineRunsByPipelineURL =

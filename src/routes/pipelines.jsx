@@ -18,6 +18,7 @@ import {
   CreateCustomRun,
   CreatePipelineRun,
   CreateTaskRun,
+  CustomResourceDefinition,
   CustomRun,
   CustomRuns,
   PipelineRun,
@@ -28,11 +29,23 @@ import {
   TaskRuns,
   Tasks
 } from '../containers';
+import { getTektonPipelinesAPIVersion, tektonAPIGroup } from '../api/utils';
 
 export default [
   {
     path: paths.clusterTasks.all(),
     element: <ClusterTasks />
+  },
+  {
+    path: paths.clusterTasks.byName(),
+    element: <CustomResourceDefinition />,
+    handle: {
+      group: tektonAPIGroup,
+      isResourceDetails: true,
+      kind: 'clustertasks',
+      path: paths.clusterTasks.byName(),
+      version: 'v1beta1'
+    }
   },
   {
     path: paths.customRuns.all(),
@@ -84,6 +97,18 @@ export default [
     }
   },
   {
+    path: paths.pipelines.byName(),
+    element: <CustomResourceDefinition />,
+    handle: {
+      group: tektonAPIGroup,
+      isNamespaced: true,
+      isResourceDetails: true,
+      kind: 'pipelines',
+      path: paths.pipelines.byName(),
+      version: getTektonPipelinesAPIVersion()
+    }
+  },
+  {
     path: paths.pipelineRuns.all(),
     element: <PipelineRuns />,
     handle: {
@@ -130,6 +155,18 @@ export default [
     handle: {
       isNamespaced: true,
       path: paths.tasks.byNamespace()
+    }
+  },
+  {
+    path: paths.tasks.byName(),
+    element: <CustomResourceDefinition />,
+    handle: {
+      group: tektonAPIGroup,
+      isNamespaced: true,
+      isResourceDetails: true,
+      kind: 'tasks',
+      path: paths.tasks.byName(),
+      version: getTektonPipelinesAPIVersion()
     }
   },
   {

@@ -194,8 +194,8 @@ it('TriggerTemplateContainer contains YAML tab with accurate information', async
     {
       path: paths.triggerTemplates.byName(),
       route: urls.triggerTemplates.byName({
-        namespace,
-        triggerTemplateName: 'pipeline-template'
+        name: 'pipeline-template',
+        namespace
       })
     }
   );
