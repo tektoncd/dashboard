@@ -37,7 +37,7 @@ metadata:
 spec:
   apiVersion: core/v1
   name: namespaces
-  displayname: Namespaces
+  displayName: Namespaces
 `);
 
     cy.contains(`.${carbonPrefix}--side-nav a`, 'Namespaces').click();
