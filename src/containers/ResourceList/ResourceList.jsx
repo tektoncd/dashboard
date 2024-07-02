@@ -25,7 +25,9 @@ import ListPageLayout from '../ListPageLayout';
 import {
   useAPIResource,
   useCustomResources,
-  useSelectedNamespace
+  useExtensions,
+  useSelectedNamespace,
+  useTenantNamespaces
 } from '../../api';
 
 export function ResourceListContainer() {
@@ -35,18 +37,29 @@ export function ResourceListContainer() {
   const matches = useMatches();
   const params = useParams();
 
+  const tenantNamespaces = useTenantNamespaces();
+  const { data: extensions = [] } = useExtensions(
+    {
+      namespace: tenantNamespaces[0] || ALL_NAMESPACES
+    },
+    { disableWebSocket: true, retryOnMount: false }
+  );
+
   const { namespace: namespaceParam } = params;
   const match = matches.at(-1);
   const handle = match.handle || {};
   let { group, kind, version } = handle;
   const { resourceURL, title } = handle;
 
-  let isExtension = false;
+  let extension;
   if (!(group && kind && version)) {
     // we're on a kubernetes resource extension page
     // grab values directly from the URL
     ({ group, kind, version } = params);
-    isExtension = true;
+    extension = extensions?.find(
+      ({ apiGroup, apiVersion, name }) =>
+        apiGroup === group && apiVersion === version && kind === name
+    );
   }
 
   const { selectedNamespace } = useSelectedNamespace();
@@ -59,12 +72,12 @@ export function ResourceListContainer() {
     data: apiResource,
     error: apiResourceError,
     isLoading: isLoadingAPIResource
-  } = useAPIResource({ group, kind, version }, { enabled: isExtension });
-  const isNamespaced = isExtension
+  } = useAPIResource({ group, kind, version }, { enabled: !!extension });
+  const isNamespaced = extension
     ? !isLoadingAPIResource && apiResource?.namespaced
     : handle?.isNamespaced;
 
-  if (isExtension && typeof apiResource?.namespaced !== 'undefined') {
+  if (extension && typeof apiResource?.namespaced !== 'undefined') {
     // dynamically toggle the namespace dropdown behaviour depending on
     // whether the kind is namespaced or cluster-scoped
     match.handle.isNamespaced = isNamespaced;
@@ -83,7 +96,7 @@ export function ResourceListContainer() {
       version
     },
     {
-      enabled: !isExtension || (!isLoadingAPIResource && !apiResourceError)
+      enabled: !extension || (!isLoadingAPIResource && !apiResourceError)
     }
   );
 
@@ -176,7 +189,7 @@ export function ResourceListContainer() {
               })
             }
           ].filter(Boolean)}
-          loading={(isExtension && isLoadingAPIResource) || isLoadingResources}
+          loading={(extension && isLoadingAPIResource) || isLoadingResources}
           rows={paginatedResources.map(resource => {
             const {
               creationTimestamp,
@@ -185,15 +198,19 @@ export function ResourceListContainer() {
               uid
             } = resource.metadata;
 
+            let resourceLink;
+            if (!extension?.disableResourceDetailsLinks) {
+              resourceLink = getResourceURL({ name, resourceNamespace });
+            }
+
             return {
               id: uid,
-              name: (
-                <Link
-                  to={getResourceURL({ name, resourceNamespace })}
-                  title={name}
-                >
+              name: resourceLink ? (
+                <Link to={resourceLink} title={name}>
                   {name}
                 </Link>
+              ) : (
+                name
               ),
               namespace: resourceNamespace,
               createdTime: <FormattedDate date={creationTimestamp} relative />

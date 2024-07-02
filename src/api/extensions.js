@@ -25,12 +25,19 @@ export function useExtensions(params, queryConfig) {
   return {
     ...query,
     data: (data || []).map(({ spec }) => {
-      const { displayname: displayName, name, namespaced } = spec;
+      const {
+        disableResourceDetailsLinks,
+        displayname, // keep for backwards compatibility for a few releases
+        displayName,
+        name,
+        namespaced
+      } = spec;
       const [apiGroup, apiVersion] = spec.apiVersion.split('/');
       return {
         apiGroup,
         apiVersion,
-        displayName,
+        disableResourceDetailsLinks,
+        displayName: displayName || displayname,
         name,
         namespaced
       };

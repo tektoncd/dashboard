@@ -22,6 +22,40 @@ it('useExtensions', () => {
   const displayName = 'fake_displayName';
   const namespaced = true;
   const query = {
+    data: [{ spec: { apiVersion, displayName, name, namespaced } }]
+  };
+  const params = { fake: 'params' };
+  vi.spyOn(utils, 'useCollection').mockImplementation(() => query);
+  const extensions = API.useExtensions(params);
+  expect(utils.useCollection).toHaveBeenCalledWith(
+    expect.objectContaining({
+      group: utils.dashboardAPIGroup,
+      kind: 'extensions',
+      params,
+      version: 'v1alpha1'
+    })
+  );
+  expect(extensions).toEqual({
+    data: [
+      {
+        apiGroup: group,
+        apiVersion: version,
+        displayName,
+        name,
+        namespaced
+      }
+    ]
+  });
+});
+
+it('useExtensions displayname backwards compatibility', () => {
+  const name = 'fake_name';
+  const group = 'fake_group';
+  const version = 'fake_version';
+  const apiVersion = `${group}/${version}`;
+  const displayName = 'fake_displayName';
+  const namespaced = true;
+  const query = {
     data: [{ spec: { apiVersion, displayname: displayName, name, namespaced } }]
   };
   const params = { fake: 'params' };
