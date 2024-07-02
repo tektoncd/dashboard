@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { paths } from '@tektoncd/dashboard-utils';
+import { paths, urls } from '@tektoncd/dashboard-utils';
 
 import {
   ClusterTasks,
@@ -25,6 +25,7 @@ import {
   PipelineRuns,
   Pipelines,
   ReadWriteRoute,
+  ResourceList,
   TaskRun,
   TaskRuns,
   Tasks
@@ -140,6 +141,44 @@ export default [
         <CreatePipelineRun />
       </ReadWriteRoute>
     )
+  },
+  {
+    path: paths.stepActions.all(),
+    element: <ResourceList />,
+    handle: {
+      group: tektonAPIGroup,
+      isNamespaced: true,
+      kind: 'stepactions',
+      path: paths.stepActions.all(),
+      resourceURL: urls.stepActions.byName,
+      title: 'StepActions',
+      version: 'v1beta1'
+    }
+  },
+  {
+    path: paths.stepActions.byName(),
+    element: <CustomResourceDefinition />,
+    handle: {
+      group: tektonAPIGroup,
+      isNamespaced: true,
+      isResourceDetails: true,
+      kind: 'stepactions',
+      path: paths.stepActions.byName(),
+      version: 'v1beta1'
+    }
+  },
+  {
+    path: paths.stepActions.byNamespace(),
+    element: <ResourceList />,
+    handle: {
+      group: tektonAPIGroup,
+      isNamespaced: true,
+      kind: 'stepactions',
+      path: paths.stepActions.byNamespace(),
+      resourceURL: urls.stepActions.byName,
+      title: 'StepActions',
+      version: 'v1beta1'
+    }
   },
   {
     path: paths.tasks.all(),

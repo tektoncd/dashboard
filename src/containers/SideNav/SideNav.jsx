@@ -106,6 +106,11 @@ function SideNav({ expanded, showKubernetesResources = false }) {
           >
             PipelineRuns
           </SideNavMenuItem>
+          <SideNavMenuItem
+            {...getMenuItemProps(getPath(urls.stepActions.all()))}
+          >
+            StepActions
+          </SideNavMenuItem>
           <SideNavMenuItem {...getMenuItemProps(getPath(urls.tasks.all()))}>
             Tasks
           </SideNavMenuItem>

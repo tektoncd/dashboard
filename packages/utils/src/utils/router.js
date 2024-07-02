@@ -129,6 +129,17 @@ export const paths = {
   settings() {
     return '/settings';
   },
+  stepActions: {
+    all() {
+      return '/stepactions';
+    },
+    byName() {
+      return byNamespace({ path: '/stepactions/:name' });
+    },
+    byNamespace() {
+      return byNamespace({ path: '/stepactions' });
+    }
+  },
   taskRuns: {
     all() {
       return '/taskruns';

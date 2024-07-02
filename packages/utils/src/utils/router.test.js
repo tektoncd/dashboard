@@ -21,6 +21,7 @@ const namespace = 'fake_namespace';
 const pipelineName = 'fake_pipelineName';
 const pipelineRunName = 'fake_pipelineRunName';
 const runName = 'fake_runName';
+const stepActionName = 'fake_stepActionName';
 const taskName = 'fake_taskName';
 const taskRunName = 'fake_taskRunName';
 const triggerName = 'fake_triggerName';
@@ -250,6 +251,31 @@ describe('customRuns', () => {
 
 it('settings', () => {
   expect(urls.settings()).toEqual(generatePath(paths.settings()));
+});
+
+describe('stepActions', () => {
+  it('all', () => {
+    expect(urls.stepActions.all()).toEqual(
+      generatePath(paths.stepActions.all())
+    );
+  });
+
+  it('byName', () => {
+    expect(
+      urls.stepActions.byName({ name: stepActionName, namespace })
+    ).toEqual(
+      generatePath(paths.stepActions.byName(), {
+        name: stepActionName,
+        namespace
+      })
+    );
+  });
+
+  it('byNamespace', () => {
+    expect(urls.stepActions.byNamespace({ namespace })).toEqual(
+      generatePath(paths.stepActions.byNamespace(), { namespace })
+    );
+  });
 });
 
 describe('taskRuns', () => {
