@@ -28,7 +28,7 @@ The first thing to do is to create a Kubernetes cluster.
 
 Kind is an easy solution to run a local cluster, all it needs is to have `docker` installed.
 
-This walk-through has been tested on Kind v0.21 with Kubernetes v1.27.
+This walk-through has been tested on Kind v0.23 with Kubernetes v1.30.
 
 Create a cluster by running the following command:
 
@@ -38,7 +38,7 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
 - role: control-plane
-  image: docker.io/kindest/node:v1.27.10@sha256:3700c811144e24a6c6181065265f69b9bf0b437c45741017182d7c82b908918f
+  image: docker.io/kindest/node:v1.30.0@sha256:047357ac0cfea04663786a612ba1eaba9702bef25227a794b52890dd8bcd692e
   kubeadmConfigPatches:
   - |
     kind: InitConfiguration
