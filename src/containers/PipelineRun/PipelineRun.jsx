@@ -261,8 +261,8 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
         setShowRunActionNotification({
           kind: 'success',
           logsURL: urls.pipelineRuns.byName({
-            namespace,
-            pipelineRunName: newRun.metadata.name
+            name: newRun.metadata.name,
+            namespace
           }),
           message: intl.formatMessage({
             id: 'dashboard.rerun.triggered',
