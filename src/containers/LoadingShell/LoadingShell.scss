@@ -14,6 +14,7 @@ limitations under the License.
 // TODO: move SideNav.scss to components and import here for consistency
 
 @use '@carbon/react/scss/config' as *;
+@use '@carbon/react/scss/spacing' as *;
 
 .tkn--config-loading-shell {
   .#{$prefix}--header ~ {
