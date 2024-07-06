@@ -151,6 +151,7 @@ export default function YAMLEditor({
             lowContrast
           />
         )}
+        {/* TODO: carbon11 - Step 6 - className now applies to the outermost element of FormGroup */}
         <FormGroup legendText="" className="tkn--codemirror--form">
           {loading ? (
             <Loading message={loadingMessage} />
