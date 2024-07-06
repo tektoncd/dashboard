@@ -15,11 +15,12 @@ limitations under the License.
 
 @use '@carbon/react/scss/config' as *;
 @use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/theme' as *;
 
 .tkn--config-loading-shell {
   .#{$prefix}--header ~ {
     .#{$prefix}--content {
-      background-color: $ui-background;
+      background-color: $background;
       transform: none;
       padding-block-start: $spacing-06;
     }

@@ -11,11 +11,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+@use '@carbon/react/scss/colors';
 @use '@carbon/react/scss/config' as *;
 
 .#{$prefix}--snippet--multi.tkn--view-yaml--dark {
-  background-color: $gray-90; // TODO: $inverse-02 - see Log.scss
-  color: $gray-10;            //       $inverse-01
+  background-color: colors.$gray-90; // TODO: $inverse-02 - see Log.scss
+  color: colors.$gray-10;            //       $inverse-01
 }
 
 .tkn--view-yaml--title {

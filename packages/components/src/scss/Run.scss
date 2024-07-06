@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 @use '@carbon/react/scss/config' as *;
+@use '@carbon/react/scss/theme' as *;
 
 .tkn--tasks {
   display: flex;
@@ -24,18 +25,18 @@ limitations under the License.
   }
 
   .tkn--step-details {
-    background-color: $ui-01;
+    background-color: $layer;
     flex-grow: 1;
     padding-inline-start: 1rem;
   }
 
   .#{$prefix}--data-table {
     td {
-      background-color: $ui-02;
-      border-block-start-color: $ui-02;
+      background-color: $layer-02;
+      border-block-start-color: $layer-02;
     }
     tr:hover td {
-      background-color: $hover-ui;
+      background-color: $layer-hover;
     }
   }
 }

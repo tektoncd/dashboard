@@ -13,6 +13,7 @@ limitations under the License.
 
 @use '@carbon/react/scss/config' as *;
 @use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/theme' as *;
 
 .tkn--create {
   .#{$prefix}--fieldset:not(:last-of-type) {
@@ -20,12 +21,12 @@ limitations under the License.
   }
 
   .#{$prefix}--form__helper-text {
-    color: $text-05; // Since by default the contrast/colour choice is barely readable.
+    color: $text-helper; // Since by default the contrast/colour choice is barely readable.
     max-inline-size: 100%;
   }
 
   .#{$prefix}--label--disabled {
-    color: $text-05;
+    color: $text-helper;
   }
 
   .#{$prefix}--text-input__field-wrapper {

@@ -11,12 +11,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+@use '@carbon/react/scss/theme' as *;
 @use '@carbon/react/scss/type' as *;
 
 header.tkn--pipeline-run-header {
   @include type-style('body-short-01');
   line-height: 1;
-  background: $ui-01;
+  background: $layer;
   margin-block-end: 2em;
   padding-block: 0.4em;
   padding-inline-start: 1.5em;
@@ -81,33 +82,33 @@ header.tkn--pipeline-run-header {
   // catch all for unknown states
   &:not([data-succeeded]) {
     .tkn--status-label {
-      color: $text-02;
+      color: $text-secondary;
     }
   }
 
   &[data-succeeded='True'] {
     .tkn--status-label {
-      color: $support-02;
+      color: $support-success;
     }
   }
 
   &[data-succeeded='False'],
   &[data-succeeded='Unknown'][data-reason='PipelineRunCouldntCancel'] {
     .tkn--status-label {
-      color: $support-01;
+      color: $support-error;
     }
   }
 
   &[data-succeeded='Unknown'][data-reason='PipelineRunPending'] {
     .tkn--status-label {
-      color: $text-02;
+      color: $text-secondary;
     }
   }
 
   &[data-succeeded='Unknown'][data-reason='Running'],
   &[data-succeeded='Unknown'][data-reason='PipelineRunStopping'] {
     .tkn--status-label {
-      color: $support-04;
+      color: $support-info;
     }
   }
 }

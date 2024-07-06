@@ -11,38 +11,40 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+@use '@carbon/react/scss/theme' as *;
+
 .tkn--status-icon {
-  fill: $ui-04;
+  fill: $toggle-off;
   inline-size: 20px;
   block-size: 20px;
 
   &.tkn--status-icon--cancelled {
-    fill: $ui-04;
+    fill: $toggle-off;
   }
 
   &.tkn--status-icon--error {
-    fill: $support-01;
+    fill: $support-error;
   }
 
   &.tkn--status-icon--running {
-    fill: $support-04;
+    fill: $support-info;
   }
 
   &.tkn--status-icon--success {
-    fill: $support-02;
+    fill: $support-success;
   }
 
   &.tkn--status-icon--warning {
     &.tkn--status-icon--type-normal {
-      fill: $support-02;
+      fill: $support-success;
 
       path:nth-child(2) {
-        fill: $support-03;
+        fill: $support-warning;
       }
     }
 
     &.tkn--status-icon--type-inverse {
-      fill: $support-03;
+      fill: $support-warning;
 
       path:first-child {
         fill: black;

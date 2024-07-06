@@ -14,6 +14,7 @@ limitations under the License.
 @use './carbon';
 @use '@carbon/react/scss/config' as *;
 @use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/theme' as *;
 @use '@carbon/react/scss/type' as *;
 
 @import './grid.scss';
@@ -72,7 +73,7 @@ body {
 }
 
 a {
-  color: $link-01;
+  color: $link-primary;
 }
 
 .#{$prefix}--btn.link-btn.#{$prefix}--btn--ghost {
@@ -82,7 +83,7 @@ a {
 .#{$prefix}--header ~ {
   .#{$prefix}--content {
     position: relative;
-    background-color: $ui-background;
+    background-color: $background;
     transform: none;
     padding-block-start: $spacing-06;
 

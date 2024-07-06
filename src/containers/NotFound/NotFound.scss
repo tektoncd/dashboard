@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 @use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/theme' as *;
 @use '@carbon/react/scss/type' as *;
 
 .tkn--not-found {
@@ -28,14 +29,14 @@ limitations under the License.
 
   h1 {
     @include type-style('productive-heading-05');
-    color: $text-01;
+    color: $text-primary;
     margin-block-start: $spacing-07;
     margin-block-end: $spacing-05;
   }
 
   p {
     @include type-style('body-long-01');
-    color: $text-02;
+    color: $text-secondary;
   }
 
   p + p {

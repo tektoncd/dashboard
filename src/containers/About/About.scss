@@ -13,6 +13,7 @@ limitations under the License.
 
 @use '@carbon/react/scss/config' as *;
 @use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/theme' as *;
 @use '@carbon/react/scss/type' as *;
 
 .tkn--about {
@@ -25,7 +26,7 @@ limitations under the License.
   }
 
   .tkn--about-header {
-    background-color: $ui-01;
+    background-color: $layer;
     block-size: 15rem;
     overflow: hidden;
 
@@ -42,14 +43,14 @@ limitations under the License.
 
       h1 {
         @include type-style('productive-heading-04');
-        color: $text-01;
+        color: $text-primary;
         margin-block-start: 2rem;
         margin-block-end: 1rem;
       }
 
       p {
         @include type-style('body-long-01');
-        color: $text-02;
+        color: $text-secondary;
       }
     }
 
@@ -100,7 +101,7 @@ limitations under the License.
 
       h2.tkn--section-title {
         @include type-style('productive-heading-03');
-        color: $text-02;
+        color: $text-secondary;
       }
     }
   }
@@ -129,19 +130,19 @@ limitations under the License.
 
     h3 {
       @include type-style('productive-heading-01');
-      color: $text-01;
+      color: $text-primary;
       margin-block-end: 1rem;
     }
 
     dt {
       @include type-style('label-01');
-      color: $text-02;
+      color: $text-secondary;
       margin-block-end: 0.25rem;
     }
 
     dd {
       @include type-style('body-short-01');
-      color: $text-01;
+      color: $text-primary;
       margin-block-end: $spacing-05;
 
       &:last-child {
@@ -159,10 +160,10 @@ limitations under the License.
         margin-inline: -1rem;
         padding-block: 3rem;
         padding-inline: 0;
-        background-color: $inverse-02;
+        background-color: $background-inverse;
 
         svg {
-          fill: $inverse-01;
+          fill: $icon-inverse;
           inline-size: clamp(48px, 20%, 64px);
         }
       }
@@ -178,7 +179,7 @@ limitations under the License.
 
       p {
         @include type-style('body-short-01');
-        color: $text-01;
+        color: $text-primary;
         margin-block-end: 1rem;
         min-block-size: 2rem;
       }

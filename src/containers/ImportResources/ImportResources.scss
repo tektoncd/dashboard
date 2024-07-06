@@ -12,11 +12,12 @@ limitations under the License.
 */
 
 @use '@carbon/react/scss/config' as *;
+@use '@carbon/react/scss/theme' as *;
 
 .tkn--importresources {
   .#{$prefix}--form__helper-text,
   .#{$prefix}--label--disabled {
-    color: $text-05; // Since by default the contrast/colour choice is barely readable.
+    color: $text-helper; // Since by default the contrast/colour choice is barely readable.
   }
 
   .#{$prefix}--label {
