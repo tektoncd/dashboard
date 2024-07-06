@@ -11,6 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+@use '@carbon/react/scss/config' as *;
+
 header.#{$prefix}--header.tkn--header {
   .#{$prefix}--list-box__wrapper {
     margin-block-start: 0.5rem;
