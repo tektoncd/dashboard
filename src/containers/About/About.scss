@@ -42,14 +42,14 @@ limitations under the License.
       }
 
       h1 {
-        @include type-style('productive-heading-04');
+        @include type-style('heading-04');
         color: $text-primary;
         margin-block-start: 2rem;
         margin-block-end: 1rem;
       }
 
       p {
-        @include type-style('body-long-01');
+        @include type-style('body-01');
         color: $text-secondary;
       }
     }
@@ -100,7 +100,7 @@ limitations under the License.
       grid-column: 2 / -1;
 
       h2.tkn--section-title {
-        @include type-style('productive-heading-03');
+        @include type-style('heading-03');
         color: $text-secondary;
       }
     }
@@ -129,7 +129,7 @@ limitations under the License.
     }
 
     h3 {
-      @include type-style('productive-heading-01');
+      @include type-style('heading-01');
       color: $text-primary;
       margin-block-end: 1rem;
     }
@@ -141,7 +141,7 @@ limitations under the License.
     }
 
     dd {
-      @include type-style('body-short-01');
+      @include type-style('body-compact-01');
       color: $text-primary;
       margin-block-end: $spacing-05;
 
@@ -178,7 +178,7 @@ limitations under the License.
       }
 
       p {
-        @include type-style('body-short-01');
+        @include type-style('body-compact-01');
         color: $text-primary;
         margin-block-end: 1rem;
         min-block-size: 2rem;

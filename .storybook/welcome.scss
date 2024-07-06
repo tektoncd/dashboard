@@ -29,12 +29,12 @@ limitations under the License.
   }
 
   h2 {
-    @include type-style('productive-heading-07');
+    @include type-style('heading-07');
     color: $text-primary;
   }
 
   h2 + p {
-    @include type-style('productive-heading-03');
+    @include type-style('heading-03');
     font-weight: 600;
   }
 
@@ -48,7 +48,7 @@ limitations under the License.
   }
 
   a:not([target="_self"]) {
-    @include type-style('body-short-01');
+    @include type-style('body-compact-01');
     outline: none;
     text-decoration: none;
     transition: color 70ms cubic-bezier(0.2, 0, 0.38, 0.9);
