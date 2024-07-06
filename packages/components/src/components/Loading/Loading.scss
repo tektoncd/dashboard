@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 @use '@carbon/react/scss/config' as *;
+@use '@carbon/react/scss/spacing' as *;
 
 .#{$prefix}--loading-overlay.tkn--loading-overlay {
   inset-block-start: 3rem;
