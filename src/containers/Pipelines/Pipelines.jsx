@@ -15,9 +15,9 @@ limitations under the License.
 import { useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import {
-  TrashCan16 as DeleteIcon,
-  PlayOutline16 as RunIcon,
-  Playlist16 as RunsIcon
+  TrashCan as DeleteIcon,
+  PlayOutline as RunIcon,
+  Playlist as RunsIcon
 } from '@carbon/icons-react';
 import { useIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';

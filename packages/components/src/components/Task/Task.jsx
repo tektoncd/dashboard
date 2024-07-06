@@ -15,8 +15,8 @@ import { Component } from 'react';
 import { injectIntl } from 'react-intl';
 import { OverflowMenu, OverflowMenuItem } from '@carbon/react';
 import {
-  PendingFilled20 as DefaultIcon,
-  ChevronDown20 as ExpandIcon
+  PendingFilled as DefaultIcon,
+  ChevronDown as ExpandIcon
 } from '@carbon/icons-react';
 import {
   getStepStatusReason,
@@ -125,7 +125,7 @@ class Task extends Component {
     const { hasWarning } = this.state;
 
     const expandIcon = expanded ? null : (
-      <ExpandIcon className="tkn--task--expand-icon" />
+      <ExpandIcon size={20} className="tkn--task--expand-icon" />
     );
 
     let retryName;
@@ -176,7 +176,7 @@ class Task extends Component {
           role="button"
         >
           <StatusIcon
-            DefaultIcon={DefaultIcon}
+            DefaultIcon={props => <DefaultIcon size={20} {...props} />}
             hasWarning={hasWarning}
             reason={reason}
             status={succeeded}

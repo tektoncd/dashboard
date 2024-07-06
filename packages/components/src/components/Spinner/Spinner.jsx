@@ -11,11 +11,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Renew20 as SpinnerIcon } from '@carbon/icons-react';
+import { Renew as SpinnerIcon } from '@carbon/icons-react';
 
 export default function Spinner({ children, className }) {
   return (
-    <SpinnerIcon className={`tkn--spinner ${className}`}>
+    <SpinnerIcon size={20} className={`tkn--spinner ${className}`}>
       {children}
     </SpinnerIcon>
   );

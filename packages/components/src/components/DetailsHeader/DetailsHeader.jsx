@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import { Component } from 'react';
-import { Pending24 as DefaultIcon } from '@carbon/icons-react';
+import { Pending as DefaultIcon } from '@carbon/icons-react';
 import { injectIntl } from 'react-intl';
 import { getStatus } from '@tektoncd/dashboard-utils';
 
@@ -141,7 +141,7 @@ class DetailsHeader extends Component {
       >
         <h2 className="tkn--details-header--heading">
           <StatusIcon
-            DefaultIcon={DefaultIcon}
+            DefaultIcon={props => <DefaultIcon size={24} {...props} />}
             hasWarning={hasWarning}
             reason={reason}
             status={status}

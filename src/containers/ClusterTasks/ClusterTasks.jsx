@@ -24,9 +24,9 @@ import {
 } from '@tektoncd/dashboard-components';
 import { Button } from '@carbon/react';
 import {
-  TrashCan16 as DeleteIcon,
-  PlayOutline16 as RunIcon,
-  Playlist16 as RunsIcon
+  TrashCan as DeleteIcon,
+  PlayOutline as RunIcon,
+  Playlist as RunsIcon
 } from '@carbon/icons-react';
 import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 

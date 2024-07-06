@@ -19,7 +19,7 @@ import {
   OverflowMenuItem,
   PrefixContext
 } from '@carbon/react';
-import { CaretDown16 } from '@carbon/icons-react';
+import { CaretDown } from '@carbon/icons-react';
 
 import Modal from '../Modal';
 
@@ -96,59 +96,57 @@ class Actions extends Component {
 
     const carbonPrefix = this.context;
 
-    return (
-      <>
-        <OverflowMenu
-          ariaLabel={title}
-          className={`tkn--actions-dropdown${
-            isButton ? ' tkn--actions-dropdown--button' : ''
-          }`}
-          flipped
-          iconDescription={title}
-          selectorPrimaryFocus="button:not([disabled])"
-          title={title}
-          renderIcon={
-            isButton
-              ? iconProps => (
-                  <span
-                    {...iconProps}
-                    className={`${carbonPrefix}--btn ${carbonPrefix}--btn--md ${carbonPrefix}--btn--tertiary`}
-                  >
-                    {title}
-                    <CaretDown16 className={`${carbonPrefix}--btn__icon`} />
-                  </span>
-                )
-              : undefined
-          }
-        >
-          {items.map(item => {
-            const {
-              actionText,
-              action,
-              danger,
-              disable,
-              hasDivider,
-              modalProperties
-            } = item;
-            const disabled = disable && disable(resource);
-            return (
-              <OverflowMenuItem
-                disabled={disabled}
-                hasDivider={hasDivider}
-                isDelete={danger}
-                itemText={actionText}
-                key={actionText}
-                onClick={() =>
-                  this.handleClick(() => action(resource), modalProperties)
-                }
-                requireTitle
-              />
-            );
-          })}
-        </OverflowMenu>
-        {dialog}
-      </>
-    );
+    return <>
+      <OverflowMenu
+        ariaLabel={title}
+        className={`tkn--actions-dropdown${
+          isButton ? ' tkn--actions-dropdown--button' : ''
+        }`}
+        flipped
+        iconDescription={title}
+        selectorPrimaryFocus="button:not([disabled])"
+        title={title}
+        renderIcon={
+          isButton
+            ? iconProps => (
+                <span
+                  {...iconProps}
+                  className={`${carbonPrefix}--btn ${carbonPrefix}--btn--md ${carbonPrefix}--btn--tertiary`}
+                >
+                  {title}
+                  <CaretDown className={`${carbonPrefix}--btn__icon`} />
+                </span>
+              )
+            : undefined
+        }
+      >
+        {items.map(item => {
+          const {
+            actionText,
+            action,
+            danger,
+            disable,
+            hasDivider,
+            modalProperties
+          } = item;
+          const disabled = disable && disable(resource);
+          return (
+            <OverflowMenuItem
+              disabled={disabled}
+              hasDivider={hasDivider}
+              isDelete={danger}
+              itemText={actionText}
+              key={actionText}
+              onClick={() =>
+                this.handleClick(() => action(resource), modalProperties)
+              }
+              requireTitle
+            />
+          );
+        })}
+      </OverflowMenu>
+      {dialog}
+    </>;
   }
 }
 Actions.contextType = PrefixContext;

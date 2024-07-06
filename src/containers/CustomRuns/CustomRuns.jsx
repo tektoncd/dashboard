@@ -33,12 +33,12 @@ import {
   Table
 } from '@tektoncd/dashboard-components';
 import {
-  Add16 as Add,
-  Calendar16 as CalendarIcon,
-  TrashCan32 as DeleteIcon,
-  Time16 as TimeIcon,
-  Lightning16 as TriggersIcon,
-  UndefinedFilled20 as UndefinedIcon
+  Add,
+  Calendar as CalendarIcon,
+  TrashCan as DeleteIcon,
+  Time as TimeIcon,
+  Lightning as TriggersIcon,
+  UndefinedFilled as UndefinedIcon
 } from '@carbon/icons-react';
 
 import ListPageLayout from '../ListPageLayout';
@@ -88,7 +88,7 @@ function getRunStatusIcon(run) {
   const { reason, status } = getStatus(run);
   return (
     <StatusIcon
-      DefaultIcon={UndefinedIcon}
+      DefaultIcon={props => <UndefinedIcon size={20} {...props} />}
       isCustomTask
       reason={reason}
       status={status}

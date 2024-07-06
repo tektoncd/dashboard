@@ -24,7 +24,7 @@ import {
   ToastNotification,
   TooltipIcon
 } from '@carbon/react';
-import { Information16 } from '@carbon/icons-react';
+import { Information } from '@carbon/icons-react';
 import { Link } from 'react-router-dom';
 import {
   ALL_NAMESPACES,
@@ -60,7 +60,7 @@ const initialMethod = 'apply';
 
 const HelpIcon = ({ title }) => (
   <TooltipIcon direction="top" align="start" tooltipText={title}>
-    <Information16 />
+    <Information />
   </TooltipIcon>
 );
 

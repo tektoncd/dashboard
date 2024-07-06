@@ -15,9 +15,9 @@ import { useIntl } from 'react-intl';
 import { useTitleSync } from '@tektoncd/dashboard-utils';
 import { RadioTile, TileGroup, Toggle } from '@carbon/react';
 import {
-  Asleep16 as DarkIcon,
-  Light16 as LightIcon,
-  Devices16 as SystemIcon
+  Asleep as DarkIcon,
+  Light as LightIcon,
+  Devices as SystemIcon
 } from '@carbon/icons-react';
 
 import { getTheme, setTheme } from '../../utils';

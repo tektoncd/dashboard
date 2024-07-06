@@ -13,9 +13,9 @@ limitations under the License.
 /* eslint-disable formatjs/no-literal-string-in-jsx */
 
 import {
-  Pending20 as DefaultStepIcon,
-  PendingFilled20 as DefaultTaskIcon,
-  UndefinedFilled20 as UndefinedIcon
+  Pending as DefaultStepIcon,
+  PendingFilled as DefaultTaskIcon,
+  UndefinedFilled as UndefinedIcon
 } from '@carbon/icons-react';
 
 import StatusIcon from './StatusIcon';
