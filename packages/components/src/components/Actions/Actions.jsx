@@ -96,6 +96,7 @@ class Actions extends Component {
 
     const carbonPrefix = this.context;
 
+    // TODO: carbon11 - for `isButton` case, use MenuButton component instead
     return (
       <>
         <OverflowMenu

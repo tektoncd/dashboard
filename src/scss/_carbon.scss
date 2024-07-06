@@ -44,6 +44,7 @@ limitations under the License.
 @use '@carbon/react/scss/components/data-table';
 @use '@carbon/react/scss/components/data-table/action';
 @use '@carbon/react/scss/components/data-table/skeleton';
+@use '@carbon/react/scss/components/data-table/sort';
 @use '@carbon/react/scss/components/code-snippet';
 @use '@carbon/react/scss/components/overflow-menu';
 @use '@carbon/react/scss/components/dropdown';
@@ -56,7 +57,7 @@ limitations under the License.
 @use '@carbon/react/scss/components/tabs';
 @use '@carbon/react/scss/components/tag';
 @use '@carbon/react/scss/components/accordion';
-// @use '@carbon/react/scss/components/skeleton';
+@use '@carbon/react/scss/components/skeleton-styles';
 @use '@carbon/react/scss/components/inline-loading';
 @use '@carbon/react/scss/components/ui-shell';
 @use '@carbon/react/scss/components/list';
