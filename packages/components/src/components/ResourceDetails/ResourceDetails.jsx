@@ -13,7 +13,14 @@ limitations under the License.
 
 import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
-import { InlineNotification, SkeletonText, Tag } from '@carbon/react';
+import {
+  InlineNotification,
+  SkeletonText,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tag
+} from '@carbon/react';
 import { formatLabels, getErrorMessage } from '@tektoncd/dashboard-utils';
 
 import FormattedDate from '../FormattedDate';
@@ -80,88 +87,94 @@ const ResourceDetails = ({
           id: 'dashboard.resourceDetails.ariaLabel',
           defaultMessage: 'Resource details'
         })}
-        onSelectionChange={index => onViewChange(tabs[index])}
-        selected={selectedTabIndex}
+        onChange={event => onViewChange(tabs[event.selectedIndex])}
+        selectedIndex={selectedTabIndex}
       >
-        <Tab
-          label={intl.formatMessage({
-            id: 'dashboard.resource.overviewTab',
-            defaultMessage: 'Overview'
-          })}
-        >
-          <div className="tkn--details">
-            <ul className="tkn--resourcedetails-metadata">
-              {resource.spec?.displayName && (
+        <TabList>
+          <Tab>
+            {intl.formatMessage({
+              id: 'dashboard.resource.overviewTab',
+              defaultMessage: 'Overview'
+            })}
+          </Tab>
+          <Tab>YAML</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel>
+            <div className="tkn--details">
+              <ul className="tkn--resourcedetails-metadata">
+                {resource.spec?.displayName && (
+                  <li>
+                    <span>
+                      {intl.formatMessage({
+                        id: 'dashboard.resourceDetails.spec.displayName',
+                        defaultMessage: 'Display name:'
+                      })}
+                    </span>
+                    {resource.spec.displayName}
+                  </li>
+                )}
+                {resource.spec?.description && (
+                  <li>
+                    <span>
+                      {intl.formatMessage({
+                        id: 'dashboard.resourceDetails.spec.description',
+                        defaultMessage: 'Description:'
+                      })}
+                    </span>
+                    {resource.spec.description}
+                  </li>
+                )}
                 <li>
                   <span>
                     {intl.formatMessage({
-                      id: 'dashboard.resourceDetails.spec.displayName',
-                      defaultMessage: 'Display name:'
+                      id: 'dashboard.metadata.dateCreated',
+                      defaultMessage: 'Date created:'
                     })}
                   </span>
-                  {resource.spec.displayName}
+                  <FormattedDate
+                    date={resource.metadata.creationTimestamp}
+                    relative
+                  />
                 </li>
-              )}
-              {resource.spec?.description && (
                 <li>
                   <span>
                     {intl.formatMessage({
-                      id: 'dashboard.resourceDetails.spec.description',
-                      defaultMessage: 'Description:'
+                      id: 'dashboard.metadata.labels',
+                      defaultMessage: 'Labels:'
                     })}
                   </span>
-                  {resource.spec.description}
+                  {formattedLabels.length === 0
+                    ? intl.formatMessage({
+                        id: 'dashboard.metadata.none',
+                        defaultMessage: 'None'
+                      })
+                    : formattedLabels.map(label => (
+                        <Tag key={label} size="sm" type="blue">
+                          {label}
+                        </Tag>
+                      ))}
                 </li>
-              )}
-              <li>
-                <span>
-                  {intl.formatMessage({
-                    id: 'dashboard.metadata.dateCreated',
-                    defaultMessage: 'Date created:'
-                  })}
-                </span>
-                <FormattedDate
-                  date={resource.metadata.creationTimestamp}
-                  relative
-                />
-              </li>
-              <li>
-                <span>
-                  {intl.formatMessage({
-                    id: 'dashboard.metadata.labels',
-                    defaultMessage: 'Labels:'
-                  })}
-                </span>
-                {formattedLabels.length === 0
-                  ? intl.formatMessage({
-                      id: 'dashboard.metadata.none',
-                      defaultMessage: 'None'
-                    })
-                  : formattedLabels.map(label => (
-                      <Tag key={label} size="sm" type="blue">
-                        {label}
-                      </Tag>
-                    ))}
-              </li>
-              {resource.metadata.namespace && (
-                <li>
-                  <span>
-                    {intl.formatMessage({
-                      id: 'dashboard.metadata.namespace',
-                      defaultMessage: 'Namespace:'
-                    })}
-                  </span>
-                  {resource.metadata.namespace}
-                </li>
-              )}
-              {additionalMetadata}
-            </ul>
-            {children}
-          </div>
-        </Tab>
-        <Tab label="YAML">
-          <ViewYAML enableSyntaxHighlighting resource={resource} />
-        </Tab>
+                {resource.metadata.namespace && (
+                  <li>
+                    <span>
+                      {intl.formatMessage({
+                        id: 'dashboard.metadata.namespace',
+                        defaultMessage: 'Namespace:'
+                      })}
+                    </span>
+                    {resource.metadata.namespace}
+                  </li>
+                )}
+                {additionalMetadata}
+              </ul>
+              {children}
+            </div>
+          </TabPanel>
+          <TabPanel>
+            <ViewYAML enableSyntaxHighlighting resource={resource} />
+          </TabPanel>
+        </TabPanels>
       </Tabs>
     </div>
   );

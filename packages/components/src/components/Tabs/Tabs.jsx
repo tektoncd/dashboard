@@ -12,15 +12,17 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
+// TODO: carbon11 - Step 6 - may not need the custom TabContent anymore
+
 import { Children, cloneElement } from 'react';
 import {
   TabContent as CarbonTabContent,
   Tabs as CarbonTabs
 } from '@carbon/react';
 
-const TabContent = ({ selected, ...other }) =>
-  selected ? (
-    <CarbonTabContent selected={selected} {...other} />
+const TabContent = ({ selectedIndex, ...other }) =>
+  selectedIndex ? (
+    <CarbonTabContent selectedIndex={selectedIndex} {...other} />
   ) : (
     <span className="tkn--visually-hidden" id={other.id} />
   );

@@ -15,7 +15,14 @@ import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
 import { getParams, taskRunHasWarning } from '@tektoncd/dashboard-utils';
-import { ContentSwitcher, Switch, Tooltip } from '@carbon/react';
+import {
+  ContentSwitcher,
+  Switch,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tooltip
+} from '@carbon/react';
 import { Information } from '@carbon/react/icons';
 
 import DetailsHeader from '../DetailsHeader';
@@ -170,6 +177,97 @@ const TaskRunDetails = ({
     selectedTabIndex = 0;
   }
 
+  const tabList = [];
+  const tabPanels = [];
+  if (paramsTable) {
+    tabList.push(
+      <Tab>
+        {intl.formatMessage({
+          id: 'dashboard.taskRun.params',
+          defaultMessage: 'Parameters'
+        })}
+      </Tab>
+    );
+    tabPanels.push(
+      <TabPanel>
+        <div className="tkn--step-status">{paramsTable}</div>
+      </TabPanel>
+    );
+  }
+  if (resultsTable) {
+    tabList.push(
+      <Tab>
+        {intl.formatMessage({
+          id: 'dashboard.taskRun.results',
+          defaultMessage: 'Results'
+        })}
+      </Tab>
+    );
+    tabPanels.push(
+      <TabPanel>
+        <div className="tkn--step-status">{resultsTable}</div>
+      </TabPanel>
+    );
+  }
+  tabList.push(
+    <Tab>
+      {intl.formatMessage({
+        id: 'dashboard.taskRun.status',
+        defaultMessage: 'Status'
+      })}
+    </Tab>
+  );
+  tabPanels.push(
+    <TabPanel>
+      <div className="tkn--step-status">
+        <ViewYAML
+          dark
+          enableSyntaxHighlighting
+          resource={
+            taskRun.status ||
+            intl.formatMessage({
+              id: 'dashboard.taskRun.status.pending',
+              defaultMessage: 'Pending'
+            })
+          }
+        />
+      </div>
+    </TabPanel>
+  );
+  if (pod) {
+    tabList.push(<Tab>Pod</Tab>);
+    tabPanels.push(
+      <TabPanel>
+        <div className="tkn--step-status">
+          {hasEvents ? (
+            <ContentSwitcher onChange={({ name }) => setPodContent(name)}>
+              <Switch
+                name="resource"
+                text={intl.formatMessage({
+                  id: 'dashboard.pod.resource',
+                  defaultMessage: 'Resource'
+                })}
+              />
+              <Switch
+                name="events"
+                text={intl.formatMessage({
+                  id: 'dashboard.pod.events',
+                  defaultMessage: 'Events'
+                })}
+              />
+            </ContentSwitcher>
+          ) : null}
+          {podContent === 'resource' ? (
+            <ViewYAML dark enableSyntaxHighlighting resource={podResource} />
+          ) : null}
+          {hasEvents && podContent === 'events' ? (
+            <ViewYAML dark enableSyntaxHighlighting resource={podEvents} />
+          ) : null}
+        </div>
+      </TabPanel>
+    );
+  }
+
   return (
     <div className="tkn--step-details">
       <DetailsHeader
@@ -180,86 +278,11 @@ const TaskRunDetails = ({
       />
       <Tabs
         aria-label="TaskRun details"
-        onSelectionChange={index => onViewChange(tabs[index])}
-        selected={selectedTabIndex}
+        onChange={event => onViewChange(tabs[event.selectedIndex])}
+        selectedIndex={selectedTabIndex}
       >
-        {paramsTable && (
-          <Tab
-            id={`${displayName}-params`}
-            label={intl.formatMessage({
-              id: 'dashboard.taskRun.params',
-              defaultMessage: 'Parameters'
-            })}
-          >
-            <div className="tkn--step-status">{paramsTable}</div>
-          </Tab>
-        )}
-        {resultsTable && (
-          <Tab
-            id={`${displayName}-results`}
-            label={intl.formatMessage({
-              id: 'dashboard.taskRun.results',
-              defaultMessage: 'Results'
-            })}
-          >
-            <div className="tkn--step-status">{resultsTable}</div>
-          </Tab>
-        )}
-        <Tab
-          id={`${displayName}-details`}
-          label={intl.formatMessage({
-            id: 'dashboard.taskRun.status',
-            defaultMessage: 'Status'
-          })}
-        >
-          <div className="tkn--step-status">
-            <ViewYAML
-              dark
-              enableSyntaxHighlighting
-              resource={
-                taskRun.status ||
-                intl.formatMessage({
-                  id: 'dashboard.taskRun.status.pending',
-                  defaultMessage: 'Pending'
-                })
-              }
-            />
-          </div>
-        </Tab>
-        {pod && (
-          <Tab id={`${displayName}-pod`} label="Pod">
-            <div className="tkn--step-status">
-              {hasEvents ? (
-                <ContentSwitcher onChange={({ name }) => setPodContent(name)}>
-                  <Switch
-                    name="resource"
-                    text={intl.formatMessage({
-                      id: 'dashboard.pod.resource',
-                      defaultMessage: 'Resource'
-                    })}
-                  />
-                  <Switch
-                    name="events"
-                    text={intl.formatMessage({
-                      id: 'dashboard.pod.events',
-                      defaultMessage: 'Events'
-                    })}
-                  />
-                </ContentSwitcher>
-              ) : null}
-              {podContent === 'resource' ? (
-                <ViewYAML
-                  dark
-                  enableSyntaxHighlighting
-                  resource={podResource}
-                />
-              ) : null}
-              {hasEvents && podContent === 'events' ? (
-                <ViewYAML dark enableSyntaxHighlighting resource={podEvents} />
-              ) : null}
-            </div>
-          </Tab>
-        )}
+        <TabList>{tabList}</TabList>
+        <TabPanels>{tabPanels}</TabPanels>
       </Tabs>
     </div>
   );
