@@ -99,7 +99,7 @@ a {
 }
 
 .#{$prefix}--header:has(.#{$prefix}--side-nav--expanded) ~ .#{$prefix}--content {
-  margin-inline-start: mini-units(32);
+  margin-inline-start: 16rem;
 }
 
 .#{$prefix}--modal-header,
