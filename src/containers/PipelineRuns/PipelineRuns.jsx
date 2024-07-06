@@ -37,7 +37,7 @@ import {
   urls,
   useTitleSync
 } from '@tektoncd/dashboard-utils';
-import { Add, TrashCan as Delete } from "@carbon/react/icons";
+import { Add, TrashCan as Delete } from '@carbon/react/icons';
 
 import ListPageLayout from '../ListPageLayout';
 import { sortRunsByStartTime } from '../../utils';

@@ -12,12 +12,7 @@ limitations under the License.
 */
 /* istanbul ignore file */
 import { useIntl } from 'react-intl';
-import {
-  Download,
-  Launch,
-  Maximize,
-  Minimize
-} from "@carbon/react/icons";
+import { Download, Launch, Maximize, Minimize } from '@carbon/react/icons';
 import { usePrefix } from '@carbon/react';
 
 const LogsToolbar = ({ isMaximized, name, toggleMaximized, url }) => {

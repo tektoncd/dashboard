@@ -39,7 +39,7 @@ import {
   Time as TimeIcon,
   Lightning as TriggersIcon,
   UndefinedFilled as UndefinedIcon
-} from "@carbon/react/icons";
+} from '@carbon/react/icons';
 
 import ListPageLayout from '../ListPageLayout';
 import {

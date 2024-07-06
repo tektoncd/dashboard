@@ -15,7 +15,7 @@ limitations under the License.
 import { useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useIntl } from 'react-intl';
-import { UndefinedFilled as UndefinedIcon } from "@carbon/react/icons";
+import { UndefinedFilled as UndefinedIcon } from '@carbon/react/icons';
 import {
   Actions,
   FormattedDuration,

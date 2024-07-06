@@ -14,7 +14,7 @@ limitations under the License.
 
 import { getStatus } from '@tektoncd/dashboard-utils';
 import { action } from '@storybook/addon-actions';
-import { TrashCan as Delete } from "@carbon/react/icons";
+import { TrashCan as Delete } from '@carbon/react/icons';
 import { Dropdown } from '@carbon/react';
 
 import StatusIcon from '../StatusIcon';

@@ -19,7 +19,7 @@ import {
   CloseOutline,
   Time as Pending,
   WarningAltFilled as WarningFilled
-} from "@carbon/react/icons";
+} from '@carbon/react/icons';
 import { classNames, isRunning } from '@tektoncd/dashboard-utils';
 
 import Spinner from '../Spinner';

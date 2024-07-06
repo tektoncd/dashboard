@@ -25,7 +25,7 @@ import {
   Chip as ExtensionsIcon,
   DocumentImport as ImportResourcesIcon,
   Settings as SettingsIcon
-} from "@carbon/react/icons";
+} from '@carbon/react/icons';
 import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 
 import {
@@ -235,7 +235,11 @@ function SideNav({ expanded, showKubernetesResources = false }) {
           </SideNavLink>
         )}
 
-        <SideNavLink element={NavLink} renderIcon={props => <AboutIcon size={20} {...props} />} to={urls.about()}>
+        <SideNavLink
+          element={NavLink}
+          renderIcon={props => <AboutIcon size={20} {...props} />}
+          to={urls.about()}
+        >
           {intl.formatMessage({
             id: 'dashboard.about.title',
             defaultMessage: 'About Tekton'

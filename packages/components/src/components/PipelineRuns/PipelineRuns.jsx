@@ -18,7 +18,7 @@ import {
   Pending as DefaultIcon,
   Time as TimeIcon,
   Lightning as TriggersIcon
-} from "@carbon/react/icons";
+} from '@carbon/react/icons';
 
 import Actions from '../Actions';
 import FormattedDate from '../FormattedDate';
@@ -76,7 +76,13 @@ const PipelineRuns = ({
   getPipelineRunStatusIcon = pipelineRun => {
     const { reason, status } = getStatus(pipelineRun);
 
-    return <StatusIcon DefaultIcon={props => <DefaultIcon size={24} {...props} />} reason={reason} status={status} />;
+    return (
+      <StatusIcon
+        DefaultIcon={props => <DefaultIcon size={24} {...props} />}
+        reason={reason}
+        status={status}
+      />
+    );
   },
   getPipelineRunStatusTooltip = (pipelineRun, intl) => {
     const { message } = getStatus(pipelineRun);

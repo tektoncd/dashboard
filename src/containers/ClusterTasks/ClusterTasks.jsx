@@ -27,7 +27,7 @@ import {
   TrashCan as DeleteIcon,
   PlayOutline as RunIcon,
   Playlist as RunsIcon
-} from "@carbon/react/icons";
+} from '@carbon/react/icons';
 import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 
 import ListPageLayout from '../ListPageLayout';

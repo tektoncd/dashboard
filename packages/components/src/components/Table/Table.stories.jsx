@@ -18,7 +18,7 @@ import {
   TrashCan as Delete,
   Restart as Rerun,
   Renew as RerunAll
-} from "@carbon/react/icons";
+} from '@carbon/react/icons';
 
 import Table from './Table';
 
