@@ -11,6 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+@use '@carbon/react/scss/config' as *;
+
 .tkn--settings {
   .tkn--settings--content {
     .#{$prefix}--tile-group {

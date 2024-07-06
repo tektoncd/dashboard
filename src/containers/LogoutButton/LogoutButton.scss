@@ -11,6 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+@use '@carbon/react/scss/config' as *;
+
 .#{$prefix}--btn.tkn--logout-btn.#{$prefix}--btn--ghost {
   position: absolute;
   inset-inline-end: 32px;
