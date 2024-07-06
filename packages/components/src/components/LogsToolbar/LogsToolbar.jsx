@@ -22,7 +22,7 @@ const LogsToolbar = ({ isMaximized, name, toggleMaximized, url }) => {
     <div className={`${carbonPrefix}--btn-set`}>
       {toggleMaximized ? (
         <button
-          className={`${carbonPrefix}--copy-btn`}
+          className={`${carbonPrefix}--btn ${carbonPrefix}--btn--icon-only ${carbonPrefix}--copy-btn`}
           onClick={toggleMaximized}
           type="button"
         >
@@ -48,7 +48,7 @@ const LogsToolbar = ({ isMaximized, name, toggleMaximized, url }) => {
         </button>
       ) : null}
       <a
-        className={`${carbonPrefix}--copy-btn`}
+        className={`${carbonPrefix}--btn ${carbonPrefix}--btn--icon-only ${carbonPrefix}--copy-btn`}
         href={url}
         target="_blank"
         rel="noopener noreferrer"

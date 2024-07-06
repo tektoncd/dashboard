@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 @use '@carbon/react/scss/config' as *;
+@use '@carbon/react/scss/utilities/skeleton' as *;
 @use '@carbon/react/scss/theme' as *;
 // TODO: carbon11 - check Carbon 11 DataTable skeleton state to see if it's suitable now
 
@@ -34,7 +35,7 @@ limitations under the License.
 
   th span,
   td span {
-    // @include skeleton;
+    @include skeleton;
     inline-size: 75%;
     block-size: 1rem;
     display: block;

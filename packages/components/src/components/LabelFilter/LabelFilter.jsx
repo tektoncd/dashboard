@@ -149,6 +149,7 @@ class LabelFilter extends Component {
             onChange={this.handleChange}
             value={currentFilterValue}
             name="filter-search"
+            size="lg"
           />
           <Button type="submit" className="tkn--visually-hidden">
             {intl.formatMessage({

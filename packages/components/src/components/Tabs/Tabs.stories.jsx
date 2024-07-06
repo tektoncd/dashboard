@@ -12,6 +12,7 @@ limitations under the License.
 */
 /* eslint-disable formatjs/no-literal-string-in-jsx */
 
+import { TabList, TabPanel, TabPanels } from '@carbon/react';
 import Tabs from '.';
 import Tab from '../Tab';
 
@@ -22,10 +23,15 @@ export default {
 
 export const Default = () => (
   <Tabs>
-    <Tab label="label for tab1">content of tab 1</Tab>
-    <Tab label="tab 2">content of tab 2</Tab>
-    <Tab label="tab 3 is disabled" disabled>
-      content of tab 3
-    </Tab>
+    <TabList>
+      <Tab>label for tab1</Tab>
+      <Tab>tab 2</Tab>
+      <Tab disabled>tab 3 is disabled</Tab>
+    </TabList>
+    <TabPanels>
+      <TabPanel>content of tab 1</TabPanel>
+      <TabPanel>content of tab 2</TabPanel>
+      <TabPanel>content of tab 3</TabPanel>
+    </TabPanels>
   </Tabs>
 );
