@@ -14,7 +14,7 @@ limitations under the License.
 
 import { useIntl } from 'react-intl';
 import { useRouteError } from 'react-router-dom';
-import { Column, Grid, Row } from '@carbon/react';
+import { Column, FlexGrid, Row } from '@carbon/react';
 
 import robocat from '../../images/robocat_404.svg';
 
@@ -29,7 +29,7 @@ function ErrorPage() {
   console.error(error); // eslint-disable-line no-console
 
   return (
-    <Grid className="tkn--not-found">
+    <FlexGrid className="tkn--not-found">
       <Row narrow>
         <Column sm={smallConfig} md={mediumConfig} lg={largeConfig}>
           <img
@@ -73,7 +73,7 @@ function ErrorPage() {
           </p>
         </Column>
       </Row>
-    </Grid>
+    </FlexGrid>
   );
 }
 

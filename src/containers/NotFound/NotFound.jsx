@@ -13,7 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import { useIntl } from 'react-intl';
-import { Column, Grid, Row } from '@carbon/react';
+import { Column, FlexGrid, Row } from '@carbon/react';
 import { Link } from '@tektoncd/dashboard-components';
 import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 
@@ -29,7 +29,7 @@ function NotFound({ suggestions = [] }) {
   const { selectedNamespace: namespace } = useSelectedNamespace();
 
   return (
-    <Grid className="tkn--not-found">
+    <FlexGrid className="tkn--not-found">
       <Row narrow>
         <Column sm={smallConfig} md={mediumConfig} lg={largeConfig}>
           <img
@@ -105,7 +105,7 @@ function NotFound({ suggestions = [] }) {
           </ul>
         </Column>
       </Row>
-    </Grid>
+    </FlexGrid>
   );
 }
 
