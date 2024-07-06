@@ -16,7 +16,7 @@ import { Button, PrefixContext, SkeletonText } from '@carbon/react';
 import { FixedSizeList as List } from 'react-window';
 import { injectIntl } from 'react-intl';
 import { getStepStatusReason, isRunning } from '@tektoncd/dashboard-utils';
-import { DownToBottom16, UpToTop16 } from '@carbon/icons-react';
+import { DownToBottom, UpToTop } from '@carbon/icons-react';
 
 import {
   hasElementPositiveVerticalScrollBottom,
@@ -215,9 +215,9 @@ export class LogContainer extends Component {
             id="log-scroll-to-start-btn"
             onClick={this.scrollToTopLog}
             renderIcon={() => (
-              <UpToTop16>
+              <UpToTop>
                 <title>{scrollButtonTopMessage}</title>
-              </UpToTop16>
+              </UpToTop>
             )}
             size="sm"
             tooltipPosition="right"
@@ -231,9 +231,9 @@ export class LogContainer extends Component {
             id="log-scroll-to-end-btn"
             onClick={this.scrollToBottomLog}
             renderIcon={() => (
-              <DownToBottom16>
+              <DownToBottom>
                 <title>{scrollButtonBottomMessage}</title>
-              </DownToBottom16>
+              </DownToBottom>
             )}
             size="sm"
             tooltipPosition="right"

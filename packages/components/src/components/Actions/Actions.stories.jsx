@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { TrashCan16 } from '@carbon/icons-react';
+import { TrashCan } from '@carbon/icons-react';
 
 import Actions from './Actions';
 
@@ -34,7 +34,7 @@ const deleteAction = {
   actionText: 'Delete',
   danger: true,
   hasDivider: true,
-  icon: TrashCan16,
+  icon: TrashCan,
   modalProperties: {
     body: () => 'modal body',
     danger: true,

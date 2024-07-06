@@ -21,10 +21,10 @@ import {
   SideNavMenuItem
 } from '@carbon/react';
 import {
-  Information20 as AboutIcon,
-  Chip20 as ExtensionsIcon,
-  DocumentImport20 as ImportResourcesIcon,
-  Settings20 as SettingsIcon
+  Information as AboutIcon,
+  Chip as ExtensionsIcon,
+  DocumentImport as ImportResourcesIcon,
+  Settings as SettingsIcon
 } from '@carbon/icons-react';
 import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 
@@ -192,7 +192,7 @@ function SideNav({ expanded, showKubernetesResources = false }) {
         {extensions.length > 0 && (
           <SideNavMenu
             defaultExpanded
-            renderIcon={ExtensionsIcon}
+            renderIcon={props => <ExtensionsIcon size={20} {...props} />}
             title={intl.formatMessage({
               id: 'dashboard.extensions.title',
               defaultMessage: 'Extensions'
@@ -225,7 +225,7 @@ function SideNav({ expanded, showKubernetesResources = false }) {
         {!isReadOnly && (
           <SideNavLink
             element={NavLink}
-            renderIcon={ImportResourcesIcon}
+            renderIcon={props => <ImportResourcesIcon size={20} {...props} />}
             to={urls.importResources()}
           >
             {intl.formatMessage({
@@ -235,7 +235,7 @@ function SideNav({ expanded, showKubernetesResources = false }) {
           </SideNavLink>
         )}
 
-        <SideNavLink element={NavLink} renderIcon={AboutIcon} to={urls.about()}>
+        <SideNavLink element={NavLink} renderIcon={props => <AboutIcon size={20} {...props} />} to={urls.about()}>
           {intl.formatMessage({
             id: 'dashboard.about.title',
             defaultMessage: 'About Tekton'
@@ -244,7 +244,7 @@ function SideNav({ expanded, showKubernetesResources = false }) {
 
         <SideNavLink
           element={NavLink}
-          renderIcon={SettingsIcon}
+          renderIcon={props => <SettingsIcon size={20} {...props} />}
           to={urls.settings()}
         >
           {intl.formatMessage({

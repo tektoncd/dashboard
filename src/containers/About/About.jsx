@@ -21,7 +21,7 @@ import {
   Tile,
   usePrefix
 } from '@carbon/react';
-import { ArrowRight24 as ArrowIcon } from '@carbon/icons-react';
+import { ArrowRight as ArrowIcon } from '@carbon/icons-react';
 import { getErrorMessage, useTitleSync } from '@tektoncd/dashboard-utils';
 
 import { useProperties } from '../../api';
@@ -245,7 +245,7 @@ export function About() {
           <div className="tkn--about-docs-description">
             <h3>Overview of Tekton</h3>
             <p>Components, benefits and caveats, common usage</p>
-            <ArrowIcon className="tkn--about-arrow" />
+            <ArrowIcon size={24} className="tkn--about-arrow" />
           </div>
         </ClickableTile>
         <ClickableTile href="https://tekton.dev/docs/concepts/concept-model/">
@@ -255,7 +255,7 @@ export function About() {
           <div className="tkn--about-docs-description">
             <h3>Concept model</h3>
             <p>Basic Tekton components and data model</p>
-            <ArrowIcon className="tkn--about-arrow" />
+            <ArrowIcon size={24} className="tkn--about-arrow" />
           </div>
         </ClickableTile>
         <ClickableTile href="https://tekton.dev/docs/pipelines/">
@@ -265,7 +265,7 @@ export function About() {
           <div className="tkn--about-docs-description">
             <h3>Tasks and Pipelines</h3>
             <p>Building blocks of Tekton CI/CD workflow</p>
-            <ArrowIcon className="tkn--about-arrow" />
+            <ArrowIcon size={24} className="tkn--about-arrow" />
           </div>
         </ClickableTile>
         <ClickableTile href="https://hub.tekton.dev/">
@@ -275,7 +275,7 @@ export function About() {
           <div className="tkn--about-docs-description">
             <h3>Tekton Hub</h3>
             <p>Discover, search, and share reusable Tasks and Pipelines</p>
-            <ArrowIcon className="tkn--about-arrow" />
+            <ArrowIcon size={24} className="tkn--about-arrow" />
           </div>
         </ClickableTile>
       </section>

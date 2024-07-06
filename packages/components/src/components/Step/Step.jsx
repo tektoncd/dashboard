@@ -13,7 +13,7 @@ limitations under the License.
 
 import { Component } from 'react';
 import { injectIntl } from 'react-intl';
-import { Pending20 as DefaultIcon } from '@carbon/icons-react';
+import { Pending as DefaultIcon } from '@carbon/icons-react';
 
 import StatusIcon from '../StatusIcon';
 
@@ -99,7 +99,7 @@ class Step extends Component {
           role="button"
         >
           <StatusIcon
-            DefaultIcon={DefaultIcon}
+            DefaultIcon={props => <DefaultIcon size={20} {...props} />}
             hasWarning={exitCode !== 0}
             reason={reason}
             status={status}

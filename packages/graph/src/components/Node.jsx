@@ -15,11 +15,11 @@ limitations under the License.
 import { Component } from 'react';
 import { classNames } from '@tektoncd/dashboard-utils';
 import {
-  CheckmarkFilled20 as CheckmarkFilled,
-  ChevronDown20 as ChevronDown,
-  ChevronUp20 as ChevronUp,
-  CloseFilled20 as CloseFilled,
-  Undefined20 as Undefined
+  CheckmarkFilled,
+  ChevronDown,
+  ChevronUp,
+  CloseFilled,
+  Undefined
 } from '@carbon/icons-react';
 
 import Graph from './Graph'; // eslint-disable-line import/no-cycle

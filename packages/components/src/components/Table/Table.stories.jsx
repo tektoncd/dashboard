@@ -14,10 +14,10 @@ limitations under the License.
 import { action } from '@storybook/addon-actions';
 import { Dropdown } from '@carbon/react';
 import {
-  Add16 as Add,
-  TrashCan32 as Delete,
-  Restart16 as Rerun,
-  Renew16 as RerunAll
+  Add,
+  TrashCan as Delete,
+  Restart as Rerun,
+  Renew as RerunAll
 } from '@carbon/icons-react';
 
 import Table from './Table';

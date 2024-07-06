@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Logout20 as LogoutIcon } from '@carbon/icons-react';
+import { Logout as LogoutIcon } from '@carbon/icons-react';
 import { HeaderGlobalAction } from '@carbon/react';
 import { useIntl } from 'react-intl';
 import { useLogoutURL } from '../../api';
@@ -38,7 +38,7 @@ export default function LogoutButton() {
       }}
       title={logoutString}
     >
-      <LogoutIcon />
+      <LogoutIcon size={20} />
     </HeaderGlobalAction>
   );
 }

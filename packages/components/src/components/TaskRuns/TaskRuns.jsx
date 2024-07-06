@@ -13,9 +13,9 @@ limitations under the License.
 
 import { useIntl } from 'react-intl';
 import {
-  Calendar16 as CalendarIcon,
-  Time16 as TimeIcon,
-  Lightning16 as TriggersIcon
+  Calendar as CalendarIcon,
+  Time as TimeIcon,
+  Lightning as TriggersIcon
 } from '@carbon/icons-react';
 import { getStatus, taskRunHasWarning, urls } from '@tektoncd/dashboard-utils';
 

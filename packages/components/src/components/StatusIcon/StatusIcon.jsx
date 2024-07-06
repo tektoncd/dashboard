@@ -12,13 +12,13 @@ limitations under the License.
 */
 
 import {
-  CheckmarkFilled20 as CheckmarkFilled,
-  CheckmarkFilledWarning20 as CheckmarkFilledWarning,
-  CheckmarkOutline20 as CheckmarkOutline,
-  CloseFilled20 as CloseFilled,
-  CloseOutline20 as CloseOutline,
-  Time20 as Pending,
-  WarningAltFilled20 as WarningFilled
+  CheckmarkFilled,
+  CheckmarkFilledWarning,
+  CheckmarkOutline,
+  CloseFilled,
+  CloseOutline,
+  Time as Pending,
+  WarningAltFilled as WarningFilled
 } from '@carbon/icons-react';
 import { classNames, isRunning } from '@tektoncd/dashboard-utils';
 

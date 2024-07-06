@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
 import { getParams, taskRunHasWarning } from '@tektoncd/dashboard-utils';
 import { ContentSwitcher, Switch, Tooltip } from '@carbon/react';
-import { Information16 } from '@carbon/icons-react';
+import { Information } from '@carbon/icons-react';
 
 import DetailsHeader from '../DetailsHeader';
 import Param from '../Param';
@@ -40,7 +40,7 @@ function HelpIcon({ title }) {
         id: 'dashboard.resourceDetails.description',
         defaultMessage: 'Description'
       })}
-      renderIcon={Information16}
+      renderIcon={Information}
       showIcon
     >
       {title}

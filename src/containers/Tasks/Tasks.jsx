@@ -30,9 +30,9 @@ import {
   Table
 } from '@tektoncd/dashboard-components';
 import {
-  TrashCan16 as DeleteIcon,
-  PlayOutline16 as RunIcon,
-  Playlist16 as RunsIcon
+  TrashCan as DeleteIcon,
+  PlayOutline as RunIcon,
+  Playlist as RunsIcon
 } from '@carbon/icons-react';
 
 import ListPageLayout from '../ListPageLayout';

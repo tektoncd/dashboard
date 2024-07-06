@@ -17,10 +17,10 @@ import { injectIntl } from 'react-intl';
 
 import { Button } from '@carbon/react';
 import {
-  Cursor_120 as Cursor20,
-  Move20,
-  ZoomIn20,
-  ZoomOut20
+  Cursor_1 as Cursor20,
+  Move,
+  ZoomIn,
+  ZoomOut
 } from '@carbon/icons-react';
 
 import PanZoom from './PanZoom';
@@ -102,7 +102,7 @@ class ZoomablePipelineGraph extends Component {
                 })}
                 kind="ghost"
                 onClick={this.togglePanning}
-                renderIcon={Cursor20}
+                renderIcon={props => <Cursor20 size={20} {...props} />}
               />
               <Button
                 disabled={isPanningEnabled}
@@ -112,7 +112,7 @@ class ZoomablePipelineGraph extends Component {
                 })}
                 kind="ghost"
                 onClick={this.togglePanning}
-                renderIcon={Move20}
+                renderIcon={props => <Move size={20} {...props} />}
               />
               {/* expand / collapse all */}
               {/* fit to window */}
@@ -132,7 +132,7 @@ class ZoomablePipelineGraph extends Component {
                 })}
                 kind="ghost"
                 onClick={zoomOut}
-                renderIcon={ZoomOut20}
+                renderIcon={props => <ZoomOut size={20} {...props} />}
                 tooltipPosition="top"
                 tooltipAlignment="end"
               />
@@ -153,7 +153,7 @@ class ZoomablePipelineGraph extends Component {
                 })}
                 kind="ghost"
                 onClick={zoomIn}
-                renderIcon={ZoomIn20}
+                renderIcon={props => <ZoomIn size={20} {...props} />}
                 tooltipPosition="top"
                 tooltipAlignment="end"
               />
