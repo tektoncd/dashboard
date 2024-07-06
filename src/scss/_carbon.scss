@@ -22,7 +22,6 @@ limitations under the License.
 
 @use '@carbon/react/scss/themes';
 @use '@carbon/react/scss/theme' with (
-  $fallback: themes.$g10,
   $theme: themes.$g10
 );
 @use '@carbon/react/scss/zone';
