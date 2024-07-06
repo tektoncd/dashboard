@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Renew as SpinnerIcon } from "@carbon/react/icons";
+import { Renew as SpinnerIcon } from '@carbon/react/icons';
 
 export default function Spinner({ children, className }) {
   return (

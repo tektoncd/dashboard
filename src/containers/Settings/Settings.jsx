@@ -18,7 +18,7 @@ import {
   Asleep as DarkIcon,
   Light as LightIcon,
   Devices as SystemIcon
-} from "@carbon/react/icons";
+} from '@carbon/react/icons';
 
 import { getTheme, setTheme } from '../../utils';
 import {

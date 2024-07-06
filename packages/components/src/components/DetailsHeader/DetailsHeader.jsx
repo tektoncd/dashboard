@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import { Component } from 'react';
-import { Pending as DefaultIcon } from "@carbon/react/icons";
+import { Pending as DefaultIcon } from '@carbon/react/icons';
 import { injectIntl } from 'react-intl';
 import { getStatus } from '@tektoncd/dashboard-utils';
 

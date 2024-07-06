@@ -17,7 +17,7 @@ import { OverflowMenu, OverflowMenuItem } from '@carbon/react';
 import {
   PendingFilled as DefaultIcon,
   ChevronDown as ExpandIcon
-} from "@carbon/react/icons";
+} from '@carbon/react/icons';
 import {
   getStepStatusReason,
   updateUnexecutedSteps

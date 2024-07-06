@@ -20,7 +20,7 @@ import {
   ChevronUp,
   CloseFilled,
   Undefined
-} from "@carbon/react/icons";
+} from '@carbon/react/icons';
 
 import Graph from './Graph'; // eslint-disable-line import/no-cycle
 import InlineLoading from './InlineLoading';

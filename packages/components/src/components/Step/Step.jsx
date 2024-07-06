@@ -13,7 +13,7 @@ limitations under the License.
 
 import { Component } from 'react';
 import { injectIntl } from 'react-intl';
-import { Pending as DefaultIcon } from "@carbon/react/icons";
+import { Pending as DefaultIcon } from '@carbon/react/icons';
 
 import StatusIcon from '../StatusIcon';
 

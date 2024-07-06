@@ -16,7 +16,7 @@ import { Button, PrefixContext, SkeletonText } from '@carbon/react';
 import { FixedSizeList as List } from 'react-window';
 import { injectIntl } from 'react-intl';
 import { getStepStatusReason, isRunning } from '@tektoncd/dashboard-utils';
-import { DownToBottom, UpToTop } from "@carbon/react/icons";
+import { DownToBottom, UpToTop } from '@carbon/react/icons';
 
 import {
   hasElementPositiveVerticalScrollBottom,
