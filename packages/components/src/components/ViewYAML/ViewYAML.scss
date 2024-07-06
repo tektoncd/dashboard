@@ -15,8 +15,8 @@ limitations under the License.
 @use '@carbon/react/scss/config' as *;
 
 .#{$prefix}--snippet--multi.tkn--view-yaml--dark {
-  background-color: colors.$gray-90; // TODO: $inverse-02 - see Log.scss
-  color: colors.$gray-10;            //       $inverse-01
+  background-color: colors.$gray-90; // TODO: $background-inverse - see Log.scss
+  color: colors.$gray-10;            //       $text-inverse
 }
 
 .tkn--view-yaml--title {

@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 @use '@carbon/react/scss/config' as *;
+@use '@carbon/react/scss/theme' as *;
 
 // TODO: resolve errors preventing the dark theme from being used here
 // @import '@carbon/elements/scss/themes/mixins';
@@ -22,16 +23,16 @@ limitations under the License.
 
 .#{$prefix}--cc--card-node {
   &.card-status-success {
-    border-color: $support-02;
+    border-color: $support-success;
   }
   &.card-status-success-warning {
-    border-color: $support-03;
+    border-color: $support-warning;
   }
   &.card-status-failed {
-    border-color: $support-01;
+    border-color: $support-error;
   }
   &.card-status-unknown {
-    border-color: $ui-04;
+    border-color: $border-strong;
   }
 }
 
@@ -56,18 +57,18 @@ limitations under the License.
   }
 
   &.status-icon-failed {
-    fill: $support-01;
+    fill: $support-error;
   }
 
   &.status-icon-success {
-    fill: $support-02;
+    fill: $support-success;
   }
 
   &.status-icon-success-warning {
-    fill: $support-02;
+    fill: $support-success;
 
     path:nth-child(2) {
-      fill: $support-03;
+      fill: $support-warning;
     }
   }
 }

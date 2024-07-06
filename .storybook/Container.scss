@@ -15,10 +15,10 @@ limitations under the License.
 @use '@carbon/react/scss/theme' as *;
 @import './welcome';
 
-@import '@tektoncd/dashboard-graph/src/components/Graph.scss';
-@import '@tektoncd/dashboard-graph/src/components/ZoomablePipelineGraph.scss';
+// @import '@tektoncd/dashboard-graph/src/components/Graph.scss';
+// @import '@tektoncd/dashboard-graph/src/components/ZoomablePipelineGraph.scss';
 
-@import '@tektoncd/dashboard-graph/src/components/newGraph.scss';
+// @import '@tektoncd/dashboard-graph/src/components/newGraph.scss';
 
 .tkn--storybook-theme {
   background-color: $background;
