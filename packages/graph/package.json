@@ -31,6 +31,7 @@
     "elkjs": "^0.9.3"
   },
   "peerDependencies": {
+    "@carbon/react": "^1.61.0",
     "react": "^16.14.0 || ^17.0.1",
     "react-intl": "^6.4.1"
   },

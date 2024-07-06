@@ -28,6 +28,7 @@
     "tlds": "^1.253.0"
   },
   "peerDependencies": {
+    "@carbon/react": "^1.61.0",
     "react": "^16.14.0 || ^17.0.1",
     "react-dom": "^16.14.0 || ^17.0.1",
     "react-intl": "^6.4.1",
