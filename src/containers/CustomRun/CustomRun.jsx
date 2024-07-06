@@ -281,6 +281,7 @@ function CustomRun() {
   return (
     <>
       {showNotification && (
+        // TODO: carbon11 - Step 6 - InlineNotification with interactive content should be replaced by ActionableNotification
         <InlineNotification
           lowContrast
           actions={
