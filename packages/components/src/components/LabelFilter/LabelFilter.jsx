@@ -130,6 +130,7 @@ class LabelFilter extends Component {
     return (
       <div className="tkn--label-filter">
         {!isValid && (
+          // TODO: carbon11 - Step 6 - InlineNotification with interactive content should be replaced by ActionableNotification
           <InlineNotification
             lowContrast
             kind="error"

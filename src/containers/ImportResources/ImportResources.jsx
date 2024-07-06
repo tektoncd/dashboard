@@ -410,6 +410,7 @@ export function ImportResources() {
           </AccordionItem>
         </Accordion>
         {submitSuccess && (
+          // TODO: carbon11 - Step 6 - ToastNotification with interactive content should be replaced by ActionableNotification
           <ToastNotification
             caption={<Link to={logsURL}>View status of this run</Link>}
             kind="success"
