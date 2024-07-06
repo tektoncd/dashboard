@@ -14,7 +14,7 @@ limitations under the License.
 
 import { forwardRef } from 'react';
 import { useHref, useLinkClickHandler } from 'react-router-dom';
-import { Link as CarbonLink } from 'carbon-components-react';
+import { Link as CarbonLink } from '@carbon/react';
 
 const Link = forwardRef(
   ({ onClick, replace = false, state, target, to, ...rest }, ref) => {

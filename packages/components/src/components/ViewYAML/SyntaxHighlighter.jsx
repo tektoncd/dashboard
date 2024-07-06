@@ -12,10 +12,8 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
+import { usePrefix } from '@carbon/react';
 import jsYaml from 'js-yaml';
-import { getCarbonPrefix } from '@tektoncd/dashboard-utils';
-
-const carbonPrefix = getCarbonPrefix();
 
 function addLine({ addBullet, key, level, lines, path, rawString, value }) {
   let valueNode;
@@ -190,6 +188,7 @@ function getLines({ level = 0, lines, path, resource }) {
 }
 
 export default function SyntaxHighlighter({ resource }) {
+  const carbonPrefix = usePrefix();
   const lines = getLines({ lines: [], path: '', resource });
   const minWidth = `${lines.length.toString().length - 1}rem`;
 

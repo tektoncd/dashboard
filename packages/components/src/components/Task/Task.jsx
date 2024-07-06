@@ -13,7 +13,7 @@ limitations under the License.
 
 import { Component } from 'react';
 import { injectIntl } from 'react-intl';
-import { OverflowMenu, OverflowMenuItem } from 'carbon-components-react';
+import { OverflowMenu, OverflowMenuItem } from '@carbon/react';
 import {
   PendingFilled20 as DefaultIcon,
   ChevronDown20 as ExpandIcon

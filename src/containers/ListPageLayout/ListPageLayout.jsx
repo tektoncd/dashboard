@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useIntl } from 'react-intl';
-import { InlineNotification, Pagination } from 'carbon-components-react';
+import { InlineNotification, Pagination } from '@carbon/react';
 import { getErrorMessage } from '@tektoncd/dashboard-utils';
 
 import LabelFilter from '../LabelFilter';

@@ -23,7 +23,7 @@ import {
   TextInput,
   ToastNotification,
   TooltipIcon
-} from 'carbon-components-react';
+} from '@carbon/react';
 import { Information16 } from '@carbon/icons-react';
 import { Link } from 'react-router-dom';
 import {

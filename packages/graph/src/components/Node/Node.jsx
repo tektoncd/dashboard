@@ -19,7 +19,7 @@ import CardNode, {
   CardNodeTitle
   // CardNodeSubtitle
 } from '@carbon/charts-react/diagrams/CardNode';
-import { Tooltip } from 'carbon-components-react';
+import { Tooltip } from '@carbon/react';
 // import { ChevronDown16 } from '@carbon/icons-react';
 
 import StatusIcon from '../StatusIcon';

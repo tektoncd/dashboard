@@ -14,7 +14,7 @@ limitations under the License.
 
 import { useIntl } from 'react-intl';
 import { useRouteError } from 'react-router-dom';
-import { Column, Grid, Row } from 'carbon-components-react';
+import { Column, Grid, Row } from '@carbon/react';
 
 import robocat from '../../images/robocat_404.svg';
 

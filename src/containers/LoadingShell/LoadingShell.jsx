@@ -23,7 +23,7 @@ import {
   SideNavItems,
   SideNavLink,
   SideNavMenu
-} from 'carbon-components-react';
+} from '@carbon/react';
 import { Loading } from '@tektoncd/dashboard-components';
 
 const SkeletonText = ({ heading, paragraph }) => (

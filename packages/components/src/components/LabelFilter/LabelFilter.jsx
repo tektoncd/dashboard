@@ -20,7 +20,7 @@ import {
   Link,
   Search,
   Tag
-} from 'carbon-components-react';
+} from '@carbon/react';
 
 function arrayUnique(arr) {
   return arr.filter((item, index) => arr.indexOf(item) >= index);

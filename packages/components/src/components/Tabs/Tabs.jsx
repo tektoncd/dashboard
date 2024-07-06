@@ -16,7 +16,7 @@ import { Children, cloneElement } from 'react';
 import {
   TabContent as CarbonTabContent,
   Tabs as CarbonTabs
-} from 'carbon-components-react';
+} from '@carbon/react';
 
 const TabContent = ({ selected, ...other }) =>
   selected ? (

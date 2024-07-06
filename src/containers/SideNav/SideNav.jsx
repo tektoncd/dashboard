@@ -19,7 +19,7 @@ import {
   SideNavLink,
   SideNavMenu,
   SideNavMenuItem
-} from 'carbon-components-react';
+} from '@carbon/react';
 import {
   Information20 as AboutIcon,
   Chip20 as ExtensionsIcon,

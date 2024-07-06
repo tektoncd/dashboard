@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import { Logout20 as LogoutIcon } from '@carbon/icons-react';
-import { HeaderGlobalAction } from 'carbon-components-react';
+import { HeaderGlobalAction } from '@carbon/react';
 import { useIntl } from 'react-intl';
 import { useLogoutURL } from '../../api';
 

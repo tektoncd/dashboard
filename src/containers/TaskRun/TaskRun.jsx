@@ -15,7 +15,7 @@ limitations under the License.
 import { Fragment, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { InlineNotification, SkeletonText } from 'carbon-components-react';
+import { InlineNotification, SkeletonText, usePrefix } from '@carbon/react';
 import {
   Actions,
   Log,
@@ -26,7 +26,6 @@ import {
   TaskTree
 } from '@tektoncd/dashboard-components';
 import {
-  getCarbonPrefix,
   getStatus,
   getStepDefinition,
   getStepStatus,
@@ -57,7 +56,6 @@ import {
 } from '../../api';
 import NotFound from '../NotFound';
 
-const carbonPrefix = getCarbonPrefix();
 const { STEP, RETRY, TASK_RUN_DETAILS, VIEW } = queryParamConstants;
 
 export function TaskRunContainer() {
@@ -65,6 +63,7 @@ export function TaskRunContainer() {
   const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
+  const carbonPrefix = usePrefix();
 
   const { name, namespace: namespaceParam } = params;
 

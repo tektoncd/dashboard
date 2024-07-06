@@ -14,7 +14,6 @@ limitations under the License.
 import { useEffect, useRef, useState } from 'react';
 import { Actions, PipelineRun } from '@tektoncd/dashboard-components';
 import {
-  getCarbonPrefix,
   getStatus,
   getTaskRunsWithPlaceholders,
   isPending,
@@ -28,8 +27,9 @@ import {
 import {
   InlineNotification,
   RadioTile,
-  TileGroup
-} from 'carbon-components-react';
+  TileGroup,
+  usePrefix
+} from '@carbon/react';
 
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useIntl } from 'react-intl';
@@ -57,7 +57,6 @@ import {
 } from '../../utils';
 import NotFound from '../NotFound';
 
-const carbonPrefix = getCarbonPrefix();
 const { PIPELINE_TASK, RETRY, STEP, TASK_RUN_NAME, VIEW } = queryParamConstants;
 
 export /* istanbul ignore next */ function PipelineRunContainer() {
@@ -65,6 +64,7 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
   const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
+  const carbonPrefix = usePrefix();
 
   const { name, namespace } = params;
 

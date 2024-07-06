@@ -23,7 +23,7 @@ import {
   FormGroup,
   InlineNotification,
   TextInput
-} from 'carbon-components-react';
+} from '@carbon/react';
 import {
   ALL_NAMESPACES,
   generateId,

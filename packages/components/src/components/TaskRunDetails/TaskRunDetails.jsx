@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
 import { getParams, taskRunHasWarning } from '@tektoncd/dashboard-utils';
-import { ContentSwitcher, Switch, Tooltip } from 'carbon-components-react';
+import { ContentSwitcher, Switch, Tooltip } from '@carbon/react';
 import { Information16 } from '@carbon/icons-react';
 
 import DetailsHeader from '../DetailsHeader';

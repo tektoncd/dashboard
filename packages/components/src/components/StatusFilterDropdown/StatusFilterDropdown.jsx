@@ -12,7 +12,7 @@ limitations under the License.
 */
 /* istanbul ignore file */
 import { useIntl } from 'react-intl';
-import { Dropdown } from 'carbon-components-react';
+import { Dropdown } from '@carbon/react';
 import {
   getTranslateWithId,
   statusFilterOrder

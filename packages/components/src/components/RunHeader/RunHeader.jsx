@@ -13,7 +13,7 @@ limitations under the License.
 
 import { Component } from 'react';
 import { injectIntl } from 'react-intl';
-import { CopyButton, SkeletonPlaceholder } from 'carbon-components-react';
+import { CopyButton, SkeletonPlaceholder } from '@carbon/react';
 import { copyToClipboard } from '@tektoncd/dashboard-utils';
 
 import FormattedDate from '../FormattedDate';
