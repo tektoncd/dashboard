@@ -55,11 +55,11 @@ limitations under the License.
   }
 
   a, a:hover, a:visited, a.storylink code {
-    color: $link-01;
+    color: $link-primary;
   }
 
   a:hover {
-    color: $hover-primary-text;
+    color: $link-primary-hover;
     text-decoration: underline;
   }
 
@@ -76,6 +76,6 @@ limitations under the License.
   }
 
   .tkn-graph-story .sb-story {
-    background-color: $ui-background;
+    background-color: $background;
   }
 }

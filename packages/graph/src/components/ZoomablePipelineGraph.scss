@@ -18,13 +18,13 @@ limitations under the License.
   inline-size: 300px;
   block-size: 600px;
   overflow: hidden;
-  outline: 1px solid $ui-03;
+  outline: 1px solid $border-subtle;
 
   .toolbar {
     inline-size: 100%;
     align-self: bottom;
     text-align: center;
-    background-color: $ui-03;
+    background-color: $layer-accent;
   }
 
   svg {
