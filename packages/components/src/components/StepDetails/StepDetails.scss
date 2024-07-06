@@ -12,9 +12,10 @@ limitations under the License.
 */
 
 @use '@carbon/react/scss/config' as *;
+@use '@carbon/react/scss/theme' as *;
 
 .tkn--step-details {
-  background-color: $ui-01;
+  background-color: $layer;
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;

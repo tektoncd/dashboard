@@ -13,6 +13,7 @@ limitations under the License.
 
 @use '@carbon/react/scss/config' as *;
 @use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/theme' as *;
 @use '@carbon/react/scss/type' as *;
 
 .tkn--resourcedetails {
@@ -64,7 +65,7 @@ limitations under the License.
 .tkn--resourcedetails-metadata {
   margin-block-end: $spacing-05;
   padding: $spacing-05;
-  background-color: $ui-01;
+  background-color: $layer;
 
   .#{$prefix}--tag {
     margin-block-start: 0;

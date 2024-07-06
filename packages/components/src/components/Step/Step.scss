@@ -11,23 +11,26 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+@use '@carbon/react/scss/theme' as *;
+@use '@carbon/react/scss/type' as *;
+
 .tkn--step {
   list-style-type: none;
 
   &:hover > .tkn--step-link,
   &:hover > .tkn--step-link:hover,
   &[data-selected] > .tkn--step-link:hover {
-    background-color: $hover-ui;
+    background-color: $layer-hover;
     text-decoration: none;
   }
 
   &:hover > .tkn--step-link,
   > .tkn--step-link:hover {
-    border-inline-start-color: $hover-ui;
+    border-inline-start-color: $layer-hover;
   }
 
   &[data-selected] > .tkn--step-link {
-    border-inline-start: 3px solid $interactive-04;
+    border-inline-start: 3px solid $border-interactive;
   }
 
   > .tkn--step-link {
@@ -42,7 +45,7 @@ limitations under the License.
     font-size: 0.78rem;
     letter-spacing: 0.02rem;
     text-decoration: none;
-    border-inline-start: 3px solid $ui-01;
+    border-inline-start: 3px solid $layer;
   }
 
   .tkn--status-icon {
@@ -52,7 +55,7 @@ limitations under the License.
   }
 
   .tkn--step-name {
-    color: $text-01;
+    color: $text-primary;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

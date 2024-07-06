@@ -12,8 +12,8 @@ limitations under the License.
 */
 
 @use '@carbon/react/scss/config' as *;
-
-@import 'carbon-components/scss/globals/scss/helper-mixins';
+@use '@carbon/react/scss/theme' as *;
+// TODO: carbon11 - check Carbon 11 DataTable skeleton state to see if it's suitable now
 
 .tkn--data-table-skeleton.#{$prefix}--data-table.#{$prefix}--skeleton {
   th {
@@ -34,7 +34,7 @@ limitations under the License.
 
   th span,
   td span {
-    @include skeleton;
+    // @include skeleton;
     inline-size: 75%;
     block-size: 1rem;
     display: block;
@@ -42,11 +42,11 @@ limitations under the License.
 
   tr:hover {
     td {
-      border-color: $ui-03;
+      border-color: $border-subtle;
       background: transparent;
       &:first-of-type,
       &:last-of-type {
-        border-color: $ui-03;
+        border-color: $border-subtle;
       }
     }
   }

@@ -12,13 +12,15 @@ limitations under the License.
 */
 
 @use '@carbon/react/scss/config' as *;
+@use '@carbon/react/scss/theme' as *;
+@use '@carbon/react/scss/type' as *;
 
 pre.tkn--log {
   position: relative;
   padding-block-start: 2rem;
   padding-block-end: 1.3rem;
   padding-inline: 1.6rem;
-  @include carbon--font-family('mono');
+  @include font-family('mono');
   font-size: 0.75rem;
   @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
     font-size: 0.6875rem;
@@ -26,22 +28,22 @@ pre.tkn--log {
 
   line-height: 0.95rem; // Update the react-window List itemSize if changing this
   overflow: hidden;
-  background-color: $ui-background;
-  color: $text-01;
+  background-color: $background;
+  color: $text-primary;
 
   word-break: normal;
   word-wrap: normal;
 
   .#{$prefix}--skeleton__text {
-    background-color: $skeleton-01;
+    background-color: $skeleton-background;
 
     &::before {
-      background-color: $skeleton-02;
+      background-color: $skeleton-element;
     }
   }
 
   a {
-    color: $link-01;
+    color: $link-primary;
   }
 
   code {
@@ -84,10 +86,10 @@ pre.tkn--log {
   .#{$prefix}--copy-btn {
     inline-size: 2rem;
     block-size: 2rem;
-    background-color: $ui-background;
+    background-color: $background;
 
     &:hover {
-      background-color: $hover-ui;
+      background-color: $layer-hover;
     }
 
     &:focus {
@@ -95,7 +97,7 @@ pre.tkn--log {
     }
 
     svg {
-      fill: $icon-01;
+      fill: $icon-primary;
     }
   }
 
@@ -104,10 +106,10 @@ pre.tkn--log {
     font-weight: bold;
 
     &[data-status='Completed'] {
-      color: $support-02;
+      color: $support-success;
     }
     &[data-status='Error'] {
-      color: $support-01;
+      color: $support-error;
     }
   }
 

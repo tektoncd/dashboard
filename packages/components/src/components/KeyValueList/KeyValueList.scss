@@ -11,21 +11,23 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+@use '@carbon/react/scss/components/button';
 @use '@carbon/react/scss/config' as *;
 @use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/theme' as *;
 
 .tkn--keyvalues {
   margin-block-end: $spacing-06;
 
   .tkn--keyvalue-invalid {
-    color: $support-01;
+    color: $support-error;
     font-weight: 400;
     font-size: 0.75rem;
     letter-spacing: 0.32px;
   }
 
   .tkn--keyvalue-label {
-    color: $text-02;
+    color: $text-secondary;
     font-size: 12px;
     block-size: 29px;
     flex: 1;
@@ -53,7 +55,7 @@ limitations under the License.
     .#{$prefix}--btn--ghost.#{$prefix}--btn--icon-only {
       &:focus, &:hover {
         svg, path {
-          fill: $danger;
+          fill: button.$button-danger-primary;
         }
       }
     }

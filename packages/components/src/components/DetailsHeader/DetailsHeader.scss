@@ -11,8 +11,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+@use '@carbon/react/scss/theme' as *;
+
 header.tkn--step-details-header {
-  background-color: $ui-01;
+  background-color: $layer;
   padding-block-start: 1rem;
   padding-block-end: 0;
   padding-inline: 1rem;
@@ -76,18 +78,18 @@ header.tkn--step-details-header {
 
   &[data-status] {
     .tkn--status-label {
-      color: $text-02;
+      color: $text-secondary;
     }
   }
   &[data-status='running'] {
     .tkn--status-label {
-      color: $support-04;
+      color: $support-info;
     }
   }
   &[data-status='terminated'][data-reason='Completed'],
   &[data-status='True'] {
     .tkn--status-label {
-      color: $support-02;
+      color: $support-success;
     }
   }
   &[data-status='terminated'][data-reason='Error'],
@@ -96,7 +98,7 @@ header.tkn--step-details-header {
   &[data-reason='TaskRunCancelled'],
   &[data-reason='TaskRunTimeout'] {
     .tkn--status-label {
-      color: $support-01;
+      color: $support-error;
     }
   }
 }

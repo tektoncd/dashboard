@@ -11,8 +11,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+@use '@carbon/react/scss/components/button';
 @use '@carbon/react/scss/config' as *;
 @use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/theme' as *;
 @use '@carbon/react/scss/type' as *;
 
 .tkn--table {
@@ -87,7 +89,7 @@ limitations under the License.
       .tkn--danger.#{$prefix}--btn--ghost.#{$prefix}--btn--icon-only {
         &:focus, &:hover {
           svg, path {
-            fill: $danger;
+            fill: button.$button-danger-primary;
           }
         }
       }
@@ -125,17 +127,17 @@ limitations under the License.
         }
 
         .#{$prefix}--text-input {
-          background-color: $ui-01;
+          background-color: $layer;
           border: none;
         }
       }
 
       .#{$prefix}--multi-select__wrapper,
       .#{$prefix}--dropdown__wrapper {
-        background-color: $ui-01;
+        background-color: $layer;
         display: flex;
         align-items: center;
-        border-inline-end: 1px solid $ui-03;
+        border-inline-end: 1px solid $border-subtle;
         margin-inline-end: 0;
         padding-inline-end: $spacing-03;
         white-space: nowrap;
@@ -161,7 +163,7 @@ limitations under the License.
 
         .#{$prefix}--multi-select--inline,
         .#{$prefix}--list-box--inline {
-          background-color: $ui-01;
+          background-color: $layer;
           block-size: 100%;
           max-block-size: 3rem;
         }
