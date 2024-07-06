@@ -15,7 +15,7 @@ limitations under the License.
 @use '@carbon/react/scss/type' as *;
 
 header.tkn--pipeline-run-header {
-  @include type-style('body-short-01');
+  @include type-style('body-compact-01');
   line-height: 1;
   background: $layer;
   margin-block-end: 2em;
@@ -30,7 +30,7 @@ header.tkn--pipeline-run-header {
   }
 
   h1.tkn--run-header--heading {
-    @include type-style('productive-heading-04');
+    @include type-style('heading-04');
     display: flex;
     align-items: baseline;
     block-size: 3rem;

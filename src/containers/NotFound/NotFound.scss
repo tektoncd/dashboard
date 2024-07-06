@@ -28,14 +28,14 @@ limitations under the License.
   }
 
   h1 {
-    @include type-style('productive-heading-05');
+    @include type-style('heading-05');
     color: $text-primary;
     margin-block-start: $spacing-07;
     margin-block-end: $spacing-05;
   }
 
   p {
-    @include type-style('body-long-01');
+    @include type-style('body-01');
     color: $text-secondary;
   }
 
@@ -52,7 +52,7 @@ limitations under the License.
     }
 
     a {
-      @include type-style('body-short-02');
+      @include type-style('body-compact-02');
     }
   }
 }

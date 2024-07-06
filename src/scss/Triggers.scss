@@ -27,7 +27,7 @@ limitations under the License.
   }
   .tkn--details {
     li:not(:empty), p:not(:empty) {
-      @include type-style('body-short-02');
+      @include type-style('body-compact-02');
       margin-block-start: $spacing-03;
       span:first-child {
         font-weight: bold;
