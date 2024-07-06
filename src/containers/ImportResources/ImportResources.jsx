@@ -21,8 +21,7 @@ import {
   Form,
   InlineNotification,
   TextInput,
-  ToastNotification,
-  TooltipIcon
+  ToastNotification
 } from '@carbon/react';
 import { Information } from '@carbon/react/icons';
 import { Link } from 'react-router-dom';
@@ -58,10 +57,11 @@ function isValidGitURL(url) {
 
 const initialMethod = 'apply';
 
-const HelpIcon = ({ title }) => (
-  <TooltipIcon direction="top" align="start" tooltipText={title}>
-    <Information />
-  </TooltipIcon>
+const HelpIcon = ({ _title }) => (
+  // TODO: carbon11 - Step 6 - Find appropriate replacement for TooltipIcon component
+  // <TooltipIcon direction="top" align="start" tooltipText={title}>
+  <Information />
+  // </TooltipIcon>
 );
 
 export function ImportResources() {
