@@ -69,7 +69,7 @@ const StatusFilterDropdown = ({ id, initialSelectedStatus, onChange }) => {
       initialSelectedItem={selectedStatusFilter}
       items={[allItem, ...statusFilterItems]}
       itemToString={({ text }) => text}
-      light
+      light // TODO: carbon11 - deprecated use Layer component instead
       label={intl.formatMessage({
         id: 'dashboard.taskRun.status',
         defaultMessage: 'Status'

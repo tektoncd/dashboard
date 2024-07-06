@@ -142,7 +142,7 @@ export const Filters = {
         id="status-filter"
         initialSelectedItem="All"
         items={['All', 'Succeeded', 'Failed']}
-        light
+        light // TODO: carbon11 - deprecated use Layer component instead
         label="Status"
         titleText="Status:"
         type="inline"
