@@ -171,7 +171,7 @@ class LabelFilter extends Component {
           {filters.length > 0 && (
             <Button
               kind="ghost"
-              size="small"
+              size="sm"
               onClick={this.props.handleClearFilters}
             >
               {intl.formatMessage({
