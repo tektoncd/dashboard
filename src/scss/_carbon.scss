@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2023 The Tekton Authors
+Copyright 2020-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,32 +11,62 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-$css--font-face: true;
-$css--helpers: true;
-$css--body: true;
-$css--reset: true;
-$css--default-type: true;
-$css--plex: true;
-
-$feature-flags: (
-  grid-columns-16: true,
-  enable-css-custom-properties: true
+@use '@carbon/react/scss/config' with (
+  $font-path: '@ibm/plex'
 );
 
-@import '@carbon/themes/scss/themes';
-@import 'carbon-components/scss/globals/scss/component-tokens';
-@import 'carbon-components/scss/components/notification/tokens';
-@import 'carbon-components/scss/components/tag/tokens';
+@use '@carbon/react/scss/reset';
+
+// Emit the Plex font-face declarations
+@use '@carbon/react/scss/fonts';
+
+@use '@carbon/react/scss/themes';
+@use '@carbon/react/scss/theme' with (
+  $fallback: themes.$g10,
+  $theme: themes.$g10
+);
+@use '@carbon/react/scss/zone';
+
+@use '@carbon/react/scss/grid';
+@use '@carbon/react/scss/layer';
+
+// Emit individual component styles
+@use '@carbon/react/scss/components/button';
+@use '@carbon/react/scss/components/copy-button';
+@use '@carbon/react/scss/components/checkbox';
+@use '@carbon/react/scss/components/combo-box';
+@use '@carbon/react/scss/components/content-switcher';
+@use '@carbon/react/scss/components/radio-button';
+@use '@carbon/react/scss/components/search';
+@use '@carbon/react/scss/components/text-input';
+@use '@carbon/react/scss/components/form';
+@use '@carbon/react/scss/components/link';
+@use '@carbon/react/scss/components/data-table';
+@use '@carbon/react/scss/components/code-snippet';
+@use '@carbon/react/scss/components/overflow-menu';
+@use '@carbon/react/scss/components/dropdown';
+@use '@carbon/react/scss/components/loading';
+@use '@carbon/react/scss/components/modal';
+@use '@carbon/react/scss/components/notification/inline-notification';
+@use '@carbon/react/scss/components/notification/toast-notification';
+@use '@carbon/react/scss/components/pagination';
+@use '@carbon/react/scss/components/tooltip';
+@use '@carbon/react/scss/components/tabs';
+@use '@carbon/react/scss/components/tag';
+@use '@carbon/react/scss/components/accordion';
+// @use '@carbon/react/scss/components/skeleton';
+@use '@carbon/react/scss/components/inline-loading';
+@use '@carbon/react/scss/components/ui-shell';
+@use '@carbon/react/scss/components/list';
+@use '@carbon/react/scss/components/tile';
+@use '@carbon/react/scss/components/toggle';
 
 :root, .tkn--theme-light {
-  @include carbon--theme($carbon--theme--g10, true);
+  @include theme.theme(themes.$g10);
 }
 
 @mixin tkn--theme-dark {
-  @include carbon--theme($carbon--theme--g90, true) {
-    @include emit-component-tokens($notification-colors);
-    @include emit-component-tokens($tag-colors);
-  };
+  @include theme.theme(themes.$g90);
 }
 
 .tkn--theme-dark {
@@ -48,40 +78,3 @@ $feature-flags: (
     @include tkn--theme-dark;
   }
 }
-
-@import 'carbon-components/scss/globals/scss/vars';
-@import 'carbon-components/scss/globals/scss/css--reset';
-@import 'carbon-components/scss/globals/scss/css--font-face';
-@import 'carbon-components/scss/globals/scss/css--helpers';
-@import 'carbon-components/scss/globals/scss/css--body';
-@import 'carbon-components/scss/globals/grid/grid';
-
-@import 'carbon-components/scss/components/button/button';
-@import 'carbon-components/scss/components/copy-button/copy-button';
-@import 'carbon-components/scss/components/checkbox/checkbox';
-@import 'carbon-components/scss/components/combo-box/combo-box';
-@import 'carbon-components/scss/components/content-switcher/content-switcher';
-@import 'carbon-components/scss/components/radio-button/radio-button';
-@import 'carbon-components/scss/components/search/search';
-@import 'carbon-components/scss/components/text-input/text-input';
-@import 'carbon-components/scss/components/form/form';
-@import 'carbon-components/scss/components/link/link';
-@import 'carbon-components/scss/components/data-table/data-table';
-@import 'carbon-components/scss/components/code-snippet/code-snippet';
-@import 'carbon-components/scss/components/overflow-menu/overflow-menu';
-@import 'carbon-components/scss/components/dropdown/dropdown';
-@import 'carbon-components/scss/components/loading/loading';
-@import 'carbon-components/scss/components/modal/modal';
-@import 'carbon-components/scss/components/notification/inline-notification';
-@import 'carbon-components/scss/components/notification/toast-notification';
-@import 'carbon-components/scss/components/pagination/pagination';
-@import 'carbon-components/scss/components/tooltip/tooltip';
-@import 'carbon-components/scss/components/tabs/tabs';
-@import 'carbon-components/scss/components/tag/tag';
-@import 'carbon-components/scss/components/accordion/accordion';
-@import 'carbon-components/scss/components/skeleton/skeleton';
-@import 'carbon-components/scss/components/inline-loading/inline-loading';
-@import 'carbon-components/scss/components/ui-shell/ui-shell';
-@import 'carbon-components/scss/components/list/list';
-@import 'carbon-components/scss/components/tile/tile';
-@import 'carbon-components/scss/components/toggle/toggle';
