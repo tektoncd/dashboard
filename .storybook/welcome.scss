@@ -11,6 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+@use '@carbon/react/scss/theme' as *;
 @use '@carbon/react/scss/type' as *;
 
 .welcome__container {
@@ -20,7 +21,7 @@ limitations under the License.
   inline-size: 100vi;
   max-inline-size: 120ch;
   padding: 3rem;
-  background-color: $ui-background;
+  background-color: $background;
 
   .welcome__heading {
     display: flex;
@@ -29,7 +30,7 @@ limitations under the License.
 
   h2 {
     @include type-style('productive-heading-07');
-    color: $text-01;
+    color: $text-primary;
   }
 
   h2 + p {
