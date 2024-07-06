@@ -18,22 +18,17 @@ import {
   ClickableTile as CarbonClickableTile,
   InlineNotification,
   SkeletonText,
-  Tile
-} from 'carbon-components-react';
+  Tile,
+  usePrefix
+} from '@carbon/react';
 import { ArrowRight24 as ArrowIcon } from '@carbon/icons-react';
-import {
-  getCarbonPrefix,
-  getErrorMessage,
-  useTitleSync
-} from '@tektoncd/dashboard-utils';
+import { getErrorMessage, useTitleSync } from '@tektoncd/dashboard-utils';
 
 import { useProperties } from '../../api';
 
 import tektonLogo from '../../images/tekton-dashboard-color.svg';
 import DocsPictogram from '../../images/assets.svg?react';
 import HubPictogram from '../../images/user--interface.svg?react';
-
-const carbonPrefix = getCarbonPrefix();
 
 function ClickableTile(props) {
   return (
@@ -48,6 +43,7 @@ function ClickableTile(props) {
 
 export function About() {
   const intl = useIntl();
+  const carbonPrefix = usePrefix();
   useTitleSync({
     page: intl.formatMessage({
       id: 'dashboard.about.title',

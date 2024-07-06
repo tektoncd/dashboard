@@ -16,7 +16,7 @@ import { useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
-import { Button } from 'carbon-components-react';
+import { Button } from '@carbon/react';
 import {
   ALL_NAMESPACES,
   getFilters,

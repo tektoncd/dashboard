@@ -13,7 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import { useIntl } from 'react-intl';
-import { Modal as CarbonModal } from 'carbon-components-react';
+import { Modal as CarbonModal } from '@carbon/react';
 
 const Modal = props => {
   const intl = useIntl();

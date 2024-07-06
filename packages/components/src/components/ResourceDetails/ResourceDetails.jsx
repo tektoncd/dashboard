@@ -13,7 +13,7 @@ limitations under the License.
 
 import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
-import { InlineNotification, SkeletonText, Tag } from 'carbon-components-react';
+import { InlineNotification, SkeletonText, Tag } from '@carbon/react';
 import { formatLabels, getErrorMessage } from '@tektoncd/dashboard-utils';
 
 import FormattedDate from '../FormattedDate';

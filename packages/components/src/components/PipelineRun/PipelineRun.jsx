@@ -13,7 +13,7 @@ limitations under the License.
 
 import { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { InlineNotification, SkeletonText } from 'carbon-components-react';
+import { InlineNotification, SkeletonText } from '@carbon/react';
 import { injectIntl } from 'react-intl';
 import {
   getErrorMessage,

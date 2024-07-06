@@ -24,13 +24,8 @@ import {
   StatusIcon,
   Table
 } from '@tektoncd/dashboard-components';
-import {
-  getCarbonPrefix,
-  getStatus,
-  urls,
-  useTitleSync
-} from '@tektoncd/dashboard-utils';
-import { InlineNotification } from 'carbon-components-react';
+import { getStatus, urls, useTitleSync } from '@tektoncd/dashboard-utils';
+import { InlineNotification, usePrefix } from '@carbon/react';
 
 import {
   deleteCustomRun,
@@ -40,8 +35,6 @@ import {
 } from '../../api';
 import { getViewChangeHandler } from '../../utils';
 import NotFound from '../NotFound';
-
-const carbonPrefix = getCarbonPrefix();
 
 function getRunDuration(run) {
   if (!run) {
@@ -100,6 +93,7 @@ function CustomRun() {
   const location = useLocation();
   const navigate = useNavigate();
   const { namespace, name: resourceName } = useParams();
+  const carbonPrefix = usePrefix();
 
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');

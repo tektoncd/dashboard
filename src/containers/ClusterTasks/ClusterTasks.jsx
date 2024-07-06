@@ -22,7 +22,7 @@ import {
   Link,
   Table
 } from '@tektoncd/dashboard-components';
-import { Button } from 'carbon-components-react';
+import { Button } from '@carbon/react';
 import {
   TrashCan16 as DeleteIcon,
   PlayOutline16 as RunIcon,

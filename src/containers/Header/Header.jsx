@@ -18,7 +18,7 @@ import {
   HeaderMenuButton,
   HeaderName,
   SkipToContent
-} from 'carbon-components-react';
+} from '@carbon/react';
 
 import { SideNav } from '..';
 

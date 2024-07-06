@@ -16,18 +16,18 @@ import {
   Accordion,
   AccordionItem,
   ListItem,
-  UnorderedList
-} from 'carbon-components-react';
-import { getCarbonPrefix, urls } from '@tektoncd/dashboard-utils';
+  UnorderedList,
+  usePrefix
+} from '@carbon/react';
+import { urls } from '@tektoncd/dashboard-utils';
 
 import Link from '../Link';
 import Table from '../Table';
 import ViewYAML from '../ViewYAML';
 
-const carbonPrefix = getCarbonPrefix();
-
 const Trigger = ({ namespace, trigger }) => {
   const intl = useIntl();
+  const carbonPrefix = usePrefix();
   const tableHeaders = [
     {
       key: 'name',

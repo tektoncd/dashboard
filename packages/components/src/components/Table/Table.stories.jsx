@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import { action } from '@storybook/addon-actions';
-import { Dropdown } from 'carbon-components-react';
+import { Dropdown } from '@carbon/react';
 import {
   Add16 as Add,
   TrashCan32 as Delete,

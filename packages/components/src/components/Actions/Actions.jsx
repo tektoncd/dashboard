@@ -16,14 +16,12 @@ import { injectIntl } from 'react-intl';
 import {
   Button,
   OverflowMenu,
-  OverflowMenuItem
-} from 'carbon-components-react';
+  OverflowMenuItem,
+  PrefixContext
+} from '@carbon/react';
 import { CaretDown16 } from '@carbon/icons-react';
-import { getCarbonPrefix } from '@tektoncd/dashboard-utils';
 
 import Modal from '../Modal';
-
-const carbonPrefix = getCarbonPrefix();
 
 class Actions extends Component {
   state = { showDialog: false };
@@ -96,6 +94,8 @@ class Actions extends Component {
       defaultMessage: 'Actions'
     });
 
+    const carbonPrefix = this.context;
+
     return (
       <>
         <OverflowMenu
@@ -151,5 +151,6 @@ class Actions extends Component {
     );
   }
 }
+Actions.contextType = PrefixContext;
 
 export default injectIntl(Actions);

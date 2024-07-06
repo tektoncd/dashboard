@@ -17,17 +17,7 @@ limitations under the License.
 /* eslint-disable jsx-a11y/control-has-associated-label */
 
 import PropTypes from 'prop-types';
-import { getCarbonPrefix } from '@tektoncd/dashboard-utils';
-
-const carbonPrefix = getCarbonPrefix();
-
-const tableSizeClassNames = {
-  xs: `${carbonPrefix}--data-table--xs`,
-  sm: `${carbonPrefix}--data-table--sm`,
-  md: `${carbonPrefix}--data-table--md`,
-  lg: `${carbonPrefix}--data-table--lg`,
-  xl: `${carbonPrefix}--data-table--xl`
-};
+import { usePrefix } from '@carbon/react';
 
 const defaults = {
   headers: []
@@ -41,6 +31,16 @@ const DataTableSkeleton = ({
   size,
   ...rest
 }) => {
+  const carbonPrefix = usePrefix();
+
+  const tableSizeClassNames = {
+    xs: `${carbonPrefix}--data-table--xs`,
+    sm: `${carbonPrefix}--data-table--sm`,
+    md: `${carbonPrefix}--data-table--md`,
+    lg: `${carbonPrefix}--data-table--lg`,
+    xl: `${carbonPrefix}--data-table--xl`
+  };
+
   const rowRepeat = rowCount - 1;
   const columns =
     headers ||

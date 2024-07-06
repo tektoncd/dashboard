@@ -13,7 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import { useIntl } from 'react-intl';
-import { Column, Grid, Row } from 'carbon-components-react';
+import { Column, Grid, Row } from '@carbon/react';
 import { Link } from '@tektoncd/dashboard-components';
 import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 

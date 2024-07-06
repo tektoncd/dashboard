@@ -11,6 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 /* istanbul ignore file */
-import { Tab } from 'carbon-components-react';
+import { Tab } from '@carbon/react';
 
 export default Tab;

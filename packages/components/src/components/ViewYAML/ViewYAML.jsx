@@ -13,11 +13,10 @@ limitations under the License.
 
 import PropTypes from 'prop-types';
 import jsYaml from 'js-yaml';
-import { classNames, getCarbonPrefix } from '@tektoncd/dashboard-utils';
+import { classNames } from '@tektoncd/dashboard-utils';
 
+import { usePrefix } from '@carbon/react';
 import SyntaxHighlighter from './SyntaxHighlighter';
-
-const carbonPrefix = getCarbonPrefix();
 
 function YAMLRaw({ children, className }) {
   return (
@@ -36,6 +35,7 @@ function ViewYAML({
   resource,
   title
 }) {
+  const carbonPrefix = usePrefix();
   let yamlComponent;
   if (enableSyntaxHighlighting && typeof resource !== 'string') {
     yamlComponent = <SyntaxHighlighter resource={resource} />;

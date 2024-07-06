@@ -15,7 +15,7 @@ limitations under the License.
 import { Component } from 'react';
 import { injectIntl } from 'react-intl';
 
-import { Button } from 'carbon-components-react';
+import { Button } from '@carbon/react';
 import {
   Cursor_120 as Cursor20,
   Move20,

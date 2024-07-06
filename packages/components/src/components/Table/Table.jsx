@@ -22,7 +22,7 @@ import {
   TableSelectRow,
   TableToolbar,
   TableToolbarContent
-} from 'carbon-components-react';
+} from '@carbon/react';
 import { ALL_NAMESPACES, classNames } from '@tektoncd/dashboard-utils';
 
 import DataTableSkeleton from '../DataTableSkeleton';

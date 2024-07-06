@@ -18,11 +18,10 @@ import {
   Maximize16,
   Minimize16
 } from '@carbon/icons-react';
-import { getCarbonPrefix } from '@tektoncd/dashboard-utils';
-
-const carbonPrefix = getCarbonPrefix();
+import { usePrefix } from '@carbon/react';
 
 const LogsToolbar = ({ isMaximized, name, toggleMaximized, url }) => {
+  const carbonPrefix = usePrefix();
   const intl = useIntl();
   return (
     <div className={`${carbonPrefix}--btn-set`}>

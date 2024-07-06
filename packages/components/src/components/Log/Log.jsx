@@ -12,14 +12,10 @@ limitations under the License.
 */
 
 import { Component, createRef } from 'react';
-import { Button, SkeletonText } from 'carbon-components-react';
+import { Button, PrefixContext, SkeletonText } from '@carbon/react';
 import { FixedSizeList as List } from 'react-window';
 import { injectIntl } from 'react-intl';
-import {
-  getCarbonPrefix,
-  getStepStatusReason,
-  isRunning
-} from '@tektoncd/dashboard-utils';
+import { getStepStatusReason, isRunning } from '@tektoncd/dashboard-utils';
 import { DownToBottom16, UpToTop16 } from '@carbon/icons-react';
 
 import {
@@ -30,8 +26,6 @@ import {
 } from './domUtils';
 import DotSpinner from '../DotSpinner';
 import LogFormat from '../LogFormat';
-
-const carbonPrefix = getCarbonPrefix();
 
 const LogLine = ({ data, index, style }) => (
   <div style={style}>
@@ -195,6 +189,7 @@ export class LogContainer extends Component {
   };
 
   getScrollButtons = () => {
+    const carbonPrefix = this.context;
     const { enableLogScrollButtons, intl } = this.props;
     const { isLogBottomUnseen, isLogTopUnseen, loading } = this.state;
 
@@ -438,7 +433,7 @@ export class LogContainer extends Component {
     );
   }
 }
-
+LogContainer.contextType = PrefixContext;
 LogContainer.defaultProps = {
   pollingInterval: 4000
 };

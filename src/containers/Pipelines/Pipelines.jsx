@@ -21,7 +21,7 @@ import {
 } from '@carbon/icons-react';
 import { useIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
-import { Button } from 'carbon-components-react';
+import { Button } from '@carbon/react';
 import {
   ALL_NAMESPACES,
   getFilters,

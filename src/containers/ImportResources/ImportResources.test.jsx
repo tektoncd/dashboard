@@ -12,18 +12,12 @@ limitations under the License.
 */
 
 import { fireEvent, waitFor } from '@testing-library/react';
-import {
-  ALL_NAMESPACES,
-  getCarbonPrefix,
-  urls
-} from '@tektoncd/dashboard-utils';
+import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 
 import { render, renderWithRouter } from '../../utils/test';
 import ImportResourcesContainer from './ImportResources';
 import * as API from '../../api';
 import * as APIUtils from '../../api/utils';
-
-const carbonPrefix = getCarbonPrefix();
 
 describe('ImportResources component', () => {
   beforeEach(() => {
@@ -134,9 +128,8 @@ describe('ImportResources component', () => {
     );
 
     expect(
-      document.getElementsByClassName(
-        `${carbonPrefix}--toast-notification__caption`
-      )[0].innerHTML
+      document.getElementsByClassName('cds--toast-notification__caption')[0]
+        .innerHTML
     ).toContain(
       urls.pipelineRuns.byName({
         name: pipelineRunName,

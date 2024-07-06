@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import { Component } from 'react';
-import { InlineNotification } from 'carbon-components-react';
+import { InlineNotification } from '@carbon/react';
 import { getErrorMessage } from '@tektoncd/dashboard-utils';
 import { injectIntl } from 'react-intl';
 
