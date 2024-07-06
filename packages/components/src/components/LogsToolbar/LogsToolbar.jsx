@@ -17,7 +17,7 @@ import {
   Launch,
   Maximize,
   Minimize
-} from '@carbon/icons-react';
+} from "@carbon/react/icons";
 import { usePrefix } from '@carbon/react';
 
 const LogsToolbar = ({ isMaximized, name, toggleMaximized, url }) => {

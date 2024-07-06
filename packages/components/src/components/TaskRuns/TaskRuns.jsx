@@ -16,7 +16,7 @@ import {
   Calendar as CalendarIcon,
   Time as TimeIcon,
   Lightning as TriggersIcon
-} from '@carbon/icons-react';
+} from "@carbon/react/icons";
 import { getStatus, taskRunHasWarning, urls } from '@tektoncd/dashboard-utils';
 
 import Actions from '../Actions';

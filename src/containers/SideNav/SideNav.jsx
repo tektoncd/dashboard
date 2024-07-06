@@ -25,7 +25,7 @@ import {
   Chip as ExtensionsIcon,
   DocumentImport as ImportResourcesIcon,
   Settings as SettingsIcon
-} from '@carbon/icons-react';
+} from "@carbon/react/icons";
 import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 
 import {

@@ -21,7 +21,7 @@ import {
   Tile,
   usePrefix
 } from '@carbon/react';
-import { ArrowRight as ArrowIcon } from '@carbon/icons-react';
+import { ArrowRight as ArrowIcon } from "@carbon/react/icons";
 import { getErrorMessage, useTitleSync } from '@tektoncd/dashboard-utils';
 
 import { useProperties } from '../../api';
