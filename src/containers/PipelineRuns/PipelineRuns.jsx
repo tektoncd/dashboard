@@ -268,6 +268,7 @@ export function PipelineRuns() {
                 valueSelected={cancelStatus}
                 onChange={status => setCancelStatus(status)}
               >
+                {/* TODO: carbon11 - light prop deprecated use Layer component instead */}
                 <RadioTile light name="cancelStatus" value="Cancelled">
                   <span>Cancelled</span>
                   <p className="tkn--tile--description">

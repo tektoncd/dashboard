@@ -42,6 +42,7 @@ export default function Node({
     shapeNode = (
       <ShapeNode
         renderIcon={
+          // TODO: carbon11 - review tooltip usage
           <Tooltip
             align="start"
             showIcon

@@ -39,6 +39,7 @@ function HelpIcon({ title }) {
     return null;
   }
 
+  // TODO: carbon11 - review tooltip usage
   return (
     <Tooltip
       align="end"

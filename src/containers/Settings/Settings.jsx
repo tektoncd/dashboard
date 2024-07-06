@@ -93,6 +93,7 @@ export function Settings() {
             id: 'dashboard.toggle.on',
             defaultMessage: 'On'
           })}
+          // TODO: carbon11 - underling element change to switch button, check events working as expected
           onToggle={checked => setLogTimestampsEnabled(checked)}
         />
 
