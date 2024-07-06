@@ -76,7 +76,7 @@ const KeyValueList = ({
               kind="ghost"
               onClick={() => onRemove(index)}
               renderIcon={Remove}
-              size="field"
+              size="md"
               tooltipAlignment="center"
               tooltipPosition="bottom"
             />
