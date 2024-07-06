@@ -13,7 +13,7 @@ limitations under the License.
 
 import { useIntl } from 'react-intl';
 import { Button, TextInput } from '@carbon/react';
-import { AddAlt as Add, SubtractAlt as Remove } from '@carbon/icons-react';
+import { AddAlt as Add, SubtractAlt as Remove } from "@carbon/react/icons";
 
 const KeyValueList = ({
   invalidFields,

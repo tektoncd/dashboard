@@ -18,7 +18,7 @@ import {
   Pending as DefaultIcon,
   Time as TimeIcon,
   Lightning as TriggersIcon
-} from '@carbon/icons-react';
+} from "@carbon/react/icons";
 
 import Actions from '../Actions';
 import FormattedDate from '../FormattedDate';

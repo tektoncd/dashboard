@@ -19,7 +19,7 @@ import {
   OverflowMenuItem,
   PrefixContext
 } from '@carbon/react';
-import { CaretDown } from '@carbon/icons-react';
+import { CaretDown } from "@carbon/react/icons";
 
 import Modal from '../Modal';
 

@@ -21,7 +21,7 @@ import {
   Move,
   ZoomIn,
   ZoomOut
-} from '@carbon/icons-react';
+} from "@carbon/react/icons";
 
 import PanZoom from './PanZoom';
 import PipelineGraph from './PipelineGraph';

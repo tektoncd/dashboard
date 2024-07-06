@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Logout as LogoutIcon } from '@carbon/icons-react';
+import { Logout as LogoutIcon } from "@carbon/react/icons";
 import { HeaderGlobalAction } from '@carbon/react';
 import { useIntl } from 'react-intl';
 import { useLogoutURL } from '../../api';

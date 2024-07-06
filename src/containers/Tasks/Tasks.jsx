@@ -33,7 +33,7 @@ import {
   TrashCan as DeleteIcon,
   PlayOutline as RunIcon,
   Playlist as RunsIcon
-} from '@carbon/icons-react';
+} from "@carbon/react/icons";
 
 import ListPageLayout from '../ListPageLayout';
 import {

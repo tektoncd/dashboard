@@ -16,7 +16,7 @@ import {
   Pending as DefaultStepIcon,
   PendingFilled as DefaultTaskIcon,
   UndefinedFilled as UndefinedIcon
-} from '@carbon/icons-react';
+} from "@carbon/react/icons";
 
 import StatusIcon from './StatusIcon';
 

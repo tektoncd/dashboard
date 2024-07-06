@@ -24,7 +24,7 @@ import {
   ToastNotification,
   TooltipIcon
 } from '@carbon/react';
-import { Information } from '@carbon/icons-react';
+import { Information } from "@carbon/react/icons";
 import { Link } from 'react-router-dom';
 import {
   ALL_NAMESPACES,

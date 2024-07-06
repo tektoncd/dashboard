@@ -23,7 +23,7 @@ import {
   User as UserIcon,
   WarningAltFilled as WarningIcon,
   Webhook as WebhookIcon
-} from '@carbon/icons-react';
+} from "@carbon/react/icons";
 
 // TODO: need 'skipped' status (e.g. when expressions)
 const statusIcons = {
