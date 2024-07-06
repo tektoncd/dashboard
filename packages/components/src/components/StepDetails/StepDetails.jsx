@@ -14,6 +14,7 @@ limitations under the License.
 import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
 import { getStatus, getStepStatusReason } from '@tektoncd/dashboard-utils';
+import { TabList, TabPanel, TabPanels } from '@carbon/react';
 
 import DetailsHeader from '../DetailsHeader';
 import StepDefinition from '../StepDefinition';
@@ -61,27 +62,29 @@ const StepDetails = ({
       />
       <Tabs
         aria-label="Step details"
-        onSelectionChange={index => onViewChange(tabs[index])}
-        selected={selectedTabIndex}
+        onChange={event => onViewChange(tabs[event.selectedIndex])}
+        selectedIndex={selectedTabIndex}
       >
-        <Tab
-          id={`${stepName}-logs`}
-          label={intl.formatMessage({
-            id: 'dashboard.taskRun.logs',
-            defaultMessage: 'Logs'
-          })}
-        >
-          {logContainer}
-        </Tab>
-        <Tab
-          id={`${stepName}-details`}
-          label={intl.formatMessage({
-            id: 'dashboard.resource.detailsTab',
-            defaultMessage: 'Details'
-          })}
-        >
-          <StepDefinition definition={definition} />
-        </Tab>
+        <TabList>
+          <Tab>
+            {intl.formatMessage({
+              id: 'dashboard.taskRun.logs',
+              defaultMessage: 'Logs'
+            })}
+          </Tab>
+          <Tab>
+            {intl.formatMessage({
+              id: 'dashboard.resource.detailsTab',
+              defaultMessage: 'Details'
+            })}
+          </Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel>{logContainer}</TabPanel>
+          <TabPanel>
+            <StepDefinition definition={definition} />
+          </TabPanel>
+        </TabPanels>
       </Tabs>
     </div>
   );
