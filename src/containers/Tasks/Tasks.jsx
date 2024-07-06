@@ -255,6 +255,8 @@ function Tasks() {
     }
   ];
 
+  // TODO: carbon11 - Step 6 - className now applies to the outermost element of Table
+
   return (
     <ListPageLayout
       error={getError()}
