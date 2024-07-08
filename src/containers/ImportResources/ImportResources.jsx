@@ -21,7 +21,8 @@ import {
   Form,
   InlineNotification,
   TextInput,
-  ToastNotification
+  ToastNotification,
+  Tooltip
 } from '@carbon/react';
 import { Information } from '@carbon/react/icons';
 import { Link } from 'react-router-dom';
@@ -57,11 +58,14 @@ function isValidGitURL(url) {
 
 const initialMethod = 'apply';
 
-const HelpIcon = ({ _title }) => (
-  // TODO: carbon11 - Step 6 - Find appropriate replacement for TooltipIcon component
-  // <TooltipIcon direction="top" align="start" tooltipText={title}>
-  <Information />
-  // </TooltipIcon>
+const HelpIcon = ({ title }) => (
+  <Tooltip align="top-left" label={title}>
+    {/* false positive, Carbon automatically adds aria-labelledby to the button */}
+    {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
+    <button className="tkn--tooltip-trigger" type="button">
+      <Information />
+    </button>
+  </Tooltip>
 );
 
 export function ImportResources() {
