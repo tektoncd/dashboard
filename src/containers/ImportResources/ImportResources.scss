@@ -24,8 +24,28 @@ limitations under the License.
     display: flex;
     align-items: center;
 
-    .#{$prefix}--tooltip__trigger {
+    .#{$prefix}--tooltip {
       margin-inline-start: 0.5rem;
+
+      .tkn--tooltip-trigger {
+        appearance: none;
+        padding: 0;
+        margin: 0;
+        border: 0;
+        vertical-align: baseline;
+        background: unset;
+        cursor: pointer;
+        text-align: start;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        block-size: 1rem;
+        inline-size: 1rem;
+
+        svg {
+          fill: $icon-secondary;
+        }
+      }
     }
   }
 
@@ -58,9 +78,18 @@ limitations under the License.
   .#{$prefix}--accordion {
     margin-block-end: 1rem;
 
+    .#{$prefix}--accordion__wrapper {
+      padding-block-start: 0;
+      padding-block-end: 0;
+    }
+
+    .#{$prefix}--accordion__item--active .#{$prefix}--accordion__wrapper {
+      padding-block-start: 0.5rem;
+      padding-block-end: 0.5rem;
+    }
+
     .#{$prefix}--accordion__content,
     .#{$prefix}--accordion__item--active .#{$prefix}--accordion__content {
-      padding-block: 0.5rem;
       padding-inline: 0;
       margin-inline-start: 0;
     }
