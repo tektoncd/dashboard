@@ -72,10 +72,6 @@ body {
   scroll-margin-block-start: 3rem;
 }
 
-a {
-  color: $link-primary;
-}
-
 .#{$prefix}--btn.link-btn.#{$prefix}--btn--ghost {
   text-decoration: none;
 }
@@ -105,19 +101,6 @@ a {
 .#{$prefix}--modal-header,
 .#{$prefix}--modal-content {
   inline-size: 100%;
-}
-
-.#{$prefix}--modal-content,
-.#{$prefix}--modal-header {
-  padding-inline-end: 1rem;
-}
-
-.#{$prefix}--modal-content {
-  margin-block-end: $spacing-07;
-}
-
-.#{$prefix}--data-table-container {
-  margin-block-start: $spacing-07;
 }
 
 .#{$prefix}--table-header-label {
