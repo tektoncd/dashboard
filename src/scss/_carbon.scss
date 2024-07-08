@@ -31,39 +31,39 @@ limitations under the License.
 @use '@carbon/react/scss/layer';
 
 // Emit individual component styles
+@use '@carbon/react/scss/components/accordion';
 @use '@carbon/react/scss/components/button';
-@use '@carbon/react/scss/components/copy-button';
 @use '@carbon/react/scss/components/checkbox';
+@use '@carbon/react/scss/components/code-snippet';
 @use '@carbon/react/scss/components/combo-box';
 @use '@carbon/react/scss/components/content-switcher';
-@use '@carbon/react/scss/components/radio-button';
-@use '@carbon/react/scss/components/search';
-@use '@carbon/react/scss/components/text-input';
-@use '@carbon/react/scss/components/form';
-@use '@carbon/react/scss/components/link';
+@use '@carbon/react/scss/components/copy-button';
 @use '@carbon/react/scss/components/data-table';
 @use '@carbon/react/scss/components/data-table/action';
 @use '@carbon/react/scss/components/data-table/expandable';
 @use '@carbon/react/scss/components/data-table/skeleton';
 @use '@carbon/react/scss/components/data-table/sort';
-@use '@carbon/react/scss/components/code-snippet';
-@use '@carbon/react/scss/components/overflow-menu';
 @use '@carbon/react/scss/components/dropdown';
+@use '@carbon/react/scss/components/form';
+@use '@carbon/react/scss/components/inline-loading';
+@use '@carbon/react/scss/components/link';
+@use '@carbon/react/scss/components/list';
 @use '@carbon/react/scss/components/loading';
 @use '@carbon/react/scss/components/modal';
 @use '@carbon/react/scss/components/notification';
+@use '@carbon/react/scss/components/overflow-menu';
 @use '@carbon/react/scss/components/pagination';
+@use '@carbon/react/scss/components/radio-button';
+@use '@carbon/react/scss/components/search';
+@use '@carbon/react/scss/components/skeleton-styles';
 @use '@carbon/react/scss/components/stack';
-@use '@carbon/react/scss/components/tooltip';
 @use '@carbon/react/scss/components/tabs';
 @use '@carbon/react/scss/components/tag';
-@use '@carbon/react/scss/components/accordion';
-@use '@carbon/react/scss/components/skeleton-styles';
-@use '@carbon/react/scss/components/inline-loading';
-@use '@carbon/react/scss/components/ui-shell';
-@use '@carbon/react/scss/components/list';
+@use '@carbon/react/scss/components/text-input';
 @use '@carbon/react/scss/components/tile';
 @use '@carbon/react/scss/components/toggle';
+@use '@carbon/react/scss/components/tooltip';
+@use '@carbon/react/scss/components/ui-shell';
 
 :root, .tkn--theme-light {
   @include theme.theme(themes.$g10);
