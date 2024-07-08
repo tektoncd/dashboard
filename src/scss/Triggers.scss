@@ -55,9 +55,12 @@ limitations under the License.
   }
 
   .tkn--trigger-details {
+    @include type-style('body-compact-01');
+
     .#{$prefix}--list--unordered {
       position: relative;
       inset-block-start: 2px;
+      margin-inline-start: 0;
     }
   }
 }
