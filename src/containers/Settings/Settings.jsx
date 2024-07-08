@@ -13,7 +13,7 @@ limitations under the License.
 
 import { useIntl } from 'react-intl';
 import { useTitleSync } from '@tektoncd/dashboard-utils';
-import { RadioTile, TileGroup, Toggle } from '@carbon/react';
+import { RadioTile, Stack, TileGroup, Toggle } from '@carbon/react';
 import {
   Asleep as DarkIcon,
   Light as LightIcon,
@@ -78,42 +78,44 @@ export function Settings() {
           </RadioTile>
         </TileGroup>
 
-        <Toggle
-          defaultToggled={isLogTimestampsEnabled()}
-          id="tkn--log-timestamps-toggle"
-          labelText={intl.formatMessage({
-            id: 'dashboard.logs.showTimestamps.label',
-            defaultMessage: 'Show log timestamps'
-          })}
-          labelA={intl.formatMessage({
-            id: 'dashboard.toggle.off',
-            defaultMessage: 'Off'
-          })}
-          labelB={intl.formatMessage({
-            id: 'dashboard.toggle.on',
-            defaultMessage: 'On'
-          })}
-          // TODO: carbon11 - underling element change to switch button, check events working as expected
-          onToggle={checked => setLogTimestampsEnabled(checked)}
-        />
+        <Stack gap={7}>
+          <Toggle
+            defaultToggled={isLogTimestampsEnabled()}
+            id="tkn--log-timestamps-toggle"
+            labelText={intl.formatMessage({
+              id: 'dashboard.logs.showTimestamps.label',
+              defaultMessage: 'Show log timestamps'
+            })}
+            labelA={intl.formatMessage({
+              id: 'dashboard.toggle.off',
+              defaultMessage: 'Off'
+            })}
+            labelB={intl.formatMessage({
+              id: 'dashboard.toggle.on',
+              defaultMessage: 'On'
+            })}
+            // TODO: carbon11 - underling element change to switch button, check events working as expected
+            onToggle={checked => setLogTimestampsEnabled(checked)}
+          />
 
-        <Toggle
-          defaultToggled={isPipelinesV1ResourcesEnabled()}
-          id="tkn--pipelines-v1-resources-toggle"
-          labelText={intl.formatMessage({
-            id: 'dashboard.pipelines.v1Resources.label',
-            defaultMessage: 'Use Tekton Pipelines API version v1'
-          })}
-          labelA={intl.formatMessage({
-            id: 'dashboard.toggle.off',
-            defaultMessage: 'Off'
-          })}
-          labelB={intl.formatMessage({
-            id: 'dashboard.toggle.on',
-            defaultMessage: 'On'
-          })}
-          onToggle={checked => setPipelinesV1ResourcesEnabled(checked)}
-        />
+          <Toggle
+            defaultToggled={isPipelinesV1ResourcesEnabled()}
+            id="tkn--pipelines-v1-resources-toggle"
+            labelText={intl.formatMessage({
+              id: 'dashboard.pipelines.v1Resources.label',
+              defaultMessage: 'Use Tekton Pipelines API version v1'
+            })}
+            labelA={intl.formatMessage({
+              id: 'dashboard.toggle.off',
+              defaultMessage: 'Off'
+            })}
+            labelB={intl.formatMessage({
+              id: 'dashboard.toggle.on',
+              defaultMessage: 'On'
+            })}
+            onToggle={checked => setPipelinesV1ResourcesEnabled(checked)}
+          />
+        </Stack>
       </div>
     </div>
   );
