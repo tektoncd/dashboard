@@ -43,7 +43,7 @@ limitations under the License.
         }
       }
 
-      .#{$prefix}--tile:not(:last-child) {
+      :has(> .#{$prefix}--tile):not(:last-child) {
         margin-block-end: 0.5rem;
       }
     }
