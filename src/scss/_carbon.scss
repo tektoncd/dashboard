@@ -65,6 +65,15 @@ limitations under the License.
 @use '@carbon/react/scss/components/tooltip';
 @use '@carbon/react/scss/components/ui-shell';
 
+:root {
+  // Carbon no longer exposes certain variables directly without also pulling in
+  // the component styles. So declare a CSS custom property here using the value
+  // from the button component's SASS variables so it can be used later without
+  // duplicating the button styles and causing issues with modal footer buttons
+  // and overflow menus due to the style order in the output.
+  --tkn-button-border-width: #{button.$button-border-width};
+}
+
 :root, .tkn--theme-light {
   @include theme.theme(themes.$g10);
 }

@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-@use '@carbon/react/scss/components/button';
+@use '@carbon/react/scss/components/button/tokens' as buttonTokens;
 @use '@carbon/react/scss/config' as *;
 @use '@carbon/react/scss/spacing' as *;
 @use '@carbon/react/scss/theme' as *;
@@ -89,7 +89,7 @@ limitations under the License.
       .tkn--danger.#{$prefix}--btn--ghost.#{$prefix}--btn--icon-only {
         &:focus, &:hover {
           svg, path {
-            fill: button.$button-danger-primary;
+            fill: buttonTokens.$button-danger-primary;
           }
         }
       }

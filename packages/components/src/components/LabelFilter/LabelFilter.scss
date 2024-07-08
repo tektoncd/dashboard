@@ -11,7 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-@use '@carbon/react/scss/components/button';
 @use '@carbon/react/scss/config' as *;
 @use '@carbon/react/scss/spacing' as *;
 
@@ -26,8 +25,8 @@ limitations under the License.
     align-items: baseline;
 
     // NOTE: add offset to min-block-size to prevent layout shift.
-    min-block-size: calc(#{$spacing-08} + #{button.$button-border-width} + 2px);
-    margin-block-end: calc(#{$spacing-05} - #{button.$button-border-width});
+    min-block-size: calc(#{$spacing-08} + var(--tkn-button-border-width) + 2px);
+    margin-block-end: calc(#{$spacing-05} - var(--tkn-button-border-width));
 
     .#{$prefix}--tag {
       flex-shrink: 0;
