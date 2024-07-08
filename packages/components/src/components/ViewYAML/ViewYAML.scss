@@ -39,6 +39,7 @@ pre.tkn--syntax-highlighter {
 }
 
 .tkn--code-line::before {
+  box-sizing: content-box;
   content: counter(tkn--code-line);
   display: inline-block;
   text-align: end;
