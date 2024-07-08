@@ -37,7 +37,6 @@ const TooltipDropdown = ({
   inline,
   items = defaults.items,
   label,
-  light,
   loading = false,
   onChange,
   selectedItem,
@@ -78,7 +77,6 @@ const TooltipDropdown = ({
       items={options}
       itemToString={itemToString}
       label={options.length === 0 ? emptyString : label}
-      light={light}
       onChange={onChange}
       placeholder={options.length === 0 ? emptyString : label}
       selectedItem={selectedItem}

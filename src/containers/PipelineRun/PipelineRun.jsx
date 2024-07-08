@@ -371,8 +371,7 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
                 valueSelected={cancelStatus}
                 onChange={status => setCancelStatus(status)}
               >
-                {/* TODO: carbon11 - light prop deprecated use Layer component instead */}
-                <RadioTile light name="cancelStatus" value="Cancelled">
+                <RadioTile name="cancelStatus" value="Cancelled">
                   <span>Cancelled</span>
                   <p className="tkn--tile--description">
                     {intl.formatMessage({
@@ -382,11 +381,7 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
                     })}
                   </p>
                 </RadioTile>
-                <RadioTile
-                  light
-                  name="cancelStatus"
-                  value="CancelledRunFinally"
-                >
+                <RadioTile name="cancelStatus" value="CancelledRunFinally">
                   <span>CancelledRunFinally</span>
                   <p className="tkn--tile--description">
                     {intl.formatMessage({
@@ -396,7 +391,7 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
                     })}
                   </p>
                 </RadioTile>
-                <RadioTile light name="cancelStatus" value="StoppedRunFinally">
+                <RadioTile name="cancelStatus" value="StoppedRunFinally">
                   <span>StoppedRunFinally</span>
                   <p className="tkn--tile--description">
                     {intl.formatMessage({
