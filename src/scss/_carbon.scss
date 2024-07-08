@@ -50,8 +50,7 @@ limitations under the License.
 @use '@carbon/react/scss/components/dropdown';
 @use '@carbon/react/scss/components/loading';
 @use '@carbon/react/scss/components/modal';
-@use '@carbon/react/scss/components/notification/inline-notification';
-@use '@carbon/react/scss/components/notification/toast-notification';
+@use '@carbon/react/scss/components/notification';
 @use '@carbon/react/scss/components/pagination';
 @use '@carbon/react/scss/components/tooltip';
 @use '@carbon/react/scss/components/tabs';
@@ -80,4 +79,10 @@ limitations under the License.
   .tkn--theme-system {
     @include tkn--theme-dark;
   }
+}
+
+// TODO: carbon11 - check styles of toast notification on import resources success
+.#{config.$prefix}--inline-notification {
+  margin-block-start: 1rem;
+  margin-block-end: 1rem;
 }
