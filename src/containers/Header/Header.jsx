@@ -17,7 +17,8 @@ import {
   HeaderGlobalBar,
   HeaderMenuButton,
   HeaderName,
-  SkipToContent
+  SkipToContent,
+  Theme
 } from '@carbon/react';
 
 import { SideNav } from '..';
@@ -37,7 +38,12 @@ function Header({
 }) {
   const intl = useIntl();
   return (
-    <CarbonHeader aria-label="Tekton Dashboard" className="tkn--header">
+    <Theme
+      aria-label="Tekton Dashboard"
+      as={CarbonHeader}
+      className="tkn--header"
+      theme="g100"
+    >
       <SkipToContent href="#" onClick={skipToContentClick}>
         {intl.formatMessage({
           id: 'dashboard.skipToContent',
@@ -67,7 +73,7 @@ function Header({
       </HeaderName>
       <HeaderGlobalBar>{children}</HeaderGlobalBar>
       <SideNav expanded={isSideNavExpanded} />
-    </CarbonHeader>
+    </Theme>
   );
 }
 

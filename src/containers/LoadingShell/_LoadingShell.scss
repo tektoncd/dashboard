@@ -11,50 +11,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// TODO: move SideNav.scss to components and import here for consistency
-
 @use '@carbon/react/scss/config' as *;
-@use '@carbon/react/scss/spacing' as *;
-@use '@carbon/react/scss/theme' as *;
 
 .tkn--config-loading-shell {
-  .#{$prefix}--header ~ {
-    .#{$prefix}--content {
-      background-color: $background;
-      transform: none;
-      padding-block-start: $spacing-06;
-    }
-  }
-
   .tkn--config-loading-nav-skeleton {
     .#{$prefix}--skeleton__text {
-      margin-inline-start: 1rem;
+      margin-inline-start: 3rem;
     }
 
     .#{$prefix}--skeleton__heading {
       margin-block-start: 1.5rem;
-    }
-  }
-
-  nav.#{$prefix}--side-nav {
-    .#{$prefix}--side-nav__items {
-      display: flex;
-      flex-direction: column;
-
-      .#{$prefix}--side-nav__item {
-        flex-shrink: 0;
-      }
-
-      div + .#{$prefix}--side-nav__item {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        justify-content: flex-end;
-      }
-
-      .#{$prefix}--side-nav__item:last-child {
-        margin-block-end: 1rem;
-      }
     }
   }
 }

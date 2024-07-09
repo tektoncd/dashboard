@@ -18,7 +18,8 @@ import {
   SideNavItems,
   SideNavLink,
   SideNavMenu,
-  SideNavMenuItem
+  SideNavMenuItem,
+  Theme
 } from '@carbon/react';
 import {
   Information as AboutIcon,
@@ -88,7 +89,13 @@ function SideNav({ expanded, showKubernetesResources = false }) {
   const isTriggersInstalled = useIsTriggersInstalled();
 
   return (
-    <CarbonSideNav aria-label="Main navigation" expanded={expanded} isFixedNav>
+    <Theme
+      aria-label="Main navigation"
+      as={CarbonSideNav}
+      expanded={expanded}
+      isFixedNav
+      theme="g100"
+    >
       <SideNavItems>
         <SideNavMenu
           defaultExpanded
@@ -257,7 +264,7 @@ function SideNav({ expanded, showKubernetesResources = false }) {
           })}
         </SideNavLink>
       </SideNavItems>
-    </CarbonSideNav>
+    </Theme>
   );
 }
 

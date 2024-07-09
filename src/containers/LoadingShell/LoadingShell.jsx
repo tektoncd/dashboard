@@ -22,9 +22,16 @@ import {
   SideNav,
   SideNavItems,
   SideNavLink,
-  SideNavMenu
+  SideNavMenu,
+  Theme
 } from '@carbon/react';
+import {
+  Information as AboutIcon,
+  Settings as SettingsIcon
+} from '@carbon/react/icons';
 import { Loading } from '@tektoncd/dashboard-components';
+
+import TektonIcon from '../../images/tekton-logo-20x20.svg?react';
 
 const SkeletonText = ({ heading, paragraph }) => (
   <CarbonSkeletonText heading={heading} paragraph={paragraph} width="80%" />
@@ -42,7 +49,12 @@ const LoadingShell = () => {
       <HeaderContainer
         isSideNavExpanded
         render={() => (
-          <Header aria-label="Tekton Dashboard" className="tkn--header">
+          <Theme
+            aria-label="Tekton Dashboard"
+            as={Header}
+            className="tkn--header"
+            theme="g100"
+          >
             <HeaderName prefix="Tekton">Dashboard</HeaderName>
             <SideNav
               aria-label="Main navigation"
@@ -53,6 +65,7 @@ const LoadingShell = () => {
               <SideNavItems>
                 <SideNavMenu
                   defaultExpanded
+                  renderIcon={TektonIcon}
                   title={intl.formatMessage({
                     id: 'dashboard.sideNav.tektonResources',
                     defaultMessage: 'Tekton resources'
@@ -66,14 +79,18 @@ const LoadingShell = () => {
                 <SkeletonText heading />
                 <SkeletonText paragraph />
 
-                <SideNavLink icon={<span />}>
+                <SideNavLink
+                  renderIcon={props => <AboutIcon size={20} {...props} />}
+                >
                   {intl.formatMessage({
                     id: 'dashboard.about.title',
                     defaultMessage: 'About Tekton'
                   })}
                 </SideNavLink>
 
-                <SideNavLink icon={<span />}>
+                <SideNavLink
+                  renderIcon={props => <SettingsIcon size={20} {...props} />}
+                >
                   {intl.formatMessage({
                     id: 'dashboard.settings.title',
                     defaultMessage: 'Settings'
@@ -81,7 +98,7 @@ const LoadingShell = () => {
                 </SideNavLink>
               </SideNavItems>
             </SideNav>
-          </Header>
+          </Theme>
         )}
       />
       <Content>

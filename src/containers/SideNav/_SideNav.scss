@@ -13,15 +13,11 @@ limitations under the License.
 
 @use '@carbon/react/scss/colors' as *;
 @use '@carbon/react/scss/config' as *;
+@use '@carbon/react/scss/theme' as *;
 
 .#{$prefix}--header {
   nav.#{$prefix}--side-nav {
-    background-color: $gray-100;
-    border-color: $gray-80;
-    color: $gray-10;
-    height: auto;
-
-    .#{$prefix}--side-nav__items {
+      .#{$prefix}--side-nav__items {
       display: flex;
       flex-direction: column;
 
@@ -29,8 +25,7 @@ limitations under the License.
         flex-shrink: 0;
       }
 
-      .#{$prefix}--side-nav__item.#{$prefix}--side-nav__item--icon
-        + .#{$prefix}--side-nav__item:not(.#{$prefix}--side-nav__item--icon) {
+      .#{$prefix}--side-nav__item:nth-child(1 of .#{$prefix}--side-nav__item:not(.#{$prefix}--side-nav__item--icon)) {
         display: flex;
         flex-direction: column;
         flex-grow: 1;
@@ -48,35 +43,7 @@ limitations under the License.
       }
 
       & > svg path {
-        fill: $gray-10;
-      }
-    }
-
-    &:not(.#{$prefix}--side-nav--expanded) {
-      .#{$prefix}--side-nav__submenu {
-        padding-block: 0;
-        padding-inline: 0.875rem;
-      }
-      .#{$prefix}--side-nav__icon:not(.#{$prefix}--side-nav__submenu-chevron) > svg {
-        inline-size: 1.25rem;
-        block-size: 1.25rem;
-      }
-    }
-
-    .#{$prefix}--side-nav__submenu {
-      color: $gray-10;
-
-      &:focus {
-        outline-color: white;
-      }
-
-      &:hover {
-        background-color: $gray-90;
-        color: white;
-
-        .#{$prefix}--side-nav__icon > svg path {
-          fill: white;
-        }
+        fill: $icon-secondary;
       }
     }
 
@@ -86,51 +53,6 @@ limitations under the License.
       a.#{$prefix}--side-nav__link {
         padding-inline-start: 3rem;
       }
-    }
-
-    .#{$prefix}--side-nav__link {
-      &:focus {
-        outline-color: white;
-      }
-
-      .#{$prefix}--side-nav__link-text {
-        color: $gray-10;
-      }
-
-      &:hover .#{$prefix}--side-nav__link-text {
-        color: white;
-      }
-    }
-
-    .#{$prefix}--side-nav__item--active {
-      .#{$prefix}--side-nav__submenu[aria-expanded=false] {
-        background-color: $gray-80;
-      }
-      .#{$prefix}--side-nav__submenu-title {
-        color: $gray-10;
-      }
-    }
-
-    .#{$prefix}--side-nav__menu a.#{$prefix}--side-nav__link--current,
-    .#{$prefix}--side-nav__menu a.#{$prefix}--side-nav__link[aria-current=page] {
-      background-color: $gray-80;
-    }
-
-    a.#{$prefix}--side-nav__link[aria-current=page],
-    a.#{$prefix}--side-nav__link--current {
-      background-color: $gray-90;
-    }
-
-    .#{$prefix}--side-nav__item:not(.#{$prefix}--side-nav__item--active) > .#{$prefix}--side-nav__link:hover > span,
-    .#{$prefix}--side-nav__item:not(.#{$prefix}--side-nav__item--active) .#{$prefix}--side-nav__menu-item > .#{$prefix}--side-nav__link:hover > span {
-      color: white;
-    }
-
-    .#{$prefix}--side-nav__item:not(.#{$prefix}--side-nav__item--active):hover .#{$prefix}--side-nav__item:not(.#{$prefix}--side-nav__item--active) > .#{$prefix}--side-nav__submenu:hover,
-    .#{$prefix}--side-nav__item:not(.#{$prefix}--side-nav__item--active) > .#{$prefix}--side-nav__link:hover, .#{$prefix}--side-nav__menu a.#{$prefix}--side-nav__link:not(.#{$prefix}--side-nav__link--current):not([aria-current=page]):hover,
-    .#{$prefix}--side-nav a.#{$prefix}--header__menu-item:hover, .#{$prefix}--side-nav .#{$prefix}--header__menu-title[aria-expanded=true]:hover {
-      background-color: $gray-90;
-      color: white;
     }
   }
 }
