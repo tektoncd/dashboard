@@ -13,10 +13,10 @@ limitations under the License.
 
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
+import { Link } from 'react-router-dom';
 import {
   Accordion,
   AccordionItem,
-  ActionableNotification,
   Button,
   Dropdown,
   Form,
@@ -24,8 +24,8 @@ import {
   TextInput,
   Tooltip
 } from '@carbon/react';
+import { ActionableNotification } from '@tektoncd/dashboard-components';
 import { Information } from '@carbon/react/icons';
-import { Link } from 'react-router-dom';
 import {
   ALL_NAMESPACES,
   getErrorMessage,

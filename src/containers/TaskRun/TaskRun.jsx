@@ -15,8 +15,9 @@ limitations under the License.
 import { Fragment, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { InlineNotification, SkeletonText, usePrefix } from '@carbon/react';
+import { SkeletonText, usePrefix } from '@carbon/react';
 import {
+  ActionableNotification,
   Actions,
   Log,
   Portal,
@@ -431,28 +432,24 @@ export function TaskRunContainer() {
     <>
       <div id="tkn--maximized-logs-container" ref={maximizedLogsContainer} />
       {showNotification && (
-        // TODO: carbon11 - Step 6 - InlineNotification with interactive content should be replaced by ActionableNotification
-        <InlineNotification
-          lowContrast
-          actions={
-            showNotification.logsURL ? (
-              <Link
-                className={`${carbonPrefix}--inline-notification__text-wrapper`}
-                to={showNotification.logsURL}
-              >
-                {intl.formatMessage({
-                  id: 'dashboard.run.rerunStatusMessage',
-                  defaultMessage: 'View status'
-                })}
-              </Link>
-            ) : (
-              ''
-            )
-          }
-          title={showNotification.message}
+        <ActionableNotification
+          inline
           kind={showNotification.kind}
-          caption=""
-        />
+          lowContrast
+          title={showNotification.message}
+        >
+          {showNotification.logsURL ? (
+            <Link
+              className={`${carbonPrefix}--inline-notification__text-wrapper`}
+              to={showNotification.logsURL}
+            >
+              {intl.formatMessage({
+                id: 'dashboard.run.rerunStatusMessage',
+                defaultMessage: 'View status'
+              })}
+            </Link>
+          ) : null}
+        </ActionableNotification>
       )}
       <RunHeader
         lastTransitionTime={taskRun.status?.startTime}
