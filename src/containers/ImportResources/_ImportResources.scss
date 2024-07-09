@@ -12,40 +12,14 @@ limitations under the License.
 */
 
 @use '@carbon/react/scss/config' as *;
-@use '@carbon/react/scss/theme' as *;
 
 .tkn--importresources {
-  .#{$prefix}--form__helper-text,
-  .#{$prefix}--label--disabled {
-    color: $text-helper; // Since by default the contrast/colour choice is barely readable.
-  }
-
   .#{$prefix}--label {
     display: flex;
     align-items: center;
 
     .#{$prefix}--tooltip {
       margin-inline-start: 0.5rem;
-
-      .tkn--tooltip-trigger {
-        appearance: none;
-        padding: 0;
-        margin: 0;
-        border: 0;
-        vertical-align: baseline;
-        background: unset;
-        cursor: pointer;
-        text-align: start;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        block-size: 1rem;
-        inline-size: 1rem;
-
-        svg {
-          fill: $icon-secondary;
-        }
-      }
     }
   }
 

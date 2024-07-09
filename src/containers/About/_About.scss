@@ -16,6 +16,42 @@ limitations under the License.
 @use '@carbon/react/scss/theme' as *;
 @use '@carbon/react/scss/type' as *;
 
+$tkn--breakpoint-md: 672px;
+$tkn--breakpoint-lg: 1056px;
+$tkn--breakpoint-max: 1584px;
+
+:root {
+  --tkn-grid-columns: 4;
+  --tkn-grid-column-size: 1fr;
+  --tkn-grid-gutter: 2rem;
+  --tkn-grid-margin: 0;
+
+  @media (min-width: $tkn--breakpoint-md) {
+    --tkn-grid-columns: 8;
+    --tkn-grid-margin: 1rem;
+  }
+
+  @media (min-width: $tkn--breakpoint-lg) {
+    --tkn-grid-columns: 16;
+  }
+
+  @media (min-width: $tkn--breakpoint-max) {
+    --tkn-grid-margin: 1.5rem;
+  }
+}
+
+.tkn--css-grid {
+  display: grid;
+  max-inline-size: 99rem;
+  padding-inline: calc(var(--tkn-grid-margin) + var(--tkn-grid-gutter) / 2);
+  margin-inline-end: auto;
+  column-gap: var(--tkn-grid-gutter);
+  grid-template-columns: repeat(
+    var(--tkn-grid-columns),
+    minmax(0, var(--tkn-grid-column-size))
+  );
+}
+
 .tkn--about {
   margin-block-start: -1.5rem;
   margin-block-end: 0;
