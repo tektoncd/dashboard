@@ -33,25 +33,17 @@ import Tabs from '../Tabs';
 import ViewYAML from '../ViewYAML';
 
 function HelpIcon({ title }) {
-  const intl = useIntl();
-
   if (!title) {
     return null;
   }
 
-  // TODO: carbon11 - review tooltip usage
   return (
-    <Tooltip
-      align="end"
-      direction="top"
-      iconDescription={intl.formatMessage({
-        id: 'dashboard.resourceDetails.description',
-        defaultMessage: 'Description'
-      })}
-      renderIcon={Information}
-      showIcon
-    >
-      {title}
+    <Tooltip align="top-end" autoAlign label={title}>
+      {/* false positive, Carbon automatically adds aria-labelledby to the button */}
+      {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
+      <button className="tkn--tooltip-trigger" type="button">
+        <Information />
+      </button>
     </Tooltip>
   );
 }

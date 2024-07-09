@@ -16,12 +16,12 @@ import { useIntl } from 'react-intl';
 import {
   Accordion,
   AccordionItem,
+  ActionableNotification,
   Button,
   Dropdown,
   Form,
   InlineNotification,
   TextInput,
-  ToastNotification,
   Tooltip
 } from '@carbon/react';
 import { Information } from '@carbon/react/icons';
@@ -414,18 +414,17 @@ export function ImportResources() {
           </AccordionItem>
         </Accordion>
         {submitSuccess && (
-          // TODO: carbon11 - Step 6 - ToastNotification with interactive content should be replaced by ActionableNotification
-          <ToastNotification
-            caption={<Link to={logsURL}>View status of this run</Link>}
+          <ActionableNotification
             kind="success"
             lowContrast
             title={intl.formatMessage({
               id: 'dashboard.importResources.triggeredNotification',
               defaultMessage: 'Triggered PipelineRun to import Tekton resources'
             })}
-            subtitle=""
             onCloseButtonClick={resetSuccess}
-          />
+          >
+            <Link to={logsURL}>View status of this run</Link>
+          </ActionableNotification>
         )}
         <Button kind="primary" onClick={handleSubmit}>
           {intl.formatMessage({

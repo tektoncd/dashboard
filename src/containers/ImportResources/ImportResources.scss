@@ -60,10 +60,14 @@ limitations under the License.
     max-inline-size: 350px;
   }
 
-  .#{$prefix}--toast-notification {
+  .#{$prefix}--actionable-notification--toast {
     margin-block-start: 2rem;
     margin-block-end: 1rem;
-    margin-inline: 0;
+
+    a {
+      display: inline-block;
+      margin-block-start: 1rem;
+    }
   }
 
   .#{$prefix}--form-item,

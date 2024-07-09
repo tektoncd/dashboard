@@ -1,5 +1,5 @@
 /*
-Copyright 2022-2023 The Tekton Authors
+Copyright 2022-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -22,7 +22,7 @@ module.exports = defineConfig({
     experimentalRunAllSpecs: true,
     experimentalStudio: true,
     setupNodeEvents(on, config) {
-      config.env.carbonPrefix = 'bx'; // eslint-disable-line no-param-reassign
+      config.env.carbonPrefix = 'cds'; // eslint-disable-line no-param-reassign
 
       on('after:spec', (spec, results) => {
         if (isCI && results && results.video && results.stats.failures === 0) {
