@@ -13,14 +13,8 @@ limitations under the License.
 
 import { Component } from 'react';
 import { injectIntl } from 'react-intl';
-import {
-  Button,
-  Form,
-  InlineNotification,
-  Link,
-  Search,
-  Tag
-} from '@carbon/react';
+import { Button, Form, Link, Search, Tag } from '@carbon/react';
+import { ActionableNotification } from '..';
 
 function arrayUnique(arr) {
   return arr.filter((item, index) => arr.indexOf(item) >= index);
@@ -130,17 +124,15 @@ class LabelFilter extends Component {
     return (
       <div className="tkn--label-filter">
         {!isValid && (
-          // TODO: carbon11 - Step 6 - InlineNotification with interactive content should be replaced by ActionableNotification
-          <InlineNotification
-            lowContrast
+          <ActionableNotification
+            inline
             kind="error"
+            lowContrast
             title={filterMessage}
-            subtitle=""
-            role="alert"
             onCloseButtonClick={this.handleCloseFilterError}
           >
             <Link href={url}>{urlMessage}</Link>
-          </InlineNotification>
+          </ActionableNotification>
         )}
         <Form onSubmit={this.handleAddFilter} autoComplete="on">
           <Search

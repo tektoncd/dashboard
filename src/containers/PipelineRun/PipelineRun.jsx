@@ -12,7 +12,11 @@ limitations under the License.
 */
 
 import { useEffect, useRef, useState } from 'react';
-import { Actions, PipelineRun } from '@tektoncd/dashboard-components';
+import {
+  ActionableNotification,
+  Actions,
+  PipelineRun
+} from '@tektoncd/dashboard-components';
 import {
   getStatus,
   getTaskRunsWithPlaceholders,
@@ -24,12 +28,7 @@ import {
   urls,
   useTitleSync
 } from '@tektoncd/dashboard-utils';
-import {
-  InlineNotification,
-  RadioTile,
-  TileGroup,
-  usePrefix
-} from '@carbon/react';
+import { RadioTile, TileGroup, usePrefix } from '@carbon/react';
 
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useIntl } from 'react-intl';
@@ -501,28 +500,24 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
     <>
       <div id="tkn--maximized-logs-container" ref={maximizedLogsContainer} />
       {showRunActionNotification && (
-        // TODO: carbon11 - Step 6 - InlineNotification with interactive content should be replaced by ActionableNotification
-        <InlineNotification
-          lowContrast
-          actions={
-            showRunActionNotification.logsURL ? (
-              <Link
-                className={`${carbonPrefix}--inline-notification__text-wrapper`}
-                to={showRunActionNotification.logsURL}
-              >
-                {intl.formatMessage({
-                  id: 'dashboard.run.rerunStatusMessage',
-                  defaultMessage: 'View status'
-                })}
-              </Link>
-            ) : (
-              ''
-            )
-          }
-          title={showRunActionNotification.message}
+        <ActionableNotification
+          inline
           kind={showRunActionNotification.kind}
-          caption=""
-        />
+          lowContrast
+          title={showRunActionNotification.message}
+        >
+          {showRunActionNotification.logsURL ? (
+            <Link
+              className={`${carbonPrefix}--inline-notification__text-wrapper`}
+              to={showRunActionNotification.logsURL}
+            >
+              {intl.formatMessage({
+                id: 'dashboard.run.rerunStatusMessage',
+                defaultMessage: 'View status'
+              })}
+            </Link>
+          ) : null}
+        </ActionableNotification>
       )}
       <PipelineRun
         enableLogAutoScroll

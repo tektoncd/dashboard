@@ -12,6 +12,7 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
+export { default as ActionableNotification } from './ActionableNotification';
 export { default as Actions } from './Actions';
 export { default as DataTableSkeleton } from './DataTableSkeleton';
 export { default as DetailsHeader } from './DetailsHeader';

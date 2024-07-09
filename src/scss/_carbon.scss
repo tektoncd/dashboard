@@ -92,8 +92,14 @@ limitations under the License.
   }
 }
 
-// TODO: carbon11 - check styles of toast notification on import resources success
+.#{config.$prefix}--actionable-notification,
+.#{config.$prefix}--actionable-notification--toast,
 .#{config.$prefix}--inline-notification {
   margin-block-start: 1rem;
   margin-block-end: 1rem;
+}
+
+.#{config.$prefix}--actionable-notification--toast a {
+  display: inline-block;
+  margin-block-start: 1rem;
 }

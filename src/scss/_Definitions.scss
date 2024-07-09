@@ -24,10 +24,10 @@ main {
     background-color: transparent !important;
   }
 
-  .#{$prefix}--inline-notification {
+  .#{$prefix}--inline-notification, .#{$prefix}--actionable-notification {
     max-inline-size: 100%;
 
-    .#{$prefix}--inline-notification__text-wrapper {
+    .#{$prefix}--inline-notification__text-wrapper, .#{$prefix}--actionable-notification__text-wrapper {
       align-items: center;
     }
   }

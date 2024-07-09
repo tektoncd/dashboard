@@ -17,6 +17,7 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 import { UndefinedFilled as UndefinedIcon } from '@carbon/react/icons';
 import {
+  ActionableNotification,
   Actions,
   FormattedDuration,
   Param,
@@ -25,7 +26,6 @@ import {
   Table
 } from '@tektoncd/dashboard-components';
 import { getStatus, urls, useTitleSync } from '@tektoncd/dashboard-utils';
-import { InlineNotification, usePrefix } from '@carbon/react';
 
 import {
   deleteCustomRun,
@@ -93,7 +93,6 @@ function CustomRun() {
   const location = useLocation();
   const navigate = useNavigate();
   const { namespace, name: resourceName } = useParams();
-  const carbonPrefix = usePrefix();
 
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');
@@ -281,28 +280,21 @@ function CustomRun() {
   return (
     <>
       {showNotification && (
-        // TODO: carbon11 - Step 6 - InlineNotification with interactive content should be replaced by ActionableNotification
-        <InlineNotification
-          lowContrast
-          actions={
-            showNotification.logsURL ? (
-              <Link
-                className={`${carbonPrefix}--inline-notification__text-wrapper`}
-                to={showNotification.logsURL}
-              >
-                {intl.formatMessage({
-                  id: 'dashboard.run.rerunStatusMessage',
-                  defaultMessage: 'View status'
-                })}
-              </Link>
-            ) : (
-              ''
-            )
-          }
-          title={showNotification.message}
+        <ActionableNotification
+          inline
           kind={showNotification.kind}
-          caption=""
-        />
+          lowContrast
+          title={showNotification.message}
+        >
+          {showNotification.logsURL ? (
+            <Link to={showNotification.logsURL}>
+              {intl.formatMessage({
+                id: 'dashboard.run.rerunStatusMessage',
+                defaultMessage: 'View status'
+              })}
+            </Link>
+          ) : null}
+        </ActionableNotification>
       )}
 
       <ResourceDetails
