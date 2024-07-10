@@ -14,12 +14,10 @@ limitations under the License.
 import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
 import { getStatus, getStepStatusReason } from '@tektoncd/dashboard-utils';
-import { TabList, TabPanel, TabPanels } from '@carbon/react';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@carbon/react';
 
 import DetailsHeader from '../DetailsHeader';
 import StepDefinition from '../StepDefinition';
-import Tab from '../Tab';
-import Tabs from '../Tabs';
 
 const tabs = ['logs', 'details'];
 
@@ -80,9 +78,11 @@ const StepDetails = ({
           </Tab>
         </TabList>
         <TabPanels>
-          <TabPanel>{logContainer}</TabPanel>
+          <TabPanel>{selectedTabIndex === 0 && logContainer}</TabPanel>
           <TabPanel>
-            <StepDefinition definition={definition} />
+            {selectedTabIndex === 1 && (
+              <StepDefinition definition={definition} />
+            )}
           </TabPanel>
         </TabPanels>
       </Tabs>

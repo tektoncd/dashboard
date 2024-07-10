@@ -18,18 +18,18 @@ import { getParams, taskRunHasWarning } from '@tektoncd/dashboard-utils';
 import {
   ContentSwitcher,
   Switch,
+  Tab,
   TabList,
   TabPanel,
   TabPanels,
+  Tabs,
   Tooltip
 } from '@carbon/react';
 import { Information } from '@carbon/react/icons';
 
 import DetailsHeader from '../DetailsHeader';
 import Param from '../Param';
-import Tab from '../Tab';
 import Table from '../Table';
-import Tabs from '../Tabs';
 import ViewYAML from '../ViewYAML';
 
 function HelpIcon({ title }) {
@@ -183,7 +183,9 @@ const TaskRunDetails = ({
     );
     tabPanels.push(
       <TabPanel>
-        <div className="tkn--step-status">{paramsTable}</div>
+        {selectedTabIndex === tabPanels.length && (
+          <div className="tkn--step-status">{paramsTable}</div>
+        )}
       </TabPanel>
     );
   }
@@ -198,7 +200,9 @@ const TaskRunDetails = ({
     );
     tabPanels.push(
       <TabPanel>
-        <div className="tkn--step-status">{resultsTable}</div>
+        {selectedTabIndex === tabPanels.length && (
+          <div className="tkn--step-status">{resultsTable}</div>
+        )}
       </TabPanel>
     );
   }
@@ -212,51 +216,55 @@ const TaskRunDetails = ({
   );
   tabPanels.push(
     <TabPanel>
-      <div className="tkn--step-status">
-        <ViewYAML
-          dark
-          enableSyntaxHighlighting
-          resource={
-            taskRun.status ||
-            intl.formatMessage({
-              id: 'dashboard.taskRun.status.pending',
-              defaultMessage: 'Pending'
-            })
-          }
-        />
-      </div>
+      {selectedTabIndex === tabPanels.length && (
+        <div className="tkn--step-status">
+          <ViewYAML
+            dark
+            enableSyntaxHighlighting
+            resource={
+              taskRun.status ||
+              intl.formatMessage({
+                id: 'dashboard.taskRun.status.pending',
+                defaultMessage: 'Pending'
+              })
+            }
+          />
+        </div>
+      )}
     </TabPanel>
   );
   if (pod) {
     tabList.push(<Tab>Pod</Tab>);
     tabPanels.push(
       <TabPanel>
-        <div className="tkn--step-status">
-          {hasEvents ? (
-            <ContentSwitcher onChange={({ name }) => setPodContent(name)}>
-              <Switch
-                name="resource"
-                text={intl.formatMessage({
-                  id: 'dashboard.pod.resource',
-                  defaultMessage: 'Resource'
-                })}
-              />
-              <Switch
-                name="events"
-                text={intl.formatMessage({
-                  id: 'dashboard.pod.events',
-                  defaultMessage: 'Events'
-                })}
-              />
-            </ContentSwitcher>
-          ) : null}
-          {podContent === 'resource' ? (
-            <ViewYAML dark enableSyntaxHighlighting resource={podResource} />
-          ) : null}
-          {hasEvents && podContent === 'events' ? (
-            <ViewYAML dark enableSyntaxHighlighting resource={podEvents} />
-          ) : null}
-        </div>
+        {selectedTabIndex === tabPanels.length && (
+          <div className="tkn--step-status">
+            {hasEvents ? (
+              <ContentSwitcher onChange={({ name }) => setPodContent(name)}>
+                <Switch
+                  name="resource"
+                  text={intl.formatMessage({
+                    id: 'dashboard.pod.resource',
+                    defaultMessage: 'Resource'
+                  })}
+                />
+                <Switch
+                  name="events"
+                  text={intl.formatMessage({
+                    id: 'dashboard.pod.events',
+                    defaultMessage: 'Events'
+                  })}
+                />
+              </ContentSwitcher>
+            ) : null}
+            {podContent === 'resource' ? (
+              <ViewYAML dark enableSyntaxHighlighting resource={podResource} />
+            ) : null}
+            {hasEvents && podContent === 'events' ? (
+              <ViewYAML dark enableSyntaxHighlighting resource={podEvents} />
+            ) : null}
+          </div>
+        )}
       </TabPanel>
     );
   }
