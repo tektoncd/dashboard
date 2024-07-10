@@ -231,7 +231,7 @@ function SideNav({ expanded, showKubernetesResources = false }) {
 
         {!isReadOnly && (
           <SideNavLink
-            element={NavLink}
+            as={NavLink}
             renderIcon={props => <ImportResourcesIcon size={20} {...props} />}
             to={urls.importResources()}
           >
@@ -243,7 +243,7 @@ function SideNav({ expanded, showKubernetesResources = false }) {
         )}
 
         <SideNavLink
-          element={NavLink}
+          as={NavLink}
           renderIcon={props => <AboutIcon size={20} {...props} />}
           to={urls.about()}
         >
@@ -254,7 +254,7 @@ function SideNav({ expanded, showKubernetesResources = false }) {
         </SideNavLink>
 
         <SideNavLink
-          element={NavLink}
+          as={NavLink}
           renderIcon={props => <SettingsIcon size={20} {...props} />}
           to={urls.settings()}
         >
