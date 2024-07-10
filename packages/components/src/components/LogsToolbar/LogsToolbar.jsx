@@ -62,7 +62,11 @@ const LogsToolbar = ({ isMaximized, name, toggleMaximized, url }) => {
           </title>
         </Launch>
       </a>
-      <a className={`${carbonPrefix}--copy-btn`} download={name} href={url}>
+      <a
+        className={`${carbonPrefix}--btn ${carbonPrefix}--btn--icon-only ${carbonPrefix}--copy-btn`}
+        download={name}
+        href={url}
+      >
         <Download>
           <title>
             {intl.formatMessage({
