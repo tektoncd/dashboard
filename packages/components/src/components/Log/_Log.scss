@@ -86,6 +86,7 @@ pre.tkn--log {
   .#{$prefix}--copy-btn {
     inline-size: 2rem;
     block-size: 2rem;
+    min-block-size: 2rem;
     background-color: $background;
 
     &:hover {
