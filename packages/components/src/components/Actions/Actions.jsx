@@ -15,11 +15,12 @@ import { Component } from 'react';
 import { injectIntl } from 'react-intl';
 import {
   Button,
+  MenuButton,
+  MenuItem,
+  MenuItemDivider,
   OverflowMenu,
-  OverflowMenuItem,
-  PrefixContext
+  OverflowMenuItem
 } from '@carbon/react';
-import { CaretDown } from '@carbon/react/icons';
 
 import Modal from '../Modal';
 
@@ -44,10 +45,109 @@ class Actions extends Component {
     }
   };
 
-  render() {
-    const { modal = {}, showDialog } = this.state;
+  getButton() {
     const { intl, items, kind, resource } = this.props;
     const isButton = kind === 'button';
+
+    if (isButton && items.length === 1) {
+      const { action, actionText, icon, modalProperties } = items[0];
+      return (
+        <Button
+          kind="tertiary"
+          onClick={() =>
+            this.handleClick(() => action(resource), modalProperties)
+          }
+          renderIcon={icon}
+          size="md"
+        >
+          {actionText}
+        </Button>
+      );
+    }
+
+    const title = intl.formatMessage({
+      id: 'dashboard.list.menu.tooltip',
+      defaultMessage: 'Actions'
+    });
+
+    if (isButton) {
+      return (
+        <MenuButton
+          className="tkn--actions-dropdown"
+          kind="tertiary"
+          label={title}
+          menuAlignment="bottom-end"
+          size="md"
+        >
+          {items.map(item => {
+            const {
+              actionText,
+              action,
+              danger,
+              disable,
+              hasDivider,
+              modalProperties
+            } = item;
+            const disabled = disable && disable(resource);
+            return (
+              <>
+                {hasDivider && <MenuItemDivider />}
+                <MenuItem
+                  disabled={disabled}
+                  key={actionText}
+                  kind={danger ? 'danger' : 'default'}
+                  label={actionText}
+                  onClick={() =>
+                    this.handleClick(() => action(resource), modalProperties)
+                  }
+                />
+              </>
+            );
+          })}
+        </MenuButton>
+      );
+    }
+    return (
+      <OverflowMenu
+        align="left"
+        ariaLabel={title}
+        className="tkn--actions-dropdown"
+        flipped
+        iconDescription={title}
+        selectorPrimaryFocus="button:not([disabled])"
+        title={title}
+      >
+        {items.map(item => {
+          const {
+            actionText,
+            action,
+            danger,
+            disable,
+            hasDivider,
+            modalProperties
+          } = item;
+          const disabled = disable && disable(resource);
+          return (
+            <OverflowMenuItem
+              disabled={disabled}
+              hasDivider={hasDivider}
+              isDelete={danger}
+              itemText={actionText}
+              key={actionText}
+              onClick={() =>
+                this.handleClick(() => action(resource), modalProperties)
+              }
+              requireTitle
+            />
+          );
+        })}
+      </OverflowMenu>
+    );
+  }
+
+  render() {
+    const { modal = {}, showDialog } = this.state;
+    const { intl, resource } = this.props;
 
     const dialog = showDialog ? (
       <Modal
@@ -70,88 +170,13 @@ class Actions extends Component {
       </Modal>
     ) : null;
 
-    if (isButton && items.length === 1) {
-      const { action, actionText, icon, modalProperties } = items[0];
-      return (
-        <>
-          <Button
-            kind="tertiary"
-            onClick={() =>
-              this.handleClick(() => action(resource), modalProperties)
-            }
-            renderIcon={icon}
-            size="md"
-          >
-            {actionText}
-          </Button>
-          {dialog}
-        </>
-      );
-    }
-
-    const title = intl.formatMessage({
-      id: 'dashboard.list.menu.tooltip',
-      defaultMessage: 'Actions'
-    });
-
-    const carbonPrefix = this.context;
-
-    // TODO: carbon11 - for `isButton` case, use MenuButton component instead
     return (
       <>
-        <OverflowMenu
-          ariaLabel={title}
-          className={`tkn--actions-dropdown${
-            isButton ? ' tkn--actions-dropdown--button' : ''
-          }`}
-          flipped
-          iconDescription={title}
-          selectorPrimaryFocus="button:not([disabled])"
-          title={title}
-          renderIcon={
-            isButton
-              ? iconProps => (
-                  <span
-                    {...iconProps}
-                    className={`${carbonPrefix}--btn ${carbonPrefix}--btn--md ${carbonPrefix}--btn--tertiary`}
-                  >
-                    {title}
-                    <CaretDown className={`${carbonPrefix}--btn__icon`} />
-                  </span>
-                )
-              : undefined
-          }
-        >
-          {items.map(item => {
-            const {
-              actionText,
-              action,
-              danger,
-              disable,
-              hasDivider,
-              modalProperties
-            } = item;
-            const disabled = disable && disable(resource);
-            return (
-              <OverflowMenuItem
-                disabled={disabled}
-                hasDivider={hasDivider}
-                isDelete={danger}
-                itemText={actionText}
-                key={actionText}
-                onClick={() =>
-                  this.handleClick(() => action(resource), modalProperties)
-                }
-                requireTitle
-              />
-            );
-          })}
-        </OverflowMenu>
+        {this.getButton()}
         {dialog}
       </>
     );
   }
 }
-Actions.contextType = PrefixContext;
 
 export default injectIntl(Actions);
