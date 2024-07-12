@@ -13,6 +13,7 @@ limitations under the License.
 
 @use '@carbon/react/scss/config' as *;
 @use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/utilities/visually-hidden' as *;
 
 .tkn--label-filter {
   form {
@@ -43,12 +44,5 @@ limitations under the License.
 }
 
 .tkn--visually-hidden:not(:focus):not(:active) {
-  position: absolute;
-  block-size: 1px;
-  inline-size: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
+  @include visually-hidden;
 }
