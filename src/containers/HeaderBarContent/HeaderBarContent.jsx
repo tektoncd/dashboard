@@ -91,6 +91,14 @@ export default function HeaderBarContent() {
   return (
     <>
       <NamespacesDropdown
+        downshiftProps={{
+          onStateChange: e => {
+            if (e.type === '__function_select_item__' && e.inputValue === '') {
+              // user clicked the 'clear' button, reset to All Namespaces
+              handleNamespaceSelected({});
+            }
+          }
+        }}
         id="header-namespace-dropdown"
         onChange={handleNamespaceSelected}
         selectedItem={{ id: namespace, text: namespace }}
