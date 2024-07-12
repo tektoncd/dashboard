@@ -15,6 +15,7 @@ limitations under the License.
 import { useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useIntl } from 'react-intl';
+import { InlineNotification } from '@carbon/react';
 import { UndefinedFilled as UndefinedIcon } from '@carbon/react/icons';
 import {
   ActionableNotification,
@@ -279,22 +280,27 @@ function CustomRun() {
 
   return (
     <>
-      {showNotification && (
+      {showNotification?.logsURL && (
         <ActionableNotification
           inline
           kind={showNotification.kind}
           lowContrast
           title={showNotification.message}
         >
-          {showNotification.logsURL ? (
-            <Link to={showNotification.logsURL}>
-              {intl.formatMessage({
-                id: 'dashboard.run.rerunStatusMessage',
-                defaultMessage: 'View status'
-              })}
-            </Link>
-          ) : null}
+          <Link to={showNotification.logsURL}>
+            {intl.formatMessage({
+              id: 'dashboard.run.rerunStatusMessage',
+              defaultMessage: 'View status'
+            })}
+          </Link>
         </ActionableNotification>
+      )}
+      {showNotification && !showNotification.logsURL && (
+        <InlineNotification
+          kind={showNotification.kind}
+          lowContrast
+          title={showNotification.message}
+        />
       )}
 
       <ResourceDetails

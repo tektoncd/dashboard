@@ -15,7 +15,7 @@ limitations under the License.
 import { Fragment, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { SkeletonText, usePrefix } from '@carbon/react';
+import { InlineNotification, SkeletonText } from '@carbon/react';
 import {
   ActionableNotification,
   Actions,
@@ -64,7 +64,6 @@ export function TaskRunContainer() {
   const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
-  const carbonPrefix = usePrefix();
 
   const { name, namespace: namespaceParam } = params;
 
@@ -431,25 +430,27 @@ export function TaskRunContainer() {
   return (
     <>
       <div id="tkn--maximized-logs-container" ref={maximizedLogsContainer} />
-      {showNotification && (
+      {showNotification?.logsURL && (
         <ActionableNotification
           inline
           kind={showNotification.kind}
           lowContrast
           title={showNotification.message}
         >
-          {showNotification.logsURL ? (
-            <Link
-              className={`${carbonPrefix}--inline-notification__text-wrapper`}
-              to={showNotification.logsURL}
-            >
-              {intl.formatMessage({
-                id: 'dashboard.run.rerunStatusMessage',
-                defaultMessage: 'View status'
-              })}
-            </Link>
-          ) : null}
+          <Link to={showNotification.logsURL}>
+            {intl.formatMessage({
+              id: 'dashboard.run.rerunStatusMessage',
+              defaultMessage: 'View status'
+            })}
+          </Link>
         </ActionableNotification>
+      )}
+      {showNotification && !showNotification.logsURL && (
+        <InlineNotification
+          kind={showNotification.kind}
+          lowContrast
+          title={showNotification.message}
+        />
       )}
       <RunHeader
         lastTransitionTime={taskRun.status?.startTime}

@@ -28,7 +28,7 @@ import {
   urls,
   useTitleSync
 } from '@tektoncd/dashboard-utils';
-import { RadioTile, TileGroup, usePrefix } from '@carbon/react';
+import { InlineNotification, RadioTile, TileGroup } from '@carbon/react';
 
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useIntl } from 'react-intl';
@@ -63,7 +63,6 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
   const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
-  const carbonPrefix = usePrefix();
 
   const { name, namespace } = params;
 
@@ -499,25 +498,27 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
   return (
     <>
       <div id="tkn--maximized-logs-container" ref={maximizedLogsContainer} />
-      {showRunActionNotification && (
+      {showRunActionNotification?.logsURL && (
         <ActionableNotification
           inline
           kind={showRunActionNotification.kind}
           lowContrast
           title={showRunActionNotification.message}
         >
-          {showRunActionNotification.logsURL ? (
-            <Link
-              className={`${carbonPrefix}--inline-notification__text-wrapper`}
-              to={showRunActionNotification.logsURL}
-            >
-              {intl.formatMessage({
-                id: 'dashboard.run.rerunStatusMessage',
-                defaultMessage: 'View status'
-              })}
-            </Link>
-          ) : null}
+          <Link to={showRunActionNotification.logsURL}>
+            {intl.formatMessage({
+              id: 'dashboard.run.rerunStatusMessage',
+              defaultMessage: 'View status'
+            })}
+          </Link>
         </ActionableNotification>
+      )}
+      {showRunActionNotification && !showRunActionNotification.logsURL && (
+        <InlineNotification
+          kind={showRunActionNotification.kind}
+          lowContrast
+          title={showRunActionNotification.message}
+        />
       )}
       <PipelineRun
         enableLogAutoScroll
