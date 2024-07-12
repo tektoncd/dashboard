@@ -18,7 +18,11 @@ limitations under the License.
 @use '@carbon/react/scss/reset';
 
 // Emit the Plex font-face declarations
-@use '@carbon/react/scss/fonts';
+@use '@carbon/react/scss/fonts' with (
+  $fonts: (
+    IBM-Plex-Serif: false
+  )
+);
 
 @use '@carbon/react/scss/themes';
 @use '@carbon/react/scss/theme' with (
