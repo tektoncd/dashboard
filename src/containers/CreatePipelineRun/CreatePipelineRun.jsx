@@ -788,7 +788,6 @@ function CreatePipelineRun() {
               id: 'dashboard.createPipelineRun.status.pending',
               defaultMessage: 'Create PipelineRun in pending state'
             })}
-            // TODO: carbon11 - underlying element changed to switch button, check events working as expected
             onToggle={checked}
             labelA={intl.formatMessage({
               id: 'dashboard.createPipelineRun.disabled',
