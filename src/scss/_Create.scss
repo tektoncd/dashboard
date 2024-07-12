@@ -56,8 +56,6 @@ limitations under the License.
   display: flex;
 
   .tkn--create--yaml-mode {
-    display: flex;
-    justify-content: flex-end;
-    flex: 1 1 0;
+    margin-inline-start: auto;
   }
 }
