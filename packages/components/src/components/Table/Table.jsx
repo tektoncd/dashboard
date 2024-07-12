@@ -16,16 +16,16 @@ import PropTypes from 'prop-types';
 import {
   Button,
   DataTable,
+  DataTableSkeleton,
   TableBatchAction,
   TableBatchActions,
   TableSelectAll,
   TableSelectRow,
   TableToolbar,
-  TableToolbarContent
+  TableToolbarContent,
+  usePrefix
 } from '@carbon/react';
 import { ALL_NAMESPACES, classNames } from '@tektoncd/dashboard-utils';
-
-import DataTableSkeleton from '../DataTableSkeleton';
 
 const {
   TableContainer,
@@ -130,6 +130,7 @@ const Table = ({
   title = null,
   toolbarButtons = defaults.toolbarButtons
 }) => {
+  const carbonPrefix = usePrefix();
   const intl = useIntl();
   const shouldRenderBatchActions = !!(
     dataRows.length && batchActionButtons.length
@@ -143,6 +144,31 @@ const Table = ({
     'tkn--table-with-details': hasDetails,
     'tkn--table-with-filters': filters
   });
+
+  if (loading) {
+    const tableSizeClassNames = {
+      xs: `${carbonPrefix}--data-table--xs`,
+      sm: `${carbonPrefix}--data-table--sm`,
+      md: `${carbonPrefix}--data-table--md`,
+      lg: `${carbonPrefix}--data-table--lg`,
+      xl: `${carbonPrefix}--data-table--xl`
+    };
+
+    return (
+      <div className={tableClassNames} id={id}>
+        <DataTableSkeleton
+          aria-label={title}
+          className={tableSizeClassNames[size]}
+          columnCount={dataHeaders.length}
+          headers={dataHeaders}
+          rowCount={skeletonRowCount}
+          showHeader={!!title}
+          showToolbar={hasToolbar}
+          size={size}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className={tableClassNames} id={id}>
@@ -206,68 +232,59 @@ const Table = ({
                 </TableToolbarContent>
               </TableToolbar>
             )}
-            {loading ? (
-              <DataTableSkeleton
-                columnCount={headers.length}
-                headers={headers}
-                rowCount={skeletonRowCount}
-                size={size}
-              />
-            ) : (
-              <CarbonTable {...getTableProps()}>
-                <TableHead>
-                  <TableRow>
-                    {shouldRenderBatchActions && (
-                      <TableSelectAll {...getSelectionProps()} />
-                    )}
-                    {headers.map(header =>
-                      header.header ? (
-                        <TableHeader
-                          {...getHeaderProps({ header })}
-                          key={header.key}
-                        >
-                          {header.header}
-                        </TableHeader>
-                      ) : (
-                        <TableHeader key={header.key} />
-                      )
-                    )}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {dataRows.length === 0 && (
-                    <TableRow>
-                      <TableCell colSpan={headers.length}>
-                        <div className="noRows">
-                          {selectedNamespace === ALL_NAMESPACES
-                            ? emptyTextAllNamespaces
-                            : emptyTextSelectedNamespace}
-                        </div>
-                      </TableCell>
-                    </TableRow>
+            <CarbonTable {...getTableProps()}>
+              <TableHead>
+                <TableRow>
+                  {shouldRenderBatchActions && (
+                    <TableSelectAll {...getSelectionProps()} />
                   )}
-                  {rows.map(row => (
-                    <TableRow {...getRowProps({ row })} key={row.id}>
-                      {shouldRenderBatchActions && (
-                        <TableSelectRow {...getSelectionProps({ row })} />
-                      )}
-                      {row.cells.map(cell => (
-                        <TableCell
-                          key={cell.id}
-                          id={id ? `${id}:${cell.id}` : cell.id}
-                          className={`cell-${cell.info.header}`}
-                          {...(typeof cell.value === 'string' && {
-                            title: cell.value
-                          })}
-                        >
-                          {cell.value}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </CarbonTable>
-            )}
+                  {headers.map(header =>
+                    header.header ? (
+                      <TableHeader
+                        {...getHeaderProps({ header })}
+                        key={header.key}
+                      >
+                        {header.header}
+                      </TableHeader>
+                    ) : (
+                      <TableHeader key={header.key} />
+                    )
+                  )}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {dataRows.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={headers.length}>
+                      <div className="noRows">
+                        {selectedNamespace === ALL_NAMESPACES
+                          ? emptyTextAllNamespaces
+                          : emptyTextSelectedNamespace}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )}
+                {rows.map(row => (
+                  <TableRow {...getRowProps({ row })} key={row.id}>
+                    {shouldRenderBatchActions && (
+                      <TableSelectRow {...getSelectionProps({ row })} />
+                    )}
+                    {row.cells.map(cell => (
+                      <TableCell
+                        key={cell.id}
+                        id={id ? `${id}:${cell.id}` : cell.id}
+                        className={`cell-${cell.info.header}`}
+                        {...(typeof cell.value === 'string' && {
+                          title: cell.value
+                        })}
+                      >
+                        {cell.value}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </CarbonTable>
           </TableContainer>
         )}
       />
