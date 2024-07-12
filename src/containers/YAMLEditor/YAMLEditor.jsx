@@ -112,7 +112,7 @@ export default function YAMLEditor({
   }
 
   return (
-    <div className="tkn--create">
+    <div className="tkn--create tkn--create-yaml">
       <div className="tkn--create--heading">
         <h1 id="main-content-header">
           {intl.formatMessage(
@@ -156,16 +156,17 @@ export default function YAMLEditor({
             <Loading message={loadingMessage} />
           ) : (
             <CodeMirror
-              value={code}
+              className="tkn--editor"
+              editable={!loading}
               height="800px"
+              onChange={onChange}
               theme="dark"
+              value={code}
               // there's an issue with CodeMirror in the unit tests when loading certain extensions
               // but they're not relevant for the purposes of the tests so skip adding them
               {...(import.meta.env.MODE === 'test'
                 ? null
                 : { extensions: [StreamLanguage.define(yamlMode)] })}
-              onChange={onChange}
-              editable={!loading}
             />
           )}
         </FormGroup>
