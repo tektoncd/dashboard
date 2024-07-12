@@ -70,7 +70,7 @@ const TooltipDropdown = ({
 
   return (
     <ComboBox
-      className={className} // TODO: carbon11 - Step 6 - className now applies to the outermost element
+      className={className}
       disabled={disabled}
       id={id}
       inline={inline}
