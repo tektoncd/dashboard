@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -37,8 +37,8 @@ const { getComputedStyle } = window;
 window.getComputedStyle = element => getComputedStyle(element);
 
 Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  writable: false,
+  value: query => ({
     matches: false,
     media: query,
     onchange: null,
@@ -47,5 +47,5 @@ Object.defineProperty(window, 'matchMedia', {
     addEventListener: vi.fn(),
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn()
-  }))
+  })
 });
