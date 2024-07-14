@@ -59,7 +59,7 @@
     "@testing-library/react": "^12.1.5",
     "@testing-library/react-hooks": "^8.0.1",
     "@vitejs/plugin-react-swc": "^3.7.0",
-    "@vitest/coverage-istanbul": "^1.6.0",
+    "@vitest/coverage-istanbul": "^2.0.2",
     "dotenv": "^16.4.5",
     "eslint": "^8.57.0",
     "eslint-config-airbnb": "^19.0.0",
@@ -84,7 +84,7 @@
     "vite": "^5.3.3",
     "vite-plugin-html": "^3.2.2",
     "vite-plugin-svgr": "^4.2.0",
-    "vitest": "^1.1.1"
+    "vitest": "^2.0.2"
   },
   "engines": {
     "node": "^20.14.0",
