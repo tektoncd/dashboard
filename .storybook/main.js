@@ -46,8 +46,8 @@ const config = {
   stories: (_config, { configType }) => ([
     { directory: '.', files: 'Welcome.mdx' },
     configType === 'DEVELOPMENT' ? { directory: '../src', files: '**/*.stories.@(js|jsx)', titlePrefix: 'Containers' } : null,
-    { directory: '../packages/components', files: '**/*.stories.@(js|jsx)', titlePrefix: 'Components' }
-    // { directory: '../packages/graph', files: '**/*.stories.@(js|jsx)', titlePrefix: 'Experimental/Graph' }
+    { directory: '../packages/components', files: '**/*.stories.@(js|jsx)', titlePrefix: 'Components' },
+    { directory: '../packages/graph', files: '**/*.stories.@(js|jsx)', titlePrefix: 'Experimental/Graph' }
   ].filter(Boolean)),
   async viteFinal(config, { configType }) {
     // fallback to default to resolve issue with MDX rendering

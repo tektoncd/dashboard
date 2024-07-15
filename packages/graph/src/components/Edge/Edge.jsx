@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import CarbonEdge from '@carbon/charts-react/diagrams/Edge/Edge';
+import { Edge as CarbonEdge } from '@carbon/charts-react';
 import { path as d3Path } from 'd3-path';
 
 export default function Edge({ direction, edge }) {

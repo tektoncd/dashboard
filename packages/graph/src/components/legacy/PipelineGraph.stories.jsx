@@ -15,10 +15,10 @@ import { action } from '@storybook/addon-actions';
 
 import PipelineGraph from './PipelineGraph';
 
-import pipeline from './examples/pipeline.json';
-import pipelineRun from './examples/pipelineRun.json';
-import taskRuns from './examples/taskRuns.json';
-import tasks from './examples/tasks.json';
+import pipeline from '../examples/pipeline.json';
+import pipelineRun from '../examples/pipelineRun.json';
+import taskRuns from '../examples/taskRuns.json';
+import tasks from '../examples/tasks.json';
 
 export default {
   title: 'legacy/PipelineGraph'
