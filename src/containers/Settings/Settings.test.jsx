@@ -40,12 +40,14 @@ describe('Settings', () => {
     vi.spyOn(APIUtils, 'isLogTimestampsEnabled').mockImplementation(() => true);
     vi.spyOn(APIUtils, 'setLogTimestampsEnabled');
 
-    const { getByLabelText, getByText } = render(<Settings />);
+    const { getByRole } = render(<Settings />);
 
-    const logTimestampToggle = getByText(/show log timestamps/i);
+    const logTimestampToggle = getByRole('switch', {
+      name: /show log timestamps/i
+    });
     expect(logTimestampToggle).toBeTruthy();
-    expect(within(logTimestampToggle).getByText('On')).toBeTruthy();
-    fireEvent.click(getByLabelText(/show log timestamps/i));
+    expect(within(logTimestampToggle.parentNode).getByText('On')).toBeTruthy();
+    fireEvent.click(logTimestampToggle);
     expect(APIUtils.setLogTimestampsEnabled).toHaveBeenCalledWith(false);
   });
 
@@ -55,12 +57,12 @@ describe('Settings', () => {
     );
     vi.spyOn(APIUtils, 'setPipelinesV1ResourcesEnabled');
 
-    const { getByLabelText, getByText } = render(<Settings />);
+    const { getByRole } = render(<Settings />);
 
-    const apiVersionToggle = getByText(/api version v1/i);
+    const apiVersionToggle = getByRole('switch', { name: /api version v1/i });
     expect(apiVersionToggle).toBeTruthy();
-    expect(within(apiVersionToggle).getByText('On')).toBeTruthy();
-    fireEvent.click(getByLabelText(/api version v1/i));
+    expect(within(apiVersionToggle.parentNode).getByText('On')).toBeTruthy();
+    fireEvent.click(apiVersionToggle);
     expect(APIUtils.setPipelinesV1ResourcesEnabled).toHaveBeenCalledWith(false);
   });
 });

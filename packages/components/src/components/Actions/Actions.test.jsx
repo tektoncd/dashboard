@@ -93,10 +93,10 @@ describe('Actions dropdown missing disable default behaviour', () => {
         action: () => {}
       }
     ];
-    const { getByText, getAllByTitle } = render(
+    const { getByRole, getByText } = render(
       <Actions items={items} kind="button" resource={resource} />
     );
-    fireEvent.click(getAllByTitle('Actions')[0]);
+    fireEvent.click(getByRole('button', { name: 'Actions' }));
     await waitFor(() => getByText('Action'));
     fireEvent.click(getByText(`Action`));
     expect(mockCallBack).toHaveBeenCalled();

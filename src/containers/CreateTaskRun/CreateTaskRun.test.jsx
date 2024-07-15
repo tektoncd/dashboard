@@ -148,8 +148,8 @@ describe('CreateTaskRun', () => {
   it('renders labels', () => {
     const {
       getAllByText,
-      getByText,
       getByPlaceholderText,
+      getByRole,
       queryByDisplayValue
     } = renderWithRouter(<CreateTaskRun />);
     fireEvent.click(getAllByText(/Add/i)[0]);
@@ -161,7 +161,7 @@ describe('CreateTaskRun', () => {
     });
     expect(queryByDisplayValue(/foo/i)).toBeTruthy();
     expect(queryByDisplayValue(/bar/i)).toBeTruthy();
-    fireEvent.click(getByText(/Remove/i).parentNode);
+    fireEvent.click(getByRole('button', { name: 'Remove' }));
     expect(queryByDisplayValue(/foo/i)).toBeFalsy();
     expect(queryByDisplayValue(/bar/i)).toBeFalsy();
   });

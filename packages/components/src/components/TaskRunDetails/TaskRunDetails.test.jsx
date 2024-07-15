@@ -93,21 +93,25 @@ describe('TaskRunDetails', () => {
     expect(queryByText(/status/i)).toBeTruthy();
   });
 
-  it.skip('renders selected view', async () => {
+  it('fires onViewChange handler when clicking a tab', async () => {
+    const onViewChangeSpy = vi.fn();
     const taskRun = {
       metadata: { name: 'task-run-name' },
       spec: { params: [{ name: 'fake_name', value: 'fake_value' }] }
     };
     const { queryByRole, queryByText, queryAllByText } = render(
-      <TaskRunDetails taskRun={taskRun} view="status" />
+      <TaskRunDetails
+        onViewChange={onViewChangeSpy}
+        taskRun={taskRun}
+        view="status"
+      />
     );
     expect(queryByText(/status/i)).toBeTruthy();
     expect(queryAllByText(/pending/i)[0]).toBeTruthy();
     expect(queryByText('fake_name')).toBeFalsy();
     const tabButton = queryByRole('tab', { name: 'Parameters' });
     fireEvent.click(tabButton);
-    // TODO: carbon11 - not rendering the selected tab, even if we wait
-    expect(queryByText('fake_name')).toBeTruthy();
+    expect(onViewChangeSpy).toHaveBeenCalledWith('params');
   });
 
   it('renders results', () => {
