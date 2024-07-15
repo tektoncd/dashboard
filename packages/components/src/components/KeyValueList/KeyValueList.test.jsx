@@ -133,7 +133,7 @@ it('KeyValueList add and remove buttons work', () => {
     onAdd: vi.fn(),
     onRemove: vi.fn()
   };
-  const { getByText, getAllByText } = render(<KeyValueList {...props} />);
+  const { getByText, queryAllByRole } = render(<KeyValueList {...props} />);
 
   const addButton = getByText(/Add/i);
 
@@ -143,9 +143,9 @@ it('KeyValueList add and remove buttons work', () => {
   fireEvent.click(addButton);
   fireEvent.click(addButton);
 
-  fireEvent.click(getAllByText(/Remove/i)[0].parentNode);
-  fireEvent.click(getAllByText(/Remove/i)[0].parentNode);
-  fireEvent.click(getAllByText(/Remove/i)[0].parentNode);
+  fireEvent.click(queryAllByRole('button', { name: 'Remove' })[0]);
+  fireEvent.click(queryAllByRole('button', { name: 'Remove' })[0]);
+  fireEvent.click(queryAllByRole('button', { name: 'Remove' })[0]);
 
   expect(props.onAdd).toHaveBeenCalledTimes(5);
   expect(props.onRemove).toHaveBeenCalledTimes(3);

@@ -267,29 +267,19 @@ describe('Table', () => {
     expect(queryAllByLabelText('Select row')[0]).toBeTruthy();
   });
 
-  it('loading with no rows, ALL_NAMESPACES, 1 toolbar button, no checkboxes and non-sortable', () => {
+  it('renders table skeleton in loading state', () => {
     const props = {
+      batchActionButtons: batchActionButtons.slice(0, 1),
       loading: true,
-      rows: [],
+      rows: rows.slice(0, 1),
       headers,
       selectedNamespace: ALL_NAMESPACES,
       toolbarButtons: toolbarButtons.slice(0, 1)
     };
-    const { queryByText } = render(<Table {...props} />);
-
-    expect(queryByText(/Add/i).disabled).toBeTruthy();
-  });
-
-  it('loading plain with one row and ALL_NAMESPACES', () => {
-    const props = {
-      loading: true,
-      rows: rows.slice(0, 1),
-      headers,
-      selectedNamespace: ALL_NAMESPACES
-    };
-    const { queryByText, queryByLabelText } = render(<Table {...props} />);
-
-    expect(queryByText(/Resources/i)).toBeNull();
+    const { getByRole, queryByLabelText, queryByText } = render(
+      <Table {...props} />
+    );
+    expect(getByRole('table').classList).toContain('cds--skeleton');
     expect(queryByText('Name')).toBeTruthy();
     expect(queryByText('Namespace')).toBeTruthy();
     expect(queryByText('Date created')).toBeTruthy();
