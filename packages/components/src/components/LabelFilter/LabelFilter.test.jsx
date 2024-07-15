@@ -59,7 +59,7 @@ it('LabelFilter displays notification if character length is over 63 characters 
       /Filters must be of the format labelKey:labelValue and contain less than 64 characters/i
     )
   );
-  fireEvent.click(getByTitle(/closes notification/i));
+  fireEvent.click(getByTitle(/close notification/i));
   expect(
     queryByText(
       /Filters must be of the format labelKey:labelValue and contain less than 64 characters/i
@@ -80,7 +80,7 @@ it('LabelFilter handles adding a duplicate filter', async () => {
   fireEvent.submit(getByText(/Input a label filter/i));
   expect(handleAddFilter).not.toHaveBeenCalled();
   await waitFor(() => getByText(/no duplicate filters allowed/i));
-  fireEvent.click(getByTitle(/closes notification/i));
+  fireEvent.click(getByTitle(/close notification/i));
   expect(queryByText(/no duplicate filters allowed/i)).toBeNull();
 });
 
