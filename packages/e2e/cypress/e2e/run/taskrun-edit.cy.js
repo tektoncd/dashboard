@@ -1,5 +1,5 @@
 /*
-Copyright 2023 The Tekton Authors
+Copyright 2023-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -60,7 +60,7 @@ spec:
 
     cy.contains('a', `${taskName}-run`).click();
     cy.contains('button', 'Actions').click();
-    cy.contains('button', 'Edit and run').click();
+    cy.contains('[role=menuitem]', 'Edit and run').click();
     cy.get('.cm-content').contains(`name: ${taskName}`);
     cy.contains('button', 'Create').click();
     cy.contains('h1', 'TaskRuns');

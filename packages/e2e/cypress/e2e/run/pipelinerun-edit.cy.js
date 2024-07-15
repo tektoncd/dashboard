@@ -65,7 +65,7 @@ spec:
 
     cy.contains('a', `${pipelineName}-run`).click();
     cy.contains('button', 'Actions').click();
-    cy.contains('button', 'Edit and run').click();
+    cy.contains('[role=menuitem]', 'Edit and run').click();
     cy.get('.cm-content').contains(`name: ${pipelineName}`);
     cy.contains('button', 'Create').click();
     cy.contains('h1', 'PipelineRuns');
