@@ -12,15 +12,15 @@ limitations under the License.
 */
 
 import { useState } from 'react';
-import ShapeNode from '@carbon/charts-react/diagrams/ShapeNode/ShapeNode';
-import CardNode, {
+import {
+  CardNode,
   CardNodeColumn,
   // CardNodeLabel,
-  CardNodeTitle
+  CardNodeTitle,
   // CardNodeSubtitle
-} from '@carbon/charts-react/diagrams/CardNode';
-import { Tooltip } from '@carbon/react';
-// import { ChevronDown16 } from '@carbon/icons-react';
+  ShapeNode
+} from '@carbon/charts-react';
+// import { ChevronDown } from '@carbon/icons-react';
 
 import StatusIcon from '../StatusIcon';
 
@@ -41,17 +41,9 @@ export default function Node({
   if (type === 'icon') {
     shapeNode = (
       <ShapeNode
-        renderIcon={
-          // TODO: carbon11 - review tooltip usage
-          <Tooltip
-            align="start"
-            showIcon
-            renderIcon={() => <StatusIcon status={status} title={title} />}
-          >
-            {title}
-          </Tooltip>
-        }
+        renderIcon={<StatusIcon status={status} title={title} />}
         size={width}
+        title=""
       />
     );
   }
@@ -67,8 +59,6 @@ export default function Node({
       <div style={{ height, width }}>
         {shapeNode || (
           <CardNode
-            // TODO: feature request - custom class so we can set color etc. in CSS
-            // https://github.com/carbon-design-system/carbon-charts/issues/1221
             className={`card-status-${status}`}
             _href="#"
             _onClick={() => setExpanded(!expanded)}
@@ -84,7 +74,7 @@ export default function Node({
               {/* {expanded && <CardNodeLabel>Label</CardNodeLabel>} */}
             </CardNodeColumn>
             {/* <CardNodeColumn farsideColumn>
-              <ChevronDown16 />
+              <ChevronDown />
             </CardNodeColumn> */}
           </CardNode>
         )}

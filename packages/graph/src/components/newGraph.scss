@@ -14,12 +14,7 @@ limitations under the License.
 @use '@carbon/react/scss/config' as *;
 @use '@carbon/react/scss/theme' as *;
 
-// TODO: resolve errors preventing the dark theme from being used here
-// @import '@carbon/elements/scss/themes/mixins';
-// @include carbon--theme($carbon--theme--g90) {
-//   $carbon--theme: $carbon--theme--g90;
-@import '@carbon/charts/styles/styles.scss';
-// }
+@import '@carbon/charts-react/styles.css';
 
 .#{$prefix}--cc--card-node {
   &.card-status-success {

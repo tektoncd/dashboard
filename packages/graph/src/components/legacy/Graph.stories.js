@@ -13,7 +13,7 @@ limitations under the License.
 
 import Graph from './Graph';
 
-import graph from './examples/graph.json';
+import graph from '../examples/graph.json';
 
 export default {
   component: Graph,

@@ -12,7 +12,7 @@ limitations under the License.
 */
 /* istanbul ignore file */
 import { Component } from 'react';
-import buildGraphData from '../buildGraphData';
+import buildGraphData from '../../buildGraphData';
 
 import Graph from './Graph';
 

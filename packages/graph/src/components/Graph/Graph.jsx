@@ -15,7 +15,7 @@ limitations under the License.
 import { useEffect, useState } from 'react';
 import ELK from 'elkjs/lib/elk.bundled';
 
-import { ArrowRightMarker } from '@carbon/charts-react/diagrams/Marker';
+import { ArrowRightMarker } from '@carbon/charts-react';
 
 import Edge from '../Edge';
 import Node from '../Node/Node';
@@ -115,7 +115,7 @@ export default function Graph({
     >
       <svg style={{ height: graphHeight, width: graphWidth }}>
         <defs>
-          <ArrowRightMarker id="arrowRight" />
+          <ArrowRightMarker id="arrowRight" height={8} width={7.5} />
         </defs>
         {edgeElements}
         {nodeElements}
