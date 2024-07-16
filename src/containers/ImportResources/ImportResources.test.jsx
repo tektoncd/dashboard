@@ -175,7 +175,7 @@ describe('ImportResources component', () => {
     await waitFor(() => queryByDisplayValue(/Invalid URL here/i));
   });
 
-  it.skip('Can clear the selected namespace', async () => {
+  it('Can clear the selected namespace', async () => {
     const {
       getAllByPlaceholderText,
       getByText,
@@ -187,7 +187,6 @@ describe('ImportResources component', () => {
     fireEvent.click(getByText('default'));
     fireEvent.click(getAllByTitle(/Clear selected item/i)[0]);
     await waitFor(() => queryByText(/please select a Namespace/i));
-    // TODO: carbon11 - not clearing as expected, reproduced in UI
     expect(queryByDisplayValue('default')).toBeFalsy();
   });
 });

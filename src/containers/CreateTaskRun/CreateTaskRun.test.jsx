@@ -119,12 +119,10 @@ describe('CreateTaskRun', () => {
     });
     expect(queryByText(/create taskrun/i)).toBeTruthy();
     expect(queryByPlaceholderText(/select namespace/i)).toBeTruthy();
-    expect(queryByPlaceholderText(/select task/i)).toBeTruthy();
-    expect(document.querySelector('[label="Select Task"]').disabled).toBe(true);
-    expect(queryByPlaceholderText(/select serviceaccount/i)).toBeTruthy();
+    expect(queryByPlaceholderText(/select task/i).disabled).toBeTruthy();
     expect(
-      document.querySelector('[label="Select ServiceAccount"]').disabled
-    ).toBe(true);
+      queryByPlaceholderText(/select serviceaccount/i).disabled
+    ).toBeTruthy();
     expect(queryByText(/cancel/i)).toBeTruthy();
     expect(submitButton(queryAllByText)).toBeTruthy();
 
@@ -134,14 +132,12 @@ describe('CreateTaskRun', () => {
     );
     fireEvent.click(await waitFor(() => getByText(/namespace-1/i)));
     await waitFor(() =>
-      expect(document.querySelector('[label="Select Task"]').disabled).toBe(
-        false
-      )
+      expect(getByPlaceholderText(/select task/i).disabled).toBe(false)
     );
     await waitFor(() =>
-      expect(
-        document.querySelector('[label="Select ServiceAccount"]').disabled
-      ).toBe(false)
+      expect(getByPlaceholderText(/select serviceaccount/i).disabled).toBe(
+        false
+      )
     );
   });
 
