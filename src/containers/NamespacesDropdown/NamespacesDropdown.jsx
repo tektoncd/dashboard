@@ -70,11 +70,11 @@ const NamespacesDropdown = ({
   return (
     <TooltipDropdown
       {...rest}
+      emptyText={emptyString}
+      items={items}
       label={labelString}
       loading={isFetching}
-      emptyText={emptyString}
       selectedItem={selectedItem}
-      items={items}
       titleText={titleText}
     />
   );

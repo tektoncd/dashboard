@@ -11,6 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { ComboBox, DropdownSkeleton, usePrefix } from '@carbon/react';
 import { getTranslateWithId } from '@tektoncd/dashboard-utils';
@@ -45,6 +46,8 @@ const TooltipDropdown = ({
 }) => {
   const intl = useIntl();
   const carbonPrefix = usePrefix();
+  const [key, setKey] = useState(0);
+
   if (loading) {
     return (
       <div className={`${carbonPrefix}--list-box__wrapper`}>
@@ -72,11 +75,22 @@ const TooltipDropdown = ({
     <ComboBox
       className={className}
       disabled={disabled}
+      {...(selectedItem && {
+        downshiftProps: {
+          onStateChange: e => {
+            if (e.type === '__function_select_item__' && e.inputValue === '') {
+              // user clicked the 'clear' button, reset to default state
+              onChange({});
+              setKey(Date.now());
+            }
+          }
+        }
+      })}
       id={id}
       inline={inline}
       items={options}
       itemToString={itemToString}
-      label={options.length === 0 ? emptyString : label}
+      key={key}
       onChange={onChange}
       placeholder={options.length === 0 ? emptyString : label}
       selectedItem={selectedItem}
