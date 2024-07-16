@@ -110,7 +110,7 @@ class Actions extends Component {
     return (
       <OverflowMenu
         align="left"
-        ariaLabel={title}
+        aria-label={title}
         className="tkn--actions-dropdown"
         flipped
         iconDescription={title}

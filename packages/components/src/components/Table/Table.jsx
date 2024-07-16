@@ -137,8 +137,11 @@ const Table = ({
   );
   const translateWithId = getTranslateWithId(intl);
 
-  const hasToolbar =
-    filters || toolbarButtons.length || shouldRenderBatchActions;
+  const hasToolbar = !!(
+    filters ||
+    toolbarButtons.length ||
+    shouldRenderBatchActions
+  );
 
   const tableClassNames = classNames('tkn--table', className, {
     'tkn--table-with-details': hasDetails,
