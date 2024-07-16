@@ -11,6 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+@use '@carbon/react/scss/theme' as *;
+
 .pipeline-graph-zoom-container {
   display: flex;
   flex-direction: column;
