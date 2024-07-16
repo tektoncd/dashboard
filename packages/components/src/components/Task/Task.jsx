@@ -186,7 +186,7 @@ class Task extends Component {
           </span>
           {expanded && taskRun.status?.retriesStatus ? (
             <OverflowMenu
-              ariaLabel={retryMenuTitle}
+              aria-label={retryMenuTitle}
               iconDescription={retryMenuTitle}
               menuOptionsClass="tkn--task--retries-menu-options"
               selectorPrimaryFocus="button:not([disabled])"
