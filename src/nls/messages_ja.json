@@ -10,6 +10,7 @@
   "carbon.table.batch.cancel": "キャンセル",
   "carbon.table.batch.item.selected": "1 項目が選択されました",
   "carbon.table.batch.items.selected": "{totalSelected, plural, other {# 項目}}が選択されました",
+  "carbon.table.batch.selectAll": "",
   "carbon.table.row.collapse": "現在の行を折りたたむ",
   "carbon.table.row.expand": "現在の行を展開",
   "carbon.table.row.select": "行を選択",

@@ -10,6 +10,7 @@
   "carbon.table.batch.cancel": "취소",
   "carbon.table.batch.item.selected": "1개 항목 선택됨",
   "carbon.table.batch.items.selected": "{totalSelected, plural, other {#개 항목}} 선택됨",
+  "carbon.table.batch.selectAll": "",
   "carbon.table.row.collapse": "현재 행 접기",
   "carbon.table.row.expand": "현재 행 펼치기",
   "carbon.table.row.select": "행 선택",
