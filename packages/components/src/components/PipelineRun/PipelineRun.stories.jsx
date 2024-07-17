@@ -171,6 +171,8 @@ export default {
 export const Default = () => {
   const [selectedStepId, setSelectedStepId] = useState();
   const [selectedTaskId, setSelectedTaskId] = useState();
+  const [view, setView] = useState();
+
   return (
     <PipelineRun
       fetchLogs={() => 'sample log output'}
@@ -181,11 +183,13 @@ export const Default = () => {
         setSelectedStepId(stepId);
         setSelectedTaskId(taskId);
       }}
+      onViewChange={selectedView => setView(selectedView)}
       pipelineRun={pipelineRun}
       selectedStepId={selectedStepId}
       selectedTaskId={selectedTaskId}
       taskRuns={[taskRun, taskRunWithWarning]}
       tasks={[task]}
+      view={view}
     />
   );
 };
@@ -193,6 +197,8 @@ export const Default = () => {
 export const WithMinimalStatus = () => {
   const [selectedStepId, setSelectedStepId] = useState();
   const [selectedTaskId, setSelectedTaskId] = useState();
+  const [view, setView] = useState();
+
   return (
     <PipelineRun
       fetchLogs={() => 'sample log output'}
@@ -203,11 +209,13 @@ export const WithMinimalStatus = () => {
         setSelectedStepId(stepId);
         setSelectedTaskId(taskId);
       }}
+      onViewChange={selectedView => setView(selectedView)}
       pipelineRun={pipelineRunWithMinimalStatus}
       selectedStepId={selectedStepId}
       selectedTaskId={selectedTaskId}
       taskRuns={[taskRun, taskRunWithWarning]}
       tasks={[task]}
+      view={view}
     />
   );
 };
@@ -215,6 +223,8 @@ export const WithMinimalStatus = () => {
 export const WithPodDetails = () => {
   const [selectedStepId, setSelectedStepId] = useState();
   const [selectedTaskId, setSelectedTaskId] = useState();
+  const [view, setView] = useState();
+
   return (
     <PipelineRun
       fetchLogs={() => 'sample log output'}
@@ -225,6 +235,7 @@ export const WithPodDetails = () => {
         setSelectedStepId(stepId);
         setSelectedTaskId(taskId);
       }}
+      onViewChange={selectedView => setView(selectedView)}
       pipelineRun={pipelineRun}
       pod={{
         events: [
@@ -291,6 +302,7 @@ export const WithPodDetails = () => {
       selectedTaskId={selectedTaskId}
       taskRuns={[taskRun]}
       tasks={[task]}
+      view={view}
     />
   );
 };
