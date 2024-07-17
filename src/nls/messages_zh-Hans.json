@@ -10,6 +10,7 @@
   "carbon.table.batch.cancel": "取消",
   "carbon.table.batch.item.selected": "选中 1 个项目",
   "carbon.table.batch.items.selected": "选中 {totalSelected, plural, other {# 个项目}}",
+  "carbon.table.batch.selectAll": "",
   "carbon.table.row.collapse": "折叠行",
   "carbon.table.row.expand": "展开行",
   "carbon.table.row.select": "选择行",

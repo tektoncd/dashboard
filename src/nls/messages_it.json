@@ -10,6 +10,7 @@
   "carbon.table.batch.cancel": "Annulla",
   "carbon.table.batch.item.selected": "1 elemento selezionato",
   "carbon.table.batch.items.selected": "{totalSelected, plural, other {# elementi}} selezionati",
+  "carbon.table.batch.selectAll": "",
   "carbon.table.row.collapse": "",
   "carbon.table.row.expand": "",
   "carbon.table.row.select": "Seleziona riga",

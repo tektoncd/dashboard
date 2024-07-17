@@ -81,6 +81,14 @@ function getTranslateWithId(intl) {
             totalSelected: state.totalSelected
           }
         );
+      case 'carbon.table.batch.selectAll':
+        return intl.formatMessage(
+          {
+            id: 'carbon.table.batch.selectAll',
+            defaultMessage: 'Select all ({totalCount})'
+          },
+          { totalCount: state.totalCount }
+        );
       case 'carbon.table.row.collapse':
         return intl.formatMessage({
           id: 'carbon.table.row.collapse',
@@ -185,111 +193,127 @@ const Table = ({
         render={({
           rows,
           headers,
+          getBatchActionProps,
           getHeaderProps,
           getRowProps,
-          getTableProps,
           getSelectionProps,
-          getBatchActionProps,
-          selectedRows
-        }) => (
-          <TableContainer title={title}>
-            {hasToolbar && (
-              <TableToolbar>
-                {filters}
-                {shouldRenderBatchActions && (
-                  <TableBatchActions
-                    {...getBatchActionProps()}
-                    translateWithId={translateWithId}
-                  >
-                    {batchActionButtons.map(button => (
-                      <TableBatchAction
-                        tabIndex={
-                          getBatchActionProps().shouldShowBatchActions ? 0 : -1
-                        }
-                        renderIcon={button.icon}
-                        key={`${button.text}Button`}
-                        onClick={() => {
-                          button.onClick(
-                            selectedRows,
-                            getBatchActionProps().onCancel
-                          );
-                        }}
-                      >
-                        {button.text}
-                      </TableBatchAction>
-                    ))}
-                  </TableBatchActions>
-                )}
-                <TableToolbarContent>
-                  {toolbarButtons.map(({ icon, onClick, text, ...rest }) => (
-                    <Button
-                      disabled={loading}
-                      key={`${text}Button`}
-                      onClick={onClick}
-                      renderIcon={icon}
-                      {...rest}
-                    >
-                      {text}
-                    </Button>
-                  ))}
-                </TableToolbarContent>
-              </TableToolbar>
-            )}
-            <CarbonTable {...getTableProps()}>
-              <TableHead>
-                <TableRow>
+          getTableContainerProps,
+          getTableProps,
+          getToolbarProps,
+          selectedRows,
+          selectRow
+        }) => {
+          const batchActionProps = {
+            ...getBatchActionProps(),
+            onSelectAll: () => {
+              rows.forEach(row => {
+                if (!row.isSelected) {
+                  selectRow(row.id);
+                }
+              });
+            }
+          };
+
+          return (
+            <TableContainer {...getTableContainerProps()} title={title}>
+              {hasToolbar && (
+                <TableToolbar {...getToolbarProps()}>
+                  {filters}
                   {shouldRenderBatchActions && (
-                    <TableSelectAll {...getSelectionProps()} />
+                    <TableBatchActions
+                      {...batchActionProps}
+                      translateWithId={translateWithId}
+                    >
+                      {batchActionButtons.map(button => (
+                        <TableBatchAction
+                          tabIndex={
+                            batchActionProps.shouldShowBatchActions ? 0 : -1
+                          }
+                          renderIcon={button.icon}
+                          key={`${button.text}Button`}
+                          onClick={() => {
+                            button.onClick(
+                              selectedRows,
+                              batchActionProps.onCancel
+                            );
+                          }}
+                        >
+                          {button.text}
+                        </TableBatchAction>
+                      ))}
+                    </TableBatchActions>
                   )}
-                  {headers.map(header =>
-                    header.header ? (
-                      <TableHeader
-                        {...getHeaderProps({ header })}
-                        key={header.key}
+                  <TableToolbarContent>
+                    {toolbarButtons.map(({ icon, onClick, text, ...rest }) => (
+                      <Button
+                        disabled={loading}
+                        key={`${text}Button`}
+                        onClick={onClick}
+                        renderIcon={icon}
+                        {...rest}
                       >
-                        {header.header}
-                      </TableHeader>
-                    ) : (
-                      <TableHeader key={header.key} />
-                    )
-                  )}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {dataRows.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={headers.length}>
-                      <div className="noRows">
-                        {selectedNamespace === ALL_NAMESPACES
-                          ? emptyTextAllNamespaces
-                          : emptyTextSelectedNamespace}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )}
-                {rows.map(row => (
-                  <TableRow {...getRowProps({ row })} key={row.id}>
-                    {shouldRenderBatchActions && (
-                      <TableSelectRow {...getSelectionProps({ row })} />
-                    )}
-                    {row.cells.map(cell => (
-                      <TableCell
-                        key={cell.id}
-                        id={id ? `${id}:${cell.id}` : cell.id}
-                        className={`cell-${cell.info.header}`}
-                        {...(typeof cell.value === 'string' && {
-                          title: cell.value
-                        })}
-                      >
-                        {cell.value}
-                      </TableCell>
+                        {text}
+                      </Button>
                     ))}
+                  </TableToolbarContent>
+                </TableToolbar>
+              )}
+              <CarbonTable {...getTableProps()}>
+                <TableHead>
+                  <TableRow>
+                    {shouldRenderBatchActions && (
+                      <TableSelectAll {...getSelectionProps()} />
+                    )}
+                    {headers.map(header =>
+                      header.header ? (
+                        <TableHeader
+                          {...getHeaderProps({ header })}
+                          key={header.key}
+                        >
+                          {header.header}
+                        </TableHeader>
+                      ) : (
+                        <TableHeader key={header.key} />
+                      )
+                    )}
                   </TableRow>
-                ))}
-              </TableBody>
-            </CarbonTable>
-          </TableContainer>
-        )}
+                </TableHead>
+                <TableBody>
+                  {dataRows.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={headers.length}>
+                        <div className="noRows">
+                          {selectedNamespace === ALL_NAMESPACES
+                            ? emptyTextAllNamespaces
+                            : emptyTextSelectedNamespace}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {rows.map(row => (
+                    <TableRow {...getRowProps({ row })} key={row.id}>
+                      {shouldRenderBatchActions && (
+                        <TableSelectRow {...getSelectionProps({ row })} />
+                      )}
+                      {row.cells.map(cell => (
+                        <TableCell
+                          key={cell.id}
+                          id={id ? `${id}:${cell.id}` : cell.id}
+                          className={`cell-${cell.info.header}`}
+                          {...(typeof cell.value === 'string' && {
+                            title: cell.value
+                          })}
+                        >
+                          {cell.value}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </CarbonTable>
+            </TableContainer>
+          );
+        }}
       />
     </div>
   );

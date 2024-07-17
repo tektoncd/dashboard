@@ -10,6 +10,7 @@
   "carbon.table.batch.cancel": "Cancelar",
   "carbon.table.batch.item.selected": "1 elemento seleccionado",
   "carbon.table.batch.items.selected": "{totalSelected, plural, other {# elementos}} seleccionados",
+  "carbon.table.batch.selectAll": "",
   "carbon.table.row.collapse": "",
   "carbon.table.row.expand": "",
   "carbon.table.row.select": "Seleccionar fila",
