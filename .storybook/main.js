@@ -16,7 +16,8 @@ const config = {
     '@storybook/addon-essentials',
     '@storybook/addon-links',
     '@storybook/addon-storysource',
-    '@storybook/addon-themes'
+    '@storybook/addon-themes',
+    'storybook-addon-remix-react-router'
   ],
   core: { disableTelemetry: true },
   docs: {
@@ -29,13 +30,8 @@ const config = {
   refs: (_config, { configType }) => {
     if (configType === 'DEVELOPMENT') {
       return {
-        carbon10: {
-          title: 'Carbon v10',
-          url: 'https://v7-react.carbondesignsystem.com/',
-          expanded: false
-        },
         carbon11: {
-          title: 'Carbon v11 (do not use yet, for reference only)',
+          title: 'Carbon v11',
           url: 'https://react.carbondesignsystem.com/',
           expanded: false
         }

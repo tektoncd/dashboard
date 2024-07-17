@@ -14,6 +14,7 @@ limitations under the License.
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Table } from '@tektoncd/dashboard-components';
+import { withRouter } from 'storybook-addon-remix-react-router';
 
 import ListPageLayoutContainer from './ListPageLayout';
 
@@ -42,6 +43,7 @@ export default {
   },
   component: ListPageLayoutContainer,
   decorators: [
+    withRouter(),
     Story => {
       queryClient.setQueryData(['Namespace'], () => ({
         items: namespaces,

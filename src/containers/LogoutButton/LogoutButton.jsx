@@ -36,7 +36,7 @@ export default function LogoutButton() {
       onClick={() => {
         window.location.href = logoutURL;
       }}
-      title={logoutString}
+      tooltipAlignment="end"
     >
       <LogoutIcon size={20} />
     </HeaderGlobalAction>

@@ -11,6 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { withRouter } from 'storybook-addon-remix-react-router';
+
 import { NamespaceContext } from '../../api';
 import NotFound from './NotFound';
 
@@ -21,6 +23,7 @@ const namespaceContext = {
 export default {
   component: NotFound,
   decorators: [
+    withRouter(),
     Story => (
       <div style={{ height: '100vh' }}>
         <NamespaceContext.Provider value={namespaceContext}>
