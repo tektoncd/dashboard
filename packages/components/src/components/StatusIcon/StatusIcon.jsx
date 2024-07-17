@@ -105,6 +105,7 @@ export default function StatusIcon({
       className={classNames('tkn--status-icon', typeClassNames[type], {
         [statusClassNames[statusClass]]: statusClass
       })}
+      size={20}
     >
       {title && <title>{title}</title>}
     </Icon>
