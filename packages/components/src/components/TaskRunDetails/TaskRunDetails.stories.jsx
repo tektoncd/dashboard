@@ -11,6 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { useArgs } from '@storybook/preview-api';
+
 import TaskRunDetails from './TaskRunDetails';
 
 const paramKey = 'k';
@@ -56,6 +58,15 @@ export const Default = {
         results
       }
     }
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    return (
+      <TaskRunDetails
+        {...args}
+        onViewChange={selectedView => updateArgs({ view: selectedView })}
+      />
+    );
   }
 };
 
@@ -88,6 +99,15 @@ export const WithWarning = {
         results
       }
     }
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    return (
+      <TaskRunDetails
+        {...args}
+        onViewChange={selectedView => updateArgs({ view: selectedView })}
+      />
+    );
   }
 };
 
@@ -163,5 +183,14 @@ export const Pod = {
         startTime: '2021-03-03T15:25:27Z'
       }
     }
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    return (
+      <TaskRunDetails
+        {...args}
+        onViewChange={selectedView => updateArgs({ view: selectedView })}
+      />
+    );
   }
 };

@@ -12,6 +12,8 @@ limitations under the License.
 */
 /* eslint-disable formatjs/no-literal-string-in-jsx */
 
+import { useArgs } from '@storybook/preview-api';
+
 import ResourceDetails from '.';
 
 const resource = {
@@ -45,7 +47,18 @@ export const Error = { args: { error: 'A helpful error message' } };
 
 export const Loading = { args: { loading: true } };
 
-export const Default = { args: { resource } };
+export const Default = {
+  args: { resource },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    return (
+      <ResourceDetails
+        {...args}
+        onViewChange={selectedView => updateArgs({ view: selectedView })}
+      />
+    );
+  }
+};
 
 export const WithAdditionalContent = {
   args: {
@@ -56,5 +69,14 @@ export const WithAdditionalContent = {
       </li>
     ),
     children: <p>some additional content</p>
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    return (
+      <ResourceDetails
+        {...args}
+        onViewChange={selectedView => updateArgs({ view: selectedView })}
+      />
+    );
   }
 };

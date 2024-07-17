@@ -11,6 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { useArgs } from '@storybook/preview-api';
+
 import Log from '../Log';
 import StepDetails from './StepDetails';
 
@@ -41,6 +43,15 @@ export const Default = {
   args: {
     logContainer: getLogContainer(),
     stepStatus: getStepStatus()
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    return (
+      <StepDetails
+        {...args}
+        onViewChange={selectedView => updateArgs({ view: selectedView })}
+      />
+    );
   }
 };
 
@@ -48,5 +59,14 @@ export const WithWarning = {
   args: {
     logContainer: getLogContainer({ exitCode: 1 }),
     stepStatus: getStepStatus({ exitCode: 1 })
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    return (
+      <StepDetails
+        {...args}
+        onViewChange={selectedView => updateArgs({ view: selectedView })}
+      />
+    );
   }
 };
