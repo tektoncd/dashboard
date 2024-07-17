@@ -82,7 +82,6 @@ function getFormattedResources({
             }
             renderIcon={DeleteIcon}
             size="sm"
-            tooltipAlignment="center"
             tooltipPosition="left"
           />
         ) : null}
@@ -104,7 +103,6 @@ function getFormattedResources({
               namespace: pipeline.metadata.namespace,
               pipelineName: pipeline.metadata.name
             }).toString()}`}
-            tooltipAlignment="center"
             tooltipPosition="left"
           />
         ) : null}
@@ -125,7 +123,6 @@ function getFormattedResources({
             namespace: pipeline.metadata.namespace,
             pipelineName: pipeline.metadata.name
           })}
-          tooltipAlignment="center"
           tooltipPosition="left"
         />
       </>
