@@ -13,7 +13,6 @@ limitations under the License.
 
 import { StrictMode } from 'react';
 import { IntlProvider } from 'react-intl';
-import { Route, MemoryRouter as Router, Routes } from 'react-router-dom';
 
 import messages from '../src/nls/messages_en.json';
 
@@ -21,26 +20,15 @@ import './Container.scss';
 
 export default function Container({
   notes,
-  path = '/',
-  route = '/',
   story: Story
 }) {
   return (
     <IntlProvider locale="en" defaultLocale="en" messages={messages['en']}>
       {notes && <p>{notes}</p>}
       <div data-floating-menu-container role="main">
-        <Router initialEntries={[route]}>
-          <Routes>
-            <Route
-              path={path}
-              element={
-                <StrictMode>
-                  <Story />
-                </StrictMode>
-              }
-            />
-          </Routes>
-        </Router>
+        <StrictMode>
+          <Story />
+        </StrictMode>
       </div>
     </IntlProvider>
   );

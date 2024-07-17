@@ -11,8 +11,35 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { withRouter } from 'storybook-addon-remix-react-router';
+
 import Header from '.';
-import LogoutButton from '../LogoutButton';
+import HeaderBarContent from '../HeaderBarContent';
+import { NamespaceContext } from '../../api';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      cacheTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnWindowFocus: false,
+      retry: false,
+      staleTime: Infinity
+    }
+  }
+});
+
+const namespaces = [
+  'default',
+  'kube-public',
+  'kube-system',
+  'tekton-pipelines'
+].map(namespace => ({ metadata: { name: namespace } }));
+
+const namespaceContext = {
+  selectedNamespace: 'default',
+  selectNamespace: () => {}
+};
 
 export default {
   component: Header,
@@ -21,10 +48,28 @@ export default {
 
 export const Default = {};
 
-export const WithLogout = {
+export const WithContent = {
   args: {
-    children: (
-      <LogoutButton getLogoutURL={() => Promise.resolve('/something')} />
-    )
-  }
+    children: <HeaderBarContent />
+  },
+  decorators: [
+    withRouter(),
+    Story => {
+      queryClient.setQueryData(['core', 'v1', 'namespaces'], () => ({
+        items: namespaces,
+        metadata: {}
+      }));
+      queryClient.setQueryData(['properties'], () => ({
+        logoutURL: '/some/url'
+      }));
+
+      return (
+        <QueryClientProvider client={queryClient}>
+          <NamespaceContext.Provider value={namespaceContext}>
+            <Story />
+          </NamespaceContext.Provider>
+        </QueryClientProvider>
+      );
+    }
+  ]
 };

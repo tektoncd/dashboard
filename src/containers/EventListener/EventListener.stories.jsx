@@ -13,8 +13,13 @@ limitations under the License.
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createIntl } from 'react-intl';
+import {
+  reactRouterParameters,
+  withRouter
+} from 'storybook-addon-remix-react-router';
 
 import { EventListenerContainer } from './EventListener';
+import { triggersAPIGroup } from '../../api/utils';
 
 const name = 'my-eventlistener';
 const namespace = 'foo';
@@ -130,6 +135,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       cacheTime: 1000 * 60 * 5, // 5 minutes
+      queryFn: () => {},
       refetchOnWindowFocus: false,
       retry: false,
       staleTime: Infinity
@@ -140,11 +146,18 @@ const queryClient = new QueryClient({
 const props = { intl };
 
 export default {
-  args: {
-    path: '/namespaces/:namespace/eventlisteners/:name',
-    route: `/namespaces/${namespace}/eventlisteners/${name}`
-  },
   component: EventListenerContainer,
+  decorators: [withRouter()],
+  parameters: {
+    reactRouter: reactRouterParameters({
+      location: {
+        pathParams: { name, namespace }
+      },
+      routing: {
+        path: '/namespaces/:namespace/eventlisteners/:name'
+      }
+    })
+  },
   title: 'EventListener'
 };
 
@@ -154,7 +167,7 @@ export const Default = {
   decorators: [
     Story => {
       queryClient.setQueryData(
-        ['EventListener', { name, namespace }],
+        [triggersAPIGroup, 'v1beta1', 'eventlisteners', { name, namespace }],
         eventListener
       );
 
@@ -172,10 +185,13 @@ export const NoTriggers = {
 
   decorators: [
     Story => {
-      queryClient.setQueryData(['EventListener', { name, namespace }], {
-        ...eventListener,
-        spec: { ...eventListener.spec, triggers: [] }
-      });
+      queryClient.setQueryData(
+        [triggersAPIGroup, 'v1beta1', 'eventlisteners', { name, namespace }],
+        {
+          ...eventListener,
+          spec: { ...eventListener.spec, triggers: [] }
+        }
+      );
 
       return (
         <QueryClientProvider client={queryClient}>
@@ -191,10 +207,13 @@ export const NoServiceAccount = {
 
   decorators: [
     Story => {
-      queryClient.setQueryData(['EventListener', { name, namespace }], {
-        ...eventListener,
-        spec: { ...eventListener.spec, serviceAccountName: undefined }
-      });
+      queryClient.setQueryData(
+        [triggersAPIGroup, 'v1beta1', 'eventlisteners', { name, namespace }],
+        {
+          ...eventListener,
+          spec: { ...eventListener.spec, serviceAccountName: undefined }
+        }
+      );
 
       return (
         <QueryClientProvider client={queryClient}>
@@ -212,10 +231,13 @@ export const NoServiceType = {
 
   decorators: [
     Story => {
-      queryClient.setQueryData(['EventListener', { name, namespace }], {
-        ...eventListener,
-        spec: { ...eventListener.spec, serviceType: undefined }
-      });
+      queryClient.setQueryData(
+        [triggersAPIGroup, 'v1beta1', 'eventlisteners', { name, namespace }],
+        {
+          ...eventListener,
+          spec: { ...eventListener.spec, serviceType: undefined }
+        }
+      );
 
       return (
         <QueryClientProvider client={queryClient}>

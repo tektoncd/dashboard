@@ -16,6 +16,7 @@ import { getStatus } from '@tektoncd/dashboard-utils';
 import { action } from '@storybook/addon-actions';
 import { TrashCan as Delete } from '@carbon/react/icons';
 import { Dropdown } from '@carbon/react';
+import { withRouter } from 'storybook-addon-remix-react-router';
 
 import StatusIcon from '../StatusIcon';
 import PipelineRuns from '.';
@@ -35,6 +36,7 @@ function getFilters(showFilters) {
 
 export default {
   component: PipelineRuns,
+  decorators: [withRouter()],
   title: 'PipelineRuns'
 };
 
