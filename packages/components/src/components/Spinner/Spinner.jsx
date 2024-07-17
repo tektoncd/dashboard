@@ -13,9 +13,9 @@ limitations under the License.
 
 import { Renew as SpinnerIcon } from '@carbon/react/icons';
 
-export default function Spinner({ children, className }) {
+export default function Spinner({ children, className, size = 20 }) {
   return (
-    <SpinnerIcon size={20} className={`tkn--spinner ${className}`}>
+    <SpinnerIcon size={size} className={`tkn--spinner ${className}`}>
       {children}
     </SpinnerIcon>
   );
