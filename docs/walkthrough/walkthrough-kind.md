@@ -181,7 +181,7 @@ kubectl wait -n tekton-pipelines \
 
 The Tekton Dashboard can import resources directly from a GitHub repository.
 
-The following steps demonstrate how to import a set of resources from a file hosted in a GitHub repository and view the resulting `PipelineRun`. The example contains some `Tasks`, a `Pipeline` that uses them, and a `PipelineRun` to execute it. To learn more about what the example does, take a look at the [example file](https://github.com/tektoncd/pipeline/blob/main/examples/v1beta1/pipelineruns/output-pipelinerun.yaml) we'll be using.
+The following steps demonstrate how to import a set of resources from files hosted in a GitHub repository and view the resulting `PipelineRun`. The example contains some `Tasks` and a `Pipeline` that uses them. To learn more about what the example does, take a look at the [example files](https://github.com/tektoncd/dashboard/blob/main/docs/tutorial) we'll be using.
 
 Create a new namespace and grant the ServiceAccount permissions to create Tekton resources:
 
