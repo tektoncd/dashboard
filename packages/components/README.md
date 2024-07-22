@@ -19,7 +19,7 @@ yarn add @tektoncd/dashboard-components
 ```
 
 You will also need to install the Carbon packages which provide the base styling and components:
-- [Carbon Components React](https://v10.carbondesignsystem.com/developing/frameworks/react)
+- [Carbon Components React](https://carbondesignsystem.com/developing/frameworks/react)
 
 This package requires [Dart Sass](http://npmjs.com/package/sass) in order to
 compile styles.
