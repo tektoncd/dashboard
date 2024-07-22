@@ -90,7 +90,7 @@ const ResourceDetails = ({
         onChange={event => onViewChange(tabs[event.selectedIndex])}
         selectedIndex={selectedTabIndex}
       >
-        <TabList>
+        <TabList activation="manual">
           <Tab>
             {intl.formatMessage({
               id: 'dashboard.resource.overviewTab',
