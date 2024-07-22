@@ -282,7 +282,7 @@ const TaskRunDetails = ({
         onChange={event => onViewChange(tabs[event.selectedIndex])}
         selectedIndex={selectedTabIndex}
       >
-        <TabList>{tabList}</TabList>
+        <TabList activation="manual">{tabList}</TabList>
         <TabPanels>{tabPanels}</TabPanels>
       </Tabs>
     </div>
