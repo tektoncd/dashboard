@@ -21,7 +21,7 @@ yarn add @tektoncd/dashboard-graph
 ```
 
 You will also need to install the Carbon packages which provide the base styling and components:
-- [Carbon Components React](https://v10.carbondesignsystem.com/developing/frameworks/react)
+- [Carbon Components React](https://carbondesignsystem.com/developing/frameworks/react)
 
 See the `@tektoncd/dashboard-components` documentation for details of setting up Sass for styling.
 
