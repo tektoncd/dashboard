@@ -1,6 +1,6 @@
 {
   "name": "@tektoncd/dashboard-e2e",
-  "version": "0.46.0-alpha.0",
+  "version": "0.49.0-alpha.0",
   "author": {
     "name": "The Tekton Authors"
   },
