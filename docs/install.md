@@ -108,7 +108,7 @@ For example:
     bash -s -- install latest --read-write --external-logs <logs-provider-url>
   ```
 
-  See [Tekton Dashboard walk-through - Logs persistence](/docs/walkthrough/walkthrough-logs.md) for details
+  See [Tekton Dashboard walk-through - Logs persistence](./walkthrough/walkthrough-logs.md) for details
 
 ## Accessing the Dashboard
 
