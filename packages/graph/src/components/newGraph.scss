@@ -14,7 +14,7 @@ limitations under the License.
 @use '@carbon/react/scss/config' as *;
 @use '@carbon/react/scss/theme' as *;
 
-@import '@carbon/charts-react/styles.css';
+@import '@carbon/charts-react/styles';
 
 .#{$prefix}--cc--card-node {
   &.card-status-success {
