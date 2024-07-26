@@ -116,11 +116,11 @@ DOCKER_BUILDKIT=1 docker build -t dashboard-e2e packages/e2e || fail_test "Faile
 echo "Finished at $(date)"
 
 if [ -z "$PIPELINES_VERSION" ]; then
-  export PIPELINES_VERSION=v0.61.0
+  export PIPELINES_VERSION=v0.62.0
 fi
 
 if [ -z "$TRIGGERS_VERSION" ]; then
-  export TRIGGERS_VERSION=v0.27.0
+  export TRIGGERS_VERSION=v0.28.0
 fi
 
 header "Installing Pipelines and Triggers"
