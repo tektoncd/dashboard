@@ -115,6 +115,7 @@ const PipelineRuns = ({
   },
   getPipelineRunURL = urls.pipelineRuns.byName,
   getRunActions = () => [],
+  LinkComponent = Link,
   loading,
   pipelineRuns,
   selectedNamespace,
@@ -199,9 +200,9 @@ const PipelineRuns = ({
         <div>
           <span>
             {pipelineRunURL ? (
-              <Link to={pipelineRunURL} title={pipelineRunNameTooltip}>
+              <LinkComponent to={pipelineRunURL} title={pipelineRunNameTooltip}>
                 {pipelineRunName}
-              </Link>
+              </LinkComponent>
             ) : (
               pipelineRunName
             )}
@@ -219,9 +220,12 @@ const PipelineRuns = ({
           <span>
             {(pipelineRefName &&
               (pipelineRunsByPipelineURL ? (
-                <Link to={pipelineRunsByPipelineURL} title={pipelineRefName}>
+                <LinkComponent
+                  to={pipelineRunsByPipelineURL}
+                  title={pipelineRefName}
+                >
                   {pipelineRefName}
-                </Link>
+                </LinkComponent>
               ) : (
                 <span title={`Pipeline: ${pipelineRefName || '-'}`}>
                   {pipelineRefName}
