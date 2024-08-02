@@ -152,3 +152,23 @@ export const Filters = {
     notes: 'table with filters'
   }
 };
+
+export const Loading = {
+  args: {
+    ...ToolbarButton.args,
+    loading: true
+  },
+  parameters: {
+    notes: 'table loading state'
+  }
+};
+
+export const LoadingWithFilters = {
+  args: {
+    ...Filters.args,
+    loading: true
+  },
+  parameters: {
+    notes: 'table loading state with filters'
+  }
+};

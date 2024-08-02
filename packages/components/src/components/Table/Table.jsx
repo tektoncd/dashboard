@@ -16,16 +16,16 @@ import PropTypes from 'prop-types';
 import {
   Button,
   DataTable,
-  DataTableSkeleton,
   TableBatchAction,
   TableBatchActions,
   TableSelectAll,
   TableSelectRow,
   TableToolbar,
-  TableToolbarContent,
-  usePrefix
+  TableToolbarContent
 } from '@carbon/react';
 import { ALL_NAMESPACES, classNames } from '@tektoncd/dashboard-utils';
+
+import DataTableSkeleton from '../DataTableSkeleton';
 
 const {
   TableContainer,
@@ -138,7 +138,6 @@ const Table = ({
   title = null,
   toolbarButtons = defaults.toolbarButtons
 }) => {
-  const carbonPrefix = usePrefix();
   const intl = useIntl();
   const shouldRenderBatchActions = !!(
     dataRows.length && batchActionButtons.length
@@ -157,20 +156,12 @@ const Table = ({
   });
 
   if (loading) {
-    const tableSizeClassNames = {
-      xs: `${carbonPrefix}--data-table--xs`,
-      sm: `${carbonPrefix}--data-table--sm`,
-      md: `${carbonPrefix}--data-table--md`,
-      lg: `${carbonPrefix}--data-table--lg`,
-      xl: `${carbonPrefix}--data-table--xl`
-    };
-
     return (
       <div className={tableClassNames} id={id}>
         <DataTableSkeleton
           aria-label={title}
-          className={tableSizeClassNames[size]}
           columnCount={dataHeaders.length}
+          filters={filters}
           headers={dataHeaders}
           rowCount={skeletonRowCount}
           showHeader={!!title}
