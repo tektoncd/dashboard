@@ -14,6 +14,7 @@ limitations under the License.
 
 export { default as ActionableNotification } from './ActionableNotification';
 export { default as Actions } from './Actions';
+export { default as DataTableSkeleton } from './DataTableSkeleton';
 export { default as DetailsHeader } from './DetailsHeader';
 export { default as DeleteModal } from './DeleteModal';
 export { default as DotSpinner } from './DotSpinner';

@@ -134,6 +134,10 @@ limitations under the License.
   &.tkn--table-with-filters {
     .#{$prefix}--data-table-container {
       overflow: visible;
+
+      &.#{$prefix}--skeleton .#{$prefix}--toolbar-content {
+        justify-content: flex-start;
+      }
     }
 
     .#{$prefix}--table-toolbar {
