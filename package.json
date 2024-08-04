@@ -74,7 +74,7 @@
     "jsdom": "^24.1.1",
     "lodash.difference": "^4.5.0",
     "lodash.omit": "^4.5.0",
-    "msw": "^2.3.4",
+    "msw": "^2.3.5",
     "prettier": "^3.3.3",
     "rollup-plugin-visualizer": "^5.12.0",
     "sass": "npm:sass-embedded@^1.77.5",
