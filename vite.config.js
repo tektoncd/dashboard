@@ -35,7 +35,13 @@ export default defineConfig(({ mode }) => ({
     target: 'es2022'
   },
   css: {
-    devSourcemap: true
+    devSourcemap: true,
+    preprocessorOptions: {
+      scss: {
+        api: 'modern-compiler',
+        quietDeps: true
+      }
+    }
   },
   esbuild: {
     target: 'es2022'
