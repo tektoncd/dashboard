@@ -16,6 +16,16 @@ This tutorial shows you how to
 1. Create a TaskRun and monitor its logs
 1. Create a PipelineRun and monitor its logs
 
+> [!CAUTION]
+> This tutorial describes setting dashboard up in READ-WRITE mode.
+>
+> Anyone who can access the dashboard can use the permissions granted to the service account.
+> Make sure to take [additional precautions](/docs/install.md#access-control)
+> if your deployment is publicly accessible.
+>
+> READ-WRITE mode is not a requirement for dashboard to operate, and can be
+> [installed in READ-ONLY mode](/docs/install.md#installing-tekton-dashboard-on-kubernetes).
+
 ## Prerequisites
 
 1.  [Install minikube](https://minikube.sigs.k8s.io/docs/start/). You only have
@@ -96,6 +106,8 @@ Hit *Ctrl + C* to stop monitoring.
    https://storage.googleapis.com/tekton-releases/dashboard/latest/release-full.yaml
    ```
 
+   **NOTE**: release-full.yaml [installs dashboard in READ-WRITE mode](/docs/install.md#installing-tekton-dashboard-on-kubernetes).
+
 1. Monitor the installation:
 
    ```bash
@@ -117,9 +129,10 @@ kubectl port-forward -n tekton-pipelines service/tekton-dashboard 9097:9097
 
 You can now open the Dashboard in your browser at http://localhost:9097
 
-## Grant required permissions
+## Grant permissions
 
 The import must be executed using a ServiceAccount with permissions to create the resources being imported.
+
 
 For this tutorial we will create a ClusterRole granting permission to create a number of Tekton resources, and a RoleBinding configuring this so that the `default` ServiceAccount in the `tekton-dashboard` namespace can create resources in the `default` namespace.
 
