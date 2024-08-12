@@ -19,11 +19,11 @@ This tutorial shows you how to
 > [!CAUTION]
 > This tutorial describes setting dashboard up in READ-WRITE mode.
 >
-> Anyone who can access the dashboard can use the permissions granted to the service account.
+> Anyone who can access the Dashboard can use the permissions granted to the service account.
 > Make sure to take [additional precautions](/docs/install.md#access-control)
 > if your deployment is publicly accessible.
 >
-> READ-WRITE mode is not a requirement for dashboard to operate, and can be
+> READ-WRITE mode is not a requirement for Dashboard to operate, and can be
 > [installed in READ-ONLY mode](/docs/install.md#installing-tekton-dashboard-on-kubernetes).
 
 ## Prerequisites
