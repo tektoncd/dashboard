@@ -17,7 +17,7 @@ This tutorial shows you how to
 1. Create a PipelineRun and monitor its logs
 
 > [!CAUTION]
-> This tutorial describes setting dashboard up in READ-WRITE mode.
+> This tutorial describes setting Dashboard up in READ-WRITE mode.
 >
 > Anyone who can access the Dashboard can use the permissions granted to the service account.
 > Make sure to take [additional precautions](/docs/install.md#access-control)
