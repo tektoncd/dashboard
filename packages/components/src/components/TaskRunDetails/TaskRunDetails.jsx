@@ -278,11 +278,12 @@ const TaskRunDetails = ({
         type="taskRun"
       />
       <Tabs
-        aria-label="TaskRun details"
         onChange={event => onViewChange(tabs[event.selectedIndex])}
         selectedIndex={selectedTabIndex}
       >
-        <TabList activation="manual">{tabList}</TabList>
+        <TabList activation="manual" aria-label="TaskRun details">
+          {tabList}
+        </TabList>
         <TabPanels>{tabPanels}</TabPanels>
       </Tabs>
     </div>
