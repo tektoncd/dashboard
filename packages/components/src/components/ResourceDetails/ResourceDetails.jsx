@@ -83,14 +83,16 @@ const ResourceDetails = ({
         {actions}
       </div>
       <Tabs
-        aria-label={intl.formatMessage({
-          id: 'dashboard.resourceDetails.ariaLabel',
-          defaultMessage: 'Resource details'
-        })}
         onChange={event => onViewChange(tabs[event.selectedIndex])}
         selectedIndex={selectedTabIndex}
       >
-        <TabList activation="manual">
+        <TabList
+          activation="manual"
+          aria-label={intl.formatMessage({
+            id: 'dashboard.resourceDetails.ariaLabel',
+            defaultMessage: 'Resource details'
+          })}
+        >
           <Tab>
             {intl.formatMessage({
               id: 'dashboard.resource.overviewTab',

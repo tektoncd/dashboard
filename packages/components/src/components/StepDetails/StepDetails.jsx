@@ -59,11 +59,10 @@ const StepDetails = ({
         taskRun={taskRun}
       />
       <Tabs
-        aria-label="Step details"
         onChange={event => onViewChange(tabs[event.selectedIndex])}
         selectedIndex={selectedTabIndex}
       >
-        <TabList activation="manual">
+        <TabList activation="manual" aria-label="Step details">
           <Tab>
             {intl.formatMessage({
               id: 'dashboard.taskRun.logs',
