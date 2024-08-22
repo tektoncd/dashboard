@@ -11,6 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { withRouter } from 'storybook-addon-remix-react-router';
 import Trigger from './Trigger';
 
 const props = {
@@ -77,6 +78,7 @@ const props = {
 
 export default {
   component: Trigger,
+  decorators: [withRouter()],
   title: 'Trigger'
 };
 
