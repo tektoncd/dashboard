@@ -11,8 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { useState } from 'react';
 import { action } from '@storybook/addon-actions';
+import { useArgs } from '@storybook/preview-api';
 
 import Task from './Task';
 
@@ -20,6 +20,7 @@ export default {
   args: {
     displayName: 'A Task',
     onSelect: action('selected'),
+    selectedStepId: undefined,
     taskRun: {}
   },
   component: Task,
@@ -51,14 +52,16 @@ export const Pending = { args: { ...Unknown.args, reason: 'Pending' } };
 export const Running = { args: { ...Unknown.args, reason: 'Running' } };
 
 export const Expanded = args => {
-  const [selectedStepId, setSelectedStepId] = useState();
+  const [, updateArgs] = useArgs();
+
   return (
     <Task
       {...args}
       expanded
-      onSelect={({ selectedStepId: stepId }) => setSelectedStepId(stepId)}
+      onSelect={({ selectedStepId: stepId }) =>
+        updateArgs({ selectedStepId: stepId })
+      }
       reason="Running"
-      selectedStepId={selectedStepId}
       steps={[
         { name: 'lint', terminated: { exitCode: 0, reason: 'Completed' } },
         { name: 'test', terminated: { exitCode: 1, reason: 'Completed' } },

@@ -11,12 +11,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { useState } from 'react';
+import { useArgs } from '@storybook/preview-api';
 
 import TaskTree from './TaskTree';
 
 export default {
   args: {
+    selectedStepId: undefined,
+    selectedTaskId: undefined,
     taskRuns: [
       {
         metadata: {
@@ -80,18 +82,14 @@ export default {
 
 export const Default = {
   render: args => {
-    const [selectedStepId, setSelectedStepId] = useState();
-    const [selectedTaskId, setSelectedTaskId] = useState();
+    const [, updateArgs] = useArgs();
 
     return (
       <TaskTree
         {...args}
         onSelect={({ selectedStepId: stepId, selectedTaskId: taskId }) => {
-          setSelectedStepId(stepId);
-          setSelectedTaskId(taskId);
+          updateArgs({ selectedStepId: stepId, selectedTaskId: taskId });
         }}
-        selectedStepId={selectedStepId}
-        selectedTaskId={selectedTaskId}
       />
     );
   }
