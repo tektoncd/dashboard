@@ -11,17 +11,26 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Component } from 'react';
 import { Pending as DefaultIcon } from '@carbon/react/icons';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { getStatus } from '@tektoncd/dashboard-utils';
 
 import FormattedDuration from '../FormattedDuration';
 import StatusIcon from '../StatusIcon';
 
-class DetailsHeader extends Component {
-  getDuration() {
-    const { intl, stepStatus, taskRun } = this.props;
+export default function DetailsHeader({
+  displayName,
+  exitCode,
+  hasWarning,
+  reason,
+  stepStatus,
+  status,
+  taskRun = {},
+  type = 'step'
+}) {
+  const intl = useIntl();
+
+  function getDuration() {
     let { completionTime: endTime, startTime } = taskRun.status || {};
     if (stepStatus) {
       ({ finishedAt: endTime, startedAt: startTime } =
@@ -53,8 +62,7 @@ class DetailsHeader extends Component {
     );
   }
 
-  statusLabel() {
-    const { exitCode, hasWarning, intl, reason, status, taskRun } = this.props;
+  function getStatusLabel() {
     const { reason: taskReason, status: taskStatus } = getStatus(taskRun);
 
     if (
@@ -108,58 +116,45 @@ class DetailsHeader extends Component {
     });
   }
 
-  render() {
-    const {
-      displayName,
-      hasWarning,
-      intl,
-      taskRun,
-      type = 'step'
-    } = this.props;
-    let { reason, status } = this.props;
-    let statusLabel;
+  let statusLabel;
 
-    const duration = this.getDuration();
+  const duration = getDuration();
 
-    if (type === 'taskRun') {
-      ({ reason, status } = getStatus(taskRun));
-      statusLabel =
-        reason ||
-        intl.formatMessage({
-          id: 'dashboard.taskRun.status.pending',
-          defaultMessage: 'Pending'
-        });
-    } else {
-      statusLabel = this.statusLabel();
-    }
+  let reasonToUse = reason;
+  let statusToUse = status;
 
-    return (
-      <header
-        className="tkn--step-details-header"
-        data-status={status}
-        data-reason={reason}
-      >
-        <h2 className="tkn--details-header--heading">
-          <StatusIcon
-            DefaultIcon={props => <DefaultIcon size={24} {...props} />}
-            hasWarning={hasWarning}
-            reason={reason}
-            status={status}
-            {...(type === 'step' ? { type: 'inverse' } : null)}
-          />
-          <span className="tkn--run-details-name" title={displayName}>
-            {displayName}
-          </span>
-          <span className="tkn--status-label">{statusLabel}</span>
-        </h2>
-        {duration}
-      </header>
-    );
+  if (type === 'taskRun') {
+    ({ reason: reasonToUse, status: statusToUse } = getStatus(taskRun));
+    statusLabel =
+      reasonToUse ||
+      intl.formatMessage({
+        id: 'dashboard.taskRun.status.pending',
+        defaultMessage: 'Pending'
+      });
+  } else {
+    statusLabel = getStatusLabel();
   }
+
+  return (
+    <header
+      className="tkn--step-details-header"
+      data-status={statusToUse}
+      data-reason={reasonToUse}
+    >
+      <h2 className="tkn--details-header--heading">
+        <StatusIcon
+          DefaultIcon={props => <DefaultIcon size={24} {...props} />}
+          hasWarning={hasWarning}
+          reason={reasonToUse}
+          status={statusToUse}
+          {...(type === 'step' ? { type: 'inverse' } : null)}
+        />
+        <span className="tkn--run-details-name" title={displayName}>
+          {displayName}
+        </span>
+        <span className="tkn--status-label">{statusLabel}</span>
+      </h2>
+      {duration}
+    </header>
+  );
 }
-
-DetailsHeader.defaultProps = {
-  taskRun: {}
-};
-
-export default injectIntl(DetailsHeader);

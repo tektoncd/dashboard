@@ -11,23 +11,28 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Component } from 'react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { Pending as DefaultIcon } from '@carbon/react/icons';
 
 import StatusIcon from '../StatusIcon';
 
-class Step extends Component {
-  handleClick = event => {
+export default function Step({
+  exitCode,
+  id,
+  onSelect,
+  reason,
+  selected,
+  status,
+  stepName = 'unknown'
+}) {
+  const intl = useIntl();
+
+  function handleClick(event) {
     event.preventDefault();
+    onSelect(id);
+  }
 
-    const { id } = this.props;
-    this.props.onSelect(id);
-  };
-
-  statusLabel() {
-    const { exitCode, intl, reason, status } = this.props;
-
+  function getStatusLabel() {
     if (
       status === 'cancelled' ||
       (status === 'terminated' &&
@@ -80,43 +85,34 @@ class Step extends Component {
     });
   }
 
-  render() {
-    const { exitCode, reason, selected, status, stepName } = this.props;
-    const statusLabel = this.statusLabel();
+  const statusLabel = getStatusLabel();
 
-    return (
-      <li
-        className="tkn--step"
-        data-status={status}
-        data-reason={reason}
-        data-selected={selected || undefined}
+  return (
+    <li
+      className="tkn--step"
+      data-status={status}
+      data-reason={reason}
+      data-selected={selected || undefined}
+    >
+      <span // eslint-disable-line jsx-a11y/no-static-element-interactions
+        className="tkn--step-link"
+        tabIndex="0" // eslint-disable-line jsx-a11y/no-noninteractive-tabindex
+        onClick={handleClick}
+        onKeyUp={e => e.key === 'Enter' && handleClick(e)}
+        role="button"
       >
-        <span // eslint-disable-line jsx-a11y/no-static-element-interactions
-          className="tkn--step-link"
-          tabIndex="0" // eslint-disable-line jsx-a11y/no-noninteractive-tabindex
-          onClick={this.handleClick}
-          onKeyUp={e => e.key === 'Enter' && this.handleClick(e)}
-          role="button"
-        >
-          <StatusIcon
-            DefaultIcon={props => <DefaultIcon size={20} {...props} />}
-            hasWarning={exitCode !== 0}
-            reason={reason}
-            status={status}
-            title={statusLabel}
-            type="inverse"
-          />
-          <span className="tkn--step-name" title={stepName}>
-            {stepName}
-          </span>
+        <StatusIcon
+          DefaultIcon={props => <DefaultIcon size={20} {...props} />}
+          hasWarning={exitCode !== 0}
+          reason={reason}
+          status={status}
+          title={statusLabel}
+          type="inverse"
+        />
+        <span className="tkn--step-name" title={stepName}>
+          {stepName}
         </span>
-      </li>
-    );
-  }
+      </span>
+    </li>
+  );
 }
-
-Step.defaultProps = {
-  stepName: 'unknown'
-};
-
-export default injectIntl(Step);

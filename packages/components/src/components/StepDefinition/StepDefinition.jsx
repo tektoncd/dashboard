@@ -11,29 +11,27 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { PureComponent } from 'react';
-import { injectIntl } from 'react-intl';
+import { memo } from 'react';
+import { useIntl } from 'react-intl';
 
 import ViewYAML from '../ViewYAML';
 
-class StepDefinition extends PureComponent {
-  render() {
-    const { definition, intl } = this.props;
+function StepDefinition({ definition }) {
+  const intl = useIntl();
 
-    return (
-      <ViewYAML
-        dark
-        enableSyntaxHighlighting
-        resource={
-          definition ||
-          intl.formatMessage({
-            id: 'dashboard.step.definitionNotAvailable',
-            defaultMessage: 'Step definition not available'
-          })
-        }
-      />
-    );
-  }
+  return (
+    <ViewYAML
+      dark
+      enableSyntaxHighlighting
+      resource={
+        definition ||
+        intl.formatMessage({
+          id: 'dashboard.step.definitionNotAvailable',
+          defaultMessage: 'Step definition not available'
+        })
+      }
+    />
+  );
 }
 
-export default injectIntl(StepDefinition);
+export default memo(StepDefinition);
