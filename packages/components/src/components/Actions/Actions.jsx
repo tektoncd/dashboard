@@ -11,8 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Component } from 'react';
-import { injectIntl } from 'react-intl';
+import { useState } from 'react';
+import { useIntl } from 'react-intl';
 import {
   Button,
   MenuButton,
@@ -24,38 +24,53 @@ import {
 
 import Modal from '../Modal';
 
-class Actions extends Component {
-  state = { showDialog: false };
+export default function Actions({ items, kind, resource }) {
+  const intl = useIntl();
 
-  handleModalAction = () => {
-    const { action } = this.state;
-    action();
-    this.handleClose();
-  };
+  const [state, setState] = useState({
+    action: undefined,
+    modal: {},
+    showDialog: false
+  });
 
-  handleClose = () => {
-    this.setState({ showDialog: false });
-  };
+  function handleClose() {
+    setState(prevState => ({ ...prevState, showDialog: false }));
+  }
 
-  handleClick = (action, modalProperties) => {
+  function handleModalAction() {
+    state.action();
+    handleClose();
+  }
+
+  function handleClick(itemAction, modalProperties) {
     if (modalProperties) {
-      this.setState({ action, modal: modalProperties, showDialog: true });
+      setState(prevState => ({
+        ...prevState,
+        action: itemAction,
+        modal: modalProperties,
+        showDialog: true
+      }));
     } else {
-      action();
+      itemAction();
     }
-  };
+  }
 
-  getButton() {
-    const { intl, items, kind, resource } = this.props;
+  function getButton() {
     const isButton = kind === 'button';
 
     if (isButton && items.length === 1) {
-      const { action, actionText, icon, modalProperties } = items[0];
+      const {
+        action: itemAction,
+        actionText,
+        danger,
+        icon,
+        modalProperties
+      } = items[0];
       return (
         <Button
-          kind="tertiary"
+          kind={danger ? 'danger' : 'tertiary'}
           onClick={() =>
-            this.handleClick(() => action(resource), modalProperties)
+            handleClick(() => itemAction(resource), modalProperties)
           }
           renderIcon={icon}
           size="md"
@@ -82,7 +97,7 @@ class Actions extends Component {
           {items.map(item => {
             const {
               actionText,
-              action,
+              action: itemAction,
               danger,
               disable,
               hasDivider,
@@ -98,7 +113,7 @@ class Actions extends Component {
                   kind={danger ? 'danger' : 'default'}
                   label={actionText}
                   onClick={() =>
-                    this.handleClick(() => action(resource), modalProperties)
+                    handleClick(() => itemAction(resource), modalProperties)
                   }
                 />
               </>
@@ -120,7 +135,7 @@ class Actions extends Component {
         {items.map(item => {
           const {
             actionText,
-            action,
+            action: itemAction,
             danger,
             disable,
             hasDivider,
@@ -135,7 +150,7 @@ class Actions extends Component {
               itemText={actionText}
               key={actionText}
               onClick={() =>
-                this.handleClick(() => action(resource), modalProperties)
+                handleClick(() => itemAction(resource), modalProperties)
               }
               requireTitle
             />
@@ -145,38 +160,31 @@ class Actions extends Component {
     );
   }
 
-  render() {
-    const { modal = {}, showDialog } = this.state;
-    const { intl, resource } = this.props;
+  const dialog = state.showDialog ? (
+    <Modal
+      open={state.showDialog}
+      modalHeading={state.modal.heading}
+      primaryButtonText={state.modal.primaryButtonText}
+      secondaryButtonText={
+        state.modal.secondaryButtonText ||
+        intl.formatMessage({
+          id: 'dashboard.modal.cancelButton',
+          defaultMessage: 'Cancel'
+        })
+      }
+      onRequestClose={handleClose}
+      onRequestSubmit={handleModalAction}
+      onSecondarySubmit={handleClose}
+      danger={state.modal.danger}
+    >
+      {state.modal.body && state.modal.body(resource)}
+    </Modal>
+  ) : null;
 
-    const dialog = showDialog ? (
-      <Modal
-        open={showDialog}
-        modalHeading={modal.heading}
-        primaryButtonText={modal.primaryButtonText}
-        secondaryButtonText={
-          modal.secondaryButtonText ||
-          intl.formatMessage({
-            id: 'dashboard.modal.cancelButton',
-            defaultMessage: 'Cancel'
-          })
-        }
-        onRequestClose={this.handleClose}
-        onRequestSubmit={this.handleModalAction}
-        onSecondarySubmit={this.handleClose}
-        danger={modal.danger}
-      >
-        {modal.body && modal.body(resource)}
-      </Modal>
-    ) : null;
-
-    return (
-      <>
-        {this.getButton()}
-        {dialog}
-      </>
-    );
-  }
+  return (
+    <>
+      {getButton()}
+      {dialog}
+    </>
+  );
 }
-
-export default injectIntl(Actions);

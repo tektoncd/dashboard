@@ -44,33 +44,29 @@ const deleteAction = {
   }
 };
 
-const props = {
-  items: [
-    { action: () => {}, actionText: 'Rerun' },
-    {
-      action: () => {},
-      actionText: 'disabled option',
-      disable: () => true,
-      modalProperties: {
-        body: () => 'modal body',
-        heading: 'Modal Heading',
-        primaryButtonText: 'primary text',
-        secondaryButtonText: 'secondary text'
-      }
-    },
-    deleteAction
-  ]
-};
-
 export const Default = {
   args: {
-    ...props
+    items: [
+      { action: () => {}, actionText: 'Rerun' },
+      {
+        action: () => {},
+        actionText: 'disabled option',
+        disable: () => true,
+        modalProperties: {
+          body: () => 'modal body',
+          heading: 'Modal Heading',
+          primaryButtonText: 'primary text',
+          secondaryButtonText: 'secondary text'
+        }
+      },
+      deleteAction
+    ]
   }
 };
 
 export const Button = {
   args: {
-    ...props,
+    ...Default.args,
     kind: 'button'
   }
 };
