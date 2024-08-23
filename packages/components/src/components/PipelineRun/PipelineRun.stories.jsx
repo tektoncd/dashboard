@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { useState } from 'react';
+import { useArgs } from '@storybook/preview-api';
 import { labels as labelConstants } from '@tektoncd/dashboard-utils';
 
 import PipelineRun from '.';
@@ -163,79 +163,72 @@ const pipelineRunWithMinimalStatus = {
 };
 
 export default {
+  args: {
+    selectedStepId: undefined,
+    selectedTaskId: undefined,
+    view: undefined
+  },
   component: PipelineRun,
   decorators: [Story => <Story />],
   title: 'PipelineRun'
 };
 
-export const Default = () => {
-  const [selectedStepId, setSelectedStepId] = useState();
-  const [selectedTaskId, setSelectedTaskId] = useState();
-  const [view, setView] = useState();
+export const Default = args => {
+  const [, updateArgs] = useArgs();
 
   return (
     <PipelineRun
+      {...args}
       fetchLogs={() => 'sample log output'}
       handleTaskSelected={({
         selectedStepId: stepId,
         selectedTaskId: taskId
       }) => {
-        setSelectedStepId(stepId);
-        setSelectedTaskId(taskId);
+        updateArgs({ selectedStepId: stepId, selectedTaskId: taskId });
       }}
-      onViewChange={selectedView => setView(selectedView)}
+      onViewChange={selectedView => updateArgs({ view: selectedView })}
       pipelineRun={pipelineRun}
-      selectedStepId={selectedStepId}
-      selectedTaskId={selectedTaskId}
       taskRuns={[taskRun, taskRunWithWarning]}
       tasks={[task]}
-      view={view}
     />
   );
 };
 
-export const WithMinimalStatus = () => {
-  const [selectedStepId, setSelectedStepId] = useState();
-  const [selectedTaskId, setSelectedTaskId] = useState();
-  const [view, setView] = useState();
+export const WithMinimalStatus = args => {
+  const [, updateArgs] = useArgs();
 
   return (
     <PipelineRun
+      {...args}
       fetchLogs={() => 'sample log output'}
       handleTaskSelected={({
         selectedStepId: stepId,
         selectedTaskId: taskId
       }) => {
-        setSelectedStepId(stepId);
-        setSelectedTaskId(taskId);
+        updateArgs({ selectedStepId: stepId, selectedTaskId: taskId });
       }}
-      onViewChange={selectedView => setView(selectedView)}
+      onViewChange={selectedView => updateArgs({ view: selectedView })}
       pipelineRun={pipelineRunWithMinimalStatus}
-      selectedStepId={selectedStepId}
-      selectedTaskId={selectedTaskId}
       taskRuns={[taskRun, taskRunWithWarning]}
       tasks={[task]}
-      view={view}
     />
   );
 };
 
-export const WithPodDetails = () => {
-  const [selectedStepId, setSelectedStepId] = useState();
-  const [selectedTaskId, setSelectedTaskId] = useState();
-  const [view, setView] = useState();
+export const WithPodDetails = args => {
+  const [, updateArgs] = useArgs();
 
   return (
     <PipelineRun
+      {...args}
       fetchLogs={() => 'sample log output'}
       handleTaskSelected={({
         selectedStepId: stepId,
         selectedTaskId: taskId
       }) => {
-        setSelectedStepId(stepId);
-        setSelectedTaskId(taskId);
+        updateArgs({ selectedStepId: stepId, selectedTaskId: taskId });
       }}
-      onViewChange={selectedView => setView(selectedView)}
+      onViewChange={selectedView => updateArgs({ view: selectedView })}
       pipelineRun={pipelineRun}
       pod={{
         events: [
@@ -298,11 +291,8 @@ export const WithPodDetails = () => {
           }
         }
       }}
-      selectedStepId={selectedStepId}
-      selectedTaskId={selectedTaskId}
       taskRuns={[taskRun]}
       tasks={[task]}
-      view={view}
     />
   );
 };
