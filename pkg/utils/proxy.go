@@ -44,7 +44,11 @@ func Proxy(request *http.Request, response http.ResponseWriter, url string, clie
 
 	if err != nil {
 		logging.Log.Errorf("Failed to execute request: %s", err)
-		return resp.StatusCode, err
+		if resp != nil {
+			return resp.StatusCode, err
+		}
+		// Return a generic status code if resp is nil
+		return http.StatusInternalServerError, err
 	}
 
 	for name, values := range resp.Header {
