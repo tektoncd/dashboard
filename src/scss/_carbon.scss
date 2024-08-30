@@ -79,24 +79,6 @@ limitations under the License.
   --tkn-button-border-width: #{button.$button-border-width};
 }
 
-:root, .tkn--theme-light {
-  @include theme.theme(themes.$g10);
-}
-
-@mixin tkn--theme-dark {
-  @include theme.theme(themes.$g90);
-}
-
-.tkn--theme-dark {
-  @include tkn--theme-dark;
-}
-
-@media (prefers-color-scheme: dark) {
-  .tkn--theme-system {
-    @include tkn--theme-dark;
-  }
-}
-
 .#{config.$prefix}--actionable-notification,
 .#{config.$prefix}--actionable-notification--toast,
 .#{config.$prefix}--inline-notification {
