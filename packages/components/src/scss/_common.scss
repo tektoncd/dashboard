@@ -11,7 +11,26 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+@use '@carbon/react/scss/themes';
 @use '@carbon/react/scss/theme' as *;
+
+:root, .tkn--theme-light {
+  @include theme(themes.$g10);
+}
+
+@mixin tkn--theme-dark {
+  @include theme(themes.$g90);
+}
+
+.tkn--theme-dark {
+  @include tkn--theme-dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  .tkn--theme-system {
+    @include tkn--theme-dark;
+  }
+}
 
 .tkn--tooltip-trigger {
   appearance: none;
