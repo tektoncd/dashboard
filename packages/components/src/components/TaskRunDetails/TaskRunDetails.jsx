@@ -39,8 +39,6 @@ function HelpIcon({ title }) {
 
   return (
     <Tooltip align="top-end" autoAlign label={title}>
-      {/* false positive, Carbon automatically adds aria-labelledby to the button */}
-      {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
       <button className="tkn--tooltip-trigger" type="button">
         <Information />
       </button>
