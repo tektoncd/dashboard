@@ -38,6 +38,7 @@ var (
 	streamLogs         = flag.Bool("stream-logs", true, "Enable log streaming instead of polling")
 	externalLogs       = flag.String("external-logs", "", "External logs provider URL")
 	xFrameOptions      = flag.String("x-frame-options", "DENY", "Value for the X-Frame-Options response header, set '' to omit it")
+	contentPathPrefix  = flag.String("content-path-prefix", "", "Value for content root path prefix when calling Tekton API in case Tekton is not exposed on root path")
 )
 
 func main() {
@@ -74,6 +75,7 @@ func main() {
 		StreamLogs:         *streamLogs,
 		ExternalLogsURL:    *externalLogs,
 		XFrameOptions:      *xFrameOptions,
+		ContentPathPrefix:  *contentPathPrefix,
 	}
 
 	resource := endpoints.Resource{

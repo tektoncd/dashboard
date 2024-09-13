@@ -30,6 +30,7 @@ type Options struct {
 	StreamLogs         bool
 	ExternalLogsURL    string
 	XFrameOptions      string
+	ContentPathPrefix  string
 }
 
 // GetPipelinesNamespace returns the PipelinesNamespace property if set

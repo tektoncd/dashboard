@@ -16,6 +16,7 @@ package endpoints
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/tektoncd/dashboard/pkg/logging"
 )
@@ -34,6 +35,7 @@ type Properties struct {
 	TenantNamespaces   []string `json:"tenantNamespaces,omitempty"`
 	TriggersNamespace  string   `json:"triggersNamespace,omitempty"`
 	TriggersVersion    string   `json:"triggersVersion,omitempty"`
+	ContentRootPath    string   `json:"contentRootPath,omitempty"`
 }
 
 // GetProperties is used to get the installed namespace for the Dashboard,
@@ -58,7 +60,7 @@ func (r Resource) GetProperties(response http.ResponseWriter, _ *http.Request) {
 	}
 
 	if r.Options.ExternalLogsURL != "" {
-		properties.ExternalLogsURL = "/v1/logs-proxy"
+		properties.ExternalLogsURL = strings.TrimSuffix(r.Options.ContentPathPrefix, "/") + "/v1/logs-proxy"
 	}
 
 	isTriggersInstalled := IsTriggersInstalled(r, triggersNamespace)

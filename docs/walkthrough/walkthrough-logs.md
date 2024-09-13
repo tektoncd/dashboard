@@ -336,6 +336,18 @@ kubectl patch deployment tekton-dashboard -n tekton-pipelines --type='json' \
   --patch='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--external-logs=http://logs-server.tools.svc.cluster.local:3000/logs"}]'
 ```
 
+---
+(Optional)  
+Potentially, if your Tekton Dashboard is exposed on nonroot content path e.g. http://logs.127.0.0.1.nip.io/ci/tekton patch Dashboard deployment to a add the `--content-path-prefix=/ci/tekton` option:
+
+```bash
+kubectl patch deployment tekton-dashboard -n tekton-pipelines --type='json' \
+  --patch='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--content-path-prefix=/ci/tekton"}]'
+```
+Of course instead of the `/ci/tekton` provide your actual value    
+
+---
+
 The logs are now displayed again, fetched from the logs server configured in the previous steps.
 
 ![Logs are available again](./walkthrough-logs-logs.png)
