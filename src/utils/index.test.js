@@ -133,7 +133,7 @@ describe('fetchLogsFallback', () => {
 
   it('should return a function to retrieve logs from the external provider', () => {
     const container = 'fake_container';
-    const externalLogsURL = 'fake_url';
+    const externalLogsURL = '/fake_url';
     const namespace = 'fake_namespace';
     const podName = 'fake_podName';
     const stepName = 'fake_stepName';
@@ -149,7 +149,7 @@ describe('fetchLogsFallback', () => {
     const fallback = fetchLogsFallback(externalLogsURL);
     fallback(stepName, stepStatus, taskRun);
     expect(comms.get).toHaveBeenCalledWith(
-      `${externalLogsURL}/${namespace}/${podName}/${container}?startTime=${startTime.replaceAll(
+      `http://localhost:3000${externalLogsURL}/${namespace}/${podName}/${container}?startTime=${startTime.replaceAll(
         ':',
         '%3A'
       )}&completionTime=${completionTime.replaceAll(':', '%3A')}`,
@@ -159,7 +159,7 @@ describe('fetchLogsFallback', () => {
 
   it('should handle a missing startTime and completionTime', () => {
     const container = 'fake_container';
-    const externalLogsURL = 'fake_url';
+    const externalLogsURL = '/fake_url';
     const namespace = 'fake_namespace';
     const podName = 'fake_podName';
     const stepName = 'fake_stepName';
@@ -170,7 +170,7 @@ describe('fetchLogsFallback', () => {
     const fallback = fetchLogsFallback(externalLogsURL);
     fallback(stepName, stepStatus, taskRun);
     expect(comms.get).toHaveBeenCalledWith(
-      `${externalLogsURL}/${namespace}/${podName}/${container}`,
+      `http://localhost:3000${externalLogsURL}/${namespace}/${podName}/${container}`,
       { Accept: 'text/plain' }
     );
   });

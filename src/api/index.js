@@ -153,7 +153,7 @@ export function getExternalLogURL({
   if (queryString) {
     queryString = `?${queryString}`;
   }
-  return `${externalLogsURL}/${namespace}/${podName}/${container}${queryString}`;
+  return `${getAPIRoot({ isDashboardAPI: true })}${externalLogsURL}/${namespace}/${podName}/${container}${queryString}`;
 }
 
 export function getPodLogURL({ container, name, namespace, follow }) {
