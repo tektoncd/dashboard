@@ -156,7 +156,7 @@ it('useEvents', async () => {
 
 it('getExternalLogURL', () => {
   const container = 'fake_container';
-  const externalLogsURL = 'fake_externalLogsURL';
+  const externalLogsURL = '/fake_externalLogsURL';
   const namespace = 'fake_namespace';
   const podName = 'fake_podName';
   const startTime = '2000-01-02T03:04:05Z';
@@ -171,7 +171,7 @@ it('getExternalLogURL', () => {
       startTime
     })
   ).toEqual(
-    `${externalLogsURL}/${namespace}/${podName}/${container}?startTime=${startTime.replaceAll(
+    `http://localhost:3000${externalLogsURL}/${namespace}/${podName}/${container}?startTime=${startTime.replaceAll(
       ':',
       '%3A'
     )}&completionTime=${completionTime.replaceAll(':', '%3A')}`
@@ -180,7 +180,7 @@ it('getExternalLogURL', () => {
 
 it('getExternalLogURL with empty completionTime', () => {
   const container = 'fake_container';
-  const externalLogsURL = 'fake_externalLogsURL';
+  const externalLogsURL = '/fake_externalLogsURL';
   const namespace = 'fake_namespace';
   const podName = 'fake_podName';
   const startTime = '2000-01-02T03:04:05Z';
@@ -193,7 +193,7 @@ it('getExternalLogURL with empty completionTime', () => {
       startTime
     })
   ).toEqual(
-    `${externalLogsURL}/${namespace}/${podName}/${container}?startTime=${startTime.replaceAll(
+    `http://localhost:3000${externalLogsURL}/${namespace}/${podName}/${container}?startTime=${startTime.replaceAll(
       ':',
       '%3A'
     )}`
@@ -202,12 +202,14 @@ it('getExternalLogURL with empty completionTime', () => {
 
 it('getExternalLogURL with empty startTime and completionTime', () => {
   const container = 'fake_container';
-  const externalLogsURL = 'fake_externalLogsURL';
+  const externalLogsURL = '/fake_externalLogsURL';
   const namespace = 'fake_namespace';
   const podName = 'fake_podName';
   expect(
     API.getExternalLogURL({ container, externalLogsURL, namespace, podName })
-  ).toEqual(`${externalLogsURL}/${namespace}/${podName}/${container}`);
+  ).toEqual(
+    `http://localhost:3000${externalLogsURL}/${namespace}/${podName}/${container}`
+  );
 });
 
 it('getPodLog', () => {
