@@ -511,8 +511,9 @@ export function getTaskRunsWithPlaceholders({
       }
       return acc;
     }, {});
+    const taskRunsToSort = [];
     realTaskRuns.forEach(taskRun => {
-      taskRunsToDisplay.push(
+      taskRunsToSort.push(
         addDashboardLabels({
           displayName: displayNames[taskRun.metadata.name],
           pipelineTask,
@@ -520,8 +521,24 @@ export function getTaskRunsWithPlaceholders({
         })
       );
     });
-
-    if (!realTaskRuns.length) {
+    if (taskRunsToSort.length) {
+      // sort by display name to provide a stable order in the UI
+      // if there's no display name stick with the source order
+      if (
+        taskRunsToSort[0].metadata.labels[labelConstants.DASHBOARD_DISPLAY_NAME]
+      ) {
+        // sort only if at least one of the TaskRuns has a display name,
+        // it's likely they all do in that case (e.g. matrix TaskRuns)
+        taskRunsToSort.sort((taskRunA, taskRunB) => {
+          const displayNameA =
+            taskRunA.metadata.labels[labelConstants.DASHBOARD_DISPLAY_NAME];
+          const displayNameB =
+            taskRunB.metadata.labels[labelConstants.DASHBOARD_DISPLAY_NAME];
+          return displayNameA.localeCompare(displayNameB);
+        });
+      }
+      taskRunsToDisplay.push(...taskRunsToSort);
+    } else {
       taskRunsToDisplay.push(
         addDashboardLabels({
           pipelineTask,

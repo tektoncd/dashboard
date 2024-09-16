@@ -849,6 +849,11 @@ describe('getTaskRunsWithPlaceholders', () => {
     const displayName = 'aDisplayName';
     const pipelineTaskName = 'aPipelineTaskName';
     const taskRunName = 'aTaskRunName';
+    const matrixPipelineTaskName = 'aMatrixPipelineTaskName';
+    const matrixTaskRunName1 = 'matrixTaskRun1';
+    const matrixTaskRunName2 = 'matrixTaskRun2';
+    const matrixTaskRunDisplayName1 = 'matrixRunDisplayName1';
+    const matrixTaskRunDisplayName2 = 'matrixRunDisplayName2';
 
     const pipelineRun = {
       spec: {
@@ -859,15 +864,28 @@ describe('getTaskRunsWithPlaceholders', () => {
       status: {
         childReferences: [
           {
+            displayName: matrixTaskRunDisplayName2,
+            name: matrixTaskRunName2,
+            pipelineTaskName: matrixPipelineTaskName
+          },
+          {
             displayName,
             name: taskRunName,
             pipelineTaskName
+          },
+          {
+            displayName: matrixTaskRunDisplayName1,
+            name: matrixTaskRunName1,
+            pipelineTaskName: matrixPipelineTaskName
           }
         ],
         pipelineSpec: {
           tasks: [
             {
               name: pipelineTaskName
+            },
+            {
+              name: matrixPipelineTaskName
             }
           ]
         }
@@ -881,12 +899,36 @@ describe('getTaskRunsWithPlaceholders', () => {
         name: taskRunName
       }
     };
+    const matrixTaskRun1 = {
+      metadata: {
+        labels: {
+          [labels.PIPELINE_TASK]: matrixPipelineTaskName
+        },
+        name: matrixTaskRunName1
+      }
+    };
+    const matrixTaskRun2 = {
+      metadata: {
+        labels: {
+          [labels.PIPELINE_TASK]: matrixPipelineTaskName
+        },
+        name: matrixTaskRunName2
+      }
+    };
+
     const runs = getTaskRunsWithPlaceholders({
       pipelineRun,
-      taskRuns: [taskRun]
+      taskRuns: [matrixTaskRun2, taskRun, matrixTaskRun1]
     });
+    // sorts matrix TaskRuns by display name
     expect(runs[0].metadata.labels[labels.DASHBOARD_DISPLAY_NAME]).toEqual(
       displayName
+    );
+    expect(runs[1].metadata.labels[labels.DASHBOARD_DISPLAY_NAME]).toEqual(
+      matrixTaskRunDisplayName1
+    );
+    expect(runs[2].metadata.labels[labels.DASHBOARD_DISPLAY_NAME]).toEqual(
+      matrixTaskRunDisplayName2
     );
   });
 });
