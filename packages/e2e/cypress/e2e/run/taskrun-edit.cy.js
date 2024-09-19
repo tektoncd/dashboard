@@ -41,6 +41,7 @@ spec:
     `;
     cy.applyResource(task);
     cy.visit(`/#/taskruns/create?namespace=${namespace}&taskName=${taskName}`);
+    cy.contains('h1', 'Create TaskRun');
     cy.get('[id=create-taskrun--namespaces-dropdown]').should(
       'have.value',
       namespace

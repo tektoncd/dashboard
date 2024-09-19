@@ -40,6 +40,8 @@ spec:
     `;
     cy.applyResource(task);
     cy.visit(`/#/taskruns/create?namespace=${namespace}&taskName=${taskName}`);
+    cy.contains('h1', 'Create TaskRun');
+
     cy.get('[id=create-taskrun--namespaces-dropdown]').should(
       'have.value',
       namespace
@@ -53,10 +55,13 @@ spec:
 
     cy.contains('h1', 'TaskRuns');
     cy.contains('a', `${taskName}-run`).click();
+    cy.contains('h1', `${taskName}-run`);
 
     cy.get('header[class="tkn--pipeline-run-header"]')
       .find('span[class="tkn--status-label"]', { timeout: 15000 })
       .should('have.text', 'Succeeded');
+
+    cy.contains('[role=button]', 'echo').click();
 
     cy.contains('.tkn--log', 'Hello World!');
     cy.contains('.tkn--log', 'Step completed successfully');
@@ -82,6 +87,7 @@ spec:
       `;
     cy.applyResource(task);
     cy.visit(`/#/taskruns/create?namespace=${namespace}&taskName=${taskName}`);
+    cy.contains('h1', 'Create TaskRun');
     cy.get('[id=create-taskrun--namespaces-dropdown]').should(
       'have.value',
       namespace
@@ -106,10 +112,13 @@ spec:
 
     cy.contains('h1', 'TaskRuns');
     cy.contains('a', taskRunName).click();
+    cy.contains('h1', taskRunName);
 
     cy.get('header[class="tkn--pipeline-run-header"]')
       .find('span[class="tkn--status-label"]', { timeout: 15000 })
       .should('have.text', 'Succeeded');
+
+    cy.contains('[role=button]', 'echo').click();
 
     cy.contains('.tkn--log', 'Hello World!');
     cy.contains('.tkn--log', 'Step completed successfully');
@@ -145,10 +154,13 @@ spec:
 
     cy.contains('h1', 'TaskRuns');
     cy.get(`[title=${taskRunName}]`).click();
+    cy.contains('h1', taskRunName);
 
     cy.get('header[class="tkn--pipeline-run-header"]')
       .find('span[class="tkn--status-label"]', { timeout: 15000 })
       .should('have.text', 'Succeeded');
+
+    cy.contains('[role=button]', 'echo').click();
 
     cy.contains('.tkn--log', 'Hello World!');
     cy.contains('.tkn--log', 'Step completed successfully');
@@ -181,10 +193,13 @@ spec:
 
     cy.contains('h1', 'TaskRuns');
     cy.get(`[title=${taskRunName}]`).click();
+    cy.contains('h1', taskRunName);
 
     cy.get('header[class="tkn--pipeline-run-header"]')
       .find('span[class="tkn--status-label"]', { timeout: 15000 })
       .should('have.text', 'Succeeded');
+
+    cy.contains('[role=button]', 'echo').click();
 
     cy.contains('.tkn--log', 'Hello World!');
     cy.contains('.tkn--log', 'Step completed successfully');
