@@ -46,6 +46,8 @@ spec:
     cy.visit(
       `/#/pipelineruns/create?namespace=${namespace}&pipelineName=${pipelineName}`
     );
+    cy.contains('h1', 'Create PipelineRun');
+
     cy.get('[id=create-pipelinerun--namespaces-dropdown]').should(
       'have.value',
       namespace

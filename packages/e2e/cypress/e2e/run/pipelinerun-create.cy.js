@@ -45,6 +45,8 @@ spec:
     cy.visit(
       `/#/pipelineruns/create?namespace=${namespace}&pipelineName=${pipelineName}`
     );
+    cy.contains('h1', 'Create PipelineRun');
+
     cy.get('[id=create-pipelinerun--namespaces-dropdown]').should(
       'have.value',
       namespace
@@ -58,10 +60,13 @@ spec:
 
     cy.contains('h1', 'PipelineRuns');
     cy.contains('a', `${pipelineName}-run`).click();
+    cy.contains('h1', `${pipelineName}-run`);
 
     cy.get('header[class="tkn--pipeline-run-header"]')
       .find('span[class="tkn--status-label"]', { timeout: 15000 })
       .should('have.text', 'Succeeded');
+
+    cy.contains('[role=button]', 'echo').click();
 
     cy.contains('.tkn--log', 'Hello World!');
     cy.contains('.tkn--log', 'Step completed successfully');
@@ -92,6 +97,8 @@ spec:
     cy.visit(
       `/#/pipelineruns/create?namespace=${namespace}&pipelineName=${pipelineName}`
     );
+    cy.contains('h1', 'Create PipelineRun');
+
     cy.get('[id=create-pipelinerun--namespaces-dropdown]').should(
       'have.value',
       namespace
@@ -116,10 +123,13 @@ spec:
 
     cy.contains('h1', 'PipelineRuns');
     cy.contains('a', pipelineRunName).click();
+    cy.contains('h1', pipelineRunName);
 
     cy.get('header[class="tkn--pipeline-run-header"]')
       .find('span[class="tkn--status-label"]', { timeout: 15000 })
       .should('have.text', 'Succeeded');
+
+    cy.contains('[role=button]', 'echo').click();
 
     cy.contains('.tkn--log', 'Hello World!');
     cy.contains('.tkn--log', 'Step completed successfully');
@@ -158,10 +168,13 @@ spec:
 
     cy.contains('h1', 'PipelineRuns');
     cy.get(`[title=${pipelineRunName}]`).click();
+    cy.contains('h1', pipelineRunName);
 
     cy.get('header[class="tkn--pipeline-run-header"]')
       .find('span[class="tkn--status-label"]', { timeout: 15000 })
       .should('have.text', 'Succeeded');
+
+    cy.contains('[role=button]', 'echo').click();
 
     cy.contains('.tkn--log', 'Hello World!');
     cy.contains('.tkn--log', 'Step completed successfully');
@@ -201,6 +214,8 @@ spec:
     cy.get('header[class="tkn--pipeline-run-header"]')
       .find('span[class="tkn--status-label"]', { timeout: 15000 })
       .should('have.text', 'Succeeded');
+
+    cy.contains('[role=button]', 'echo').click();
 
     cy.contains('.tkn--log', 'Hello World!');
     cy.contains('.tkn--log', 'Step completed successfully');
