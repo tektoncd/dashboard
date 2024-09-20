@@ -34,7 +34,7 @@
     "react-intl": "^6.4.1"
   },
   "engines": {
-    "node": "^20.14.0",
+    "node": "^20.17.0",
     "npm": "^10.7.0"
   },
   "publishConfig": {
