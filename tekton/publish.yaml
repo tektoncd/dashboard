@@ -71,7 +71,7 @@ spec:
     - name: IMAGES
   steps:
     - name: container-registry-auth
-      image: gcr.io/go-containerregistry/crane:debug
+      image: gcr.io/go-containerregistry/crane:debug@sha256:ff0e08eeae8097d28b2381c7f7123bf542757abc68d11bff58fb882b72843785
       script: |
         #!/busybox/sh
         set -ex
@@ -90,7 +90,7 @@ spec:
         cp ${DOCKER_CONFIG} /workspace/docker-config.json
 
     - name: run-ko
-      image: gcr.io/tekton-releases/dogfooding/ko-gcloud:latest
+      image: gcr.io/tekton-releases/dogfooding/ko-gcloud:v20240920-6c2a999d36@sha256:1756ca55a09b360028695792e638a7cc366292d7aef44c926a8cb765085664c8
       env:
         - name: KO_DOCKER_REPO
           value: $(params.imageRegistry)/$(params.imageRegistryPath)
@@ -130,7 +130,7 @@ spec:
         ./scripts/installer release --debug --read-write --platform $(params.platforms) --tag $(params.versionTag) --output $OUTPUT_RELEASE_DIR/release-full.yaml
 
     - name: koparse
-      image: gcr.io/tekton-releases/dogfooding/koparse:latest
+      image: gcr.io/tekton-releases/dogfooding/koparse:v20240910-ec3cf3c749@sha256:5e8a522fc1e587fc00b69a6d73e0bfdf7a29ca143537a5542eb224680d2dbf2f
       script: |
         set -ex
 
@@ -147,7 +147,7 @@ spec:
           --base ${IMAGES_PATH} --images ${IMAGES} > /workspace/built_images
 
     - name: tag-images
-      image: gcr.io/go-containerregistry/crane:debug
+      image: gcr.io/go-containerregistry/crane:debug@sha256:ff0e08eeae8097d28b2381c7f7123bf542757abc68d11bff58fb882b72843785
       script: |
         #!/busybox/sh
         set -ex
