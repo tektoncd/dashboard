@@ -131,7 +131,7 @@ function Root() {
         render={({ isSideNavExpanded, onClickSideNavExpand }) => (
           <Header
             headerNameProps={{
-              element: HeaderNameLink
+              as: HeaderNameLink
             }}
             isSideNavExpanded={isSideNavExpanded}
             onHeaderMenuButtonClick={onClickSideNavExpand}
