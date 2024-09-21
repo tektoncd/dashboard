@@ -1,6 +1,8 @@
 src/utils/test.jsx
 *.cy.js
+*.stories.js
 *.stories.jsx
+*.stories.scss
 *.test.js
 *.test.jsx
 **/examples/
