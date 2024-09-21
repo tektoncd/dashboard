@@ -95,6 +95,10 @@ body {
   margin-inline-start: 16rem;
 }
 
+.#{$prefix}--header .#{$prefix}--list-box__wrapper:has(.#{$prefix}--list-box.#{$prefix}--skeleton) {
+  inline-size: 245px;
+}
+
 .#{$prefix}--modal-header,
 .#{$prefix}--modal-content {
   inline-size: 100%;

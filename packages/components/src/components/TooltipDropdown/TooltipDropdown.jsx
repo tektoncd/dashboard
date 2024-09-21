@@ -35,12 +35,12 @@ const TooltipDropdown = ({
   disabled,
   emptyText,
   id,
-  inline,
   items = defaults.items,
   label,
   loading = false,
   onChange,
   selectedItem,
+  size = 'md',
   titleText,
   ...rest
 }) => {
@@ -55,9 +55,9 @@ const TooltipDropdown = ({
           <span className={`${carbonPrefix}--label`}>{titleText}</span>
         )}
         <DropdownSkeleton
-          className={`${carbonPrefix}--combo-box ${className || ''}`}
+          className={`${carbonPrefix}--combo-box ${carbonPrefix}--list-box ${carbonPrefix}--list-box--${size} ${className || ''}`}
+          hideLabel
           id={id}
-          inline={inline}
         />
       </div>
     );
@@ -87,13 +87,13 @@ const TooltipDropdown = ({
         }
       })}
       id={id}
-      inline={inline}
       items={options}
       itemToString={itemToString}
       key={key}
       onChange={onChange}
       placeholder={options.length === 0 ? emptyString : label}
       selectedItem={selectedItem}
+      size={size}
       titleText={titleText}
       translateWithId={getTranslateWithId(intl)}
       {...rest}
