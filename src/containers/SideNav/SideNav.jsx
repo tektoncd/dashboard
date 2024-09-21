@@ -59,7 +59,7 @@ function SideNav({ expanded, showKubernetesResources = false }) {
 
   function getMenuItemProps(to) {
     return {
-      element: NavLink,
+      as: NavLink,
       isActive: !!matchPath(
         {
           path: to
