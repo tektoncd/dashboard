@@ -37,6 +37,9 @@ spec:
     - name: imageRegistryRegions
       description: The target image registry regions
       default: "us eu asia"
+    - name: imageRegistryUser
+      description: Username to be used to login to the container registry
+      default: "_json_key"
     - name: releaseAsLatest
       description: Whether to tag and publish this release as Dashboard's latest
       default: "true"
@@ -61,6 +64,8 @@ spec:
         value: "$(workspaces.release-secret.path)/$(params.serviceAccountPath)"
       - name: CONTAINER_REGISTRY
         value: "$(params.imageRegistry)/$(params.imageRegistryPath)"
+      - name: CONTAINER_REGISTRY_USER
+        value: "$(params.imageRegistryUser)"
       - name: REGIONS
         value: "$(params.imageRegistryRegions)"
       - name: OUTPUT_RELEASE_DIR
@@ -78,14 +83,14 @@ spec:
 
         # Login to the container registry
         DOCKER_CONFIG=$(cat ${CONTAINER_REGISTRY_CREDENTIALS} | \
-          crane auth login -u _json_key --password-stdin $(params.imageRegistry) 2>&1 | \
+          crane auth login -u ${CONTAINER_REGISTRY_USER} --password-stdin $(params.imageRegistry) 2>&1 | \
           sed 's,^.*logged in via \(.*\)$,\1,g')
 
         # Auth with account credentials for all regions.
         for region in ${REGIONS}
         do
           HOSTNAME=${region}.$(params.imageRegistry)
-          cat ${CONTAINER_REGISTRY_CREDENTIALS} | crane auth login -u _json_key --password-stdin ${HOSTNAME}
+          cat ${CONTAINER_REGISTRY_CREDENTIALS} | crane auth login -u ${CONTAINER_REGISTRY_USER} --password-stdin ${HOSTNAME}
         done
         cp ${DOCKER_CONFIG} /workspace/docker-config.json
 
