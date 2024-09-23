@@ -47,6 +47,9 @@ spec:
     - name: platforms
       description: Platforms to publish for the images (e.g. linux/amd64,linux/arm64)
       default: linux/amd64,linux/arm,linux/arm64,linux/s390x,linux/ppc64le
+    - name: koExtraArgs
+      description: Extra args to be passed to ko
+      default: "--preserve-import-paths"
     - name: serviceAccountPath
       description: The path to the service account file within the release-secret workspace
     - name: serviceAccountImagesPath
@@ -127,6 +130,8 @@ spec:
           value: $(params.serviceAccountImagesPath)
         - name: platforms
           value: $(params.platforms)
+        - name: koExtraArgs
+          value: $(params.koExtraArgs)
       workspaces:
         - name: source
           workspace: workarea
