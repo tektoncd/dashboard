@@ -16,7 +16,7 @@
 ARG CHROME_VERSION='129.0.6668.58-1'
 ARG NODE_VERSION='20.17.0'
 
-FROM cypress/factory
+FROM cypress/factory@sha256:2fd35ba020a43beefb3de43c1dfc56d36b2dd3ebb261955f4185d28737957a3f
 
 RUN apt-get update && apt-get install -y apt-transport-https ca-certificates curl gpg &&\
     mkdir -p /etc/apt/keyrings &&\

@@ -9,7 +9,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM gcr.io/tekton-releases/dogfooding/dashboard-e2e-base:node20.14.0-chrome126
+FROM gcr.io/tekton-releases/dogfooding/dashboard-e2e-base:node20.17.0-chrome129@sha256:823219d58f96726fa25d79571ec236c4bf672ceec961c79ded77b1eeafd858a3
 
 ENTRYPOINT ["npm", "run", "test:ci"]
 CMD ["--", "--browser", "chrome"]
