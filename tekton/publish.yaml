@@ -27,6 +27,9 @@ spec:
     - name: images
       description: List of cmd/* paths to be published as images
       default: "dashboard"
+    - name: koExtraArgs
+      description: Extra args to be passed to ko
+      default: "--preserve-import-paths"
     - name: versionTag
       description: The vX.Y.Z version that the artifacts should be tagged with (including `v`)
     - name: imageRegistry
@@ -70,6 +73,8 @@ spec:
         value: "$(params.imageRegistryRegions)"
       - name: OUTPUT_RELEASE_DIR
         value: "$(workspaces.output.path)/$(params.versionTag)"
+      - name: KO_EXTRA_ARGS
+        value: "$(params.koExtraArgs)"
   results:
     # IMAGES result is picked up by Tekton Chains to sign the release.
     # See https://github.com/tektoncd/plumbing/blob/main/docs/signing.md for more info.
@@ -128,17 +133,31 @@ spec:
 
         # build manifests for installer
         KO_RESOLVE_IMAGE_LABEL="--image-label=org.opencontainers.image.source=https://$(params.package)"
-        kustomize build overlays/installer/read-only  --load-restrictor LoadRestrictionsNone | ko resolve ${KO_RESOLVE_IMAGE_LABEL} --platform=$(params.platforms) --preserve-import-paths -t $(params.versionTag) -f - > $OUTPUT_RELEASE_DIR/installer-release.yaml
-        kustomize build overlays/installer/read-write --load-restrictor LoadRestrictionsNone | ko resolve ${KO_RESOLVE_IMAGE_LABEL} --platform=$(params.platforms) --preserve-import-paths -t $(params.versionTag) -f - > $OUTPUT_RELEASE_DIR/installer-release-full.yaml
+        kustomize build overlays/installer/read-only  --load-restrictor LoadRestrictionsNone | ko resolve ${KO_RESOLVE_IMAGE_LABEL} --platform=$(params.platforms) ${KO_EXTRA_ARGS} -t $(params.versionTag) -f - > $OUTPUT_RELEASE_DIR/installer-release.yaml
+        kustomize build overlays/installer/read-write --load-restrictor LoadRestrictionsNone | ko resolve ${KO_RESOLVE_IMAGE_LABEL} --platform=$(params.platforms) ${KO_EXTRA_ARGS} -t $(params.versionTag) -f - > $OUTPUT_RELEASE_DIR/installer-release-full.yaml
 
         # build pre configured manifests
-        ./scripts/installer release --debug              --platform $(params.platforms) --tag $(params.versionTag) --output $OUTPUT_RELEASE_DIR/release.yaml
-        ./scripts/installer release --debug --read-write --platform $(params.platforms) --tag $(params.versionTag) --output $OUTPUT_RELEASE_DIR/release-full.yaml
-
+        ./scripts/installer build --debug              --platform $(params.platforms) --tag $(params.versionTag) --output $OUTPUT_RELEASE_DIR/release.yaml ${KO_EXTRA_ARGS}
+        ./scripts/installer build --debug --read-write --platform $(params.platforms) --tag $(params.versionTag) --output $OUTPUT_RELEASE_DIR/release-full.yaml ${KO_EXTRA_ARGS}
     - name: koparse
       image: gcr.io/tekton-releases/dogfooding/koparse:v20240923-1c3aa3eee7@sha256:ae363d70e3c2fb75e96aaeb561dcea20383c27a47f0266c8179bbb72b89c2430
       script: |
         set -ex
+
+        # Find "--preserve-import-paths" in a list of args
+        function find_preserve_import_path() {
+          for arg in $@; do
+            if [[ "$arg" == "--preserve-import-paths" ]]; then
+              return 0
+            fi
+          done
+          return 1
+        }
+        # If "--preserve-import-paths" is used, include "package" in the expected path
+        find_preserve_import_path \
+          $(echo $KO_EXTRA_ARGS) && \
+          PRESERVE_IMPORT_PATH="--preserve-path" || \
+          PRESERVE_IMPORT_PATH="--no-preserve-path"
 
         for cmd in $(params.images)
         do
@@ -150,7 +169,8 @@ spec:
           --path $OUTPUT_RELEASE_DIR/release.yaml \
           --base $(params.package) \
           --container-registry ${CONTAINER_REGISTRY} \
-          --images ${IMAGES} > /workspace/built_images
+          --images ${IMAGES} \
+          ${PRESERVE_IMPORT_PATH} > /workspace/built_images
 
     - name: tag-images
       image: gcr.io/go-containerregistry/crane:debug@sha256:ff0e08eeae8097d28b2381c7f7123bf542757abc68d11bff58fb882b72843785

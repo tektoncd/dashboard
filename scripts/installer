@@ -388,7 +388,6 @@ help () {
   echo -e "\tinstall|i\t\t\t\tInstalls the dashboard"
   echo -e "\tuninstall|u\t\t\t\tUninstalls the dashboard"
   echo -e "\tbuild|b\t\t\t\t\tBuilds the manifests and dashboard docker image"
-  echo -e "\trelease|r\t\t\t\tBuilds the manifests and dashboard docker image for release"
   echo -e ""
   echo -e "Accepted options:"
   echo -e "\t[--debug]\t\t\t\tPrints additional messages in the console"
@@ -441,11 +440,6 @@ case $1 in
     exit 0
     ;;
   'build'|b)
-    ACTION="build"
-    shift
-    ;;
-  'release'|r)
-    KO_RESOLVE_OPTIONS="$KO_RESOLVE_OPTIONS --preserve-import-paths"
     ACTION="build"
     shift
     ;;
@@ -538,6 +532,10 @@ while [[ $# -gt 0 ]]; do
     '--tag')
       shift
       KO_RESOLVE_OPTIONS="$KO_RESOLVE_OPTIONS -t ${1}"
+      ;;
+    '--preserve-import-paths')
+      shift
+      KO_RESOLVE_OPTIONS="$KO_RESOLVE_OPTIONS --preserve-import-paths"
       ;;
     *)
       echo "ERROR: Unknown option $1"

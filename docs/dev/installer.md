@@ -15,7 +15,6 @@ It covers the following topics:
   - [Install ingress](#install-ingress)
 - [Uninstall command](#uninstall-command)
 - [Build command](#build-command)
-- [Release command](#release-command)
 - [Platform support](#platform-support)
 
 ## Before you begin
@@ -55,7 +54,6 @@ Accepted commands:
         install|i                               Installs the dashboard
         uninstall|u                             Uninstalls the dashboard
         build|b                                 Builds the manifests and dashboard docker image
-        release|r                               Builds the manifests and dashboard docker image for release
 
 Accepted options:
         [--debug]                               Prints additional messages in the console
@@ -169,12 +167,6 @@ The `installer` script can be used to build the Dashboard docker image and the Y
 This will NOT deploy the resulting manifest in the target cluster but will build and push the Dashboard docker image to [whichever docker repo was configured](./README.md#build-and-deploy-with-kustomize-and-ko) for `ko` to work with and will display the YAML manifests in the console output.
 
 The `build` command is useful when you want to ensure everything builds correctly without altering the current deployment. It can help verifying the generated manifests are correct when a change was made in the base or overlays used by `kustomize` too.
-
-## Release command
-
-This command is essentially the same as the [build command](#build-command) but adds the `--preserve-import-paths` option when invoking `ko`.
-
-This is needed to generate the correct docker image name in the manifests when cutting a release.
 
 ## Platform support
 
