@@ -122,8 +122,9 @@ spec:
         cp ${PROJECT_ROOT}/scripts/installer $OUTPUT_RELEASE_DIR/installer
 
         # build manifests for installer
-        kustomize build overlays/installer/read-only  --load-restrictor LoadRestrictionsNone | ko resolve --platform=$(params.platforms) --preserve-import-paths -t $(params.versionTag) -f - > $OUTPUT_RELEASE_DIR/installer-release.yaml
-        kustomize build overlays/installer/read-write --load-restrictor LoadRestrictionsNone | ko resolve --platform=$(params.platforms) --preserve-import-paths -t $(params.versionTag) -f - > $OUTPUT_RELEASE_DIR/installer-release-full.yaml
+        KO_RESOLVE_IMAGE_LABEL="--image-label=org.opencontainers.image.source=https://$(params.package)"
+        kustomize build overlays/installer/read-only  --load-restrictor LoadRestrictionsNone | ko resolve ${KO_RESOLVE_IMAGE_LABEL} --platform=$(params.platforms) --preserve-import-paths -t $(params.versionTag) -f - > $OUTPUT_RELEASE_DIR/installer-release.yaml
+        kustomize build overlays/installer/read-write --load-restrictor LoadRestrictionsNone | ko resolve ${KO_RESOLVE_IMAGE_LABEL} --platform=$(params.platforms) --preserve-import-paths -t $(params.versionTag) -f - > $OUTPUT_RELEASE_DIR/installer-release-full.yaml
 
         # build pre configured manifests
         ./scripts/installer release --debug              --platform $(params.platforms) --tag $(params.versionTag) --output $OUTPUT_RELEASE_DIR/release.yaml
