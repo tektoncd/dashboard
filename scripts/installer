@@ -30,7 +30,7 @@ EXTERNAL_LOGS=""
 BASE_RELEASE_URL="https://storage.googleapis.com/tekton-releases/dashboard"
 
 # additional options passed to ko resolve
-KO_RESOLVE_OPTIONS=""
+KO_RESOLVE_OPTIONS="--image-label=org.opencontainers.image.source=https://github.com/tektoncd/dashboard"
 PLATFORM=""
 
 # Display a box banner.
@@ -445,7 +445,7 @@ case $1 in
     shift
     ;;
   'release'|r)
-    KO_RESOLVE_OPTIONS="--preserve-import-paths"
+    KO_RESOLVE_OPTIONS="$KO_RESOLVE_OPTIONS --preserve-import-paths"
     ACTION="build"
     shift
     ;;
