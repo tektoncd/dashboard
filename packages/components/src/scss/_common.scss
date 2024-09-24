@@ -14,7 +14,7 @@ limitations under the License.
 @use '@carbon/react/scss/themes';
 @use '@carbon/react/scss/theme' as *;
 
-:root, .tkn--theme-light {
+body.tkn--dashboard, .tkn--theme-light {
   @include theme(themes.$g10);
 }
 
@@ -22,12 +22,12 @@ limitations under the License.
   @include theme(themes.$g90);
 }
 
-.tkn--theme-dark {
+body.tkn--dashboard.tkn--theme-dark, .tkn--theme-dark {
   @include tkn--theme-dark;
 }
 
 @media (prefers-color-scheme: dark) {
-  .tkn--theme-system {
+  body.tkn--dashboard.tkn--theme-system, .tkn--theme-system {
     @include tkn--theme-dark;
   }
 }
