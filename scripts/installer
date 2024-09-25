@@ -534,7 +534,6 @@ while [[ $# -gt 0 ]]; do
       KO_RESOLVE_OPTIONS="$KO_RESOLVE_OPTIONS -t ${1}"
       ;;
     '--preserve-import-paths')
-      shift
       KO_RESOLVE_OPTIONS="$KO_RESOLVE_OPTIONS --preserve-import-paths"
       ;;
     *)
