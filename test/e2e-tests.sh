@@ -120,7 +120,7 @@ if [ -z "$PIPELINES_VERSION" ]; then
 fi
 
 if [ -z "$TRIGGERS_VERSION" ]; then
-  export TRIGGERS_VERSION=v0.29.0
+  export TRIGGERS_VERSION=v0.29.1
 fi
 
 header "Installing Pipelines and Triggers"
