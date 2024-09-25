@@ -46,12 +46,17 @@ the dashboard repo, a terminal window and a text editor.
     tkn --context dogfooding pipeline start dashboard-release \
       --serviceaccount=release-right-meow \
       --param=gitRevision="${TEKTON_RELEASE_GIT_SHA}" \
+      --param=imageRegistry=ghcr.io \
+      --param=imageRegistryPath=tektoncd/dashboard \
+      --param=imageRegistryRegions="" \
+      --param=imageRegistryUser="tekton-robot" \
+      --param=koExtraArgs="" \
       --param=serviceAccountPath=release.json \
-      --param=serviceAccountImagesPath=release.json \
+      --param=serviceAccountImagesPath=credentials \
       --param=versionTag="${TEKTON_VERSION}" \
       --param=releaseBucket=gs://tekton-releases/dashboard \
       --workspace name=release-secret,secret=release-secret \
-      --workspace name=release-images-secret,secret=release-secret \
+      --workspace name=release-images-secret,secret=ghcr-creds \
       --workspace name=workarea,volumeClaimTemplateFile=workspace-template.yaml
     ```
 

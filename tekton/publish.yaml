@@ -128,6 +128,10 @@ spec:
         # Publish images and create release.yaml
         mkdir -p $OUTPUT_RELEASE_DIR
 
+        # Make a local git tag to make git status happy :)
+        # The real "tagging" will happen with the "create-release" pipeline.
+        git tag $(params.versionTag)
+
         # add installer script in the release
         cp ${PROJECT_ROOT}/scripts/installer $OUTPUT_RELEASE_DIR/installer
 
