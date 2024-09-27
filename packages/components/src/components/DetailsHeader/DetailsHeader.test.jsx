@@ -104,6 +104,43 @@ describe('DetailsHeader', () => {
     expect(queryByText(/pending/i)).toBeTruthy();
   });
 
+  it('renders the skipped state for a step', () => {
+    const taskRun = {
+      status: {
+        conditions: [
+          {
+            reason: 'Completed',
+            status: 'True',
+            type: 'Succeeded'
+          }
+        ]
+      }
+    };
+
+    const { queryByText } = render(
+      <DetailsHeader
+        {...props}
+        stepStatus={{ terminationReason: 'Skipped' }}
+        taskRun={taskRun}
+      />
+    );
+    expect(queryByText(/skipped/i)).toBeTruthy();
+  });
+
+  it('renders the skipped state for a TaskRun', () => {
+    const taskRun = {};
+
+    const { queryByText } = render(
+      <DetailsHeader
+        {...props}
+        reason="tkn-dashboard:skipped"
+        taskRun={taskRun}
+        type="taskRun"
+      />
+    );
+    expect(queryByText(/skipped/i)).toBeTruthy();
+  });
+
   it('renders no duration for a running step', () => {
     const stepStatus = {
       running: {

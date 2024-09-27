@@ -13,12 +13,13 @@ limitations under the License.
 
 import DetailsHeader from './DetailsHeader';
 
-const getTaskRun = ({ reason, status }) => ({
+const getTaskRun = ({ reason, status, terminationReason }) => ({
   status: {
     conditions: [
       {
         reason,
         status,
+        terminationReason,
         type: 'Succeeded'
       }
     ]
@@ -69,6 +70,35 @@ export const CompletedWithWarning = {
     taskRun: getTaskRun({ reason: 'Succeeded', status: 'True' })
   },
   name: 'Completed with warning'
+};
+
+export const SkippedTask = {
+  args: {
+    reason: 'tkn-dashboard:skipped',
+    displayName: 'build',
+    taskRun: {},
+    type: 'taskRun'
+  },
+  argTypes: {
+    type: {
+      control: false
+    }
+  }
+};
+
+export const SkippedStep = {
+  args: {
+    reason: 'Completed',
+    status: 'terminated',
+    stepStatus: { terminationReason: 'Skipped' },
+    displayName: 'build',
+    type: 'step'
+  },
+  argTypes: {
+    type: {
+      control: false
+    }
+  }
 };
 
 export const Failed = {

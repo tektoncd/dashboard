@@ -15,6 +15,7 @@ import { getStatus, labels as labelConstants } from '@tektoncd/dashboard-utils';
 import Task from '../Task';
 
 const defaults = {
+  skippedTasks: [],
   taskRuns: []
 };
 
@@ -26,6 +27,7 @@ const TaskTree = ({
   selectedStepId,
   selectedTaskId,
   selectedTaskRunName,
+  skippedTasks = defaults.skippedTasks,
   taskRuns = defaults.taskRuns
 }) => {
   if (!taskRuns) {
@@ -62,7 +64,9 @@ const TaskTree = ({
           };
         }
 
-        const { reason, status } = getStatus(taskRunToUse);
+        const taskRunStatus = getStatus(taskRunToUse);
+        let { reason } = taskRunStatus;
+        const { status } = taskRunStatus;
         const { steps } = taskRunToUse.status || {};
         const expanded =
           // should only have 1 expanded task at a time (may change in a future design)
@@ -80,6 +84,15 @@ const TaskTree = ({
 
         if (!hasExpandedTask && expanded) {
           hasExpandedTask = true;
+        }
+
+        if (
+          !reason &&
+          skippedTasks.find(
+            skippedTask => skippedTask.name === pipelineTaskName
+          )
+        ) {
+          reason = 'tkn-dashboard:skipped';
         }
 
         const selectDefaultStep =

@@ -92,6 +92,19 @@ const taskRunWithWarning = getTaskRun({
   pipelineTaskName: 'task2'
 });
 
+const taskRunSkipped = getTaskRun({
+  name: 'sampleTaskRunName3',
+  pipelineTaskName: 'task3'
+});
+delete taskRunSkipped.status.conditions;
+delete taskRunSkipped.status.steps[0].terminated;
+
+const taskRunWithSkippedStep = getTaskRun({
+  name: 'sampleTaskRunName4',
+  pipelineTaskName: 'task4'
+});
+taskRunWithSkippedStep.status.steps[0].terminationReason = 'Skipped';
+
 const pipelineRun = {
   metadata: {
     name: 'pipeline-run',
@@ -113,6 +126,9 @@ const pipelineRun = {
         type: 'Succeeded'
       }
     ],
+    skippedTasks: [
+      { name: 'task3', reason: 'When Expressions evaluated to false' }
+    ],
     startTime: '2019-08-21T17:12:20Z',
     taskRuns: {
       sampleTaskRunName: {
@@ -122,6 +138,14 @@ const pipelineRun = {
       sampleTaskRunName2: {
         pipelineTaskName: 'task2',
         status: taskRunWithWarning.status
+      },
+      sampleTaskRunName3: {
+        pipelineTaskName: 'task3',
+        status: taskRunSkipped.status
+      },
+      sampleTaskRunName4: {
+        pipelineTaskName: 'task4',
+        status: taskRunWithSkippedStep.status
       }
     }
   }
@@ -188,7 +212,12 @@ export const Default = args => {
       }}
       onViewChange={selectedView => updateArgs({ view: selectedView })}
       pipelineRun={pipelineRun}
-      taskRuns={[taskRun, taskRunWithWarning]}
+      taskRuns={[
+        taskRun,
+        taskRunWithWarning,
+        taskRunSkipped,
+        taskRunWithSkippedStep
+      ]}
       tasks={[task]}
     />
   );
