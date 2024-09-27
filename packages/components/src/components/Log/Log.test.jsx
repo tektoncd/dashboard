@@ -61,6 +61,19 @@ describe('Log', () => {
     await waitFor(() => getByText(/step failed/i));
   });
 
+  it('renders skipped trailer', async () => {
+    const { getByText } = render(
+      <Log
+        stepStatus={{
+          terminated: { reason: 'Completed' },
+          terminationReason: 'Skipped'
+        }}
+        fetchLogs={() => 'testing'}
+      />
+    );
+    await waitFor(() => getByText(/step skipped/i));
+  });
+
   it('renders pending trailer when step complete and forcePolling is true', async () => {
     const { getByText, queryByText } = render(
       <Log

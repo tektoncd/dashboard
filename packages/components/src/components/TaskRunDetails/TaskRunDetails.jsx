@@ -14,7 +14,11 @@ limitations under the License.
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
-import { getParams, taskRunHasWarning } from '@tektoncd/dashboard-utils';
+import {
+  dashboardReasonSkipped,
+  getParams,
+  taskRunHasWarning
+} from '@tektoncd/dashboard-utils';
 import {
   ContentSwitcher,
   Switch,
@@ -66,6 +70,7 @@ const defaults = {
 const TaskRunDetails = ({
   onViewChange = defaults.onViewChange,
   pod,
+  skippedTask,
   task = defaults.task,
   taskRun = defaults.taskRun,
   view
@@ -160,7 +165,7 @@ const TaskRunDetails = ({
     paramsTable && 'params',
     resultsTable && 'results',
     'status',
-    pod && 'pod'
+    !skippedTask && pod && 'pod'
   ].filter(Boolean);
 
   let selectedTabIndex = tabs.indexOf(view);
@@ -172,7 +177,7 @@ const TaskRunDetails = ({
   const tabPanels = [];
   if (paramsTable) {
     tabList.push(
-      <Tab>
+      <Tab key="params">
         {intl.formatMessage({
           id: 'dashboard.taskRun.params',
           defaultMessage: 'Parameters'
@@ -180,7 +185,7 @@ const TaskRunDetails = ({
       </Tab>
     );
     tabPanels.push(
-      <TabPanel>
+      <TabPanel key="params">
         {selectedTabIndex === tabPanels.length && (
           <div className="tkn--step-status">{paramsTable}</div>
         )}
@@ -189,7 +194,7 @@ const TaskRunDetails = ({
   }
   if (resultsTable) {
     tabList.push(
-      <Tab>
+      <Tab key="results">
         {intl.formatMessage({
           id: 'dashboard.taskRun.results',
           defaultMessage: 'Results'
@@ -197,7 +202,7 @@ const TaskRunDetails = ({
       </Tab>
     );
     tabPanels.push(
-      <TabPanel>
+      <TabPanel key="results">
         {selectedTabIndex === tabPanels.length && (
           <div className="tkn--step-status">{resultsTable}</div>
         )}
@@ -205,7 +210,7 @@ const TaskRunDetails = ({
     );
   }
   tabList.push(
-    <Tab>
+    <Tab key="status">
       {intl.formatMessage({
         id: 'dashboard.taskRun.status',
         defaultMessage: 'Status'
@@ -213,13 +218,14 @@ const TaskRunDetails = ({
     </Tab>
   );
   tabPanels.push(
-    <TabPanel>
+    <TabPanel key="status">
       {selectedTabIndex === tabPanels.length && (
         <div className="tkn--step-status">
           <ViewYAML
             dark
             enableSyntaxHighlighting
             resource={
+              skippedTask ||
               taskRun.status ||
               intl.formatMessage({
                 id: 'dashboard.taskRun.status.pending',
@@ -231,10 +237,10 @@ const TaskRunDetails = ({
       )}
     </TabPanel>
   );
-  if (pod) {
-    tabList.push(<Tab>Pod</Tab>);
+  if (!skippedTask && pod) {
+    tabList.push(<Tab key="pod">Pod</Tab>);
     tabPanels.push(
-      <TabPanel>
+      <TabPanel key="pod">
         {selectedTabIndex === tabPanels.length && (
           <div className="tkn--step-status">
             {hasEvents ? (
@@ -272,6 +278,7 @@ const TaskRunDetails = ({
       <DetailsHeader
         displayName={displayName}
         hasWarning={taskRunHasWarning(taskRun)}
+        reason={skippedTask ? dashboardReasonSkipped : null}
         taskRun={taskRun}
         type="taskRun"
       />

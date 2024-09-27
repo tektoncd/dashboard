@@ -13,7 +13,7 @@ limitations under the License.
 
 import { Pending as DefaultIcon } from '@carbon/react/icons';
 import { useIntl } from 'react-intl';
-import { getStatus } from '@tektoncd/dashboard-utils';
+import { dashboardReasonSkipped, getStatus } from '@tektoncd/dashboard-utils';
 
 import FormattedDuration from '../FormattedDuration';
 import StatusIcon from '../StatusIcon';
@@ -64,6 +64,13 @@ export default function DetailsHeader({
 
   function getStatusLabel() {
     const { reason: taskReason, status: taskStatus } = getStatus(taskRun);
+
+    if (stepStatus?.terminationReason === 'Skipped') {
+      return intl.formatMessage({
+        id: 'dashboard.taskRun.status.skipped',
+        defaultMessage: 'Skipped'
+      });
+    }
 
     if (
       status === 'cancelled' ||
@@ -126,11 +133,16 @@ export default function DetailsHeader({
   if (type === 'taskRun') {
     ({ reason: reasonToUse, status: statusToUse } = getStatus(taskRun));
     statusLabel =
-      reasonToUse ||
-      intl.formatMessage({
-        id: 'dashboard.taskRun.status.pending',
-        defaultMessage: 'Pending'
-      });
+      reason === dashboardReasonSkipped
+        ? intl.formatMessage({
+            id: 'dashboard.taskRun.status.skipped',
+            defaultMessage: 'Skipped'
+          })
+        : reasonToUse ||
+          intl.formatMessage({
+            id: 'dashboard.taskRun.status.pending',
+            defaultMessage: 'Pending'
+          });
   } else {
     statusLabel = getStatusLabel();
   }
@@ -140,14 +152,20 @@ export default function DetailsHeader({
       className="tkn--step-details-header"
       data-status={statusToUse}
       data-reason={reasonToUse}
+      data-termination-reason={stepStatus?.terminationReason}
     >
       <h2 className="tkn--details-header--heading">
         <StatusIcon
           DefaultIcon={props => <DefaultIcon size={24} {...props} />}
           hasWarning={hasWarning}
-          reason={reasonToUse}
+          reason={reason === dashboardReasonSkipped ? reason : reasonToUse}
           status={statusToUse}
-          {...(type === 'step' ? { type: 'inverse' } : null)}
+          {...(type === 'step'
+            ? {
+                terminationReason: stepStatus?.terminationReason,
+                type: 'inverse'
+              }
+            : null)}
         />
         <span className="tkn--run-details-name" title={displayName}>
           {displayName}

@@ -74,6 +74,18 @@ it('Step renders completed with warning state', () => {
   expect(queryByText(/Completed with exit code 1/i)).toBeTruthy();
 });
 
+it('Step renders skipped state', () => {
+  const { queryByText } = render(
+    <Step
+      exitCode={0}
+      status="terminated"
+      reason="Completed"
+      terminationReason="Skipped"
+    />
+  );
+  expect(queryByText(/Skipped/i)).toBeTruthy();
+});
+
 it('Step renders error state', () => {
   const { queryByText } = render(<Step status="terminated" reason="Error" />);
   expect(queryByText(/Failed/i)).toBeTruthy();

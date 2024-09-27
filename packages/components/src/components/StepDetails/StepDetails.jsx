@@ -17,6 +17,7 @@ import { getStatus, getStepStatusReason } from '@tektoncd/dashboard-utils';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@carbon/react';
 
 import DetailsHeader from '../DetailsHeader';
+import Log from '../Log';
 import StepDefinition from '../StepDefinition';
 
 const tabs = ['logs', 'details'];
@@ -30,6 +31,7 @@ const StepDetails = ({
   definition,
   logContainer,
   onViewChange = defaults.onViewChange,
+  skippedTask,
   stepName,
   stepStatus,
   taskRun = defaults.taskRun,
@@ -77,7 +79,21 @@ const StepDetails = ({
           </Tab>
         </TabList>
         <TabPanels>
-          <TabPanel>{selectedTabIndex === 0 && logContainer}</TabPanel>
+          <TabPanel>
+            {selectedTabIndex === 0 && skippedTask ? (
+              <Log
+                fetchLogs={() =>
+                  intl.formatMessage({
+                    id: 'dashboard.taskRun.logs.skipped',
+                    defaultMessage:
+                      'This step did not run as the task was skipped. See task status for more details.'
+                  })
+                }
+              />
+            ) : (
+              logContainer
+            )}
+          </TabPanel>
           <TabPanel>
             {selectedTabIndex === 1 && (
               <StepDefinition definition={definition} />

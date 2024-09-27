@@ -194,3 +194,13 @@ export const Pod = {
     );
   }
 };
+
+export const Skipped = {
+  args: {
+    ...Pod.args,
+    skippedTask: {
+      reason: 'When Expressions evaluated to false',
+      whenExpressions: [{ cel: `'yes'=='missing'` }]
+    }
+  }
+};

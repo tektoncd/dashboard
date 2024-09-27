@@ -45,7 +45,7 @@ class Task extends Component {
     const { reason, selectedStepId, steps } = this.props;
     let hasWarning = false;
     const stepData = updateUnexecutedSteps(steps).map(step => {
-      const { name } = step;
+      const { name, terminationReason } = step;
       const {
         exitCode,
         status,
@@ -62,7 +62,14 @@ class Task extends Component {
           ? 'cancelled'
           : status;
 
-      return { exitCode, name, selected, stepReason, stepStatus };
+      return {
+        exitCode,
+        name,
+        selected,
+        stepReason,
+        stepStatus,
+        terminationReason
+      };
     });
 
     if (propagateWarning) {
@@ -237,7 +244,14 @@ class Task extends Component {
         {expanded && (
           <ol className="tkn--step-list">
             {this.getStepData().map(step => {
-              const { exitCode, name, selected, stepReason, stepStatus } = step;
+              const {
+                exitCode,
+                name,
+                selected,
+                stepReason,
+                stepStatus,
+                terminationReason
+              } = step;
               return (
                 <Step
                   exitCode={exitCode}
@@ -248,6 +262,7 @@ class Task extends Component {
                   selected={selected}
                   status={stepStatus}
                   stepName={name}
+                  terminationReason={terminationReason}
                 />
               );
             })}

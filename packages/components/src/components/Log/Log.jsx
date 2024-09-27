@@ -276,8 +276,15 @@ export class LogContainer extends Component {
     );
   };
 
-  getTrailerMessage = ({ exitCode, reason }) => {
+  getTrailerMessage = ({ exitCode, reason, terminationReason }) => {
     const { forcePolling, intl } = this.props;
+
+    if (terminationReason === 'Skipped') {
+      return intl.formatMessage({
+        id: 'dashboard.pipelineRun.stepSkipped',
+        defaultMessage: 'Step skipped'
+      });
+    }
 
     if (reason && forcePolling) {
       return (
@@ -397,7 +404,11 @@ export class LogContainer extends Component {
   logTrailer = () => {
     const { forcePolling, stepStatus } = this.props;
     const { exitCode, reason } = (stepStatus && stepStatus.terminated) || {};
-    const trailer = this.getTrailerMessage({ exitCode, reason });
+    const trailer = this.getTrailerMessage({
+      exitCode,
+      reason,
+      terminationReason: stepStatus?.terminationReason
+    });
     if (!trailer) {
       return null;
     }

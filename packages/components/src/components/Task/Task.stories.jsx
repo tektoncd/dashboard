@@ -11,6 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { dashboardReasonSkipped } from '@tektoncd/dashboard-utils';
 import { action } from '@storybook/addon-actions';
 import { useArgs } from '@storybook/preview-api';
 
@@ -51,6 +52,8 @@ export const Pending = { args: { ...Unknown.args, reason: 'Pending' } };
 
 export const Running = { args: { ...Unknown.args, reason: 'Running' } };
 
+export const Skipped = { args: { reason: dashboardReasonSkipped } };
+
 export const Expanded = args => {
   const [, updateArgs] = useArgs();
 
@@ -64,6 +67,11 @@ export const Expanded = args => {
       reason="Running"
       steps={[
         { name: 'lint', terminated: { exitCode: 0, reason: 'Completed' } },
+        {
+          name: 'check',
+          terminated: { exitCode: 0, reason: 'Completed' },
+          terminationReason: 'Skipped'
+        },
         { name: 'test', terminated: { exitCode: 1, reason: 'Completed' } },
         { name: 'build', running: {} },
         { name: 'deploy', running: {} }
