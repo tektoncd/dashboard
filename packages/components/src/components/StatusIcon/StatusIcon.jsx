@@ -18,6 +18,7 @@ import {
   CloseFilled,
   CloseOutline,
   Time as Pending,
+  Undefined,
   WarningAltFilled as WarningFilled
 } from '@carbon/react/icons';
 import { classNames, isRunning } from '@tektoncd/dashboard-utils';
@@ -30,6 +31,7 @@ const icons = {
     error: CloseOutline,
     pending: Pending,
     running: Spinner,
+    skipped: Undefined,
     success: CheckmarkOutline,
     warning: WarningFilled
   },
@@ -38,6 +40,7 @@ const icons = {
     error: CloseFilled,
     pending: Pending,
     running: Spinner,
+    skipped: Undefined,
     success: CheckmarkFilled,
     warning: CheckmarkFilledWarning
   }
@@ -67,7 +70,9 @@ export default function StatusIcon({
   type = 'normal'
 }) {
   let statusClass;
-  if (
+  if (!status && reason === 'tkn-dashboard:skipped') {
+    statusClass = 'skipped';
+  } else if (
     (!status && !DefaultIcon) ||
     (status === 'Unknown' && reason === 'Pending')
   ) {
