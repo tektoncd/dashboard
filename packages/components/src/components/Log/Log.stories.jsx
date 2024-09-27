@@ -97,6 +97,16 @@ export const Performance = {
   name: 'performance test (<20,000 lines with ANSI)'
 };
 
+export const Skipped = {
+  args: {
+    fetchLogs: () => 'This step was skipped',
+    stepStatus: {
+      terminated: { reason: 'Completed', exitCode: 0 },
+      terminationReason: 'Skipped'
+    }
+  }
+};
+
 export const Toolbar = {
   args: {
     fetchLogs: () => 'A log message',

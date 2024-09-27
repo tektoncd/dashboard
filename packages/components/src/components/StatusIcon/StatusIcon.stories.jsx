@@ -15,7 +15,7 @@ limitations under the License.
 import {
   Pending as DefaultStepIcon,
   PendingFilled as DefaultTaskIcon,
-  UndefinedFilled as UndefinedIcon
+  UnknownFilled as UnknownIcon
 } from '@carbon/react/icons';
 
 import StatusIcon from './StatusIcon';
@@ -90,6 +90,10 @@ export const SucceededWithWarning = {
   name: 'Succeeded with warning'
 };
 
+export const Skipped = {
+  args: { status: 'True', terminationReason: 'Skipped' }
+};
+
 export const DefaultTask = {
   args: { DefaultIcon: DefaultTaskIcon },
   name: 'Task default - no status received yet'
@@ -101,7 +105,7 @@ export const DefaultStep = {
 };
 
 export const CustomRun = {
-  args: { DefaultIcon: UndefinedIcon },
+  args: { DefaultIcon: UnknownIcon },
   name: 'CustomRun (unknown status)'
 };
 
@@ -172,6 +176,10 @@ export const AllIcons = {
             <span>Succeeded with warning</span>
           </li>
           <li>
+            <StatusIcon {...Skipped.args} />
+            <span>Skipped</span>
+          </li>
+          <li>
             <StatusIcon {...DefaultTask.args} />
             <span>Default - no status received yet</span>
           </li>
@@ -198,6 +206,10 @@ export const AllIcons = {
           <li>
             <StatusIcon {...SucceededWithWarning.args} type="inverse" />
             <span>Succeeded with warning</span>
+          </li>
+          <li>
+            <StatusIcon {...Skipped.args} type="inverse" />
+            <span>Skipped</span>
           </li>
           <li>
             <StatusIcon {...DefaultStep.args} />

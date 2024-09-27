@@ -11,6 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { dashboardReasonSkipped } from '@tektoncd/dashboard-utils';
+
 import DetailsHeader from './DetailsHeader';
 import { render } from '../../utils/test';
 
@@ -102,6 +104,43 @@ describe('DetailsHeader', () => {
       <DetailsHeader {...props} taskRun={taskRun} type="taskRun" />
     );
     expect(queryByText(/pending/i)).toBeTruthy();
+  });
+
+  it('renders the skipped state for a step', () => {
+    const taskRun = {
+      status: {
+        conditions: [
+          {
+            reason: 'Completed',
+            status: 'True',
+            type: 'Succeeded'
+          }
+        ]
+      }
+    };
+
+    const { queryByText } = render(
+      <DetailsHeader
+        {...props}
+        stepStatus={{ terminationReason: 'Skipped' }}
+        taskRun={taskRun}
+      />
+    );
+    expect(queryByText(/skipped/i)).toBeTruthy();
+  });
+
+  it('renders the skipped state for a TaskRun', () => {
+    const taskRun = {};
+
+    const { queryByText } = render(
+      <DetailsHeader
+        {...props}
+        reason={dashboardReasonSkipped}
+        taskRun={taskRun}
+        type="taskRun"
+      />
+    );
+    expect(queryByText(/skipped/i)).toBeTruthy();
   });
 
   it('renders no duration for a running step', () => {

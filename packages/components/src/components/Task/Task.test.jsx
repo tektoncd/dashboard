@@ -11,7 +11,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { dashboardReasonSkipped } from '@tektoncd/dashboard-utils';
 import { fireEvent } from '@testing-library/react';
+
 import Task from './Task';
 import { render } from '../../utils/test';
 
@@ -145,6 +147,10 @@ describe('Task', () => {
 
   it('renders running state', () => {
     render(<Task {...props} succeeded="Unknown" reason="Running" />);
+  });
+
+  it('renders skipped state', () => {
+    render(<Task {...props} reason={dashboardReasonSkipped} />);
   });
 
   it('renders cancelled state', () => {

@@ -18,9 +18,15 @@ import {
   CloseFilled,
   CloseOutline,
   Time as Pending,
+  Undefined,
+  UndefinedFilled,
   WarningAltFilled as WarningFilled
 } from '@carbon/react/icons';
-import { classNames, isRunning } from '@tektoncd/dashboard-utils';
+import {
+  classNames,
+  dashboardReasonSkipped,
+  isRunning
+} from '@tektoncd/dashboard-utils';
 
 import Spinner from '../Spinner';
 
@@ -30,6 +36,7 @@ const icons = {
     error: CloseOutline,
     pending: Pending,
     running: Spinner,
+    skipped: Undefined,
     success: CheckmarkOutline,
     warning: WarningFilled
   },
@@ -38,6 +45,7 @@ const icons = {
     error: CloseFilled,
     pending: Pending,
     running: Spinner,
+    skipped: UndefinedFilled,
     success: CheckmarkFilled,
     warning: CheckmarkFilledWarning
   }
@@ -63,11 +71,17 @@ export default function StatusIcon({
   isCustomTask,
   reason,
   status,
+  terminationReason,
   title,
   type = 'normal'
 }) {
   let statusClass;
   if (
+    (!status && reason === dashboardReasonSkipped) ||
+    terminationReason === 'Skipped'
+  ) {
+    statusClass = 'skipped';
+  } else if (
     (!status && !DefaultIcon) ||
     (status === 'Unknown' && reason === 'Pending')
   ) {

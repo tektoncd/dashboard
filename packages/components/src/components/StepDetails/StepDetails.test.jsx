@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { fireEvent } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/react';
 import { renderWithRouter } from '../../utils/test';
 
 import StepDetails from './StepDetails';
@@ -52,5 +52,13 @@ describe('StepDetails', () => {
     );
 
     fireEvent.click(getByText(/logs/i));
+  });
+
+  it('renders skipped Task state', async () => {
+    const { getByText } = renderWithRouter(
+      <StepDetails skippedTask={{}} stepStatus={{}} />
+    );
+
+    await waitFor(() => getByText(/task was skipped/i));
   });
 });

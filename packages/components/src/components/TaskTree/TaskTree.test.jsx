@@ -84,7 +84,7 @@ it('TaskTree renders when taskRuns contains a falsy run', () => {
   render(<TaskTree {...getProps()} taskRuns={[null]} />);
 });
 
-it('TaskTree renders and expands first Task in TaskRun with no error', () => {
+it('TaskTree renders and expands first Task in run with no error', () => {
   const { queryByText } = render(<TaskTree {...getProps()} />);
   // Selected Task should have two child elements. The anchor and ordered list
   // of steps in expanded task
@@ -99,7 +99,7 @@ it('TaskTree renders and expands first Task in TaskRun with no error', () => {
   ).toHaveLength(1);
 });
 
-it('TaskTree renders and expands error Task in TaskRun', () => {
+it('TaskTree renders and expands error Task', () => {
   const props = getProps();
   props.taskRuns[1].status.conditions[0].status = 'False';
 
@@ -117,7 +117,7 @@ it('TaskTree renders and expands error Task in TaskRun', () => {
   ).toHaveLength(1);
 });
 
-it('TaskTree renders and expands first error Task in TaskRun', () => {
+it('TaskTree renders and expands first error Task', () => {
   const props = getProps();
   props.taskRuns[1].status.conditions[0].status = 'False';
   props.taskRuns[2].status.conditions[0].status = 'False';
@@ -131,6 +131,23 @@ it('TaskTree renders and expands first error Task in TaskRun', () => {
   expect(
     queryByText('A Second Task').parentNode.parentNode.childNodes
   ).toHaveLength(2);
+  expect(
+    queryByText('A Third Task').parentNode.parentNode.childNodes
+  ).toHaveLength(1);
+});
+
+it('TaskTree renders skipped Task', () => {
+  const { queryByText } = render(
+    <TaskTree {...getProps()} skippedTasks={[{ name: 'A Second Task' }]} />
+  );
+  // Selected Task should have two child elements. The anchor and ordered list
+  // of steps in expanded task
+  expect(queryByText('A Task').parentNode.parentNode.childNodes).toHaveLength(
+    2
+  );
+  expect(
+    queryByText('A Second Task').parentNode.parentNode.childNodes
+  ).toHaveLength(1);
   expect(
     queryByText('A Third Task').parentNode.parentNode.childNodes
   ).toHaveLength(1);
