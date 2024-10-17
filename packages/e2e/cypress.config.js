@@ -39,7 +39,7 @@ module.exports = defineConfig({
   screenshotOnRunFailure: !isCI,
   video: true,
   videoCompression: true,
-  viewportHeight: 800, // default 660
+  viewportHeight: 1024, // default 660
   viewportWidth: 1280 // default 1000
   // waitForAnimations: true // disable to account for spinners?
 });

@@ -29,7 +29,7 @@
     "elkjs": "^0.9.3"
   },
   "peerDependencies": {
-    "@carbon/react": "^1.63.2",
+    "@carbon/react": "^1.68.0",
     "react": "^16.14.0 || ^17.0.2",
     "react-intl": "^6.4.1"
   },
