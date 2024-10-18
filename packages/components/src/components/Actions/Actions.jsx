@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { useIntl } from 'react-intl';
 import {
   Button,
@@ -105,7 +105,7 @@ export default function Actions({ items, kind, resource }) {
             } = item;
             const disabled = disable && disable(resource);
             return (
-              <>
+              <Fragment key={actionText}>
                 {hasDivider && <MenuItemDivider />}
                 <MenuItem
                   disabled={disabled}
@@ -116,7 +116,7 @@ export default function Actions({ items, kind, resource }) {
                     handleClick(() => itemAction(resource), modalProperties)
                   }
                 />
-              </>
+              </Fragment>
             );
           })}
         </MenuButton>

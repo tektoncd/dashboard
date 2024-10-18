@@ -126,11 +126,13 @@ export default function DetailsHeader({
   if (type === 'taskRun') {
     ({ reason: reasonToUse, status: statusToUse } = getStatus(taskRun));
     statusLabel =
-      reasonToUse ||
-      intl.formatMessage({
-        id: 'dashboard.taskRun.status.pending',
-        defaultMessage: 'Pending'
-      });
+      reason === 'tkn-dashboard:skipped'
+        ? 'Skipped'
+        : reasonToUse ||
+          intl.formatMessage({
+            id: 'dashboard.taskRun.status.pending',
+            defaultMessage: 'Pending'
+          });
   } else {
     statusLabel = getStatusLabel();
   }
@@ -145,7 +147,7 @@ export default function DetailsHeader({
         <StatusIcon
           DefaultIcon={props => <DefaultIcon size={24} {...props} />}
           hasWarning={hasWarning}
-          reason={reasonToUse}
+          reason={reason === 'tkn-dashboard:skipped' ? reason : reasonToUse}
           status={statusToUse}
           {...(type === 'step' ? { type: 'inverse' } : null)}
         />

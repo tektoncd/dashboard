@@ -30,6 +30,7 @@ const StepDetails = ({
   definition,
   logContainer,
   onViewChange = defaults.onViewChange,
+  skippedTask,
   stepName,
   stepStatus,
   taskRun = defaults.taskRun,
@@ -77,7 +78,11 @@ const StepDetails = ({
           </Tab>
         </TabList>
         <TabPanels>
-          <TabPanel>{selectedTabIndex === 0 && logContainer}</TabPanel>
+          <TabPanel>
+            {selectedTabIndex === 0 && skippedTask
+              ? 'Task skipped, no logs to show.'
+              : logContainer}
+          </TabPanel>
           <TabPanel>
             {selectedTabIndex === 1 && (
               <StepDefinition definition={definition} />
