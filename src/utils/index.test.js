@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -19,7 +19,6 @@ import {
   followLogs,
   getLocale,
   getLogsRetriever,
-  getLogsToolbar,
   getTheme,
   getViewChangeHandler,
   I18N_DEV_KEY,
@@ -291,55 +290,6 @@ it('getViewChangeHandler', () => {
   expect(navigate).toHaveBeenCalledWith(
     `${url}?nonViewQueryParam=someValue&view=${view}`
   );
-});
-
-describe('getLogsToolbar', () => {
-  it('should handle pod logs (default)', () => {
-    const container = 'fake_container';
-    const namespace = 'fake_namespace';
-    const podName = 'fake_podname';
-    const stepStatus = { container };
-    const taskRun = { metadata: { namespace }, status: { podName } };
-    vi.spyOn(API, 'getPodLogURL');
-    vi.spyOn(API, 'getExternalLogURL');
-
-    const logsToolbar = getLogsToolbar({ stepStatus, taskRun });
-
-    expect(API.getExternalLogURL).not.toHaveBeenCalled();
-    expect(API.getPodLogURL).toHaveBeenCalledWith({
-      container,
-      name: podName,
-      namespace
-    });
-    expect(logsToolbar).toBeTruthy();
-  });
-
-  it('should handle external logs', () => {
-    const container = 'fake_container';
-    const externalLogsURL = 'fake_externalLogsURL';
-    const namespace = 'fake_namespace';
-    const podName = 'fake_podname';
-    const stepStatus = { container };
-    const taskRun = { metadata: { namespace }, status: { podName } };
-    vi.spyOn(API, 'getPodLogURL');
-    vi.spyOn(API, 'getExternalLogURL');
-
-    const logsToolbar = getLogsToolbar({
-      externalLogsURL,
-      isUsingExternalLogs: true,
-      stepStatus,
-      taskRun
-    });
-
-    expect(API.getPodLogURL).not.toHaveBeenCalled();
-    expect(API.getExternalLogURL).toHaveBeenCalledWith({
-      container,
-      externalLogsURL,
-      namespace,
-      podName
-    });
-    expect(logsToolbar).toBeTruthy();
-  });
 });
 
 describe('getLocale', () => {

@@ -41,6 +41,7 @@ spec:
               script: |
                 #!/bin/ash
                 echo "Hello World!"
+                echo "::debug::This line should be hidden by default"
     `;
     cy.applyResource(pipelineRun);
 
@@ -52,5 +53,20 @@ spec:
     cy.get('header[class="tkn--pipeline-run-header"]')
       .find('span[class="tkn--status-label"]', { timeout: 15000 })
       .should('have.text', 'Succeeded');
+
+    cy.contains('.tkn--log', 'Hello World!');
+    cy.contains('.tkn--log', '2024').should('not.exist');
+    cy.get('.tkn--log-settings-menu button').click();
+    cy.contains('Show timestamps').click();
+    cy.contains(
+      // title starts with date formatted as 'yyyy-MM-dd'
+      `.tkn--log [title^="${new Date().toISOString().substring(0, 10)}"]`,
+      // something that looks like part of a timestamp: `mm:ss`
+      /\d{2}:\d{2}/
+    );
+    cy.contains('.tkn--log', 'hidden by default').should('not.exist');
+    cy.get('.tkn--log-settings-menu button').click();
+    cy.contains('Debug').click();
+    cy.contains('.tkn--log', 'hidden by default');
   });
 });

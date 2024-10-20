@@ -22,9 +22,7 @@ import {
 
 import { getTheme, setTheme } from '../../utils';
 import {
-  isLogTimestampsEnabled,
   isPipelinesV1ResourcesEnabled,
-  setLogTimestampsEnabled,
   setPipelinesV1ResourcesEnabled
 } from '../../api/utils';
 
@@ -79,24 +77,6 @@ export function Settings() {
         </TileGroup>
 
         <Stack gap={7}>
-          <Toggle
-            defaultToggled={isLogTimestampsEnabled()}
-            id="tkn--log-timestamps-toggle"
-            labelText={intl.formatMessage({
-              id: 'dashboard.logs.showTimestamps.label',
-              defaultMessage: 'Show log timestamps'
-            })}
-            labelA={intl.formatMessage({
-              id: 'dashboard.toggle.off',
-              defaultMessage: 'Off'
-            })}
-            labelB={intl.formatMessage({
-              id: 'dashboard.toggle.on',
-              defaultMessage: 'On'
-            })}
-            onToggle={checked => setLogTimestampsEnabled(checked)}
-          />
-
           <Toggle
             defaultToggled={isPipelinesV1ResourcesEnabled()}
             id="tkn--pipelines-v1-resources-toggle"

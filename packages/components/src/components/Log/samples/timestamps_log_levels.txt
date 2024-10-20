@@ -1,0 +1,160 @@
+2024-11-14T14:10:53.354144861Z ::info::APP_REPO referred as https://github.com/example-org/example-app
+2024-11-14T14:10:56.300268594Z ::debug::[get_repo_params:30] | get_repo_name called for https://github.com/example-org/example-app. Repository Name identified as example-app
+2024-11-14T14:10:56.307088791Z ::debug::[get_repo_params:18] | get_repo_owner called for https://github.com/example-org/example-app. Repository Owner identified as example-org
+2024-11-14T14:10:56.700290228Z ::debug::[setup_pr:87] | INCIDENT_ISSUES_URL https://github.com/example-org/example-compliance-issues
+2024-11-14T14:10:56.815017386Z ::debug::[get_repo_params:212] | Unable to locate repository parameters for key https://github.com/example-org/example-compliance-issues in the cache. Attempt to fetch repository parameters.
+2024-11-14T14:10:56.819937688Z ::debug::[get_repo_params:39] | get_repo_server_name called for https://github.com/example-org/example-compliance-issues. Repository Server Name identified as github.com
+2024-11-14T14:10:56.869171436Z ::debug::[get_repo_params:89] | get_absolute_scm_type called for https://github.com/example-org/example-compliance-issues. SCM Type identified as github
+2024-11-14T14:10:56.869719012Z ::debug::[get_repo_params:201] | get_api_url called for https://github.com/example-org/example-compliance-issues. Reading token from environment property https://github.com/api/v3.
+2024-11-14T14:10:56.921468475Z ::debug::[get_repo_params:89] | get_absolute_scm_type called for https://github.com/example-org/example-compliance-issues. SCM Type identified as github
+2024-11-14T14:10:56.921926910Z ::debug::[get_repo_params:97] | get_absolute_scm_type called for https://github.com/example-org/example-compliance-issues. SCM Type identified as github
+2024-11-14T14:10:56.930606377Z ::debug::[get_repo_params:18] | get_repo_owner called for https://github.com/example-org/example-compliance-issues. Repository Owner identified as PIYUSH-Mundra
+2024-11-14T14:10:56.937633991Z ::debug::[get_repo_params:30] | get_repo_name called for https://github.com/example-org/example-compliance-issues. Repository Name identified as example-compliance-issues
+2024-11-14T14:10:56.938340279Z ::debug::[get_repo_params:218] | Update the cache for key https://github.com/example-org/example-compliance-issues.
+2024-11-14T14:10:57.053269000Z ::debug::[get_repo_params:223] | get_repo_params called for https://github.com/example-org/example-compliance-issues.
+2024-11-14T14:10:57.060958330Z ::debug::[get_repo_params:30] | get_repo_name called for https://github.com/example-org/example-compliance-issues. Repository Name identified as example-compliance-issues
+2024-11-14T14:10:57.065382263Z ::debug::[get_repo_params:18] | get_repo_owner called for https://github.com/example-org/example-compliance-issues. Repository Owner identified as PIYUSH-Mundra
+2024-11-14T14:10:57.144848440Z ::debug::[get_repo_params:141] | get_repo_specific_token called for https://github.com/example-org/example-compliance-issues. Reading token from environment property 
+2024-11-14T14:10:57.145289008Z ::debug::[get_repo_params:153] | get_repo_token called for https://github.com/example-org/example-compliance-issues. Reading token from environment property .
+2024-11-14T14:10:57.145311781Z ::debug::[get_repo_params:162] | Unable to retreive repo_token from environment property. Attempt to fetch Personal Access Token.
+2024-11-14T14:10:57.177880037Z ::debug::[get_repo_params:116] | get_repo_pat called for https://github.com/example-org/example-compliance-issues. Auth Type identified as oauth
+2024-11-14T14:10:57.178355945Z ::debug::[get_repo_params:167] | Unable to retreive Personal Access Token. Attempt to fetch token from Toolchain Broker.
+2024-11-14T14:10:57.211621179Z ::debug::[get_repo_params:89] | get_absolute_scm_type called for https://github.com/example-org/example-compliance-issues. SCM Type identified as github
+2024-11-14T14:10:57.891095096Z ::debug::[get_credentials_v2:187] | Fetch Git Token for SCM Type: github, SCM ID: integrated, Repository URL: https://github.com/example-org/example-compliance-issues.
+2024-11-14T14:10:57.935248942Z ::info::Fetch git token for https://github.com/example-org/example-inventory.git
+2024-11-14T14:10:59.051060095Z ::info::Fetching IAM access token...
+2024-11-14T14:11:00.302592151Z ::info::Fetch token from toolchain broker. Query URL: https://otc-github-consolidated-broker.us-south.devops.cloud.ibm.com/github/token?git_id=integrated&toolchain_id=85f5ae2c-e4bb-43aa-96db-92aa8f54368c&service_instance_id=40478e15-8b70-40f0-93c5-932c2b958b17&repo_url=https://github.com/example-org/example-inventory.git.
+2024-11-14T14:11:02.921082406Z ::debug::[get_credentials_v2:184] | Successfully retreived token for https://github.com/example-org/example-inventory.git and updated the cache.
+2024-11-14T14:11:11.213717482Z ::debug::[get_repo_params:30] | get_repo_name called for https://github.com/example-org/example-app. Repository Name identified as example-app
+2024-11-14T14:11:11.224234563Z ::debug::[get_repo_params:18] | get_repo_owner called for https://github.com/example-org/example-app. Repository Owner identified as PIYUSH-Mundra
+2024-11-14T14:11:11.333949964Z ::debug::[get_repo_params:141] | get_repo_specific_token called for https://github.com/example-org/example-app. Reading token from environment property 
+2024-11-14T14:11:11.335344502Z ::debug::[get_repo_params:153] | get_repo_token called for https://github.com/example-org/example-app. Reading token from environment property .
+2024-11-14T14:11:11.335771106Z ::debug::[get_repo_params:162] | Unable to retreive repo_token from environment property. Attempt to fetch Personal Access Token.
+2024-11-14T14:11:11.380632436Z ::debug::[get_repo_params:116] | get_repo_pat called for https://github.com/example-org/example-app. Auth Type identified as oauth
+2024-11-14T14:11:11.381059828Z ::debug::[get_repo_params:167] | Unable to retreive Personal Access Token. Attempt to fetch token from Toolchain Broker.
+2024-11-14T14:11:11.444320839Z ::debug::[get_repo_params:89] | get_absolute_scm_type called for https://github.com/example-org/example-app. SCM Type identified as github
+2024-11-14T14:11:12.149847003Z ::debug::[get_credentials_v2:187] | Fetch Git Token for SCM Type: github, SCM ID: integrated, Repository URL: https://github.com/example-org/example-app.
+2024-11-14T14:11:12.207642299Z ::info::Fetch git token for https://github.com/example-org/example-inventory.git
+2024-11-14T14:11:12.313844262Z ::debug::[get_credentials_v2:106] | Returning git token for https://github.com/example-org/example-inventory.git as found in cache.
+2024-11-14T14:11:12.640204642Z ::debug::[get_repo_params:89] | get_absolute_scm_type called for https://github.com/example-org/example-app. SCM Type identified as github
+2024-11-14T14:11:12.640848952Z ::debug::[get_repo_params:97] | get_absolute_scm_type called for https://github.com/example-org/example-app. SCM Type identified as github
+2024-11-14T14:11:17.217179370Z INFO: notifications are turned off . <event_notifications.en_helpers.event_notifications object at 0x7fb02302ab10>
+2024-11-14T14:11:17.324996212Z ::info::Cloning application repository of type=github repo=https://github.com/example-org/example-app:revert-4-test/test-3 branch= commit=
+2024-11-14T14:11:17.831509554Z ::info::Cloning Repository: https://github.com/example-org/example-app, Branch: master, Commit:  at Path:  with USE_SUBMODULES flag as: 0
+2024-11-14T14:11:19.025893202Z ::debug::[clone_repo:118] | Branch master exists in https://github.com/example-org/example-app
+2024-11-14T14:11:19.033207058Z ::debug::[clone_repo:143] | Attempting to clone with retry using git clone -q -b master https://****:****@github.com/example-org/example-app
+2024-11-14T14:11:26.947198505Z ::debug::[clone_repo:185] | Origin: 
+2024-11-14T14:11:26.958713232Z ::info::Successfully Cloned Repository: https://github.com/example-org/example-app, Branch: master, Commit: f16e5a66fa78262078d3590b75a242f311da4224 at Path: example-app.
+2024-11-14T14:11:29.826267156Z From https://github.com/example-org/example-app
+2024-11-14T14:11:29.826317883Z  * [new ref]         refs/pull/5/head -> temp_revert-4-test_test-3_temp
+2024-11-14T14:11:29.994799234Z Switched to branch 'temp_revert-4-test_test-3_temp'
+2024-11-14T14:11:30.041818627Z HEAD is now at b00b89b Revert "chore: update readme"
+2024-11-14T14:11:30.069444019Z Switched to branch 'master'
+2024-11-14T14:11:30.072838820Z Your branch is up to date with 'origin/master'.
+2024-11-14T14:11:30.145860476Z Updating f16e5a6..b00b89b
+2024-11-14T14:11:30.145891405Z Fast-forward
+2024-11-14T14:11:30.167249857Z  README.md | 3 ---
+2024-11-14T14:11:30.167288759Z  1 file changed, 3 deletions(-)
+2024-11-14T14:11:30.168330372Z ::debug::[merge_pr_branch:53] | git merge of pull request with id 5 and commit b00b89b53ead4344a55d003b1f5698183e6128ab to master succeeded.
+2024-11-14T14:11:30.567714946Z ::debug::[get_repo_params:30] | get_repo_name called for https://github.com/example-org/example-app. Repository Name identified as example-app
+2024-11-14T14:11:30.572994605Z ::debug::[get_repo_params:18] | get_repo_owner called for https://github.com/example-org/example-app. Repository Owner identified as PIYUSH-Mundra
+2024-11-14T14:11:30.669224685Z ::debug::[get_repo_params:141] | get_repo_specific_token called for https://github.com/example-org/example-app. Reading token from environment property 
+2024-11-14T14:11:30.669846206Z ::debug::[get_repo_params:153] | get_repo_token called for https://github.com/example-org/example-app. Reading token from environment property .
+2024-11-14T14:11:30.670304272Z ::debug::[get_repo_params:162] | Unable to retreive repo_token from environment property. Attempt to fetch Personal Access Token.
+2024-11-14T14:11:30.718736005Z ::debug::[get_repo_params:116] | get_repo_pat called for https://github.com/example-org/example-app. Auth Type identified as oauth
+2024-11-14T14:11:30.720588941Z ::debug::[get_repo_params:167] | Unable to retreive Personal Access Token. Attempt to fetch token from Toolchain Broker.
+2024-11-14T14:11:30.769049756Z ::debug::[get_repo_params:89] | get_absolute_scm_type called for https://github.com/example-org/example-app. SCM Type identified as github
+2024-11-14T14:11:31.563713080Z ::debug::[get_credentials_v2:187] | Fetch Git Token for SCM Type: github, SCM ID: integrated, Repository URL: https://github.com/example-org/example-app.
+2024-11-14T14:11:31.612290227Z ::info::Fetch git token for https://github.com/example-org/example-inventory.git
+2024-11-14T14:11:31.699130184Z ::debug::[get_credentials_v2:106] | Returning git token for https://github.com/example-org/example-inventory.git as found in cache.
+2024-11-14T14:11:32.516948769Z ::info::Cloning Repository: https://github.com/example-org/example-app, Branch: master, Commit:  at Path: one-pipeline-config-repo with USE_SUBMODULES flag as: 1
+2024-11-14T14:11:33.636651210Z ::debug::[clone_repo:118] | Branch master exists in https://github.com/example-org/example-app
+2024-11-14T14:11:33.645486961Z ::debug::[clone_repo:143] | Attempting to clone with retry using git clone -q -b master https://****:****@github.com/example-org/example-app one-pipeline-config-repo
+2024-11-14T14:11:37.349997961Z ::debug::[clone_repo:185] | Origin: 
+2024-11-14T14:11:37.367120803Z ::info::Successfully Cloned Repository: https://github.com/example-org/example-app, Branch: master, Commit: f16e5a66fa78262078d3590b75a242f311da4224 at Path: one-pipeline-config-repo.
+2024-11-14T14:11:42.498866720Z 
+2024-11-14T14:11:42.498915345Z 
+2024-11-14T14:11:42.498922840Z YAML linting of pipeline configuration passed
+2024-11-14T14:11:42.498926150Z 
+2024-11-14T14:11:42.498929514Z 
+2024-11-14T14:11:42.498934511Z List of custom stages within pipeline configuration missing implementation. For these stages pipeline will pick the default implementations. :
+2024-11-14T14:11:42.498941481Z - 'detect-secrets'
+2024-11-14T14:11:42.498945057Z - 'compliance-checks'
+2024-11-14T14:11:42.498948957Z - 'pr-finish'
+2024-11-14T14:11:42.498953257Z For more information on the stages that can be skipped refer to the doc link below
+2024-11-14T14:11:42.498957672Z https://cloud.ibm.com/docs/devsecops?topic=devsecops-cd-devsecops-pr-pipeline
+2024-11-14T14:11:42.498961928Z 
+2024-11-14T14:11:42.498964925Z 
+2024-11-14T14:11:43.342596128Z ::debug::[set-commit-status:48] | repository: https://github.com/example-org/example-app
+2024-11-14T14:11:43.342933970Z ::debug::[set-commit-status:60] | commit-sha: b00b89b53ead4344a55d003b1f5698183e6128ab
+2024-11-14T14:11:43.342946722Z ::debug::[set-commit-status:72] | state: pending
+2024-11-14T14:11:43.342952600Z ::debug::[set-commit-status:85] | description: Running unit tests...
+2024-11-14T14:11:43.343224450Z ::debug::[set-commit-status:97] | context: tekton/code-unit-tests
+2024-11-14T14:11:43.343242477Z ::debug::[set-commit-status:109] | task-name: code-unit-tests
+2024-11-14T14:11:43.343247262Z ::debug::[set-commit-status:121] | step-name: run-stage
+2024-11-14T14:11:43.343251080Z 
+2024-11-14T14:11:43.448849244Z ::debug::[get_repo_params:212] | Unable to locate repository parameters for key https://github.com/example-org/example-app in the cache. Attempt to fetch repository parameters.
+2024-11-14T14:11:43.453672514Z ::debug::[get_repo_params:39] | get_repo_server_name called for https://github.com/example-org/example-app. Repository Server Name identified as github.com
+2024-11-14T14:11:43.496797303Z ::debug::[get_repo_params:89] | get_absolute_scm_type called for https://github.com/example-org/example-app. SCM Type identified as github
+2024-11-14T14:11:43.497560996Z ::debug::[get_repo_params:201] | get_api_url called for https://github.com/example-org/example-app. Reading token from environment property https://github.com/api/v3.
+2024-11-14T14:11:43.529001605Z ::debug::[get_repo_params:89] | get_absolute_scm_type called for https://github.com/example-org/example-app. SCM Type identified as github
+2024-11-14T14:11:43.529338994Z ::debug::[get_repo_params:97] | get_absolute_scm_type called for https://github.com/example-org/example-app. SCM Type identified as github
+2024-11-14T14:11:43.533299101Z ::debug::[get_repo_params:18] | get_repo_owner called for https://github.com/example-org/example-app. Repository Owner identified as PIYUSH-Mundra
+2024-11-14T14:11:43.540457519Z ::debug::[get_repo_params:30] | get_repo_name called for https://github.com/example-org/example-app. Repository Name identified as example-app
+2024-11-14T14:11:43.540474134Z ::debug::[get_repo_params:218] | Update the cache for key https://github.com/example-org/example-app.
+2024-11-14T14:11:43.623629967Z ::debug::[get_repo_params:223] | get_repo_params called for https://github.com/example-org/example-app.
+2024-11-14T14:11:43.631172957Z ::debug::[get_repo_params:30] | get_repo_name called for https://github.com/example-org/example-app. Repository Name identified as example-app
+2024-11-14T14:11:43.635020828Z ::debug::[get_repo_params:18] | get_repo_owner called for https://github.com/example-org/example-app. Repository Owner identified as PIYUSH-Mundra
+2024-11-14T14:11:43.719595703Z ::debug::[get_repo_params:141] | get_repo_specific_token called for https://github.com/example-org/example-app. Reading token from environment property 
+2024-11-14T14:11:43.719784194Z ::debug::[get_repo_params:153] | get_repo_token called for https://github.com/example-org/example-app. Reading token from environment property .
+2024-11-14T14:11:43.719789683Z ::debug::[get_repo_params:162] | Unable to retreive repo_token from environment property. Attempt to fetch Personal Access Token.
+2024-11-14T14:11:43.750695266Z ::debug::[get_repo_params:116] | get_repo_pat called for https://github.com/example-org/example-app. Auth Type identified as oauth
+2024-11-14T14:11:43.750947704Z ::debug::[get_repo_params:167] | Unable to retreive Personal Access Token. Attempt to fetch token from Toolchain Broker.
+2024-11-14T14:11:43.782406568Z ::debug::[get_repo_params:89] | get_absolute_scm_type called for https://github.com/example-org/example-app. SCM Type identified as github
+2024-11-14T14:11:44.375617191Z ::debug::[get_credentials_v2:187] | Fetch Git Token for SCM Type: github, SCM ID: integrated, Repository URL: https://github.com/example-org/example-app.
+2024-11-14T14:11:44.415251742Z ::info::Fetch git token for https://github.com/example-org/example-inventory.git
+2024-11-14T14:11:44.507177971Z ::debug::[get_credentials_v2:106] | Returning git token for https://github.com/example-org/example-inventory.git as found in cache.
+2024-11-14T14:11:44.825013004Z ::debug::[set-commit-status:219] | Calling set-commit-status with params %s: --state=pending --targetURL=https://cloud.ibm.com/devops/pipelines/tekton/a3fe08ad-d5de-4cd2-98b0-f5c5219a33cd/runs/5f3949cf-de85-415c-a6cc-74a336bbe206/code-unit-tests/run-stage?env_id=ibm:yp:us-south --context=tekton/code-unit-tests --description=Running unit tests... --git-provider=github --git-token-path=/workspace/app/secrets/app-token --git-api-url=https://github.com/api/v3
+2024-11-14T14:11:47.398894541Z ::info::set-commit-status for context tekton/code-unit-tests and commit with b00b89b53ead4344a55d003b1f5698183e6128ab in https://github.com/example-org/example-app to pending
+2024-11-14T14:11:50.294887769Z ::info::Validating pipeline config
+2024-11-14T14:11:51.257435452Z ::debug::[validate_pipeline:102] | Pipeline definitions are being referenced from branch with name chore/private-compliance-baseimage-3.59.5_commons-1.20.6
+2024-11-14T14:11:51.432935896Z ::debug::[validate_pipeline:157] | get_current_tag_branch retreived metadata for pipeline definitions. BRANCH_TAG_VALUE: chore/private-compliance-baseimage-3.59.5_commons-1.20.6, IS_BRANCH_OR_TAG: branch
+2024-11-14T14:11:51.781884301Z ::debug::[validate_pipeline:364] | Successfully retrieved the metadata for pipeline definitions. Proceeding with pipeline definition validation.
+2024-11-14T14:11:51.781910560Z ::debug::[validate_pipeline:296] | Validate Pipeline Definition for branch with value chore/private-compliance-baseimage-3.59.5_commons-1.20.6 and GIT SCM Provider github with production branches.
+2024-11-14T14:11:51.781916139Z ::debug::[validate_pipeline:278] | Validating pipeline definition source chore/private-compliance-baseimage-3.59.5_commons-1.20.6 against list of stable branches chore/private-compliance-baseimage-3.59.5_commons-1.20.6 v10 v10-preprocessor v9.
+2024-11-14T14:11:51.781922526Z ::warning::[validate_pipeline:280] | Your pipeline is currently running against pipeline definition branch: chore/private-compliance-baseimage-3.59.5_commons-1.20.6. It is advised to set theses branches: chore/private-compliance-baseimage-3.59.5_commons-1.20.6 v10 v10-preprocessor v9 .
+2024-11-14T14:11:53.458588489Z INFO: notifications are turned off . <event_notifications.en_helpers.event_notifications object at 0x7f0429477550>
+2024-11-14T14:11:54.166495164Z ::info::Getting compliance versions...
+2024-11-14T14:11:54.490186086Z ::debug::[validate_pipeline:157] | get_current_tag_branch retreived metadata for pipeline definitions. BRANCH_TAG_VALUE: , IS_BRANCH_OR_TAG: 
+2024-11-14T14:11:54.833949298Z ::info::Core BaseImage Version:           3.59.5
+2024-11-14T14:11:54.833995892Z ::info::Commons Version:                  1.20.6
+2024-11-14T14:11:54.834000728Z ::info::Pipeline Definition Source:       branch
+2024-11-14T14:11:54.836379443Z ::info::Pipeline Definition Source Value: chore/private-compliance-baseimage-3.59.5_commons-1.20.6
+2024-11-14T14:12:08.065631069Z ::error::Sample error
+2024-11-14T14:12:08.065631069Z ::warning::Sample warning
+2024-11-14T14:12:08.065631069Z ::notice::Sample notice
+2024-11-14T14:12:08.065631069Z ::info::Sample info
+2024-11-14T14:12:08.065631069Z Sample with no log level
+2024-11-14T14:12:08.065631069Z ::debug::Sample debug
+2024-11-14T14:12:08.065631069Z ::info::Details of asset created:
+2024-11-14T14:12:11.849912684Z ┌─────┬──────┬────┬─────┐
+2024-11-14T14:12:11.849981080Z │ Key │ Type │ ID │ URL │
+2024-11-14T14:12:11.849987327Z └─────┴──────┴────┴─────┘
+2024-11-14T14:12:11.869437298Z ::info::Details of evidence collected:
+2024-11-14T14:12:15.892827575Z ┌─────────────────┬────────────────────┐
+2024-11-14T14:12:15.892883264Z │ Attribute       │ Value              │
+2024-11-14T14:12:15.892888519Z ├─────────────────┼────────────────────┤
+2024-11-14T14:12:15.892895717Z │ Status          │ [32msuccess[39m            │
+2024-11-14T14:12:15.892900191Z ├─────────────────┼────────────────────┤
+2024-11-14T14:12:15.892904785Z │ Tool Type       │ jest               │
+2024-11-14T14:12:15.892908480Z ├─────────────────┼────────────────────┤
+2024-11-14T14:12:15.892912390Z │ Evidence ID     │ -                  │
+2024-11-14T14:12:15.892916374Z ├─────────────────┼────────────────────┤
+2024-11-14T14:12:15.892920207Z │ Evidence Type   │ com.ibm.unit_tests │
+2024-11-14T14:12:15.892924894Z ├─────────────────┼────────────────────┤
+2024-11-14T14:12:15.892930294Z │ Issues          │ -                  │
+2024-11-14T14:12:15.892933984Z ├─────────────────┼────────────────────┤
+2024-11-14T14:12:15.892938649Z │ Attachment URLs │                    │
+2024-11-14T14:12:15.892942307Z │                 │                    │
+2024-11-14T14:12:15.892947043Z └─────────────────┴────────────────────┘
+2024-11-14T14:12:15.989838531Z success

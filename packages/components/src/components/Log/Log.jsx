@@ -27,19 +27,16 @@ import {
 import DotSpinner from '../DotSpinner';
 import LogFormat from '../LogFormat';
 
-const LogLine = ({ data, index, style }) => (
-  <div style={style}>
-    <LogFormat>{`${data[index]}\n`}</LogFormat>
-  </div>
-);
-
-const itemSize = 15; // This should be kept in sync with the line-height in SCSS
+const itemSize = 16; // This should be kept in sync with the line-height in SCSS
 const defaultHeight = itemSize * 100 + itemSize / 2;
+
+const logFormatRegex =
+  /^((?<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3,9}Z)\s?)?(::(?<level>error|warning|info|notice|debug)::)?(?<message>.*)?$/s;
 
 export class LogContainer extends Component {
   constructor(props) {
     super(props);
-    this.state = { loading: true };
+    this.state = { loading: true, logs: [] };
     this.logRef = createRef();
     this.textRef = createRef();
   }
@@ -244,7 +241,27 @@ export class LogContainer extends Component {
   };
 
   getLogList = () => {
-    const { stepStatus, intl } = this.props;
+    const {
+      intl,
+      logLevels,
+      parseLogLine = line => {
+        if (!line?.length) {
+          return { message: line };
+        }
+
+        const {
+          groups: { level, message, timestamp }
+        } = logFormatRegex.exec(line);
+        return {
+          level,
+          message,
+          timestamp
+        };
+      },
+      showLevels,
+      showTimestamps,
+      stepStatus
+    } = this.props;
     const { reason } = (stepStatus && stepStatus.terminated) || {};
     const {
       logs = [
@@ -255,8 +272,35 @@ export class LogContainer extends Component {
       ]
     } = this.state;
 
-    if (logs.length < 20000) {
-      return <LogFormat>{logs.join('\n')}</LogFormat>;
+    let previousTimestamp;
+    const parsedLogs = logs.reduce((acc, line) => {
+      const parsedLogLine = parseLogLine(line);
+      if (!parsedLogLine.timestamp) {
+        // multiline log, use same timestamp as previous line
+        parsedLogLine.timestamp = previousTimestamp;
+      } else {
+        previousTimestamp = parsedLogLine.timestamp;
+      }
+
+      if (
+        !logLevels ||
+        // we treat lines with no log level as if they specified 'info'
+        // but we don't display a default level for these lines to avoid
+        // unnecessary noise for users not using the expected log format
+        (!parsedLogLine.level && logLevels.info) ||
+        logLevels[parsedLogLine.level]
+      ) {
+        acc.push(parsedLogLine);
+      }
+      return acc;
+    }, []);
+    if (parsedLogs.length < 20_000) {
+      return (
+        <LogFormat
+          fields={{ level: showLevels, timestamp: showTimestamps }}
+          logs={parsedLogs}
+        />
+      );
     }
 
     const height = reason
@@ -266,12 +310,19 @@ export class LogContainer extends Component {
     return (
       <List
         height={height}
-        itemCount={logs.length}
-        itemData={logs}
+        itemCount={parsedLogs.length}
+        itemData={parsedLogs}
         itemSize={itemSize}
         width="100%"
       >
-        {LogLine}
+        {({ data, index, style }) => (
+          <div style={style}>
+            <LogFormat
+              fields={{ level: showLevels, timestamp: showTimestamps }}
+              logs={[data[index]]}
+            />
+          </div>
+        )}
       </List>
     );
   };
@@ -333,7 +384,7 @@ export class LogContainer extends Component {
       logs += decoder.decode(value, { stream: !done });
       this.setState({
         loading: false,
-        logs: logs.split('\n')
+        logs: logs.split(/\r?\n/)
       });
     } else {
       this.setState({
@@ -376,7 +427,7 @@ export class LogContainer extends Component {
       } else {
         this.setState({
           loading: false,
-          logs: logs ? logs.split('\n') : undefined
+          logs: logs ? logs.split(/\r?\n/) : undefined
         });
         if (continuePolling) {
           clearTimeout(this.timer);

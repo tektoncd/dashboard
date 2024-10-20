@@ -36,21 +36,6 @@ describe('Settings', () => {
     expect(Utils.setTheme).toHaveBeenCalledWith('dark');
   });
 
-  it('should render the log timestamp settings correctly', () => {
-    vi.spyOn(APIUtils, 'isLogTimestampsEnabled').mockImplementation(() => true);
-    vi.spyOn(APIUtils, 'setLogTimestampsEnabled');
-
-    const { getByRole } = render(<Settings />);
-
-    const logTimestampToggle = getByRole('switch', {
-      name: /show log timestamps/i
-    });
-    expect(logTimestampToggle).toBeTruthy();
-    expect(within(logTimestampToggle.parentNode).getByText('On')).toBeTruthy();
-    fireEvent.click(logTimestampToggle);
-    expect(APIUtils.setLogTimestampsEnabled).toHaveBeenCalledWith(false);
-  });
-
   it('should render the v1 API settings correctly', () => {
     vi.spyOn(APIUtils, 'isPipelinesV1ResourcesEnabled').mockImplementation(
       () => true

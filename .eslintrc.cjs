@@ -65,7 +65,10 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     'import/no-named-as-default': 'off',
     'import/no-named-as-default-member': 'off',
-    'import/no-unresolved': ['error', { ignore: ['\\.svg\\?react$'] }],
+    'import/no-unresolved': [
+      'error',
+      { ignore: ['\\.svg\\?react$', '\\.txt\\?raw$'] }
+    ],
     'import/prefer-default-export': 'off',
     'jsx-a11y/anchor-is-valid': 'off',
     'no-case-declarations': 'off',

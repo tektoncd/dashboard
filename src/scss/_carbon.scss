@@ -12,7 +12,8 @@ limitations under the License.
 */
 
 @use '@carbon/react/scss/config' with (
-  $font-path: '@ibm/plex'
+  $font-path: '@ibm/plex',
+  $use-per-family-plex: true
 );
 
 @use '@carbon/react/scss/reset';

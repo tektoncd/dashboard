@@ -51,6 +51,7 @@ export default /* istanbul ignore next */ function PipelineRun({
   handleTaskSelected = /* istanbul ignore next */ () => {},
   icon,
   loading,
+  logLevels,
   maximizedLogsContainer,
   onRetryChange,
   onViewChange = /* istanbul ignore next */ () => {},
@@ -63,6 +64,8 @@ export default /* istanbul ignore next */ function PipelineRun({
   selectedStepId = null,
   selectedTaskId = null,
   selectedTaskRunName,
+  showLogLevels,
+  showLogTimestamps,
   taskRuns,
   tasks,
   triggerHeader,
@@ -88,7 +91,7 @@ export default /* istanbul ignore next */ function PipelineRun({
     );
   }
 
-  function toggleLogsMaximized() {
+  function onToggleLogsMaximized() {
     setIsLogsMaximized(prevIsLogsMaximized => !prevIsLogsMaximized);
   }
 
@@ -110,19 +113,23 @@ export default /* istanbul ignore next */ function PipelineRun({
             stepStatus &&
             getLogsToolbar({
               isMaximized: isLogsMaximized,
+              onToggleMaximized:
+                !!maximizedLogsContainer && onToggleLogsMaximized,
               stepStatus,
-              taskRun,
-              toggleMaximized: !!maximizedLogsContainer && toggleLogsMaximized
+              taskRun
             })
           }
           fetchLogs={() => fetchLogs(stepName, stepStatus, taskRun)}
           forcePolling={forceLogPolling}
           key={`${selectedTaskId}:${selectedStepId}:${selectedRetry}`}
+          logLevels={logLevels}
           pollingInterval={pollingInterval}
           stepStatus={stepStatus}
           isLogsMaximized={isLogsMaximized}
           enableLogAutoScroll={enableLogAutoScroll}
           enableLogScrollButtons={enableLogScrollButtons}
+          showLevels={showLogLevels}
+          showTimestamps={showLogTimestamps}
         />
       </LogsRoot>
     );
