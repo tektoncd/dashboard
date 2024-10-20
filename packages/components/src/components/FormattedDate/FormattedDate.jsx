@@ -16,6 +16,7 @@ import { FormattedDate, FormattedRelativeTime, useIntl } from 'react-intl';
 const FormattedDateWrapper = ({
   date,
   formatTooltip = formattedDate => formattedDate,
+  includeSeconds = false,
   relative
 }) => {
   const intl = useIntl();
@@ -47,6 +48,7 @@ const FormattedDateWrapper = ({
         year={yearFormat}
         hour="numeric"
         minute="numeric"
+        {...(includeSeconds ? { second: 'numeric' } : null)}
       />
     );
   }
@@ -56,7 +58,8 @@ const FormattedDateWrapper = ({
     month: 'long',
     year: 'numeric',
     hour: 'numeric',
-    minute: 'numeric'
+    minute: 'numeric',
+    ...(includeSeconds ? { second: 'numeric' } : null)
   });
   formattedDate = formatTooltip(formattedDate);
   return <span title={formattedDate}>{content}</span>;

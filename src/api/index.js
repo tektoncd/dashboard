@@ -22,7 +22,6 @@ import {
   apiRoot,
   getKubeAPI,
   getTektonPipelinesAPIVersion,
-  isLogTimestampsEnabled,
   tektonAPIGroup,
   useCollection,
   useResource
@@ -157,11 +156,10 @@ export function getExternalLogURL({
 }
 
 export function getPodLogURL({ container, name, namespace, follow }) {
-  const timestamps = isLogTimestampsEnabled();
   const queryParams = {
     ...(container && { container }),
     ...(follow && { follow }),
-    ...(timestamps && { timestamps })
+    timestamps: true
   };
   const uri = `${getKubeAPI({
     group: 'core',
