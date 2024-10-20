@@ -16,17 +16,19 @@ limitations under the License.
 @use '@carbon/react/scss/type' as *;
 
 pre.tkn--log {
+  --tkn-log-inline-padding: 1.6rem;
   position: relative;
   padding-block-start: 2rem;
   padding-block-end: 1.3rem;
-  padding-inline: 1.6rem;
+  padding-inline: var(--tkn-log-inline-padding);
   @include font-family('mono');
+  // @include type-style('code-01');
   font-size: 0.75rem;
   @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
     font-size: 0.6875rem;
   }
 
-  line-height: 0.95rem; // Update the react-window List itemSize if changing this
+  line-height: 1rem; // Update the react-window List itemSize if changing this
   overflow: hidden;
   background-color: $background;
   color: $text-primary;
@@ -49,12 +51,16 @@ pre.tkn--log {
   code {
     white-space: pre;
     overflow-wrap: normal;
+    display: block;
+    inline-size: auto;
+    min-inline-size: max-content;
   }
 
   .#{$prefix}--btn-set {
     position: absolute;
     inset-block-start: 0;
-    inset-inline-end: 0;
+    inset-inline-end: var(--tkn-log-inline-padding);
+    align-items: center;
   }
 
   .button-container {
@@ -63,7 +69,7 @@ pre.tkn--log {
     inset-block-start: 3.125rem; //equals the maximum between padding-block-start of pre.tkn--log and between the page header height
     inset-block-end: 0;
     inset-inline-end: 0;
-    inline-size: 1.6rem; //equals the padding-inline-end of pre.tkn--log
+    inline-size: var(--tkn-log-inline-padding);
   }
 
   #log-scroll-to-start-btn, #log-scroll-to-end-btn {
@@ -83,6 +89,7 @@ pre.tkn--log {
     inset-block-end: var(--tkn-scroll-button-bottom);
   }
 
+  .#{$prefix}--btn--ghost,
   .#{$prefix}--copy-btn {
     inline-size: 2rem;
     block-size: 2rem;
@@ -103,7 +110,8 @@ pre.tkn--log {
   }
 
   .tkn--log-trailer {
-    font-family: ibm-plex-sans, sans-serif;
+    font-family: 'IBM Plex Sans', sans-serif;
+    // @include type-style('helper-text-01');
     font-weight: bold;
 
     &[data-status='Completed'] {

@@ -11,9 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { LogsToolbar } from '@tektoncd/dashboard-components';
+import { getExternalLogURL, getPodLog } from '../api';
 
-import { getExternalLogURL, getPodLog, getPodLogURL } from '../api';
 import { get } from '../api/comms';
 
 const buildLocales = import.meta.env.VITE_LOCALES_BUILD.split(',');
@@ -148,36 +147,6 @@ export function getViewChangeHandler({ location, navigate }) {
     const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
     navigate(browserURL);
   };
-}
-
-export function getLogsToolbar({
-  externalLogsURL,
-  isMaximized,
-  isUsingExternalLogs,
-  stepStatus,
-  taskRun,
-  toggleMaximized
-}) {
-  const { container } = stepStatus;
-  const { namespace } = taskRun.metadata;
-  const { podName } = taskRun.status;
-
-  const logURL = isUsingExternalLogs
-    ? getExternalLogURL({ container, externalLogsURL, namespace, podName })
-    : getPodLogURL({
-        container,
-        name: podName,
-        namespace
-      });
-
-  return (
-    <LogsToolbar
-      isMaximized={isMaximized}
-      name={`${podName}__${container}__log.txt`}
-      toggleMaximized={toggleMaximized}
-      url={logURL}
-    />
-  );
 }
 
 export function formatLocale(locale) {

@@ -37,11 +37,8 @@ import {
   useTitleSync
 } from '@tektoncd/dashboard-utils';
 
-import {
-  getLogsRetriever,
-  getLogsToolbar,
-  getViewChangeHandler
-} from '../../utils';
+import LogsToolbar from '../LogsToolbar';
+import { getLogsRetriever, getViewChangeHandler } from '../../utils';
 import {
   cancelTaskRun,
   deleteTaskRun,
@@ -56,14 +53,46 @@ import {
   useTaskRun
 } from '../../api';
 import NotFound from '../NotFound';
+import {
+  getLogLevels,
+  isLogTimestampsEnabled,
+  setLogLevels,
+  setLogTimestampsEnabled
+} from '../../api/utils';
 
 const { STEP, RETRY, TASK_RUN_DETAILS, VIEW } = queryParamConstants;
 
-export function TaskRunContainer() {
+export function TaskRunContainer({
+  // we may consider customisation of the log format in future
+  showLogLevels = true
+}) {
   const intl = useIntl();
   const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
+
+  const [logLevels, setLogLevelsState] = useState(getLogLevels());
+  const [showTimestamps, setShowTimestamps] = useState(
+    isLogTimestampsEnabled()
+  );
+
+  function onToggleLogLevel(logLevel) {
+    setLogLevelsState(levels => {
+      const newLevels = { ...levels, ...logLevel };
+      // if (!Object.values(newLevels).filter(Boolean).length) {
+      //   // TODO: logs - notification or allow?
+      //   alert('must have at least 1 log level enabled');
+      //   return levels;
+      // }
+      setLogLevels(newLevels);
+      return newLevels;
+    });
+  }
+
+  function onToggleShowTimestamps(show) {
+    setShowTimestamps(show);
+    setLogTimestampsEnabled(show);
+  }
 
   const { name, namespace: namespaceParam } = params;
 
@@ -134,7 +163,7 @@ export function TaskRunContainer() {
     { enabled: !!podName && view === 'pod' }
   );
 
-  function toggleLogsMaximized() {
+  function onToggleLogsMaximized() {
     setIsLogsMaximized(state => !state);
   }
 
@@ -158,20 +187,31 @@ export function TaskRunContainer() {
           : null)}
       >
         <Log
-          toolbar={getLogsToolbar({
-            externalLogsURL,
-            isMaximized: isLogsMaximized,
-            isUsingExternalLogs,
-            stepStatus,
-            taskRun: run,
-            toggleMaximized: !!maximizedLogsContainer && toggleLogsMaximized
-          })}
           fetchLogs={() => logsRetriever(stepName, stepStatus, run)}
-          key={`${stepName}:${currentRetry}`}
-          stepStatus={stepStatus}
           isLogsMaximized={isLogsMaximized}
           enableLogAutoScroll
           enableLogScrollButtons
+          key={`${stepName}:${currentRetry}`}
+          logLevels={logLevels}
+          showLevels={showLogLevels}
+          showTimestamps={showTimestamps}
+          stepStatus={stepStatus}
+          toolbar={
+            <LogsToolbar
+              externalLogsURL={externalLogsURL}
+              isMaximized={isLogsMaximized}
+              isUsingExternalLogs={isUsingExternalLogs}
+              logLevels={showLogLevels && logLevels}
+              onToggleLogLevel={onToggleLogLevel}
+              onToggleMaximized={
+                !!maximizedLogsContainer && onToggleLogsMaximized
+              }
+              onToggleShowTimestamps={onToggleShowTimestamps}
+              showTimestamps={showTimestamps}
+              stepStatus={stepStatus}
+              taskRun={run}
+            />
+          }
         />
       </LogsRoot>
     );

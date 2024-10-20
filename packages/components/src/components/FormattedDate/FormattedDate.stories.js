@@ -33,3 +33,9 @@ export const Relative = {
 };
 
 export const Absolute = {};
+
+export const Seconds = {
+  args: {
+    includeSeconds: true
+  }
+};

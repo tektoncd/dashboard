@@ -377,24 +377,6 @@ describe('isLogTimestampsEnabled', () => {
   });
 });
 
-describe('isLogTimestampsEnabled', () => {
-  afterEach(() => {
-    localStorage.removeItem('tkn-logs-timestamps');
-  });
-
-  it('handles valid values', () => {
-    localStorage.setItem('tkn-logs-timestamps', true);
-    expect(utils.isLogTimestampsEnabled()).toBe(true);
-    localStorage.setItem('tkn-logs-timestamps', false);
-    expect(utils.isLogTimestampsEnabled()).toBe(false);
-  });
-
-  it('handles invalid values', () => {
-    localStorage.setItem('tkn-logs-timestamps', 'foo');
-    expect(utils.isLogTimestampsEnabled()).toBe(false);
-  });
-});
-
 describe('setLogTimestampsEnabled', () => {
   afterEach(() => {
     localStorage.removeItem('tkn-logs-timestamps');
