@@ -16,7 +16,7 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 import { InlineNotification } from '@carbon/react';
-import { UndefinedFilled as UndefinedIcon } from '@carbon/react/icons';
+import { UnknownFilled as UnknownIcon } from '@carbon/react/icons';
 import {
   ActionableNotification,
   Actions,
@@ -69,7 +69,7 @@ function getRunStatusIcon(run) {
   const { reason, status } = getStatus(run);
   return (
     <StatusIcon
-      DefaultIcon={props => <UndefinedIcon size={20} {...props} />}
+      DefaultIcon={props => <UnknownIcon size={20} {...props} />}
       isCustomTask
       reason={reason}
       status={status}

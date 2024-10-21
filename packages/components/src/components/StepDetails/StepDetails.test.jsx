@@ -53,4 +53,12 @@ describe('StepDetails', () => {
 
     fireEvent.click(getByText(/logs/i));
   });
+
+  it('renders skipped Task state', () => {
+    const { queryByText } = renderWithRouter(
+      <StepDetails skippedTask={{}} stepStatus={{}} />
+    );
+
+    expect(queryByText('Task skipped, no logs to show.')).toBeTruthy();
+  });
 });

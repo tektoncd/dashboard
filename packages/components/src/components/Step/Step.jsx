@@ -23,7 +23,8 @@ export default function Step({
   reason,
   selected,
   status,
-  stepName = 'unknown'
+  stepName = 'unknown',
+  terminationReason
 }) {
   const intl = useIntl();
 
@@ -33,6 +34,12 @@ export default function Step({
   }
 
   function getStatusLabel() {
+    if (terminationReason === 'Skipped') {
+      return intl.formatMessage({
+        id: 'dashboard.taskRun.status.skipped',
+        defaultMessage: 'Skipped'
+      });
+    }
     if (
       status === 'cancelled' ||
       (status === 'terminated' &&
@@ -93,6 +100,7 @@ export default function Step({
       data-status={status}
       data-reason={reason}
       data-selected={selected || undefined}
+      data-termination-reason={terminationReason}
     >
       <span // eslint-disable-line jsx-a11y/no-static-element-interactions
         className="tkn--step-link"
@@ -106,6 +114,7 @@ export default function Step({
           hasWarning={exitCode !== 0}
           reason={reason}
           status={status}
+          terminationReason={terminationReason}
           title={statusLabel}
           type="inverse"
         />

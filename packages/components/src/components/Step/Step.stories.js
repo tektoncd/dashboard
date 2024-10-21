@@ -42,4 +42,12 @@ export const CompletedWithWarning = {
   name: 'Completed with warning'
 };
 
+export const Skipped = {
+  args: {
+    reason: 'Completed',
+    status: 'terminated',
+    terminationReason: 'Skipped'
+  }
+};
+
 export const Error = { args: { reason: 'Error', status: 'terminated' } };

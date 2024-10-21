@@ -247,4 +247,31 @@ describe('TaskRunDetails', () => {
     expect(queryByText('Resource')).toBeFalsy();
     expect(queryByText(waitingMessage)).toBeTruthy();
   });
+
+  it('renders skipped task', () => {
+    const reason = 'When Expressions evaluated to false';
+    const podName = 'fake_pod';
+    const pod = { metadata: { name: podName } };
+    const taskRun = {
+      metadata: { name: 'task-run-name' },
+      spec: {},
+      status: {}
+    };
+    const { queryByText } = render(
+      <TaskRunDetails
+        pod={{
+          resource: pod
+        }}
+        skippedTask={{ reason }}
+        task={{
+          metadata: 'task',
+          spec: {}
+        }}
+        taskRun={taskRun}
+        view="pod"
+      />
+    );
+    expect(queryByText('Pod')).toBeFalsy();
+    expect(queryByText(reason)).toBeTruthy();
+  });
 });

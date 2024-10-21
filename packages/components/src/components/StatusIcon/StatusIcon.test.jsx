@@ -23,6 +23,18 @@ describe('StatusIcon', () => {
     expect(queryByText(title)).toBeTruthy();
   });
 
+  it('renders success state', () => {
+    render(<StatusIcon reason="Completed" status="True" />);
+  });
+
+  it('renders success with warning state', () => {
+    render(<StatusIcon hasWarning reason="Completed" status="True" />);
+  });
+
+  it('renders step success state', () => {
+    render(<StatusIcon reason="Completed" status="terminated" />);
+  });
+
   it('renders PipelineRunCancelled state', () => {
     render(<StatusIcon reason="PipelineRunCancelled" status="False" />);
   });
@@ -37,6 +49,20 @@ describe('StatusIcon', () => {
 
   it('renders PipelineRunCouldntCancel state', () => {
     render(<StatusIcon reason="PipelineRunCouldntCancel" status="Unknown" />);
+  });
+
+  it('renders Skipped state', () => {
+    render(
+      <StatusIcon
+        reason="Completed"
+        status="True"
+        terminationReason="Skipped"
+      />
+    );
+  });
+
+  it('renders Custom Task running state', () => {
+    render(<StatusIcon isCustomTask status="Unknown" />);
   });
 
   it('gracefully handles unsupported state', () => {

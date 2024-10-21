@@ -299,6 +299,14 @@ export default /* istanbul ignore next */ function PipelineRun({
     taskRun
   });
 
+  const skippedTasks = pipelineRun.status?.skippedTasks || [];
+  const skippedTask = skippedTasks.find(
+    skipped => skipped.name === selectedTaskId
+  );
+
+  // TODO: skipped - test with retries
+  // console.log({ selectedTaskId, skippedTask });
+
   return (
     <>
       <RunHeader
@@ -324,6 +332,7 @@ export default /* istanbul ignore next */ function PipelineRun({
             selectedStepId={selectedStepId}
             selectedTaskId={selectedTaskId}
             selectedTaskRunName={selectedTaskRunName}
+            skippedTasks={skippedTasks}
             taskRuns={taskRunsToUse}
           />
           {(selectedStepId && (
@@ -331,6 +340,7 @@ export default /* istanbul ignore next */ function PipelineRun({
               definition={definition}
               logContainer={logContainer}
               onViewChange={onViewChange}
+              skippedTask={skippedTask}
               stepName={selectedStepId}
               stepStatus={stepStatus}
               taskRun={taskRun}
@@ -341,6 +351,7 @@ export default /* istanbul ignore next */ function PipelineRun({
               <TaskRunDetails
                 onViewChange={onViewChange}
                 pod={pod}
+                skippedTask={skippedTask}
                 task={task}
                 taskRun={taskRun}
                 view={view}

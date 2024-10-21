@@ -19,6 +19,7 @@ export default {
   args: {
     selectedStepId: undefined,
     selectedTaskId: undefined,
+    skippedTasks: [{ name: 'Task 2' }],
     taskRuns: [
       {
         metadata: {
@@ -30,8 +31,8 @@ export default {
             { reason: 'Completed', status: 'True', type: 'Succeeded' }
           ],
           steps: [
-            { name: 'build', terminated: { reason: 'Completed' } },
-            { name: 'test', terminated: { reason: 'Completed' } }
+            { name: 'build', terminated: { exitCode: 0, reason: 'Completed' } },
+            { name: 'test', terminated: { exitCode: 1, reason: 'Completed' } }
           ]
         }
       },
@@ -39,6 +40,16 @@ export default {
         metadata: {
           labels: { 'tekton.dev/pipelineTask': 'Task 2' },
           uid: 'task2'
+        },
+        status: {
+          conditions: [],
+          steps: [{ name: 'build' }, { name: 'test' }]
+        }
+      },
+      {
+        metadata: {
+          labels: { 'tekton.dev/pipelineTask': 'Task 3' },
+          uid: 'task3'
         },
         status: {
           conditions: [
@@ -53,10 +64,10 @@ export default {
       },
       {
         metadata: {
-          labels: { 'tekton.dev/pipelineTask': 'Task 3' },
-          uid: 'task3'
+          labels: { 'tekton.dev/pipelineTask': 'Task 4' },
+          uid: 'task4'
         },
-        pipelineTaskName: 'Task 3',
+        pipelineTaskName: 'Task 4',
         status: {
           conditions: [
             { reason: 'Running', status: 'Unknown', type: 'Succeeded' }

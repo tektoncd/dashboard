@@ -147,6 +147,10 @@ describe('Task', () => {
     render(<Task {...props} succeeded="Unknown" reason="Running" />);
   });
 
+  it('renders skipped state', () => {
+    render(<Task {...props} reason="tkn-dashboard:skipped" />);
+  });
+
   it('renders cancelled state', () => {
     render(
       <Task

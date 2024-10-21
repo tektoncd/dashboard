@@ -86,7 +86,7 @@ header.tkn--step-details-header {
       color: $support-info;
     }
   }
-  &[data-status='terminated'][data-reason='Completed'],
+  &[data-status='terminated'][data-reason='Completed']:not([data-termination-reason='Skipped']),
   &[data-status='True'] {
     .tkn--status-label {
       color: $support-success;
