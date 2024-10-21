@@ -59,7 +59,7 @@ function isValidGitURL(url) {
 const initialMethod = 'apply';
 
 const HelpIcon = ({ title }) => (
-  <Tooltip align="top-left" label={title}>
+  <Tooltip align="top-start" label={title}>
     <button className="tkn--tooltip-trigger" type="button">
       <Information />
     </button>
