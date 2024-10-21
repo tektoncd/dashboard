@@ -72,7 +72,10 @@ export default defineConfig(({ mode }) => ({
         ws: true
       }
     },
-    strictPort: mode !== 'test'
+    strictPort: mode !== 'test',
+    watch: {
+      ignored: ['**/coverage/**']
+    }
   },
   test: {
     clearMocks: true,
