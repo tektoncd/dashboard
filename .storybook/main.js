@@ -46,6 +46,10 @@ const config = {
     { directory: '../packages/graph', files: '**/*.stories.@(js|jsx)', titlePrefix: 'Experimental/Graph' }
   ].filter(Boolean)),
   async viteFinal(config, { configType }) {
+    config.server.watch = {
+      ignored: ['**/coverage/**']
+    };
+
     // fallback to default to resolve issue with MDX rendering
     delete config.resolve?.extensions;
     return config;
