@@ -42,6 +42,7 @@ export default function DataTableSkeleton({
     rows[i] = (
       <tr key={i}>
         {columnsArray.map(j => (
+          // eslint-disable-next-line jsx-a11y/control-has-associated-label
           <td key={j}>
             <span />
           </td>
