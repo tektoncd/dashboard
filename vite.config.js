@@ -47,7 +47,9 @@ export default defineConfig(({ mode }) => ({
     target: 'es2022'
   },
   plugins: [
-    createHtmlPlugin({}),
+    // disable CSS minification since we don't use it ourselves and it causes
+    // problems with use of CSS nesting in Storybook production build
+    createHtmlPlugin({ minify: { minifyCSS: false } }),
     react({ devTarget: 'es2022' }),
     svgr(),
     yaml(),
