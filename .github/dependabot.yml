@@ -1,7 +1,8 @@
 version: 2
 updates:
   - package-ecosystem: "docker"
-    directory: "/packages/e2e/"
+    directories:
+    - "**/*"
     schedule:
       interval: "weekly"
       day: "sunday"
@@ -11,6 +12,17 @@ updates:
     - "kind/misc"
     - "ok-to-test"
     - "docker"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+    labels:
+    - "area/automation"
+    - "dependencies"
+    - "kind/misc"
+    - "ok-to-test"
+    - "github-actions"
   - package-ecosystem: "gomod"
     directory: "/"
     schedule:
