@@ -32,7 +32,7 @@ spec:
       description: The workspace where the repo has been cloned
   steps:
     - name: check-git-tag
-      image: docker.io/alpine/git:2.45.2@sha256:7d612867d6b2f12be0827bc70833bac7204791871c80d7c852a336479ba99104
+      image: ghcr.io/wolfi-dev/git:alpine@sha256:c07caa1c1974bed9045fccd12a47ad4de1379341bec5287623a9897aa25c2978
       script: |
         echo "Checking git tag"
         # Look for the tag in the list of tags
