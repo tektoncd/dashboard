@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import { defineConfig, splitVendorChunkPlugin } from 'vite';
-import { createHtmlPlugin } from 'vite-plugin-html';
 import react from '@vitejs/plugin-react-swc';
 import svgr from 'vite-plugin-svgr';
 import yaml from '@modyfi/vite-plugin-yaml';
@@ -47,9 +46,6 @@ export default defineConfig(({ mode }) => ({
     target: 'es2022'
   },
   plugins: [
-    // disable CSS minification since we don't use it ourselves and it causes
-    // problems with use of CSS nesting in Storybook production build
-    createHtmlPlugin({ minify: { minifyCSS: false } }),
     react({ devTarget: 'es2022' }),
     svgr(),
     yaml(),
