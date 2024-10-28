@@ -34,8 +34,8 @@
     "react-intl": "^6.4.1"
   },
   "engines": {
-    "node": "^20.17.0",
-    "npm": "^10.7.0"
+    "node": "^20.18.0",
+    "npm": "^10.8.2"
   },
   "publishConfig": {
     "access": "public"

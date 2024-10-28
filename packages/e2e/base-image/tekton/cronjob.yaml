@@ -43,4 +43,4 @@ spec:
             - name: CONTEXT_PATH
               value: packages/e2e/base-image
             - name: TAGS
-              value: latest,node20.17.0-chrome129
+              value: latest,node20.18.0-chrome130
