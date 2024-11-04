@@ -72,7 +72,7 @@ export default defineConfig(({ mode }) => ({
     },
     strictPort: mode !== 'test',
     watch: {
-      ignored: ['**/coverage/**']
+      ignored: ['**/coverage/**', '**/storybook-static/**']
     }
   },
   test: {
