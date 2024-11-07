@@ -74,12 +74,11 @@ const TooltipDropdown = ({
       className={className}
       disabled={disabled}
       id={id}
-      initialSelectedItem={selectedItem}
       items={options}
       itemToString={itemToString}
-      key={JSON.stringify(selectedItem)}
       onChange={onChange}
       placeholder={options.length === 0 ? emptyString : label}
+      selectedItem={selectedItem}
       size={size}
       titleText={titleText}
       translateWithId={getTranslateWithId(intl)}

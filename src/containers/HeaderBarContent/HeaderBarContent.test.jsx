@@ -30,7 +30,7 @@ describe('HeaderBarContent', () => {
     const path = '/namespaces/:namespace/foo';
     renderWithRouter(<HeaderBarContent />, {
       path,
-      route: `/namespaces/${namespace}/foo`
+      route: path.replace(':namespace', namespace)
     });
     expect(selectNamespace).toHaveBeenCalledWith(namespace);
   });
@@ -76,7 +76,7 @@ describe('HeaderBarContent', () => {
       {
         handle: { isNamespaced: true, path },
         path,
-        route: `/namespaces/${namespace}/fake/path`
+        route: path.replace(':namespace', namespace)
       }
     );
     fireEvent.click(getByDisplayValue(namespace));
@@ -103,7 +103,7 @@ describe('HeaderBarContent', () => {
       {
         handle: { isNamespaced: true, path },
         path,
-        route: `/namespaces/${namespace}/fake/path`
+        route: path.replace(':namespace', namespace)
       }
     );
     fireEvent.click(getByDisplayValue(namespace));
@@ -126,7 +126,7 @@ describe('HeaderBarContent', () => {
     const { getByTitle } = renderWithRouter(<HeaderBarContent />, {
       handle: { isNamespaced: true, path },
       path,
-      route: `/namespaces/${namespace}/fake/path`
+      route: path.replace(':namespace', namespace)
     });
     fireEvent.click(getByTitle(/clear selected item/i));
     expect(selectNamespace).toHaveBeenCalledWith(ALL_NAMESPACES);
@@ -152,14 +152,14 @@ describe('HeaderBarContent', () => {
       {
         handle: { isNamespaced: true, path },
         path,
-        route: `/namespaces/${tenantNamespace2}/fake/path`
+        route: path.replace(':namespace', tenantNamespace2)
       }
     );
     await waitFor(() => getByDisplayValue(tenantNamespace2));
     fireEvent.click(getByTitle(/clear selected item/i));
     expect(selectNamespace).toHaveBeenCalledWith(tenantNamespace1);
     expect(window.location.pathname).toEqual(
-      `/namespaces/${tenantNamespace1}/fake/path`
+      path.replace(':namespace', tenantNamespace1)
     );
   });
 });

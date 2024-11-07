@@ -47,20 +47,28 @@ it('NamespacesDropdown renders items', () => {
 });
 
 it('NamespacesDropdown renders controlled selection', () => {
+  const namespace1 = 'namespace-1';
+  const namespace2 = 'namespace-2';
   vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
     data: namespaceResources
   }));
   // Select item 'namespace-1'
   const { queryByPlaceholderText, queryByDisplayValue, rerender } = render(
-    <NamespacesDropdown {...props} selectedItem={{ text: 'namespace-1' }} />
+    <NamespacesDropdown
+      {...props}
+      selectedItem={{ id: namespace1, text: namespace1 }}
+    />
   );
-  expect(queryByDisplayValue(/namespace-1/i)).toBeTruthy();
+  expect(queryByDisplayValue(namespace1)).toBeTruthy();
   // Select item 'namespace-2'
   render(
-    <NamespacesDropdown {...props} selectedItem={{ text: 'namespace-2' }} />,
+    <NamespacesDropdown
+      {...props}
+      selectedItem={{ id: namespace2, text: namespace2 }}
+    />,
     { rerender }
   );
-  expect(queryByDisplayValue(/namespace-2/i)).toBeTruthy();
+  expect(queryByDisplayValue(namespace2)).toBeTruthy();
   // No selected item (select item '')
   render(<NamespacesDropdown {...props} selectedItem="" />, { rerender });
   expect(queryByPlaceholderText(initialTextRegExp)).toBeTruthy();

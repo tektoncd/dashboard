@@ -11,6 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
@@ -55,10 +56,14 @@ const NamespacesDropdown = ({
     disableWebSocket: true
   });
 
-  const selectedItem = { ...originalSelectedItem };
-  if (selectedItem && selectedItem.id === ALL_NAMESPACES) {
-    selectedItem.text = allNamespacesString;
-  }
+  const selectedItem = useMemo(() => {
+    const newSelectedItem = { ...originalSelectedItem };
+    if (newSelectedItem.id === ALL_NAMESPACES) {
+      newSelectedItem.text = allNamespacesString;
+    }
+
+    return newSelectedItem;
+  }, [originalSelectedItem?.id]);
 
   const items = tenantNamespaces.length
     ? tenantNamespaces
