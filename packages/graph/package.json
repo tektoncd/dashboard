@@ -24,7 +24,7 @@
     "@carbon/charts-react": "^1.19.0",
     "@tektoncd/dashboard-utils": "file:../utils",
     "@visx/event": "^3.12.0",
-    "@visx/network": "^3.3.0",
+    "@visx/network": "^3.12.0",
     "d3-path": "^3.1.0",
     "elkjs": "^0.9.3"
   },
