@@ -6,6 +6,10 @@ updates:
     schedule:
       interval: "weekly"
       day: "sunday"
+    groups:
+      all:
+        patterns:
+          - "*"
     labels:
     - "area/dependency"
     - "dependencies"
