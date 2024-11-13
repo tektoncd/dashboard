@@ -22,7 +22,7 @@ This guide explains how to install Tekton Dashboard. It covers the following top
 Choose the version of Tekton Dashboard you want to install. You have the following options:
 
 - **[Official](https://github.com/tektoncd/dashboard/releases)** - install this unless you have a specific reason to go for a different release.
-- **[Nightly](https://gcr.io/tekton-nightly)** - may contain bugs, install at your own risk.
+- **[Nightly](https://ghcr.io/tektoncd/dashboard)** - may contain bugs, install at your own risk.
 - **[`HEAD`]** - this is the bleeding edge. It contains unreleased code that may result in unpredictable behavior. To get started, see the [development guide](../DEVELOPMENT.md) instead of this page.
 
 ## Pre-requisites

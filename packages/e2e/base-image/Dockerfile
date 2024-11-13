@@ -18,6 +18,11 @@ ARG NODE_VERSION='20.18.0'
 
 FROM cypress/factory@sha256:18e552026e3b2a33041a99417823d1ff2a016ff5ab3866cd9743d91410981797
 
+LABEL maintainer "Tekton Authors <tekton-dev@googlegroups.com>"
+LABEL org.opencontainers.image.source=https://github.com/tektoncd/dashboard
+LABEL org.opencontainers.image.description="Base image for Tekton Dashboard E2E tests"
+LABEL org.opencontainers.image.licenses=Apache-2.0
+
 RUN apt-get update && apt-get install -y apt-transport-https ca-certificates curl gpg &&\
     mkdir -p /etc/apt/keyrings &&\
     curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg &&\
