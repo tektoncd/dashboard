@@ -15,8 +15,14 @@ as follows:
     - Releases happen towards the middle of the month, between the 13th and the
       20th, depending on week-ends and readiness
 
-Tekton Dashboard produces nightly builds, publicly available on
-`gcr.io/tekton-nightly`. 
+Tekton Dashboard produces nightly builds, publicly available at:
+- [read-only](https://storage.googleapis.com/tekton-releases-nightly/dashboard/latest/release.yaml)
+- [read/write](https://storage.googleapis.com/tekton-releases-nightly/dashboard/latest/release-full.yaml)
+
+The images for Dashboard releases are published to `ghcr.io/tektoncd/dashboard`.
+
+Prior to 26th September 2024, nightly images were published to `gcr.io/tekton-nightly`.
+For release v0.50.x and earlier, release images were published to `gcr.io/tekton-releases`.
 
 ## Release Process
 

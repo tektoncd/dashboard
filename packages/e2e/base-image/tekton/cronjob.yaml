@@ -39,7 +39,7 @@ spec:
             - name: SINK_URL
               value: el-image-builder.default.svc.cluster.local:8080
             - name: TARGET_IMAGE
-              value: gcr.io/tekton-releases/dogfooding/dashboard-e2e-base
+              value: ghcr.io/tektoncd/dashboard/dashboard-e2e-base
             - name: CONTEXT_PATH
               value: packages/e2e/base-image
             - name: TAGS
