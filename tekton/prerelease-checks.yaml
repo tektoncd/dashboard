@@ -32,7 +32,7 @@ spec:
       description: The workspace where the repo has been cloned
   steps:
     - name: check-git-tag
-      image: ghcr.io/wolfi-dev/git:alpine@sha256:27b5052749f76995f2e8508ca85fbf6cdbca9a331d9c11be5599f7ae6cd9cbe3
+      image: ghcr.io/wolfi-dev/git:alpine@sha256:10ff7431a524494da019f75dbb4eaa1994e0bc7286125b9c49cf1d14c56c159a
       script: |
         echo "Checking git tag"
         # Look for the tag in the list of tags
@@ -42,7 +42,7 @@ spec:
         echo "Version $(params.versionTag) already tagged for $(params.package)"
         exit 1
     - name: check-release-file
-      image: gcr.io/google.com/cloudsdktool/cloud-sdk:500.0.0@sha256:38eb06b9382439803f9cf546b283ec48e929d55e3824bb786984e596ee45b6da
+      image: gcr.io/google.com/cloudsdktool/cloud-sdk:501.0.0@sha256:26eeb4b056601aec9b37e54e7efe9f6c195361303f57d56399fb9fd3d357d5e4
       script: |
         echo "Checking release file"
         # Check if the release file already exists
