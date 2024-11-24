@@ -16,7 +16,7 @@
 ARG CHROME_VERSION='130.0.6723.69-1'
 ARG NODE_VERSION='20.18.0'
 
-FROM cypress/factory@sha256:ae7c95201296b309db6e46a0aab959ebe733517da650296e917d3e86c8adc035
+FROM cypress/factory@sha256:18e552026e3b2a33041a99417823d1ff2a016ff5ab3866cd9743d91410981797
 
 RUN apt-get update && apt-get install -y apt-transport-https ca-certificates curl gpg &&\
     mkdir -p /etc/apt/keyrings &&\
