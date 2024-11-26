@@ -79,7 +79,7 @@
     "sass-embedded": "^1.81.0",
     "storybook": "^8.3.0",
     "storybook-addon-remix-react-router": "^3.0.2",
-    "vite": "^5.4.11",
+    "vite": "^6.0.0",
     "vite-plugin-svgr": "^4.3.0",
     "vitest": "^2.0.4"
   },
