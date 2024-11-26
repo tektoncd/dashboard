@@ -15,7 +15,6 @@ limitations under the License.
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { defaultQueryFn } from './src/api/utils';
 import { setTheme } from './src/utils';
@@ -35,15 +34,11 @@ const queryClient = new QueryClient({
 
 setTheme();
 
-const enableReactQueryDevTools =
-  localStorage.getItem('tkn-devtools-rq') === 'true';
-
 ReactDOM.render(
   <QueryClientProvider client={queryClient}>
     <StrictMode>
       <App />
     </StrictMode>
-    {enableReactQueryDevTools && <ReactQueryDevtools initialIsOpen={false} />}
   </QueryClientProvider>,
   document.getElementById('root')
 );
