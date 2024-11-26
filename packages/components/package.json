@@ -31,7 +31,7 @@
     "@carbon/react": "^1.65.0",
     "react": "^16.14.0 || ^17.0.2",
     "react-dom": "^16.14.0 || ^17.0.2",
-    "react-intl": "^6.4.1",
+    "react-intl": "^7.0.1",
     "react-router-dom": "^5.0.0 || ^6.0.0"
   },
   "engines": {
