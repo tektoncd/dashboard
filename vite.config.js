@@ -14,7 +14,7 @@ limitations under the License.
 import { defineConfig, splitVendorChunkPlugin } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import svgr from 'vite-plugin-svgr';
-import yaml from '@modyfi/vite-plugin-yaml';
+import yaml from '@rollup/plugin-yaml';
 
 const customAPIDomain = process.env.API_DOMAIN;
 
@@ -37,7 +37,6 @@ export default defineConfig(({ mode }) => ({
     devSourcemap: true,
     preprocessorOptions: {
       scss: {
-        api: 'modern-compiler',
         quietDeps: true
       }
     }
