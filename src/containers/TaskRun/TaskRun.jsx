@@ -182,10 +182,12 @@ export function TaskRunContainer({
           : null)}
       >
         <Log
-          fetchLogs={() => logsRetriever(stepName, stepStatus, run)}
-          isLogsMaximized={isLogsMaximized}
           enableLogAutoScroll
           enableLogScrollButtons
+          fetchLogs={() =>
+            logsRetriever({ stepName, stepStatus, taskRun: run })
+          }
+          isLogsMaximized={isLogsMaximized}
           key={`${stepName}:${currentRetry}`}
           logLevels={logLevels}
           showLevels={showLogLevels}

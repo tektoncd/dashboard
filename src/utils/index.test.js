@@ -16,7 +16,6 @@ import * as comms from '../api/comms';
 import {
   fetchLogs,
   fetchLogsFallback,
-  followLogs,
   getLocale,
   getLogsRetriever,
   getTheme,
@@ -101,7 +100,7 @@ describe('fetchLogs', () => {
     const logs = 'fake logs';
     vi.spyOn(API, 'getPodLog').mockImplementation(() => logs);
 
-    const returnedLogs = fetchLogs(stepName, stepStatus, taskRun);
+    const returnedLogs = fetchLogs({ stepName, stepStatus, taskRun });
     expect(API.getPodLog).toHaveBeenCalledWith(
       expect.objectContaining({
         container: stepStatus.container,
@@ -120,7 +119,60 @@ describe('fetchLogs', () => {
     const taskRun = { metadata: { namespace: 'default' } };
     vi.spyOn(API, 'getPodLog');
 
-    fetchLogs(stepName, stepStatus, taskRun);
+    fetchLogs({ stepName, stepStatus, taskRun });
+    expect(API.getPodLog).not.toHaveBeenCalled();
+  });
+
+  it('should return the streamed pod logs', () => {
+    const namespace = 'default';
+    const podName = 'pipeline-run-123456';
+    const stepName = 'kubectl-apply';
+    const stepStatus = { container: 'step-kubectl-apply' };
+    const taskRun = {
+      metadata: { namespace },
+      status: { podName }
+    };
+
+    const logs = {
+      getReader() {
+        return {
+          read() {
+            return Promise.resolve({
+              done: true,
+              value: new TextEncoder().encode('fake logs')
+            });
+          }
+        };
+      }
+    };
+    vi.spyOn(API, 'getPodLog').mockImplementation(() => logs);
+
+    const returnedLogs = fetchLogs({
+      stepName,
+      stream: true,
+      stepStatus,
+      taskRun
+    });
+    expect(API.getPodLog).toHaveBeenCalledWith(
+      expect.objectContaining({
+        container: stepStatus.container,
+        name: podName,
+        namespace,
+        stream: true
+      })
+    );
+    returnedLogs.then(data => {
+      expect(data).toBe(logs);
+    });
+  });
+
+  it('should not call the API when the pod is not specified', () => {
+    const stepName = 'kubectl-apply';
+    const stepStatus = { container: 'step-kubectl-apply' };
+    const taskRun = { metadata: { namespace: 'default' } };
+    vi.spyOn(API, 'getPodLog');
+
+    fetchLogs({ stepName, stream: true, stepStatus, taskRun });
     expect(API.getPodLog).not.toHaveBeenCalled();
   });
 });
@@ -146,7 +198,7 @@ describe('fetchLogsFallback', () => {
     vi.spyOn(comms, 'get').mockImplementation(() => {});
 
     const fallback = fetchLogsFallback(externalLogsURL);
-    fallback(stepName, stepStatus, taskRun);
+    fallback({ stepName, stepStatus, taskRun });
     expect(comms.get).toHaveBeenCalledWith(
       `http://localhost:3000${externalLogsURL}/${namespace}/${podName}/${container}?startTime=${startTime.replaceAll(
         ':',
@@ -167,61 +219,11 @@ describe('fetchLogsFallback', () => {
     vi.spyOn(comms, 'get').mockImplementation(() => {});
 
     const fallback = fetchLogsFallback(externalLogsURL);
-    fallback(stepName, stepStatus, taskRun);
+    fallback({ stepName, stepStatus, taskRun });
     expect(comms.get).toHaveBeenCalledWith(
       `http://localhost:3000${externalLogsURL}/${namespace}/${podName}/${container}`,
       { Accept: 'text/plain' }
     );
-  });
-});
-
-describe('followLogs', () => {
-  it('should return the pod logs', () => {
-    const namespace = 'default';
-    const podName = 'pipeline-run-123456';
-    const stepName = 'kubectl-apply';
-    const stepStatus = { container: 'step-kubectl-apply' };
-    const taskRun = {
-      metadata: { namespace },
-      status: { podName }
-    };
-
-    const logs = {
-      getReader() {
-        return {
-          read() {
-            return Promise.resolve({
-              done: true,
-              value: new TextEncoder().encode('fake logs')
-            });
-          }
-        };
-      }
-    };
-    vi.spyOn(API, 'getPodLog').mockImplementation(() => logs);
-
-    const returnedLogs = followLogs(stepName, stepStatus, taskRun);
-    expect(API.getPodLog).toHaveBeenCalledWith(
-      expect.objectContaining({
-        container: stepStatus.container,
-        name: podName,
-        namespace,
-        stream: true
-      })
-    );
-    returnedLogs.then(data => {
-      expect(data).toBe(logs);
-    });
-  });
-
-  it('should not call the API when the pod is not specified', () => {
-    const stepName = 'kubectl-apply';
-    const stepStatus = { container: 'step-kubectl-apply' };
-    const taskRun = { metadata: { namespace: 'default' } };
-    vi.spyOn(API, 'getPodLog');
-
-    followLogs(stepName, stepStatus, taskRun);
-    expect(API.getPodLog).not.toHaveBeenCalled();
   });
 });
 
@@ -236,7 +238,7 @@ describe('getLogsRetriever', () => {
     vi.spyOn(API, 'getPodLog').mockImplementation(() => {});
     const logsRetriever = getLogsRetriever({});
     expect(logsRetriever).toBeDefined();
-    logsRetriever(stepName, stepStatus, taskRun);
+    logsRetriever({ stepName, stepStatus, taskRun });
     expect(API.getPodLog).toHaveBeenCalledWith({
       container: stepName,
       name: podName,
@@ -250,7 +252,7 @@ describe('getLogsRetriever', () => {
     const onFallback = vi.fn();
     const logsRetriever = getLogsRetriever({ externalLogsURL, onFallback });
     expect(logsRetriever).toBeDefined();
-    await logsRetriever(stepName, stepStatus, taskRun);
+    await logsRetriever({ stepName, stepStatus, taskRun });
     expect(API.getPodLog).toHaveBeenCalledWith({
       container: stepName,
       name: podName,
@@ -269,7 +271,7 @@ describe('getLogsRetriever', () => {
     const onFallback = vi.fn();
     const logsRetriever = getLogsRetriever({ externalLogsURL, onFallback });
     expect(logsRetriever).toBeDefined();
-    await logsRetriever(stepName, stepStatus, taskRun);
+    await logsRetriever({ stepName, stepStatus, taskRun });
     expect(API.getPodLog).toHaveBeenCalledWith({
       container: stepName,
       name: podName,
