@@ -55,7 +55,7 @@ export function sortRunsByCreationTime(runs) {
   });
 }
 
-export async function followLogs(stepName, stepStatus, taskRun) {
+export async function fetchLogs({ _stepName, stream, stepStatus, taskRun }) {
   const { namespace } = taskRun.metadata;
   const { podName } = taskRun.status || {};
   let logs;
@@ -65,22 +65,7 @@ export async function followLogs(stepName, stepStatus, taskRun) {
       container,
       name: podName,
       namespace,
-      stream: true
-    });
-  }
-  return logs;
-}
-
-export async function fetchLogs(stepName, stepStatus, taskRun) {
-  const { namespace } = taskRun.metadata;
-  const { podName } = taskRun.status || {};
-  let logs;
-  if (podName && stepStatus) {
-    const { container } = stepStatus;
-    logs = getPodLog({
-      container,
-      name: podName,
-      namespace
+      stream
     });
   }
   return logs;
@@ -91,7 +76,7 @@ export function fetchLogsFallback(externalLogsURL) {
     return undefined;
   }
 
-  return (stepName, stepStatus, taskRun) => {
+  return ({ _stepName, stepStatus, taskRun }) => {
     const { namespace } = taskRun.metadata;
     const { podName, startTime, completionTime } = taskRun.status || {};
     const { container } = stepStatus;
@@ -116,18 +101,23 @@ export function getLogsRetriever({
   isLogStreamingEnabled,
   onFallback
 }) {
-  const logs = isLogStreamingEnabled ? followLogs : fetchLogs;
   const fallback = fetchLogsFallback(externalLogsURL);
 
   if (fallback) {
-    return (stepName, stepStatus, taskRun) =>
-      logs(stepName, stepStatus, taskRun).catch(() => {
+    return ({ stepName, stepStatus, taskRun }) =>
+      fetchLogs({
+        stepName,
+        stream: isLogStreamingEnabled,
+        stepStatus,
+        taskRun
+      }).catch(() => {
         onFallback(true);
-        return fallback(stepName, stepStatus, taskRun);
+        // TODO: logs - support streaming from external logs?
+        return fallback({ stepName, stepStatus, taskRun });
       });
   }
 
-  return logs;
+  return fetchLogs;
 }
 
 // K8s label documentation comes from here:

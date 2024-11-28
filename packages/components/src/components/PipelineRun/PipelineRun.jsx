@@ -120,7 +120,7 @@ export default /* istanbul ignore next */ function PipelineRun({
               taskRun
             })
           }
-          fetchLogs={() => fetchLogs(stepName, stepStatus, taskRun)}
+          fetchLogs={() => fetchLogs({ stepName, stepStatus, taskRun })}
           forcePolling={forceLogPolling}
           key={`${selectedTaskId}:${selectedStepId}:${selectedRetry}`}
           logLevels={logLevels}
