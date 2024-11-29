@@ -1,5 +1,6 @@
 ignore: |
   /vendor
+  .github/workflows/*.yml
 
 rules:
   braces: enable
