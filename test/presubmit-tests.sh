@@ -65,9 +65,11 @@ function post_build_tests() {
 
 function get_node() {
   echo "Installing Node.js"
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+  # nvm v0.40.1
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/179d45050be0a71fd57591b0ed8aedf9b177ba10/install.sh | bash
   export NVM_DIR="$HOME/.nvm"
   source "$NVM_DIR/nvm.sh"
+  nvm --version
   # if nvm install fails using the Node.js binary, the `-b` causes it to exit
   # instead of trying to build from source
   nvm install -b
