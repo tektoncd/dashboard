@@ -15,6 +15,7 @@ ENTRYPOINT ["npm", "run", "test:ci"]
 CMD ["--", "--browser", "chrome"]
 
 COPY package.json .
-RUN npm install
+COPY package-lock.json .
+RUN npm ci
 COPY cypress.config.js .
 COPY cypress cypress/

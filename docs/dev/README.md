@@ -160,7 +160,19 @@ Tests are defined in `*.test.js(x)` files alongside the code under test.
 
 ### Frontend E2E tests
 
-Run `npm run e2e` to execute the end-to-end UI tests via [Cypress](https://www.cypress.io/) in interactive mode.
+First install the required dependencies:
+
+```bash
+npm run e2e:install
+```
+
+This installs [Cypress](https://www.cypress.io/) and its dependencies, and must be run before executing the tests the first time as well as whenever the E2E dependencies are updated.
+
+Now you can execute the end-to-end UI tests via Cypress in interactive mode:
+
+```bash
+npm run e2e
+```
 
 Tests are defined in `*.cy.js` files in `packages/e2e/cypress`.
 

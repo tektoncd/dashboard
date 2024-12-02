@@ -6,8 +6,9 @@
   "scripts": {
     "build": "vite build",
     "build:analyze": "vite build --config vite.config.analyze.js",
-    "e2e": "npm test -w @tektoncd/dashboard-e2e",
-    "e2e:ci": "npm run test:ci -w @tektoncd/dashboard-e2e",
+    "e2e": "npm test --prefix packages/e2e",
+    "e2e:ci": "npm run test:ci --prefix packages/e2e",
+    "e2e:install": "npm ci --prefix packages/e2e",
     "eslint:check": "npx eslint-config-prettier src/index.js",
     "i18n:extract": "formatjs extract './{packages,src}/**/*.{js,jsx}' --ignore './packages/{**/node_modules,e2e}/**' --format simple --out-file src/nls/messages_en.json && node scripts/i18n/extractMessages.cjs",
     "i18n:import": "node scripts/i18n/importFromProperties.js",
@@ -87,11 +88,10 @@
     "node": "^20.18.0",
     "npm": "^10.8.2"
   },
-  "//": "Workspaces must be listed explicitly to ensure they're processed in the correct order until npm natively supports detecting the topological order",
+  "//": "Workspaces must be listed explicitly to ensure they're processed in the correct order until npm natively supports detecting the topological order. Exclude e2e as it needs to function as a standalone project and its dependencies should not be hoisted.",
   "workspaces": [
     "packages/utils",
     "packages/components",
-    "packages/graph",
-    "packages/e2e"
+    "packages/graph"
   ]
 }
