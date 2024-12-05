@@ -33,6 +33,7 @@ import { InlineNotification, RadioTile, TileGroup } from '@carbon/react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 
+import LogsToolbar from '../LogsToolbar';
 import {
   cancelPipelineRun,
   deletePipelineRun,
@@ -49,20 +50,48 @@ import {
   useTaskRuns,
   useTasks
 } from '../../api';
-import {
-  getLogsRetriever,
-  getLogsToolbar,
-  getViewChangeHandler
-} from '../../utils';
+import { getLogsRetriever, getViewChangeHandler } from '../../utils';
 import NotFound from '../NotFound';
+import {
+  getLogLevels,
+  isLogTimestampsEnabled,
+  setLogLevels,
+  setLogTimestampsEnabled
+} from '../../api/utils';
 
 const { PIPELINE_TASK, RETRY, STEP, TASK_RUN_NAME, VIEW } = queryParamConstants;
 
-export /* istanbul ignore next */ function PipelineRunContainer() {
+export /* istanbul ignore next */ function PipelineRunContainer({
+  // we may consider customisation of the log format in future
+  showLogLevels = true
+}) {
   const intl = useIntl();
   const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
+
+  const [logLevels, setLogLevelsState] = useState(getLogLevels());
+  const [showTimestamps, setShowTimestamps] = useState(
+    isLogTimestampsEnabled()
+  );
+
+  function onToggleLogLevel(logLevel) {
+    setLogLevelsState(levels => {
+      const newLevels = { ...levels, ...logLevel };
+      // if (!Object.values(newLevels).filter(Boolean).length) {
+      //   // TODO: logs - notification or allow?
+      //   alert('must have at least 1 log level enabled');
+      //   return levels;
+      // }
+      setLogLevels(newLevels);
+      return newLevels;
+    });
+  }
+
+  function onToggleShowTimestamps(show) {
+    setShowTimestamps(show);
+    setLogTimestampsEnabled(show);
+  }
 
   const { name, namespace } = params;
 
@@ -531,13 +560,18 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
         })}
         handleTaskSelected={handleTaskSelected}
         loading={isLoading}
-        getLogsToolbar={toolbarParams =>
-          getLogsToolbar({
-            ...toolbarParams,
-            externalLogsURL,
-            isUsingExternalLogs
-          })
-        }
+        logLevels={logLevels}
+        getLogsToolbar={toolbarProps => (
+          <LogsToolbar
+            {...toolbarProps}
+            externalLogsURL={externalLogsURL}
+            isUsingExternalLogs={isUsingExternalLogs}
+            logLevels={showLogLevels && logLevels}
+            onToggleLogLevel={onToggleLogLevel}
+            onToggleShowTimestamps={onToggleShowTimestamps}
+            showTimestamps={showTimestamps}
+          />
+        )}
         maximizedLogsContainer={maximizedLogsContainer.current}
         onRetryChange={retry => {
           if (Number.isInteger(retry)) {
@@ -562,6 +596,8 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
         selectedStepId={currentSelectedStepId}
         selectedTaskId={selectedTaskId}
         selectedTaskRunName={currentTaskRunName}
+        showLogLevels={showLogLevels}
+        showLogTimestamps={showTimestamps}
         taskRuns={taskRuns}
         tasks={tasks.concat(clusterTasks)}
         view={view}

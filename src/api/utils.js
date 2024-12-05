@@ -320,6 +320,27 @@ export function setLogTimestampsEnabled(enabled) {
   localStorage.setItem('tkn-logs-timestamps', enabled);
 }
 
+export function getLogLevels() {
+  let logLevels = localStorage.getItem('tkn-logs-levels');
+  if (logLevels) {
+    logLevels = JSON.parse(logLevels);
+  } else {
+    logLevels = {
+      error: true,
+      warning: true,
+      info: true,
+      notice: true,
+      debug: false
+    };
+  }
+
+  return logLevels;
+}
+
+export function setLogLevels(levels) {
+  localStorage.setItem('tkn-logs-levels', JSON.stringify(levels));
+}
+
 export function removeSystemAnnotations(resource) {
   Object.keys(resource.metadata.annotations).forEach(annotation => {
     if (annotation.startsWith('tekton.dev/')) {

@@ -18,9 +18,7 @@ import {
 
 export default function ActionableNotification(props) {
   return (
-    <FeatureFlags
-      flags={{ 'enable-experimental-focus-wrap-without-sentinels': true }}
-    >
+    <FeatureFlags enableExperimentalFocusWrapWithoutSentinels>
       <CarbonActionableNotification {...props} />
     </FeatureFlags>
   );
