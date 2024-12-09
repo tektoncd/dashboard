@@ -131,8 +131,18 @@ header "Test Dashboard default namespace"
 export DASHBOARD_NAMESPACE=tekton-pipelines
 export TENANT_NAMESPACE=""
 
-test_dashboard ${PLATFORM} --read-write
-test_dashboard ${PLATFORM}
+if [ -z "$DASHBOARD_MODE" ]; then
+  echo "Running tests for both install modes"
+  test_dashboard ${PLATFORM} --read-write
+  test_dashboard ${PLATFORM}
+fi
+
+if [ "$DASHBOARD_MODE" = "read-write" ]; then
+  test_dashboard ${PLATFORM} --read-write
+fi
+if [ "$DASHBOARD_MODE" = "read-only" ]; then
+  test_dashboard ${PLATFORM}
+fi
 
 header "Test Dashboard custom namespace"
 if [ -z "$TEST_CUSTOM_INSTALL_NAMESPACE" ]; then

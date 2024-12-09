@@ -1,0 +1,111 @@
+name: E2E
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: ["main"]
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  e2e-tests:
+    name: E2E tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        k8s-name:
+          - k8s-oldest
+          - k8s-plus-one
+
+        dashboard-mode:
+          - read-only
+          - read-write
+
+        # k8s-name above is used to give stable naming of the checks for branch
+        # protection config. Map name to corresponding version for use in steps
+        include:
+          - k8s-name: k8s-oldest
+            k8s-version: v1.29.x
+          - k8s-name: k8s-plus-one
+            k8s-version: v1.30.x
+
+    env:
+      GOPATH: ${{ github.workspace }}
+      GO111MODULE: on
+      KO_DOCKER_REPO: registry.local:5000/tekton
+      CLUSTER_DOMAIN: c${{ github.run_id }}.local
+      ARTIFACTS: ${{ github.workspace }}/artifacts
+
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          path: ${{ github.workspace }}/src/github.com/tektoncd/dashboard
+
+      - name: Checkout setup-kind.sh
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: tektoncd/pipeline
+          ref: d306d649df2dbd2badaba6a90459efd05c753d2f
+          path: scripts
+          sparse-checkout: |
+            hack/setup-kind.sh
+          sparse-checkout-cone-mode: false
+
+      - name: Set up Go 1.22
+        uses: actions/setup-go@3041bf56c941b39c61721a86cd11f3bb1338122a # v5.2.0
+        with:
+          go-version: 1.22.5
+
+      - name: Install dependencies
+        working-directory: ./
+        run: |
+          echo '::group::install ko'
+          curl -L https://github.com/ko-build/ko/releases/download/v0.15.4/ko_0.15.4_Linux_x86_64.tar.gz | tar xzf - ko
+          chmod +x ./ko
+          sudo mv ko /usr/local/bin
+          echo '::endgroup::'
+
+          echo '::group::create required folders'
+          mkdir -p "${ARTIFACTS}"
+          echo '::endgroup::'
+
+          echo "${GOPATH}/bin" >> "$GITHUB_PATH"
+
+      - name: Run tests
+        working-directory: ${{ github.workspace }}/src/github.com/tektoncd/dashboard
+        run: |
+          ${{ github.workspace }}/scripts/hack/setup-kind.sh \
+            --registry-url $(echo ${KO_DOCKER_REPO} | cut -d'/' -f 1) \
+            --cluster-suffix c${{ github.run_id }}.local \
+            --nodes 3 \
+            --k8s-version ${{ matrix.k8s-version }} \
+            --e2e-script ./test/e2e-tests-prow.sh \
+            --e2e-env ./test/e2e-tests-kind-${{ matrix.dashboard-mode }}.env
+
+      - name: Upload test results
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+        with:
+          name: ${{ matrix.k8s-version }}-${{ matrix.dashboard-mode }}
+          path: ${{ env.ARTIFACTS }}
+
+      # - name: Collect resources from cluster
+      #   uses: chainguard-dev/actions/kind-diag@94389dc7faf4ef9040df90498419535e1bdcb60e # main
+      #   if: ${{ failure() }}
+      #   with:
+      #     artifact-name: ${{ matrix.k8s-version }}-${{ matrix.dashboard-mode }}-logs
+      #     namespace-resources: pods,taskruns,pipelineruns
