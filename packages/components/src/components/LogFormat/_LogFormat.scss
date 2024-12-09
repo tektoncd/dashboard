@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2024 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -67,4 +67,72 @@ $colors: (
   &-cross {
     text-decoration: line-through;
   }
+}
+
+.tkn--log-line {
+  min-block-size: 1rem; // explicitly set height to hold space for empty log line when timestamps disabled
+  transition: 0s background-color;
+  &:hover {
+    background-color: #ffffff10;
+    transition-delay: 0.5s;
+  }
+
+  // set default colours for the log level badge, this will be used for 'info'
+  --tkn-log-level-badge-background: var(--cds-tag-background-gray);
+  --tkn-log-level-badge-color: var(--cds-text-primary);
+
+  &.tkn--log-level--error {
+    --tkn-log-level-badge-background: rgb(from var(--cds-tag-background-red) r g b / 80%);
+    --tkn-log-level-badge-color: var(--cds-tag-color-red);
+
+    background-color: rgb(from var(--cds-support-error-inverse) r g b / 15%);
+
+    &:hover {
+      background-color: rgb(from var(--cds-support-error-inverse) r g b / 30%);
+    }
+  }
+
+  &.tkn--log-level--warning {
+    --tkn-log-level-badge-background: rgb(from var(--cds-support-warning) r g b / 35%);
+
+    background-color: rgb(from var(--cds-support-warning-inverse) r g b / 15%);
+
+    &:hover {
+      background-color: rgb(from var(--cds-support-warning-inverse) r g b / 30%);
+    }
+  }
+
+  &.tkn--log-level--notice {
+    --tkn-log-level-badge-background: var(--cds-tag-background-teal);
+    --tkn-log-level-badge-color: var(--cds-tag-color-teal);
+  }
+
+  &.tkn--log-level--debug {
+    --tkn-log-level-badge-background: rgb(from var(--cds-tag-background-purple) r g b / 60%);
+    --tkn-log-level-badge-color: var(--cds-tag-color-purple);
+  }
+
+  .tkn--log-line--timestamp {
+    color: var(--cds-text-helper);
+    font-weight: 300;
+  }
+
+  .tkn--log-line--level {
+    display: inline-block;
+    padding-inline: 4px;
+    background-color: var(--tkn-log-level-badge-background);
+    color: var(--tkn-log-level-badge-color);
+  }
+}
+
+// only add margin after timestamp if there's at least one log line with a
+// visible timestamp so we don't add unnecessary space when 'Show timestamps' is
+// enabled but for some reason there are no timestamps to show (maybe external
+// logs that didn't capture timestamps at runtime)
+.tkn--log:has(.tkn--log-line--timestamp:not(:empty)) .tkn--log-line--timestamp {
+  margin-inline-end: 0.5rem;
+}
+
+.tkn--log-line--level {
+  margin-inline-end: 0.5rem;
 }

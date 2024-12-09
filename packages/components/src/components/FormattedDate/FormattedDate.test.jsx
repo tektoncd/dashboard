@@ -21,8 +21,18 @@ describe('FormattedDate', () => {
   });
 
   it('handles absolute date formatting', () => {
-    const { queryByText } = render(<FormattedDate date="2019/12/01" />);
-    expect(queryByText(/Dec 1, 2019/i)).toBeTruthy();
+    const { queryByText } = render(
+      <FormattedDate date="2019/12/01 12:13:14" />
+    );
+    expect(queryByText(/Dec 1, 2019, 12:13/i)).toBeTruthy();
+    expect(queryByText(/:14/i)).toBeFalsy();
+  });
+
+  it('handles absolute date formatting with seconds', () => {
+    const { queryByText } = render(
+      <FormattedDate date="2019/12/01 12:13:14" includeSeconds />
+    );
+    expect(queryByText(/Dec 1, 2019, 12:13:14/i)).toBeTruthy();
   });
 
   it('handles absolute date formatting for current year', () => {
