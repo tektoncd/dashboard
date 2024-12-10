@@ -11,18 +11,26 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import PropTypes from 'prop-types';
 import tlds from 'tlds';
 import LinkifyIt from 'linkify-it';
 import { classNames } from '@tektoncd/dashboard-utils';
 
 import { colors } from './defaults';
+import FormattedDate from '../FormattedDate';
 
 const linkifyIt = LinkifyIt().tlds(tlds);
 
 // eslint-disable-next-line no-control-regex
 const ansiRegex = /^\u001b([@-_])(.*?)([@-~])/;
 const characterRegex = /[^]/m;
+
+const getDecoratedLevel = level => {
+  if (!level) {
+    return null;
+  }
+
+  return <span className="tkn--log-line--level">{level}</span>;
+};
 
 const getXtermColor = commandStack => {
   if (commandStack.length >= 2 && commandStack[0] === '5') {
@@ -84,7 +92,7 @@ const linkify = (str, styleObj, classNameString) => {
   return elements;
 };
 
-const LogFormat = ({ children }) => {
+const LogFormat = ({ fields = { message: true }, logs = [] }) => {
   let properties = {
     classes: {},
     foregroundColor: null,
@@ -240,13 +248,14 @@ const LogFormat = ({ children }) => {
     };
   };
 
-  const parse = (ansi, index) => {
-    if (ansi.length === 0) {
+  const parse = (log, index) => {
+    const { level, message = '', timestamp } = log;
+    if (!message?.length && !timestamp && !level) {
       return <br key={index} />;
     }
     let offset = 0;
-    while (offset !== ansi.length) {
-      const str = ansi.substring(offset);
+    while (offset !== message.length) {
+      const str = message.substring(offset);
       const controlSequence = str.match(ansiRegex);
       if (controlSequence) {
         offset += controlSequence.index + controlSequence[0].length;
@@ -270,21 +279,36 @@ const LogFormat = ({ children }) => {
         )
       );
     }
-    return <div key={index}>{line}</div>;
+
+    return (
+      <div
+        className={classNames('tkn--log-line', {
+          [`tkn--log-level--${level}`]: level
+        })}
+        key={index}
+      >
+        {fields.timestamp && (
+          <span className="tkn--log-line--timestamp">
+            <FormattedDate
+              date={timestamp}
+              formatTooltip={() => timestamp}
+              includeSeconds
+            />
+          </span>
+        )}
+        {fields.level && getDecoratedLevel(level)}
+        {line}
+      </div>
+    );
   };
 
-  const convert = ansi =>
-    ansi.split(/\r?\n/).map((part, index) => {
+  const convert = () =>
+    logs.map((part, index) => {
       text = '';
       line = [];
       return parse(part, index);
     });
-
-  return <code>{convert(children)}</code>;
-};
-
-LogFormat.propTypes = {
-  children: PropTypes.string.isRequired
+  return <code>{convert()}</code>;
 };
 
 export default LogFormat;
