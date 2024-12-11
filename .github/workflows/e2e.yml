@@ -88,6 +88,8 @@ jobs:
 
       - name: Run tests
         working-directory: ${{ github.workspace }}/src/github.com/tektoncd/dashboard
+        env:
+          DASHBOARD_MODE: ${{ matrix.dashboard-mode }}
         run: |
           ${{ github.workspace }}/scripts/hack/setup-kind.sh \
             --registry-url $(echo ${KO_DOCKER_REPO} | cut -d'/' -f 1) \
@@ -95,7 +97,7 @@ jobs:
             --nodes 3 \
             --k8s-version ${{ matrix.k8s-version }} \
             --e2e-script ./test/e2e-tests-prow.sh \
-            --e2e-env ./test/e2e-tests-kind-${{ matrix.dashboard-mode }}.env
+            --e2e-env ./test/e2e-tests-kind-prow.env
 
       - name: Upload test results
         uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
