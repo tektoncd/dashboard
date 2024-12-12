@@ -1,4 +1,4 @@
-# Copyright 2021 The Tekton Authors
+# Copyright 2024 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,18 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: v1
-kind: ConfigMap
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
 metadata:
-  name: dashboard-info
-  namespace: tekton-dashboard
+  name: tekton-dashboard-aggregate-view
   labels:
     app.kubernetes.io/instance: default
     app.kubernetes.io/part-of: tekton-dashboard
-data:
-  # Contains dashboard version which can be queried by external
-  # tools such as CLI. Elevated permissions are already given to
-  # this ConfigMap such that even if we don't have access to
-  # other resources in the namespace we still can have access to
-  # this ConfigMap.
-  version: "devel"
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+rules:
+- apiGroups:
+    - dashboard.tekton.dev
+  resources:
+    - extensions
+  verbs:
+    - get
+    - list
+    - watch

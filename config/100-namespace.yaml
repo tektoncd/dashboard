@@ -1,4 +1,4 @@
-# Copyright 2019-2023 The Tekton Authors
+# Copyright 2019-2024 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,29 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
----
-kind: Service
 apiVersion: v1
+kind: Namespace
 metadata:
   name: tekton-dashboard
-  namespace: tekton-pipelines
   labels:
-    app.kubernetes.io/name: dashboard
-    app.kubernetes.io/component: dashboard
-    app.kubernetes.io/instance: default
-    app.kubernetes.io/version: devel
-    app.kubernetes.io/part-of: tekton-dashboard
-    dashboard.tekton.dev/release: "devel"
-    app: tekton-dashboard
-    version: "devel"
-spec:
-  ports:
-    - name: http
-      protocol: TCP
-      port: 9097
-      targetPort: 9097
-  selector:
-    app.kubernetes.io/name: dashboard
-    app.kubernetes.io/component: dashboard
     app.kubernetes.io/instance: default
     app.kubernetes.io/part-of: tekton-dashboard
