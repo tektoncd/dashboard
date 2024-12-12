@@ -1,0 +1,61 @@
+# Copyright 2021-2024 The Tekton Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashboard-info
+  namespace: tekton-dashboard
+  labels:
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: tekton-dashboard
+data:
+  # Contains dashboard version which can be queried by external tools such as
+  # the Tekton CLI. Elevated permissions are given to this ConfigMap such that
+  # even if we don't have access to other resources in the namespace we still
+  # have access to this ConfigMap.
+  version: "devel"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: tekton-dashboard-info
+  namespace: tekton-dashboard
+  labels:
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: tekton-dashboard
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: ["dashboard-info"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tekton-dashboard-info
+  namespace: tekton-dashboard
+  labels:
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: tekton-dashboard
+subjects:
+  # Grant all system:authenticated users access to the dashboard-info ConfigMap
+  # even if they don't have access to other resources present in the namespace.
+  - kind: Group
+    name: system:authenticated
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: tekton-dashboard-info

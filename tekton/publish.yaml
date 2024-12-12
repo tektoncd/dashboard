@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
----
 apiVersion: tekton.dev/v1
 kind: Task
 metadata:
@@ -135,14 +134,13 @@ spec:
         # add installer script in the release
         cp ${PROJECT_ROOT}/scripts/installer $OUTPUT_RELEASE_DIR/installer
 
-        # build manifests for installer
-        KO_RESOLVE_IMAGE_LABEL="--image-label=org.opencontainers.image.source=https://$(params.package)"
-        kustomize build overlays/installer/read-only  --load-restrictor LoadRestrictionsNone | ko resolve ${KO_RESOLVE_IMAGE_LABEL} --platform=$(params.platforms) ${KO_EXTRA_ARGS} -t $(params.versionTag) -f - > $OUTPUT_RELEASE_DIR/installer-release.yaml
-        kustomize build overlays/installer/read-write --load-restrictor LoadRestrictionsNone | ko resolve ${KO_RESOLVE_IMAGE_LABEL} --platform=$(params.platforms) ${KO_EXTRA_ARGS} -t $(params.versionTag) -f - > $OUTPUT_RELEASE_DIR/installer-release-full.yaml
+        # build manifest for installer
+        INSTALLER_MANIFEST=$OUTPUT_RELEASE_DIR/installer-release.yaml
+        ./scripts/installer build --debug --installer-only --platform $(params.platforms) --tag $(params.versionTag) --output $INSTALLER_MANIFEST ${KO_EXTRA_ARGS}
 
         # build pre configured manifests
-        ./scripts/installer build --debug              --platform $(params.platforms) --tag $(params.versionTag) --output $OUTPUT_RELEASE_DIR/release.yaml ${KO_EXTRA_ARGS}
-        ./scripts/installer build --debug --read-write --platform $(params.platforms) --tag $(params.versionTag) --output $OUTPUT_RELEASE_DIR/release-full.yaml ${KO_EXTRA_ARGS}
+        ./scripts/installer build --debug              --platform $(params.platforms) --tag $(params.versionTag) --input $INSTALLER_MANIFEST --output $OUTPUT_RELEASE_DIR/release.yaml ${KO_EXTRA_ARGS}
+        ./scripts/installer build --debug --read-write --platform $(params.platforms) --tag $(params.versionTag) --input $INSTALLER_MANIFEST --output $OUTPUT_RELEASE_DIR/release-full.yaml ${KO_EXTRA_ARGS}
     - name: koparse
       image: ghcr.io/tektoncd/plumbing/koparse:v20241104-39ec1660b7@sha256:9179221325db56efbe2c7baea05b871454c3f01c6dba438455fb35fe95b772ce
       script: |
