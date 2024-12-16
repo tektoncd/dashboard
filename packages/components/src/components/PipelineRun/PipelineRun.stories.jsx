@@ -15,6 +15,7 @@ import { useArgs } from '@storybook/preview-api';
 import { labels as labelConstants } from '@tektoncd/dashboard-utils';
 
 import PipelineRun from '.';
+import LogsToolbar from '../LogsToolbar';
 
 const task = {
   metadata: {
@@ -197,6 +198,38 @@ export default {
   title: 'PipelineRun'
 };
 
+const logsWithTimestampsAndLevels = `2024-11-14T14:10:53.354144861Z::info::Cloning repo
+2024-11-14T14:10:56.300268594Z::debug::[get_repo_params:30] | get_repo_name called for https://github.com/example/app. Repository Name identified as app
+2024-11-14T14:10:56.307088791Z::debug::[get_repo_params:18] | get_repo_owner called for https://github.com/example/app. Repository Owner identified as example
+2024-11-14T14:10:56.815017386Z::debug::[get_repo_params:212] | Unable to locate repository parameters for key https://github.com/example/app in the cache. Attempt to fetch repository parameters.
+2024-11-14T14:10:56.819937688Z::debug::[get_repo_params:39] | get_repo_server_name called for https://github.com/example/app. Repository Server Name identified as github.com
+2024-11-14T14:10:56.869719012Z Sample with no log level
+2024-11-14T14:10:56.869719012Z::error::Sample error
+2024-11-14T14:10:56.869719012Z::warning::Sample warning
+2024-11-14T14:10:56.869719012Z::notice::Sample notice
+2024-11-14T14:11:08.065631069Z ::info::Details of asset created:
+2024-11-14T14:11:11.849912684Z ┌─────┬──────┬────┬─────┐
+2024-11-14T14:11:11.849981080Z │ Key │ Type │ ID │ URL │
+2024-11-14T14:11:11.849987327Z └─────┴──────┴────┴─────┘
+2024-11-14T14:11:11.869437298Z ::info::Details of evidence collected:
+2024-11-14T14:11:15.892827575Z ┌─────────────────┬────────────────────┐
+2024-11-14T14:11:15.892883264Z │ Attribute       │ Value              │
+2024-11-14T14:11:15.892888519Z ├─────────────────┼────────────────────┤
+2024-11-14T14:11:15.892895717Z │ Status          │ \x1B[32msuccess\x1B[39m            │
+2024-11-14T14:11:15.892900191Z ├─────────────────┼────────────────────┤
+2024-11-14T14:11:15.892904785Z │ Tool Type       │ jest               │
+2024-11-14T14:11:15.892908480Z ├─────────────────┼────────────────────┤
+2024-11-14T14:11:15.892912390Z │ Evidence ID     │ -                  │
+2024-11-14T14:11:15.892916374Z ├─────────────────┼────────────────────┤
+2024-11-14T14:11:15.892920207Z │ Evidence Type   │ com.ibm.unit_tests │
+2024-11-14T14:11:15.892924894Z ├─────────────────┼────────────────────┤
+2024-11-14T14:11:15.892930294Z │ Issues          │ -                  │
+2024-11-14T14:11:15.892933984Z ├─────────────────┼────────────────────┤
+2024-11-14T14:11:15.892938649Z │ Attachment URLs │                    │
+2024-11-14T14:11:15.892942307Z │                 │                    │
+2024-11-14T14:11:15.892947043Z └─────────────────┴────────────────────┘
+2024-11-14T14:11:15.989838531Z success`;
+
 export const Default = args => {
   const [, updateArgs] = useArgs();
 
@@ -320,10 +353,69 @@ export const WithPodDetails = args => {
           }
         }
       }}
+      selectedTaskId="task1"
       taskRuns={[taskRun]}
       tasks={[task]}
+      view="pod"
     />
   );
+};
+
+export const LogsWithTimestampsAndLevels = {
+  args: {
+    fetchLogs: () => logsWithTimestampsAndLevels,
+    logLevels: {
+      error: true,
+      warning: true,
+      notice: true,
+      info: true,
+      debug: false
+    },
+    pipelineRun: pipelineRunWithMinimalStatus,
+    selectedStepId: 'build',
+    selectedTaskId: task.metadata.name,
+    showLogLevels: true,
+    showLogTimestamps: true,
+    taskRuns: [taskRun],
+    tasks: [task]
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+
+    return (
+      <PipelineRun
+        {...args}
+        getLogsToolbar={toolbarProps => (
+          <LogsToolbar
+            {...toolbarProps}
+            logLevels={args.logLevels}
+            onToggleLogLevel={level =>
+              updateArgs({ logLevels: { ...args.logLevels, ...level } })
+            }
+            onToggleShowTimestamps={showLogTimestamps =>
+              updateArgs({ showLogTimestamps })
+            }
+            showTimestamps={args.showLogTimestamps}
+          />
+        )}
+        handleTaskSelected={({
+          selectedStepId: stepId,
+          selectedTaskId: taskId
+        }) => {
+          updateArgs({ selectedStepId: stepId, selectedTaskId: taskId });
+        }}
+        onViewChange={selectedView => updateArgs({ view: selectedView })}
+        pipelineRun={pipelineRun}
+        taskRuns={[
+          taskRun,
+          taskRunWithWarning,
+          taskRunSkipped,
+          taskRunWithSkippedStep
+        ]}
+        tasks={[task]}
+      />
+    );
+  }
 };
 
 export const Empty = {};
