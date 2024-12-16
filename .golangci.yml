@@ -1,6 +1,26 @@
+# Documentation: https://golangci-lint.run/usage/configuration/
+
 linters-settings:
-  errcheck:
-    exclude: .errcheck.txt
+  gomodguard:
+    blocked:
+      modules:
+        - github.com/ghodss/yaml:
+            recommendations:
+              - sigs.k8s.io/yaml
+  depguard:
+    rules:
+      prevent_unmaintained_packages:
+        list-mode: lax # allow unless explicitely denied
+        files:
+          - $all
+          - "!$test"
+        allow:
+          - $gostd
+        deny:
+          - pkg: io/ioutil
+            desc: "replaced by io and os packages since Go 1.16: https://tip.golang.org/doc/go1.16#ioutil"
+          - pkg: github.com/ghodss/yaml
+            desc: "use sigs.k8s.io/yaml instead, to be consistent"
 linters:
   enable:
   - bodyclose
@@ -42,6 +62,7 @@ linters:
   - cyclop
   - depguard
   - dupl
+  - err113
   - exhaustruct
   - forcetypeassert
   - funlen
@@ -52,19 +73,20 @@ linters:
   - gocyclo
   - godot
   - godox
-  - goerr113
   - gofumpt
-  - gomnd
   - gomoddirectives
+  - iface
   - ireturn
   - lll
   - mirror
+  - mnd
   - nestif
   - nlreturn
   - nonamedreturns
   - paralleltest
   - prealloc
   - predeclared
+  - recvcheck
   - revive
   - staticcheck
   - stylecheck
@@ -98,17 +120,12 @@ output:
 issues:
   exclude-dirs:
   - vendor
-  exclude-rules:
-  - path: _test\.go
-    linters:
-    - errcheck
-    - gosec
   max-issues-per-linter: 0
   max-same-issues: 0
   include:
   # Enable off-by-default rules for revive requiring that all exported elements have a properly formatted comment.
-  - EXC0012
-  - EXC0014
+  - EXC0012 # https://golangci-lint.run/usage/false-positives/#exc0012
+  - EXC0014 # https://golangci-lint.run/usage/false-positives/#exc0014
 run:
   issues-exit-code: 1
   build-tags:
