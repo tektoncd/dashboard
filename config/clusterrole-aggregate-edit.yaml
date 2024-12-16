@@ -1,4 +1,4 @@
-# Copyright 2021 The Tekton Authors
+# Copyright 2024 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,19 +13,25 @@
 # limitations under the License.
 
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRole
 metadata:
-  name: tekton-dashboard-info
-  namespace: tekton-dashboard
+  name: tekton-dashboard-aggregate-edit
   labels:
     app.kubernetes.io/instance: default
     app.kubernetes.io/part-of: tekton-dashboard
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
 rules:
-    # All system:authenticated users needs to have access
-    # of the dashboard-info ConfigMap even if they don't
-    # have access to the other resources present in the
-    # installed namespace.
-  - apiGroups: [""]
-    resources: ["configmaps"]
-    resourceNames: ["dashboard-info"]
-    verbs: ["get"]
+- apiGroups:
+    - dashboard.tekton.dev
+  resources:
+    - extensions
+  verbs:
+    - create
+    - delete
+    - deletecollection
+    - get
+    - list
+    - patch
+    - update
+    - watch

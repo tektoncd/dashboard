@@ -1,4 +1,4 @@
-# Copyright 2021 The Tekton Authors
+# Copyright 2019-2024 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,21 +12,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
 metadata:
-  name: tekton-dashboard-info
-  namespace: tekton-dashboard
+  name: tekton-dashboard-tenant-view
   labels:
+    app.kubernetes.io/component: dashboard
     app.kubernetes.io/instance: default
     app.kubernetes.io/part-of: tekton-dashboard
-subjects:
-    # Giving all system:authenticated users the access of the
-    # ConfigMap which contains version information.
-  - kind: Group
-    name: system:authenticated
-    apiGroup: rbac.authorization.k8s.io
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: tekton-dashboard-info
+rules:
+  - apiGroups:
+      - dashboard.tekton.dev
+    resources:
+      - extensions
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ''
+    resources:
+      - events
+      - namespaces
+      - pods
+      - pods/log
+    verbs:
+      - get
+      - list
+      - watch

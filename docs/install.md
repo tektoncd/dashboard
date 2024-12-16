@@ -28,8 +28,7 @@ Choose the version of Tekton Dashboard you want to install. You have the followi
 ## Pre-requisites
 
 In order to install the Tekton Dashboard, please make sure the following requirements are met:
-- You must have a Kubernetes cluster running version 1.24.0 or later. Tekton Pipelines 
-or other projects may require a newer version.
+- You must have a Kubernetes cluster running version 1.28.0 or later. Tekton Pipelines or other projects may require a newer version. The Dashboard may work on older Kubernetes versions but this is untested and not officially supported.
 
   If you don't already have a cluster, you can create one for testing with `kind`.
   [Install `kind`](https://kind.sigs.k8s.io/docs/user/quick-start/#installation) and create a cluster by running [`kind create cluster`](https://kind.sigs.k8s.io/docs/user/quick-start/#creating-a-cluster). This
@@ -99,7 +98,7 @@ For example:
     bash -s -- install latest --read-write --tenant-namespaces tenant-namespace1,tenant-namespace2
   ```
 
-  This will add the `--namespaces` arg to the Dashboard deployment and create a RoleBinding in each of the specified namespaces with role `tekton-dashboard-tenant` granted to the Dashboard ServiceAccount.
+  This will add the `--namespaces` arg to the Dashboard deployment and create RoleBindings in each of the specified namespaces with appropriate roles granted to the Dashboard ServiceAccount.
 
 - to install with support for loading logs from an external source:
 

@@ -1,4 +1,4 @@
-# Copyright 2020-2024 The Tekton Authors
+# Copyright 2019-2024 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,35 +12,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
----
-- op: add
-  path: /rules/-
-  value:
-    apiGroups:
-      - tekton.dev
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: tekton-dashboard-backend-edit
+  labels:
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: tekton-dashboard
+rules:
+  - apiGroups:
+      - ''
     resources:
-      - stepactions
-      - tasks
-      - taskruns
-      - pipelines
-      - pipelineruns
-      - customruns
+      - serviceaccounts
     verbs:
-      - create
-      - update
-      - delete
-      - patch
-- op: add
-  path: /rules/-
-  value:
-    apiGroups:
-      - triggers.tekton.dev
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - dashboard.tekton.dev
     resources:
-      - eventlisteners
-      - interceptors
-      - triggerbindings
-      - triggers
-      - triggertemplates
+      - extensions
     verbs:
       - create
       - update

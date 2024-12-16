@@ -16,6 +16,7 @@ READONLY="true"
 
 # configuration default values
 DEBUG="false"
+INSTALLER_ONLY="false"
 INSTALL_NAMESPACE="tekton-pipelines"
 PIPELINES_NAMESPACE="tekton-pipelines"
 TRIGGERS_NAMESPACE="tekton-pipelines"
@@ -102,17 +103,14 @@ debug() {
   fi
 }
 
+bootstrapFromInstallerManifest() {
+  debug "Copying input file $INPUT_FILE -> $TMP_FILE …"
+  cp "$INPUT_FILE" $TMP_FILE
+}
+
 compile() {
-  local overlay="overlays/installer"
-
-  if [ "$READONLY" == "true" ]; then
-    overlay="$overlay/read-only"
-  else
-    overlay="$overlay/read-write"
-  fi
-
-  debug "Building overlay $overlay …"
-  kustomize build --load-restrictor LoadRestrictionsNone "$overlay" | ko resolve $KO_RESOLVE_OPTIONS $PLATFORM -f - > "$TMP_FILE"
+  debug "Building config …"
+  kustomize build --load-restrictor LoadRestrictionsNone config | ko resolve $KO_RESOLVE_OPTIONS $PLATFORM -f - > "$TMP_FILE"
 }
 
 download() {
@@ -122,13 +120,7 @@ download() {
     local url="$BASE_RELEASE_URL/previous/$DASHBOARD_VERSION/installer-"
   fi
 
-  url="${url}release"
-
-  if [ "$READONLY" == "false" ]; then
-    url="${url}-full"
-  fi
-
-  url="${url}.yaml"
+  url="${url}release.yaml"
 
   debug "Downloading $url -> $TMP_FILE …"
 
@@ -181,8 +173,9 @@ patch() {
 }
 
 role_binding() {
-  local name=$1
-  local namespace=$2
+  local bindingName=$1
+  local roleName=$2
+  local namespace=$3
 
 cat <<EOF >> $TMP_FILE
 ---
@@ -194,12 +187,12 @@ metadata:
     app.kubernetes.io/instance: default
     app.kubernetes.io/part-of: tekton-dashboard
     rbac.dashboard.tekton.dev/subject: tekton-dashboard
-  name: $name
+  name: $bindingName
   namespace: $namespace
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: $name
+  name: $roleName
 subjects:
   - kind: ServiceAccount
     name: tekton-dashboard
@@ -208,7 +201,8 @@ EOF
 }
 
 cluster_role_binding() {
-  local name=$1
+  local bindingName=$1
+  local roleName=$2
 
 cat <<EOF >> $TMP_FILE
 ---
@@ -220,11 +214,11 @@ metadata:
     app.kubernetes.io/instance: default
     app.kubernetes.io/part-of: tekton-dashboard
     rbac.dashboard.tekton.dev/subject: tekton-dashboard
-  name: $name
+  name: $bindingName
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: $name
+  name: $roleName
 subjects:
   - kind: ServiceAccount
     name: tekton-dashboard
@@ -251,21 +245,40 @@ aggregationRule:
 EOF
 fi
 
+  # Use ClusterRoles defined by Pipelines and Triggers to ensure we stay in
+  # sync with resources supported by the deployed versions.
+  # `tekton-aggregate-*` are the ClusterRoles for Tekton Pipelines
   if [ ! -z "$TENANT_NAMESPACES" ]; then
     IFS=','
     for namespace in ${TENANT_NAMESPACES}; do
-      role_binding tekton-dashboard-tenant $namespace
+      role_binding tekton-dashboard-tenant-view tekton-dashboard-tenant-view $namespace
+      role_binding tekton-dashboard-pipelines-view tekton-aggregate-view $namespace
+      role_binding tekton-dashboard-triggers-view tekton-triggers-aggregate-view $namespace
+
+      if [ "$READONLY" == "false" ]; then
+        role_binding tekton-dashboard-backend-edit tekton-dashboard-backend-edit $namespace
+        role_binding tekton-dashboard-pipelines-edit tekton-aggregate-edit $namespace
+        role_binding tekton-dashboard-triggers-edit tekton-triggers-aggregate-edit $namespace
+      fi
 
       if [ "$EXTENSIONS_RBAC" == "true" ]; then
-        role_binding tekton-dashboard-extensions $namespace
+        role_binding tekton-dashboard-extensions tekton-dashboard-extensions $namespace
       fi
     done
     unset IFS
   else
-    cluster_role_binding tekton-dashboard-tenant
+    cluster_role_binding tekton-dashboard-tenant-view tekton-dashboard-tenant-view
+    cluster_role_binding tekton-dashboard-pipelines-view tekton-aggregate-view
+    cluster_role_binding tekton-dashboard-triggers-view tekton-triggers-aggregate-view
+
+    if [ "$READONLY" == "false" ]; then
+      cluster_role_binding tekton-dashboard-backend-edit tekton-dashboard-backend-edit
+      cluster_role_binding tekton-dashboard-pipelines-edit tekton-aggregate-edit
+      cluster_role_binding tekton-dashboard-triggers-edit tekton-triggers-aggregate-edit
+    fi
 
     if [ "$EXTENSIONS_RBAC" == "true" ]; then
-      cluster_role_binding tekton-dashboard-extensions
+      cluster_role_binding tekton-dashboard-extensions tekton-dashboard-extensions
     fi
   fi
 }
@@ -363,6 +376,17 @@ uninstall() {
   done
 }
 
+additionalResources() {
+  COMBINED_FILE=${TMP_FILE}.tmp
+  cat /dev/null > $COMBINED_FILE
+  if [ "$READONLY" == "false" ]; then
+    cat ./config/100-namespace.yaml > $COMBINED_FILE
+    echo '---' >> $COMBINED_FILE
+  fi
+  cat $TMP_FILE >> $COMBINED_FILE
+  mv $COMBINED_FILE $TMP_FILE
+}
+
 build() {
   if [ -z "$OUTPUT_FILE" ]; then
     cat $TMP_FILE
@@ -454,30 +478,41 @@ set -u
 
 while [[ $# -gt 0 ]]; do
   case $1 in
-    '--version')
+    '--debug')
+      DEBUG="true"
+      ;;
+    '--default-namespace')
       shift
-      DASHBOARD_VERSION="${1}"
+      DEFAULT_NAMESPACE="${1}"
       ;;
-    '--nightly')
-      BASE_RELEASE_URL="https://storage.googleapis.com/tekton-releases-nightly/dashboard"
-      ;;
-    '--read-write')
-      READONLY="false"
-      ;;
-    '--stream-logs')
-      shift
-      STREAM_LOGS="${1}"
+    '--extensions-rbac')
+      EXTENSIONS_RBAC="true"
       ;;
     '--external-logs')
       shift
       EXTERNAL_LOGS="${1}"
       ;;
-    '--namespace')
-      shift
-      OVERRIDE_NAMESPACE="${1}"
+    '--ingress-default-class')
+      INGRESS_DEFAULT_CLASS="true"
       ;;
-    '--extensions-rbac')
-      EXTENSIONS_RBAC="true"
+    '--ingress-secret')
+      shift
+      INGRESS_SECRET="${1}"
+      ;;
+    '--ingress-url')
+      shift
+      INGRESS_URL="${1}"
+      ;;
+    '--input')
+      shift
+      INPUT_FILE="${1}"
+      if [ ! -f "$INPUT_FILE" ]; then
+        echo "ERROR: input file not found"
+        exit 1
+      fi
+      ;;
+    '--installer-only')
+      INSTALLER_ONLY="true"
       ;;
     '--log-format')
       shift
@@ -491,50 +526,50 @@ while [[ $# -gt 0 ]]; do
       shift
       LOGOUT_URL="${1}"
       ;;
-    '--pipelines-namespace')
+    '--namespace')
       shift
-      OVERRIDE_PIPELINES_NAMESPACE="${1}"
+      OVERRIDE_NAMESPACE="${1}"
       ;;
-    '--triggers-namespace')
-      shift
-      OVERRIDE_TRIGGERS_NAMESPACE="${1}"
-      ;;
-    '--default-namespace')
-      shift
-      DEFAULT_NAMESPACE="${1}"
-      ;;
-    '--tenant-namespaces')
-      shift
-      TENANT_NAMESPACES="${1}"
-      ;;
-    '--ingress-default-class')
-      INGRESS_DEFAULT_CLASS="true"
-      ;;
-    '--ingress-url')
-      shift
-      INGRESS_URL="${1}"
-      ;;
-    '--ingress-secret')
-      shift
-      INGRESS_SECRET="${1}"
-      ;;
-    '--debug')
-      DEBUG="true"
+    '--nightly')
+      BASE_RELEASE_URL="https://storage.googleapis.com/tekton-releases-nightly/dashboard"
       ;;
     '--output')
       shift
       OUTPUT_FILE="${1}"
       ;;
+    '--pipelines-namespace')
+      shift
+      OVERRIDE_PIPELINES_NAMESPACE="${1}"
+      ;;
     '--platform')
       shift
       PLATFORM="--platform ${1}"
+      ;;
+    '--preserve-import-paths')
+      KO_RESOLVE_OPTIONS="$KO_RESOLVE_OPTIONS --preserve-import-paths"
+      ;;
+    '--read-write')
+      READONLY="false"
+      ;;
+    '--stream-logs')
+      shift
+      STREAM_LOGS="${1}"
       ;;
     '--tag')
       shift
       KO_RESOLVE_OPTIONS="$KO_RESOLVE_OPTIONS -t ${1}"
       ;;
-    '--preserve-import-paths')
-      KO_RESOLVE_OPTIONS="$KO_RESOLVE_OPTIONS --preserve-import-paths"
+    '--tenant-namespaces')
+      shift
+      TENANT_NAMESPACES="${1}"
+      ;;
+    '--triggers-namespace')
+      shift
+      OVERRIDE_TRIGGERS_NAMESPACE="${1}"
+      ;;
+    '--version')
+      shift
+      DASHBOARD_VERSION="${1}"
       ;;
     *)
       echo "ERROR: Unknown option $1"
@@ -553,13 +588,18 @@ TMP_FILE="$TMP_ROOT/manifest.yaml"
 initOS
 verifySupported
 setup
-if [ -z "$DASHBOARD_VERSION" ]; then
-  compile
-else
+if [ ! -z "$INPUT_FILE" ]; then
+  bootstrapFromInstallerManifest
+elif [ ! -z "$DASHBOARD_VERSION" ]; then
   download
+else
+  compile
 fi
-patch
-rbac
-ingress
+if [ "$INSTALLER_ONLY" == "false" ]; then
+  patch
+  rbac
+  ingress
+fi
+additionalResources
 eval $ACTION
 cleanup
