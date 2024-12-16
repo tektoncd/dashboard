@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2022 The Tekton Authors
+Copyright 2020-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -31,7 +31,7 @@ func Proxy(request *http.Request, response http.ResponseWriter, url string, clie
 
 	req = req.WithContext(request.Context())
 
-	if request.Method == "POST" || request.Method == "PATCH" || request.Method == "PUT" || request.Method == "DELETE" {
+	if request.Method == http.MethodPost || request.Method == http.MethodPatch || request.Method == http.MethodPut || request.Method == http.MethodDelete {
 		req.Header.Set("Content-Type", request.Header.Get("Content-Type"))
 	}
 
