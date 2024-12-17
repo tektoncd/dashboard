@@ -1,0 +1,9 @@
+name: Rerun Failed Actions
+on:
+  repository_dispatch:
+    types: [retest-command]
+
+jobs:
+  retest:
+    name: Rerun Failed Actions
+    uses: tektoncd/plumbing/.github/workflows/_chatops_retest.yml@b3abc99873185dfb1d74064e4aa851478d6aaa7c
