@@ -17,7 +17,7 @@
   "main": "./src/index.js",
   "type": "module",
   "scripts": {
-    "version": "npm pkg set \"dependencies.@tektoncd/dashboard-utils=$npm_new_version\"",
+    "prepublishOnly": "npm pkg set \"dependencies.@tektoncd/dashboard-utils=$npm_package_version\"",
     "postpublish": "npm pkg set \"dependencies.@tektoncd/dashboard-utils=file:../utils\""
   },
   "dependencies": {

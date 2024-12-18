@@ -162,13 +162,15 @@ To update the Dashboard release on the [`dogfooding` cluster](https://dashboard.
 
 To release a new version of the npm packages, e.g. `@tektoncd/dashboard-components`:
 
-1. ensure you have the relevant commit checked out and that you're at the root of the project
+1. ensure you have checked out the latest change and that you're at the root of the project
 1. `npm --workspaces version <version>` where version is a valid semver string, e.g. `0.24.1-alpha.0`
     - Note: On Windows set the npm script-shell to git-bash, e.g.: `npm config set script-shell "C:\\Program Files\\Git\\bin\\bash.exe"`
-1. `npm --workspaces publish --otp <one-time-passcode>`
-1. once the packages are published run `npm install`
-1. stage and commit the changes to the package.json and package-lock.json files and open a new PR to record the release
-1. build and publish the Storybook:
-   1. `npm run storybook:build`
+1. commit the change and open a PR
+   - Note: both the PR title and commit message should use the following format:
+     > `Publish v<version> of the @tektoncd/dashboard-* packages`
+ 
+     e.g. `Publish v0.24.1-alpha.0 of the @tektoncd/dashboard-* packages`
+1. once the packages are published, build and publish the Storybook:
+   1. `npm run storybook:build` - optional, deploys to your fork (origin)
    1. `npm run storybook:deploy -- --remote upstream`
    1. verify that the updated version is available at https://tektoncd.github.io/dashboard/
