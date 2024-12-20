@@ -197,6 +197,14 @@ export const paths = {
     byNamespace() {
       return byNamespace({ path: '/triggertemplates' });
     }
+  },
+  results: {
+    taskRunsAll() {
+      return '/results/taskruns';
+    },
+    taskRunsByNamespace() {
+      return byNamespace({ path: '/results/taskruns' });
+    }
   }
 };
 

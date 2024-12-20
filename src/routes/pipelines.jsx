@@ -28,6 +28,7 @@ import {
   ResourceList,
   TaskRun,
   TaskRuns,
+  TaskRunsByResults,
   Tasks
 } from '../containers';
 import { getTektonPipelinesAPIVersion, tektonAPIGroup } from '../api/utils';
@@ -240,5 +241,9 @@ export default [
         <CreateTaskRun />
       </ReadWriteRoute>
     )
+  },
+  {
+    path: paths.results.taskRunsAll(),
+    element: <TaskRunsByResults />
   }
 ];

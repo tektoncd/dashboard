@@ -21,6 +21,8 @@ export const apiRoot = getAPIRoot();
 export const tektonAPIGroup = 'tekton.dev';
 export const triggersAPIGroup = 'triggers.tekton.dev';
 export const dashboardAPIGroup = 'dashboard.tekton.dev';
+export const resultsAPIGroup = 'results.tekton.dev';
+export const ALL_RESULTS = '*';
 
 export function getQueryParams({
   filters,
@@ -80,6 +82,23 @@ export function getKubeAPI({
     Object.keys(queryParamsToUse).length > 0
       ? `?${new URLSearchParams(queryParamsToUse).toString()}`
       : ''
+  ].join('');
+}
+
+export function getRecordsAPI({
+  group = resultsAPIGroup,
+  version = 'v1alpha2',
+  namespace = ALL_NAMESPACES,
+  result = ALL_RESULTS,
+  filters
+}) {
+  const host = '127.0.0.1:8080';
+  return [
+    `https://${host}/apis/${group}/${version}`,
+    namespace === ALL_NAMESPACES ? `/parents/-` : `/parents/${namespace}`,
+    result === ALL_RESULTS ? `/results/-` : `/results/${result}`,
+    `/records`,
+    filters ? `?${filters}` : ''
   ].join('');
 }
 
@@ -194,9 +213,11 @@ export function useWebSocket({
     function handleClose() {
       setWebSocketConnected(false);
     }
+
     function handleOpen() {
       setWebSocketConnected(true);
     }
+
     function handleMessage(event) {
       if (event.type !== 'message') {
         return;

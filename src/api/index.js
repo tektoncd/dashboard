@@ -173,6 +173,7 @@ export function getPodLogURL({ container, name, namespace, follow }) {
   return uri;
 }
 
+// TODO(xinnjie) 获取log的地方
 export function getPodLog({ container, name, namespace, stream }) {
   const uri = getPodLogURL({ container, name, namespace, follow: stream });
   return get(uri, { Accept: 'text/plain,*/*' }, { stream });

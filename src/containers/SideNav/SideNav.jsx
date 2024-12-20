@@ -127,6 +127,12 @@ function SideNav({ expanded, showKubernetesResources = false }) {
           <SideNavMenuItem {...getMenuItemProps(getPath(urls.taskRuns.all()))}>
             TaskRuns
           </SideNavMenuItem>
+          {/* TODO(xinnjie) appear by config */}
+          <SideNavMenuItem
+            {...getMenuItemProps(getPath(urls.results.taskRunsAll()))}
+          >
+            TaskRuns by Results
+          </SideNavMenuItem>
           <SideNavMenuItem
             {...getMenuItemProps(getPath(urls.customRuns.all()))}
           >
