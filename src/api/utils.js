@@ -92,9 +92,8 @@ export function getRecordsAPI({
   result = ALL_RESULTS,
   filters
 }) {
-  const host = '127.0.0.1:8080';
   return [
-    `https://${host}/apis/${group}/${version}`,
+    `${apiRoot}/apis/${group}/${version}`,
     namespace === ALL_NAMESPACES ? `/parents/-` : `/parents/${namespace}`,
     result === ALL_RESULTS ? `/results/-` : `/results/${result}`,
     `/records`,

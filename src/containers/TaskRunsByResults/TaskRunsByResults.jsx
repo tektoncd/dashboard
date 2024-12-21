@@ -12,15 +12,15 @@ limitations under the License.
 */
 import { urls } from '@tektoncd/dashboard-utils';
 import { useParams } from 'react-router-dom';
+import { TaskRuns as TaskRunsList } from '@tektoncd/dashboard-components';
 import NotFound from '../NotFound';
 import { useSelectedNamespace } from '../../api';
 import { useTaskRunsByResultsAPI } from '../../api/taskRunsByResultsAPI';
-
+import ListPageLayout from '../ListPageLayout';
 
 function TaskRunsByResults() {
   const params = useParams();
   const { namespace: namespaceParam } = params;
-
   const { selectedNamespace } = useSelectedNamespace();
   const namespace = namespaceParam || selectedNamespace;
 
@@ -28,15 +28,12 @@ function TaskRunsByResults() {
     data: recordsForTaskRuns = [],
     error,
     isLoading
-  } = useTaskRunsByResultsAPI({
-    namespace
-  });
-  console.log(recordsForTaskRuns);
+  } = useTaskRunsByResultsAPI(namespace);
   if (isLoading) {
     return <div>Loading...</div>;
   }
   if (error) {
-    console.log(error);
+    console.error('Error querying TaskRuns by ResultsAPI', error);
     return (
       <NotFound
         suggestions={[
@@ -48,8 +45,25 @@ function TaskRunsByResults() {
       />
     );
   }
+  const taskRuns = recordsForTaskRuns.map(record => record.data.value);
+  console.debug('taskRuns', JSON.parse(JSON.stringify(taskRuns)));
 
-  return <div>TaskRuns By Results</div>;
+  return (
+    <ListPageLayout
+      error={error}
+      resources={taskRuns}
+      title="TaskRuns by Results"
+    >
+      {({ resources }) => (
+        <TaskRunsList
+          filters={[]}
+          loading={isLoading}
+          selectedNamespace={namespace}
+          taskRuns={resources}
+        />
+      )}
+    </ListPageLayout>
+  );
 }
 
 export default TaskRunsByResults;

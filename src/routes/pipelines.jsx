@@ -243,7 +243,15 @@ export default [
     )
   },
   {
-    path: paths.results.taskRunsAll(),
+    path: paths.taskRunsByResults.all(),
     element: <TaskRunsByResults />
+  },
+  {
+    path: paths.taskRunsByResults.byNamespace(),
+    element: <TaskRunsByResults />,
+    handle: {
+      isNamespaced: true,
+      path: paths.taskRunsByResults.byNamespace()
+    }
   }
 ];

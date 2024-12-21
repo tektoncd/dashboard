@@ -198,11 +198,11 @@ export const paths = {
       return byNamespace({ path: '/triggertemplates' });
     }
   },
-  results: {
-    taskRunsAll() {
+  taskRunsByResults: {
+    all() {
       return '/results/taskruns';
     },
-    taskRunsByNamespace() {
+    byNamespace() {
       return byNamespace({ path: '/results/taskruns' });
     }
   }
