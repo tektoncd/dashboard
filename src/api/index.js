@@ -21,6 +21,7 @@ import { get, getAPIRoot, post } from './comms';
 import {
   apiRoot,
   getKubeAPI,
+  getLogAPI,
   getTektonPipelinesAPIVersion,
   isLogTimestampsEnabled,
   tektonAPIGroup,
@@ -173,10 +174,14 @@ export function getPodLogURL({ container, name, namespace, follow }) {
   return uri;
 }
 
-// TODO(xinnjie) 获取log的地方
 export function getPodLog({ container, name, namespace, stream }) {
   const uri = getPodLogURL({ container, name, namespace, follow: stream });
   return get(uri, { Accept: 'text/plain,*/*' }, { stream });
+}
+
+export function getLogByResultsAPI({ namespace, resultUID, recordUID }) {
+  const uri = getLogAPI({ namespace, resultUID, recordUID });
+  return get(uri, { Accept: 'text/plain,*/*' }, { stream: false });
 }
 
 export function importResources({

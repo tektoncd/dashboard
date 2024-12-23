@@ -12,11 +12,9 @@ limitations under the License.
 */
 
 import { Fragment, useRef, useState } from 'react';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { InlineNotification, SkeletonText } from '@carbon/react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { SkeletonText } from '@carbon/react';
 import {
-  ActionableNotification,
-  Actions,
   Log,
   Portal,
   RunHeader,
@@ -28,19 +26,14 @@ import {
   getStatus,
   getStepDefinition,
   getStepStatus,
-  isRunning,
   labels as labelConstants,
   queryParams as queryParamConstants,
   urls,
   useTitleSync
 } from '@tektoncd/dashboard-utils';
-import {
-  getLogsRetriever,
-  getLogsToolbar,
-  getViewChangeHandler
-} from '../../utils';
+import { getLogsToolbar, getViewChangeHandler } from '../../utils';
 import { useTaskRunByResultsAPI } from '../../api/taskRunsByResultsAPI';
-import { useSelectedNamespace } from '../../api';
+import { getLogByResultsAPI, useSelectedNamespace } from '../../api';
 import NotFound from '../NotFound';
 
 const { STEP, RETRY, TASK_RUN_DETAILS, VIEW } = queryParamConstants;
@@ -121,6 +114,49 @@ export function TaskRunContainerByResults() {
     }
   }
 
+  function toggleLogsMaximized() {
+    setIsLogsMaximized(state => !state);
+  }
+
+  function getLogContainer({ stepName, stepStatus, taskRun: run }) {
+    if (!selectedStepId || !stepStatus) {
+      return null;
+    }
+
+    // TODO(xinnjie) supporting Step level log,log provided by ResultsAPI is currently TaskRun level instead of Step level
+    const log = getLogByResultsAPI({
+      namespace,
+      resultUID,
+      recordUID
+    });
+
+    const LogsRoot = isLogsMaximized ? Portal : Fragment;
+
+    return (
+      <LogsRoot
+        {...(isLogsMaximized
+          ? { container: maximizedLogsContainer.current }
+          : null)}
+      >
+        <Log
+          toolbar={getLogsToolbar({
+            isMaximized: isLogsMaximized,
+            isUsingExternalLogs,
+            stepStatus,
+            taskRun: run,
+            toggleMaximized: !!maximizedLogsContainer && toggleLogsMaximized
+          })}
+          fetchLogs={() => log}
+          key={`${stepName}:${currentRetry}`}
+          stepStatus={stepStatus}
+          isLogsMaximized={isLogsMaximized}
+          enableLogAutoScroll
+          enableLogScrollButtons
+        />
+      </LogsRoot>
+    );
+  }
+
   if (isLoading) {
     return <SkeletonText heading width="60%" />;
   }
@@ -157,6 +193,11 @@ export function TaskRunContainerByResults() {
 
   const onViewChange = getViewChangeHandler({ location, navigate });
 
+  const logContainer = getLogContainer({
+    stepName: selectedStepId,
+    stepStatus,
+    taskRun
+  });
 
   return (
     <>
@@ -181,7 +222,7 @@ export function TaskRunContainerByResults() {
         {(selectedStepId && (
           <StepDetails
             definition={definition}
-            // logContainer={logContainer}
+            logContainer={logContainer}
             onViewChange={onViewChange}
             stepName={selectedStepId}
             stepStatus={stepStatus}

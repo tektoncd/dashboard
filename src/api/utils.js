@@ -85,6 +85,7 @@ export function getKubeAPI({
   ].join('');
 }
 
+// getRecordsAPI return URL for getting a list of records through the ResultsAPI
 export function getRecordsAPI({
   group = resultsAPIGroup,
   version = 'v1alpha2',
@@ -101,6 +102,7 @@ export function getRecordsAPI({
   ].join('');
 }
 
+// getRecordAPI return URL for getting a record through the ResultsAPI
 export function getRecordAPI({
   group = resultsAPIGroup,
   version = 'v1alpha2',
@@ -113,6 +115,22 @@ export function getRecordAPI({
     `/parents/${namespace}`,
     `/results/${resultUID}`,
     `/records/${recordUID}`
+  ].join('');
+}
+
+// getLogAPI return URL for getting a log through the ResultsAPI
+export function getLogAPI({
+  group = resultsAPIGroup,
+  version = 'v1alpha2',
+  namespace,
+  resultUID,
+  recordUID
+}) {
+  return [
+    `${apiRoot}/apis/${group}/${version}`,
+    `/parents/${namespace}`,
+    `/results/${resultUID}`,
+    `/logs/${recordUID}`
   ].join('');
 }
 
