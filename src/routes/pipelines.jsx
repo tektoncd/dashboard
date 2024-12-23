@@ -27,6 +27,7 @@ import {
   ReadWriteRoute,
   ResourceList,
   TaskRun,
+  TaskRunByResults,
   TaskRuns,
   TaskRunsByResults,
   Tasks
@@ -252,6 +253,15 @@ export default [
     handle: {
       isNamespaced: true,
       path: paths.taskRunsByResults.byNamespace()
+    }
+  },
+  {
+    path: paths.taskRunsByResults.byUID(),
+    element: <TaskRunByResults />,
+    handle: {
+      isNamespaced: true,
+      isResourceDetails: true,
+      path: paths.taskRunsByResults.byUID()
     }
   }
 ];

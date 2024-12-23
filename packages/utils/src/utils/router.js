@@ -204,6 +204,9 @@ export const paths = {
     },
     byNamespace() {
       return byNamespace({ path: '/results/taskruns' });
+    },
+    byUID() {
+      return byNamespace({ path: '/results/taskruns/:resultuid/:recorduid' });
     }
   }
 };

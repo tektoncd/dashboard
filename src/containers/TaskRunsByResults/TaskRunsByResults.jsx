@@ -28,7 +28,9 @@ function TaskRunsByResults() {
     data: recordsForTaskRuns = [],
     error,
     isLoading
-  } = useTaskRunsByResultsAPI(namespace);
+  } = useTaskRunsByResultsAPI(namespace, {
+    staleTime: 1000 // 1 second
+  });
   if (isLoading) {
     return <div>Loading...</div>;
   }

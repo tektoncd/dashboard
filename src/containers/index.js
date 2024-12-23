@@ -45,6 +45,7 @@ export { default as Tasks } from './Tasks';
 export { default as TasksDropdown } from './TasksDropdown';
 export { default as TaskRun } from './TaskRun';
 export { default as TaskRuns } from './TaskRuns';
+export { default as TaskRunByResults } from './TaskRunByResults';
 export { default as TaskRunsByResults } from './TaskRunsByResults';
 export { default as TriggerBinding } from './TriggerBinding';
 export { default as Trigger } from './Trigger';

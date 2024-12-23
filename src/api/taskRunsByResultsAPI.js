@@ -12,9 +12,11 @@ limitations under the License.
 */
 
 import { useQuery } from '@tanstack/react-query';
-import { getRecordsAPI } from './utils';
+import { getRecordAPI, getRecordsAPI } from './utils';
 import { checkStatus } from './comms';
+
 // useTaskRunsByResultsAPI list all TaskRuns by ResultsAPI
+// Return a list of Records
 export function useTaskRunsByResultsAPI(namespace, queryConfig) {
   const query = useQuery({
     queryKey: ['results', 'taskruns', namespace],
@@ -60,4 +62,53 @@ export function useTaskRunsByResultsAPI(namespace, queryConfig) {
     ...query,
     data: query.data?.records || []
   };
+}
+
+// useTaskRunByResultsAPI get a single TaskRun by ResultsAPI
+// Return a single Record
+export function useTaskRunByResultsAPI(
+  namespace,
+  resultUID,
+  recordUID,
+  queryConfig
+) {
+  const query = useQuery({
+    queryKey: ['results', 'taskrun', resultUID, recordUID, recordUID],
+    queryFn: async () => {
+      const uri = getRecordAPI({
+        group: 'results.tekton.dev',
+        version: 'v1alpha2',
+        namespace,
+        resultUID,
+        recordUID
+      });
+      console.debug('Querying TaskRun by ResultsAPI, uri:', uri);
+      const resp = await fetch(uri, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => checkStatus(response, false));
+      if (resp.data) {
+        if (!resp.data.type.includes('TaskRun')) {
+          throw new Error(
+            `Found a record of type other than taskrun: ${resp.data.type}`
+          );
+        }
+        resp.data = {
+          type: resp.data.type,
+          value: JSON.parse(atob(resp.data.value))
+        };
+      }
+      return resp;
+    },
+    ...queryConfig
+  });
+  if (query.data) {
+    console.debug(
+      'TaskRun queried by ResultsAPI, record:',
+      JSON.parse(JSON.stringify(query.data))
+    );
+  }
+  return query;
 }

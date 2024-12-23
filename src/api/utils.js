@@ -101,6 +101,21 @@ export function getRecordsAPI({
   ].join('');
 }
 
+export function getRecordAPI({
+  group = resultsAPIGroup,
+  version = 'v1alpha2',
+  namespace,
+  resultUID,
+  recordUID
+}) {
+  return [
+    `${apiRoot}/apis/${group}/${version}`,
+    `/parents/${namespace}`,
+    `/results/${resultUID}`,
+    `/records/${recordUID}`
+  ].join('');
+}
+
 export async function defaultQueryFn({ queryKey, signal }) {
   const [group, version, kind, params] = queryKey;
   const url = getKubeAPI({ group, kind, params, version });
