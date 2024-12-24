@@ -28,7 +28,6 @@ export function useTaskRunsByResultsAPI(namespace, queryConfig) {
         result: '-',
         filters: 'data_type==TASK_RUN'
       });
-      console.debug("Querying TaskRuns by ResultsAPI, uri:", uri);
       const resp = await fetch(uri, {
         method: 'GET',
         headers: {
@@ -52,12 +51,6 @@ export function useTaskRunsByResultsAPI(namespace, queryConfig) {
     staleTime: 0,
     ...queryConfig
   });
-  if (query.data) {
-    console.debug(
-      'records queried for TaskRuns, response: ',
-      JSON.parse(JSON.stringify(query.data))
-    );
-  }
   return {
     ...query,
     data: query.data?.records || []
@@ -82,7 +75,6 @@ export function useTaskRunByResultsAPI(
         resultUID,
         recordUID
       });
-      console.debug('Querying TaskRun by ResultsAPI, uri:', uri);
       const resp = await fetch(uri, {
         method: 'GET',
         headers: {
@@ -104,11 +96,5 @@ export function useTaskRunByResultsAPI(
     },
     ...queryConfig
   });
-  if (query.data) {
-    console.debug(
-      'TaskRun queried by ResultsAPI, record:',
-      JSON.parse(JSON.stringify(query.data))
-    );
-  }
   return query;
 }

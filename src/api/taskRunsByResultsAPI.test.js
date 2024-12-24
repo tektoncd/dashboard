@@ -12,6 +12,7 @@ limitations under the License.
 */
 import * as API from './taskRunsByResultsAPI';
 
+// TODO(xinnjie): add tests. Un-runnable test to block PR merge.
 it('useTaskRunsByResults', () => {
   expect(API.useTaskRunsByResultsAPI()).toEqual(null);
 });

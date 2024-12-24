@@ -64,8 +64,7 @@ export function TaskRunContainerByResults() {
 
   const maximizedLogsContainer = useRef();
   const [isLogsMaximized, setIsLogsMaximized] = useState(false);
-  const [showNotification, setShowNotification] = useState(null);
-  const [isUsingExternalLogs, setIsUsingExternalLogs] = useState(false);
+  const isUsingExternalLogs = false;
 
   const {
     data: record,
@@ -123,7 +122,7 @@ export function TaskRunContainerByResults() {
       return null;
     }
 
-    // TODO(xinnjie) supporting Step level log,log provided by ResultsAPI is currently TaskRun level instead of Step level
+    // TODO(xinnjie): supporting Step level log, log provided by ResultsAPI is currently TaskRun level instead of Step level
     const log = getLogByResultsAPI({
       namespace,
       resultUID,
@@ -139,6 +138,7 @@ export function TaskRunContainerByResults() {
           : null)}
       >
         <Log
+          // FIXME(xinnjie): log in toolbar is not from ResultsAPI yet
           toolbar={getLogsToolbar({
             isMaximized: isLogsMaximized,
             isUsingExternalLogs,

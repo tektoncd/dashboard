@@ -18,7 +18,20 @@ import { useSelectedNamespace } from '../../api';
 import { useTaskRunsByResultsAPI } from '../../api/taskRunsByResultsAPI';
 import ListPageLayout from '../ListPageLayout';
 
+const recordAnnotationKey = 'results.tekton.dev/record';
 function TaskRunsByResults() {
+  function getTaskRunURL({ namespace, taskRun }) {
+    // TODO(xinnjie): best user experience will be like if taskRun is still exist in kubernetes, provide a link to the taskRun page with live info and logs.
+    // if not, provide a link to the taskRun page by ResultsAPI
+    const recordAnnotation = taskRun.metadata.annotations[recordAnnotationKey];
+    // record annotation format: default/results/8b19a00c-d702-4903-a9eb-d41d37250240/records/8b19a00c-d702-4903-a9eb-d41d37250240
+    const [, , resultuid, , recorduid] = recordAnnotation.split('/');
+    return urls.taskRunsByResults.byUID({
+      namespace,
+      resultuid,
+      recorduid
+    });
+  }
   const params = useParams();
   const { namespace: namespaceParam } = params;
   const { selectedNamespace } = useSelectedNamespace();
@@ -31,11 +44,11 @@ function TaskRunsByResults() {
   } = useTaskRunsByResultsAPI(namespace, {
     staleTime: 1000 // 1 second
   });
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
   if (error) {
-    console.error('Error querying TaskRuns by ResultsAPI', error);
     return (
       <NotFound
         suggestions={[
@@ -48,7 +61,6 @@ function TaskRunsByResults() {
     );
   }
   const taskRuns = recordsForTaskRuns.map(record => record.data.value);
-  console.debug('taskRuns', JSON.parse(JSON.stringify(taskRuns)));
 
   return (
     <ListPageLayout
@@ -62,6 +74,7 @@ function TaskRunsByResults() {
           loading={isLoading}
           selectedNamespace={namespace}
           taskRuns={resources}
+          getTaskRunURL={getTaskRunURL}
         />
       )}
     </ListPageLayout>
