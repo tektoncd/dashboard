@@ -98,7 +98,7 @@ export function getRecordsAPI({
     namespace === ALL_NAMESPACES ? `/parents/-` : `/parents/${namespace}`,
     result === ALL_RESULTS ? `/results/-` : `/results/${result}`,
     `/records`,
-    filters ? `?${filters}` : ''
+    filters ? `?filter=${encodeURIComponent(filters)}` : ''
   ].join('');
 }
 
