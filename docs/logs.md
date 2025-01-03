@@ -15,7 +15,7 @@ The Tekton Dashboard log viewer supports ANSI colour codes and text styles, and 
 
 ## Toolbar
 
-The toolbar diplayed in the log viewer includes a number of additional features, including:
+The toolbar displayed in the log viewer includes a number of additional features, including:
 
 - maximize: increase the area available to the log viewer by hiding the task list and run header. This allows the user to eliminate distractions from other parts of the app and focus on the log content.
 - open in new window: open the raw logs in a separate browser window. This provides an unmodified and unprocessed view of the logs, without any of the added features provided by the log viewer.
@@ -26,7 +26,7 @@ The toolbar diplayed in the log viewer includes a number of additional features,
 
 The Dashboard will always request logs with timestamps from the Kubernetes pod logs API, and show / hide the timestamps in the log viewer based on the user's preference. This can be toggled from the settings menu in the toolbar at the top of the log viewer.
 
-The timestamps are localised based on users' browser settings, with the raw timestamp value received from the API provided as a tooltip on hover.
+The timestamps are localised based on the user's browser settings, with the raw timestamp value received from the API provided as a tooltip on hover.
 
 In releases prior to Tekton Dashboard v0.54, the timestamp preference was found on the Settings page, and governed whether or not timestamps were requested from the Kubernetes API server.
 

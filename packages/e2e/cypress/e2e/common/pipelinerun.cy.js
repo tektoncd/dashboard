@@ -1,5 +1,5 @@
 /*
-Copyright 2023-2024 The Tekton Authors
+Copyright 2023-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -58,6 +58,7 @@ spec:
     cy.contains('.tkn--log', '2024').should('not.exist');
     cy.get('.tkn--log-settings-menu button').click();
     cy.contains('Show timestamps').click();
+    cy.get('.tkn--log-settings-menu button').type('{esc}');
     cy.contains(
       // title starts with date formatted as 'yyyy-MM-dd'
       `.tkn--log [title^="${new Date().toISOString().substring(0, 10)}"]`,
@@ -67,6 +68,7 @@ spec:
     cy.contains('.tkn--log', 'hidden by default').should('not.exist');
     cy.get('.tkn--log-settings-menu button').click();
     cy.contains('Debug').click();
+    cy.get('.tkn--log-settings-menu button').type('{esc}');
     cy.contains('.tkn--log', 'hidden by default');
   });
 });
