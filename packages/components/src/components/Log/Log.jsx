@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,9 +14,9 @@ limitations under the License.
 import { Component, createRef } from 'react';
 import { Button, PrefixContext, SkeletonText } from '@carbon/react';
 import { FixedSizeList as List } from 'react-window';
-import { injectIntl } from 'react-intl';
+import { injectIntl, useIntl } from 'react-intl';
 import { getStepStatusReason, isRunning } from '@tektoncd/dashboard-utils';
-import { DownToBottom, UpToTop } from '@carbon/react/icons';
+import { DownToBottom, Information, UpToTop } from '@carbon/react/icons';
 
 import {
   hasElementPositiveVerticalScrollBottom,
@@ -32,6 +32,52 @@ const defaultHeight = itemSize * 100 + itemSize / 2;
 
 const logFormatRegex =
   /^((?<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3,9}Z)\s?)?(::(?<level>error|warning|info|notice|debug)::)?(?<message>.*)?$/s;
+
+function LogsFilteredNotification({ displayedLogLines, totalLogLines }) {
+  const intl = useIntl();
+
+  if (displayedLogLines === totalLogLines) {
+    return null;
+  }
+
+  if (displayedLogLines === 0) {
+    return (
+      <span className="tkn--log-filtered">
+        <Information />
+        {intl.formatMessage({
+          id: 'dashboard.logs.hidden.all',
+          defaultMessage: 'All lines hidden due to selected log levels'
+        })}
+      </span>
+    );
+  }
+
+  const hiddenLines = totalLogLines - displayedLogLines;
+  const message =
+    hiddenLines === 1
+      ? intl.formatMessage(
+          {
+            id: 'dashboard.logs.hidden.one',
+            defaultMessage: '1 line hidden due to selected log levels'
+          },
+          { numHiddenLines: totalLogLines - displayedLogLines }
+        )
+      : intl.formatMessage(
+          {
+            id: 'dashboard.logs.hidden',
+            defaultMessage:
+              '{numHiddenLines, plural, other {# lines}} hidden due to selected log levels'
+          },
+          { numHiddenLines: totalLogLines - displayedLogLines }
+        );
+
+  return (
+    <span className="tkn--log-filtered">
+      <Information />
+      {message}
+    </span>
+  );
+}
 
 export class LogContainer extends Component {
   constructor(props) {
@@ -294,12 +340,19 @@ export class LogContainer extends Component {
       }
       return acc;
     }, []);
+
     if (parsedLogs.length < 20_000) {
       return (
-        <LogFormat
-          fields={{ level: showLevels, timestamp: showTimestamps }}
-          logs={parsedLogs}
-        />
+        <>
+          <LogsFilteredNotification
+            displayedLogLines={parsedLogs.length}
+            totalLogLines={logs.length}
+          />
+          <LogFormat
+            fields={{ level: showLevels, timestamp: showTimestamps }}
+            logs={parsedLogs}
+          />
+        </>
       );
     }
 
@@ -308,22 +361,28 @@ export class LogContainer extends Component {
       : defaultHeight;
 
     return (
-      <List
-        height={height}
-        itemCount={parsedLogs.length}
-        itemData={parsedLogs}
-        itemSize={itemSize}
-        width="100%"
-      >
-        {({ data, index, style }) => (
-          <div style={style}>
-            <LogFormat
-              fields={{ level: showLevels, timestamp: showTimestamps }}
-              logs={[data[index]]}
-            />
-          </div>
-        )}
-      </List>
+      <>
+        <LogsFilteredNotification
+          displayedLogLines={parsedLogs.length}
+          totalLogLines={logs.length}
+        />
+        <List
+          height={height}
+          itemCount={parsedLogs.length}
+          itemData={parsedLogs}
+          itemSize={itemSize}
+          width="100%"
+        >
+          {({ data, index, style }) => (
+            <div style={style}>
+              <LogFormat
+                fields={{ level: showLevels, timestamp: showTimestamps }}
+                logs={[data[index]]}
+              />
+            </div>
+          )}
+        </List>
+      </>
     );
   };
 
