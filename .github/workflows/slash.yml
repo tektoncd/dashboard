@@ -5,4 +5,4 @@ on:
 
 jobs:
   check_comments:
-    uses: tektoncd/plumbing/.github/workflows/_slash.yml@b3abc99873185dfb1d74064e4aa851478d6aaa7c
+    uses: tektoncd/plumbing/.github/workflows/_slash.yml@8441d6ffad5bf64f631ed0e67e46192fdedaca47
