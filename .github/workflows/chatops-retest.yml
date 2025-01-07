@@ -11,3 +11,4 @@ jobs:
   retest:
     name: Rerun Failed Actions
     uses: tektoncd/plumbing/.github/workflows/_chatops_retest.yml@8441d6ffad5bf64f631ed0e67e46192fdedaca47
+    secrets: inherit
