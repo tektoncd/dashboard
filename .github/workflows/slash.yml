@@ -1,8 +1,15 @@
 name: Slash Command Routing
+
+permissions:
+  contents: read
+
 on:
   issue_comment:
     types: [created]
 
 jobs:
   check_comments:
+    permissions:
+      issues: write # for peter-evans/slash-command-dispatch to create issue reaction
+      pull-requests: write # for peter-evans/slash-command-dispatch to create PR reaction
     uses: tektoncd/plumbing/.github/workflows/_slash.yml@8441d6ffad5bf64f631ed0e67e46192fdedaca47

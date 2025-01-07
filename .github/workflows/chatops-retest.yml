@@ -1,4 +1,8 @@
 name: Rerun Failed Actions
+
+permissions:
+  contents: read
+
 on:
   repository_dispatch:
     types: [retest-command]
