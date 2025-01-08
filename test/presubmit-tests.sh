@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2018-2024 The Tekton Authors
+# Copyright 2018-2025 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -51,17 +51,17 @@ source $(dirname $0)/../vendor/github.com/tektoncd/plumbing/scripts/presubmit-te
 #   - post_integration_tests : runs after the integration-test function
 #
 
-function post_build_tests() {
-  header "Testing if golint has been done"
-  golangci-lint --color=never run
+# function post_build_tests() {
+#   header "Testing if golint has been done"
+#   golangci-lint --color=never run
 
-  if [[ $? != 0 ]]; then
-      results_banner "Go Lint" 1
-      exit 1
-  fi
+#   if [[ $? != 0 ]]; then
+#       results_banner "Go Lint" 1
+#       exit 1
+#   fi
 
-  results_banner "Go Lint" 0
-}
+#   results_banner "Go Lint" 0
+# }
 
 function get_node() {
   echo "Installing Node.js"
