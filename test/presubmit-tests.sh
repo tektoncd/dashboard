@@ -51,17 +51,17 @@ source $(dirname $0)/../vendor/github.com/tektoncd/plumbing/scripts/presubmit-te
 #   - post_integration_tests : runs after the integration-test function
 #
 
-# function post_build_tests() {
-#   header "Testing if golint has been done"
-#   golangci-lint --color=never run
+function post_build_tests() {
+  header "Testing if golint has been done"
+  golangci-lint --color=never run
 
-#   if [[ $? != 0 ]]; then
-#       results_banner "Go Lint" 1
-#       exit 1
-#   fi
+  if [[ $? != 0 ]]; then
+      results_banner "Go Lint" 1
+      exit 1
+  fi
 
-#   results_banner "Go Lint" 0
-# }
+  results_banner "Go Lint" 0
+}
 
 function get_node() {
   echo "Installing Node.js"
