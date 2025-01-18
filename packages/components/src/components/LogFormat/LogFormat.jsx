@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2024 The Tekton Authors
+Copyright 2020-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -10,6 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/* istanbul ignore file */
 
 import tlds from 'tlds';
 import LinkifyIt from 'linkify-it';
@@ -92,7 +93,11 @@ const linkify = (str, styleObj, classNameString) => {
   return elements;
 };
 
-const LogFormat = ({ fields = { message: true }, logs = [] }) => {
+const LogFormat = ({
+  fields = { message: true },
+  logs = [],
+  onToggleGroup
+}) => {
   let properties = {
     classes: {},
     foregroundColor: null,
@@ -249,7 +254,14 @@ const LogFormat = ({ fields = { message: true }, logs = [] }) => {
   };
 
   const parse = (log, index) => {
-    const { level, message = '', timestamp } = log;
+    const {
+      command,
+      expanded,
+      groupIndex = null,
+      level,
+      message = '',
+      timestamp
+    } = log;
     if (!message?.length && !timestamp && !level) {
       return <br key={index} />;
     }
@@ -283,7 +295,9 @@ const LogFormat = ({ fields = { message: true }, logs = [] }) => {
     return (
       <div
         className={classNames('tkn--log-line', {
-          [`tkn--log-level--${level}`]: level
+          [`tkn--log-level--${level}`]: level,
+          'tkn--log-line--group': command === 'group',
+          'tkn--log-line--in-group': command !== 'group' && groupIndex !== null
         })}
         key={index}
       >
@@ -297,7 +311,19 @@ const LogFormat = ({ fields = { message: true }, logs = [] }) => {
           </span>
         )}
         {fields.level && getDecoratedLevel(level)}
-        {line}
+        {command === 'group' && (
+          <details
+            onToggle={event =>
+              onToggleGroup({ expanded: event.target.open, groupIndex })
+            }
+            open={expanded}
+          >
+            <summary>{line}</summary>
+          </details>
+        )}
+        {!['group', 'endgroup'].includes(command) && (
+          <span className="tkn--log-line--content">{line}</span>
+        )}
       </div>
     );
   };

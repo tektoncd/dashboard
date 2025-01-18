@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2024 The Tekton Authors
+Copyright 2020-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -148,6 +148,35 @@ export const LogLevelsAndTimestamps = {
         timestamp: '2024-11-14T14:10:56.869719012Z',
         level: 'notice',
         message: 'Sample notice'
+      },
+      {
+        timestamp: '2024-11-14T14:10:56.869719012Z',
+        command: 'group',
+        expanded: false,
+        message: 'Collapsed group'
+      },
+      {
+        timestamp: '2024-11-14T14:10:56.869719012Z',
+        command: 'group',
+        expanded: true,
+        message: 'Expanded group'
+      },
+      {
+        timestamp: '2024-11-14T14:10:56.869719012Z',
+        level: 'info',
+        isInGroup: true,
+        message: 'First line inside group'
+      },
+      {
+        timestamp: '2024-11-14T14:10:56.869719012Z',
+        level: 'debug',
+        isInGroup: true,
+        message: 'Second line inside group'
+      },
+      {
+        timestamp: '2024-11-14T14:10:56.869719012Z',
+        isInGroup: true,
+        message: 'A line with no log level inside a group'
       }
     ]
   }
