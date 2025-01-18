@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2024 The Tekton Authors
+Copyright 2020-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -321,7 +321,7 @@ describe('LogFormat', () => {
     const logs = [{ message: 'Hello' }, { message: '' }, { message: 'World' }];
     const { container } = render(<LogFormat logs={logs} />);
     expect(container.childNodes[0].innerHTML).toBe(
-      '<div class="tkn--log-line">Hello</div><br><div class="tkn--log-line">World</div>'
+      '<div class="tkn--log-line"><span class="tkn--log-line--content">Hello</span></div><br><div class="tkn--log-line"><span class="tkn--log-line--content">World</span></div>'
     );
   });
 
@@ -352,7 +352,7 @@ describe('LogFormat', () => {
       <LogFormat fields={{ timestamp: false }} logs={logs} />
     );
     expect(container.childNodes[0].innerHTML).toBe(
-      '<div class="tkn--log-line">Hello</div>'
+      '<div class="tkn--log-line"><span class="tkn--log-line--content">Hello</span></div>'
     );
     rerender(<LogFormat fields={{ timestamp: true }} logs={logs} />);
     expect(container.childNodes[0].innerHTML).toMatch(
@@ -361,7 +361,7 @@ describe('LogFormat', () => {
       // accept anything (`.*`) for test purposes as it may be localised
       // and we're more concerned with the structure here
       new RegExp(
-        `<div class="tkn--log-line"><span class="tkn--log-line--timestamp"><span title="${timestamp}">.*</span></span>Hello</div>`
+        `<div class="tkn--log-line"><span class="tkn--log-line--timestamp"><span title="${timestamp}">.*</span></span><span class="tkn--log-line--content">Hello</span></div>`
       )
     );
   });

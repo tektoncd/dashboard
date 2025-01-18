@@ -10,6 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/* istanbul ignore file */
 
 import { Component, createRef } from 'react';
 import { Button, PrefixContext, SkeletonText } from '@carbon/react';
@@ -31,7 +32,7 @@ const itemSize = 16; // This should be kept in sync with the line-height in SCSS
 const defaultHeight = itemSize * 100 + itemSize / 2;
 
 const logFormatRegex =
-  /^((?<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3,9}Z)\s?)?(::(?<level>error|warning|info|notice|debug)::)?(?<message>.*)?$/s;
+  /^((?<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3,9}Z)\s?)?(::(?<command>group|endgroup|error|warning|info|notice|debug)::)?(?<message>.*)?$/s;
 
 function LogsFilteredNotification({ displayedLogLines, totalLogLines }) {
   const intl = useIntl();
@@ -46,7 +47,8 @@ function LogsFilteredNotification({ displayedLogLines, totalLogLines }) {
         <Information />
         {intl.formatMessage({
           id: 'dashboard.logs.hidden.all',
-          defaultMessage: 'All lines hidden due to selected log levels'
+          defaultMessage:
+            'All lines hidden due to selected log levels or collapsed groups'
         })}
       </span>
     );
@@ -58,7 +60,8 @@ function LogsFilteredNotification({ displayedLogLines, totalLogLines }) {
       ? intl.formatMessage(
           {
             id: 'dashboard.logs.hidden.one',
-            defaultMessage: '1 line hidden due to selected log levels'
+            defaultMessage:
+              '1 line hidden due to selected log levels or collapsed groups'
           },
           { numHiddenLines: totalLogLines - displayedLogLines }
         )
@@ -66,7 +69,7 @@ function LogsFilteredNotification({ displayedLogLines, totalLogLines }) {
           {
             id: 'dashboard.logs.hidden',
             defaultMessage:
-              '{numHiddenLines, plural, other {# lines}} hidden due to selected log levels'
+              '{numHiddenLines, plural, other {# lines}} hidden due to selected log levels or collapsed groups'
           },
           { numHiddenLines: totalLogLines - displayedLogLines }
         );
@@ -82,7 +85,7 @@ function LogsFilteredNotification({ displayedLogLines, totalLogLines }) {
 export class LogContainer extends Component {
   constructor(props) {
     super(props);
-    this.state = { loading: true, logs: [] };
+    this.state = { groupsExpanded: {}, loading: true, logs: [] };
     this.logRef = createRef();
     this.textRef = createRef();
   }
@@ -115,6 +118,15 @@ export class LogContainer extends Component {
     clearTimeout(this.timer);
     this.cancelled = true;
   }
+
+  onToggleGroup = ({ expanded, groupIndex }) => {
+    this.setState(({ groupsExpanded }) => ({
+      groupsExpanded: {
+        ...groupsExpanded,
+        [groupIndex]: expanded
+      }
+    }));
+  };
 
   handleLogScroll = () => {
     if (!this.state.loading) {
@@ -296,9 +308,14 @@ export class LogContainer extends Component {
         }
 
         const {
-          groups: { level, message, timestamp }
+          groups: { command, message, timestamp }
         } = logFormatRegex.exec(line);
+        let level;
+        if (!['group', 'endgroup'].includes(command)) {
+          level = command;
+        }
         return {
+          command,
           level,
           message,
           timestamp
@@ -310,6 +327,7 @@ export class LogContainer extends Component {
     } = this.props;
     const { reason } = (stepStatus && stepStatus.terminated) || {};
     const {
+      groupsExpanded,
       logs = [
         intl.formatMessage({
           id: 'dashboard.pipelineRun.logEmpty',
@@ -319,13 +337,47 @@ export class LogContainer extends Component {
     } = this.state;
 
     let previousTimestamp;
-    const parsedLogs = logs.reduce((acc, line) => {
+    let currentGroupIndex = null;
+    const parsedLogs = logs.reduce((acc, line, index) => {
       const parsedLogLine = parseLogLine(line);
       if (!parsedLogLine.timestamp) {
         // multiline log, use same timestamp as previous line
         parsedLogLine.timestamp = previousTimestamp;
       } else {
         previousTimestamp = parsedLogLine.timestamp;
+      }
+
+      const isGroup = parsedLogLine.command === 'group';
+      const isEndGroup = parsedLogLine.command === 'endgroup';
+      if (isGroup) {
+        currentGroupIndex = index;
+        parsedLogLine.groupIndex = index;
+        if (groupsExpanded[index] !== false) {
+          // if not already explicitly collapsed,
+          // respect state if explicitly expanded, otherwise
+          // should be expanded by default if viewed when step running
+          // or collapsed by default if viewing after run complete
+          parsedLogLine.expanded =
+            groupsExpanded[index] || this.wasRunningAfterMounting();
+        }
+      } else if (isEndGroup) {
+        currentGroupIndex = null;
+        // we don't render anything for the endgroup command
+        return acc;
+      }
+
+      if (!isGroup && currentGroupIndex !== null) {
+        // we're inside a group, determine if the line should be rendered
+        if (
+          groupsExpanded[currentGroupIndex] === false ||
+          (!groupsExpanded[currentGroupIndex] &&
+            !this.wasRunningAfterMounting())
+        ) {
+          // skip if either explicitly collapsed, or viewed after step completed so collapsed by default
+          return acc;
+        }
+
+        parsedLogLine.groupIndex = currentGroupIndex;
       }
 
       if (
@@ -351,6 +403,7 @@ export class LogContainer extends Component {
           <LogFormat
             fields={{ level: showLevels, timestamp: showTimestamps }}
             logs={parsedLogs}
+            onToggleGroup={this.onToggleGroup}
           />
         </>
       );
@@ -378,6 +431,7 @@ export class LogContainer extends Component {
               <LogFormat
                 fields={{ level: showLevels, timestamp: showTimestamps }}
                 logs={[data[index]]}
+                onToggleGroup={this.onToggleGroup}
               />
             </div>
           )}

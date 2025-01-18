@@ -84,7 +84,7 @@
 2024-11-14T14:11:42.498953257Z For more information on the stages that can be skipped refer to the doc link below
 2024-11-14T14:11:42.498957672Z https://cloud.ibm.com/docs/devsecops?topic=devsecops-cd-devsecops-pr-pipeline
 2024-11-14T14:11:42.498961928Z 
-2024-11-14T14:11:42.498964925Z 
+2024-11-14T14:11:42.498964925Z ::group::Process repository parameters
 2024-11-14T14:11:43.342596128Z ::debug::[set-commit-status:48] | repository: https://github.com/example-org/example-app
 2024-11-14T14:11:43.342933970Z ::debug::[set-commit-status:60] | commit-sha: b00b89b53ead4344a55d003b1f5698183e6128ab
 2024-11-14T14:11:43.342946722Z ::debug::[set-commit-status:72] | state: pending
@@ -112,6 +112,7 @@
 2024-11-14T14:11:43.750947704Z ::debug::[get_repo_params:167] | Unable to retreive Personal Access Token. Attempt to fetch token from Toolchain Broker.
 2024-11-14T14:11:43.782406568Z ::debug::[get_repo_params:89] | get_absolute_scm_type called for https://github.com/example-org/example-app. SCM Type identified as github
 2024-11-14T14:11:44.375617191Z ::debug::[get_credentials_v2:187] | Fetch Git Token for SCM Type: github, SCM ID: integrated, Repository URL: https://github.com/example-org/example-app.
+2024-11-14T14:11:44.375617191Z ::endgroup::
 2024-11-14T14:11:44.415251742Z ::info::Fetch git token for https://github.com/example-org/example-inventory.git
 2024-11-14T14:11:44.507177971Z ::debug::[get_credentials_v2:106] | Returning git token for https://github.com/example-org/example-inventory.git as found in cache.
 2024-11-14T14:11:44.825013004Z ::debug::[set-commit-status:219] | Calling set-commit-status with params %s: --state=pending --targetURL=https://cloud.ibm.com/devops/pipelines/tekton/a3fe08ad-d5de-4cd2-98b0-f5c5219a33cd/runs/5f3949cf-de85-415c-a6cc-74a336bbe206/code-unit-tests/run-stage?env_id=ibm:yp:us-south --context=tekton/code-unit-tests --description=Running unit tests... --git-provider=github --git-token-path=/workspace/app/secrets/app-token --git-api-url=https://github.com/api/v3

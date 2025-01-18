@@ -42,6 +42,9 @@ spec:
                 #!/bin/ash
                 echo "Hello World!"
                 echo "::debug::This line should be hidden by default"
+                echo "::group::This is the start of a group"
+                echo "::info::This line is inside a group"
+                echo "::endgroup::"
     `;
     cy.applyResource(pipelineRun);
 
@@ -70,5 +73,20 @@ spec:
     cy.contains('Debug').click();
     cy.get('.tkn--log-settings-menu button').type('{esc}');
     cy.contains('.tkn--log', 'hidden by default');
+
+    // Reload page to test log group behaviour after step completed (collapsed by default).
+    // The step runs so quickly we may not see expanded by default behaviour during the run
+    // as the logs may only load after the step is completed.
+    // `cy.reload()` is causing the renderer to crash consistently when run in CI, so navigate
+    // to the run again instead.
+    // cy.reload();
+    cy.visit(`/#/pipelineruns`);
+    cy.contains('h1', 'PipelineRuns');
+    cy.get(`[title=${pipelineRunName}]`).click();
+
+    cy.contains('.tkn--log', 'Hello World!');
+    cy.contains('.tkn--log', 'inside a group').should('not.exist');
+    cy.contains('summary', 'start of a group').click();
+    cy.contains('.tkn--log', 'inside a group');
   });
 });

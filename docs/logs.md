@@ -52,6 +52,33 @@ echo '::warning::Something that may require attention but is non-blocking…'
 
 The displayed log levels can be changed via the settings menu in the toolbar at the top of the log viewer.
 
+###  Log groups
+
+In addition to log levels, the log viewer also supports collapsible groups within the logs. The format supported is described below.
+
+```
+<timestamp> ::group::<message>
+…
+<timestamp> ::endgroup::
+```
+
+A `group` command marks the beginning of the group. The content of `message` is displayed as the title / summary of the group along with an indicator of the group's current state (i.e. expanded or collapsed). Clicking the summary will toggle the state of the group.
+
+Groups are rendered in the collapsed state by default unless the step is still in progress when the logs are viewed. The user can expand or collapse groups as desired and their state will be maintained until the user navigates to a different view.
+
+Log groups cannot be mixed with log levels on the same line, the `group`, `endgroup`, and log level commands are mutually exclusive. However, logs contained within a group can use log levels as normal.
+
+Nesting groups is not supported. A `group` command will implicitly terminate any prior unterminated group.
+
+For example, the following snippet would output a log group with the summary 'Additional config' containing a number of messages at the `info` level:
+
+```sh
+echo '::group::Additional config'
+echo 'This extends the base config'
+echo '::info:: More info about the config…'
+echo '::endgroup::'
+```
+
 ## Logs persistence
 
 By default, Tekton Dashboard loads the logs from the Kubernetes API server, using the pod logs API. However, it also supports loading logs from an external source when the container logs or the pods associated with the `TaskRuns` are no longer available on the cluster.
