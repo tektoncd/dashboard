@@ -27,35 +27,42 @@ defaults:
 
 jobs:
   publish:
-    if: >-
-      ${{
-        (
-          github.event_name == 'pull_request' &&
-          startsWith(github.event.pull_request.title, 'Publish v') &&
-          endsWith(github.event.pull_request.title, 'of the @tektoncd/dashboard-* packages')
-        ) ||
-        (
-          github.event_name == 'push' &&
-          startsWith(github.event.head_commit.message, 'Publish v') &&
-          endsWith(github.event.head_commit.message, 'of the @tektoncd/dashboard-* packages')
-        )
-      }}
     runs-on: ubuntu-24.04
     permissions:
       contents: read
       # required for npm package provenance
       id-token: write
     steps:
+      - name: Check for publish commit
+        id: checkPublishCommit
+        if: >-
+          ${{
+            (
+              github.event_name == 'pull_request' &&
+              startsWith(github.event.pull_request.title, 'Publish v') &&
+              endsWith(github.event.pull_request.title, 'of the @tektoncd/dashboard-* packages')
+            ) ||
+            (
+              github.event_name == 'push' &&
+              startsWith(github.event.head_commit.message, 'Publish v') &&
+              endsWith(github.event.head_commit.message, 'of the @tektoncd/dashboard-* packages')
+            )
+          }}
+        run: |
+          echo "Confirmed it's a publish commit"
       - name: Harden Runner
+        if: ${{ steps.checkPublishCommit.outcome == 'success' }}
         uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
         with:
           egress-policy: audit
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Checkout
+        if: ${{ steps.checkPublishCommit.outcome == 'success' }}
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           # for PRs checkout the head rather than the merge commit so we can get the original commit message
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Validate PR title and commit message match
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ steps.checkPublishCommit.outcome == 'success' && github.event_name == 'pull_request' }}
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
@@ -71,6 +78,7 @@ jobs:
           fi
       - name: Get version
         id: get-version
+        if: ${{ steps.checkPublishCommit.outcome == 'success' }}
         env:
           MESSAGE_WITH_VERSION: ${{ github.event.pull_request.title || github.event.head_commit.message }}
         run: |
@@ -79,6 +87,7 @@ jobs:
           echo "VERSION: $VERSION"
           echo "newPackageVersion=${VERSION}" >> $GITHUB_OUTPUT
       - name: Check version matches package.json
+        if: ${{ steps.checkPublishCommit.outcome == 'success' }}
         run: |
           EXPECTED_VERSION="${{ steps.get-version.outputs.newPackageVersion }}"
           mismatch=false
@@ -94,7 +103,7 @@ jobs:
             exit 1
           fi
       - name: Check PR is up-to-date
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ steps.checkPublishCommit.outcome == 'success' && github.event_name == 'pull_request' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -110,14 +119,16 @@ jobs:
           else
             echo "Pull request is up-to-date with base branch, continuing…"
           fi
-      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+      - name: Setup Node.js
+        if: ${{ steps.checkPublishCommit.outcome == 'success' }}
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
         with:
           node-version-file: .nvmrc
       - name: Publish dry run
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ steps.checkPublishCommit.outcome == 'success' && github.event_name == 'pull_request' }}
         run: npm publish --workspaces --provenance --access public --dry-run
       - name: Publish
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ steps.checkPublishCommit.outcome == 'success' && github.event_name == 'push' }}
         run: npm publish --workspaces --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
