@@ -93,7 +93,7 @@ jobs:
           mismatch=false
           for packageJson in ./packages/*/package.json; do
             VERSION="v$(jq -r .version $packageJson)"
-            PRIVATE="$(jq -r .private)"
+            PRIVATE="$(jq -r .private $packageJson)"
             if [ "$PRIVATE" == "false" ] && [ "$VERSION" != "$EXPECTED_VERSION" ]; then
               echo "::error::Version mismatch found in $packageJson: ${VERSION}"
               mismatch=true
