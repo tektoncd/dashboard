@@ -105,10 +105,12 @@ jobs:
       - name: Check PR is up-to-date
         if: ${{ steps.checkPublishCommit.outcome == 'success' && github.event_name == 'pull_request' }}
         env:
+          # user controls the head ref, use env var to avoid script injection similar to PR title / commit message handling above
+          PR_HEAD_REF: ${{github.event.pull_request.head.ref}}
           GH_TOKEN: ${{ github.token }}
         run: |
           BASE_REF="${{github.event.pull_request.base.repo.owner.login}}:${{github.event.pull_request.base.ref}}"
-          HEAD_REF="${{github.event.pull_request.head.repo.owner.login}}:${{github.event.pull_request.head.ref}}"
+          HEAD_REF="${{github.event.pull_request.head.repo.owner.login}}:${PR_HEAD_REF}"
           STATUS=$(gh api \
               -H "Accept: application/vnd.github+json" \
               -H "X-GitHub-Api-Version: 2022-11-28" \
