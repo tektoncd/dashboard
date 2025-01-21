@@ -1,0 +1,26 @@
+changelog:
+  exclude:
+    labels:
+      - release-note-none
+  categories:
+    - title: 🚨 Breaking changes
+      labels:
+        - release-note-action-required
+    - title: 🚨 Deprecation notices
+      labels:
+        - release-note-action-required
+    - title: ✨ Features
+      labels:
+        - kind/feature
+    - title: 🐛 Fixes
+      labels:
+        - kind/bug
+    - title: 🔨 Misc
+      labels:
+        - kind/misc
+    - title: 📖 Docs
+      labels:
+        - kind/documentation
+    - title: Other changes to review
+      labels:
+        - "*"
