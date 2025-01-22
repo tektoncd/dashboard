@@ -3,10 +3,7 @@ changelog:
     labels:
       - release-note-none
   categories:
-    - title: 🚨 Breaking changes
-      labels:
-        - release-note-action-required
-    - title: 🚨 Deprecation notices
+    - title: 🚨 Breaking changes / deprecation notices
       labels:
         - release-note-action-required
     - title: ✨ Features
