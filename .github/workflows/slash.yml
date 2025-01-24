@@ -9,6 +9,7 @@ on:
 
 jobs:
   check_comments:
+    if: ${{ github.event.issue.pull_request }}
     permissions:
       issues: write # for peter-evans/slash-command-dispatch to create issue reaction
       pull-requests: write # for peter-evans/slash-command-dispatch to create PR reaction
