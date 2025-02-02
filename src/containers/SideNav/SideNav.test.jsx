@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -35,10 +35,12 @@ const mockExtensions = [
 ];
 
 it('SideNav renders only when expanded', () => {
-  const { queryByText, rerender } = renderWithRouter(<SideNav expanded />);
+  const { queryByText } = renderWithRouter(<SideNav expanded />);
   expect(queryByText(/Tekton resources/)).toBeTruthy();
+});
 
-  renderWithRouter(<SideNav />, { rerender });
+it('SideNav renders nothing when collapsed', () => {
+  const { queryByText } = renderWithRouter(<SideNav />);
   expect(queryByText(/Tekton resources/)).toBeFalsy();
 });
 
