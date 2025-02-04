@@ -48,6 +48,10 @@ updates:
         patterns:
           - "storybook"
           - "@storybook/*"
+      vitest:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
     labels:
     - "area/dependency"
     - "dependencies"
