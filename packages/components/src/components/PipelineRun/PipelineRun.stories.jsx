@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -106,6 +106,41 @@ const taskRunWithSkippedStep = getTaskRun({
 });
 taskRunWithSkippedStep.status.steps[0].terminationReason = 'Skipped';
 
+const taskRunWithRetries = getTaskRun({
+  exitCode: 0,
+  name: 'sampleTaskRunName2',
+  pipelineTaskName: 'task2'
+});
+taskRunWithRetries.status.retriesStatus = [
+  {
+    completionTime: '2019-08-21T17:12:21Z',
+    conditions: [
+      {
+        lastTransitionTime: '2019-08-21T17:12:21Z',
+        message: 'All Steps have completed executing',
+        reason: 'Succeeded',
+        status: 'False',
+        type: 'Succeeded'
+      }
+    ],
+    podName: `sample-task-run-pod-name-0`,
+    startTime: '2019-08-21T17:11:21Z',
+    steps: [
+      {
+        name: 'build',
+        terminated: {
+          containerID:
+            'docker://88659459cb477936d2ee859822b024bf02768c9ff3dd048f7d8af85843064f95',
+          exitCode: 1,
+          finishedAt: '2019-08-21T17:12:20Z',
+          reason: 'Failed',
+          startedAt: '2019-08-21T17:11:22Z'
+        }
+      }
+    ]
+  }
+];
+
 const pipelineRun = {
   metadata: {
     name: 'pipeline-run',
@@ -189,6 +224,7 @@ const pipelineRunWithMinimalStatus = {
 
 export default {
   args: {
+    selectedRetry: '',
     selectedStepId: undefined,
     selectedTaskId: undefined,
     view: undefined
@@ -416,6 +452,30 @@ export const LogsWithTimestampsAndLevels = {
       />
     );
   }
+};
+
+export const WithRetries = args => {
+  const [, updateArgs] = useArgs();
+
+  return (
+    <PipelineRun
+      {...args}
+      fetchLogs={() => 'sample log output'}
+      handleTaskSelected={({
+        selectedStepId: stepId,
+        selectedTaskId: taskId
+      }) => {
+        updateArgs({ selectedStepId: stepId, selectedTaskId: taskId });
+      }}
+      onRetryChange={selectedRetry =>
+        updateArgs({ selectedRetry: `${selectedRetry}` })
+      }
+      onViewChange={selectedView => updateArgs({ view: selectedView })}
+      pipelineRun={pipelineRunWithMinimalStatus}
+      taskRuns={[taskRun, taskRunWithRetries]}
+      tasks={[task]}
+    />
+  );
 };
 
 export const Empty = {};

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,6 +17,7 @@ import TaskTree from './TaskTree';
 
 export default {
   args: {
+    selectedRetry: '',
     selectedStepId: undefined,
     selectedTaskId: undefined,
     skippedTasks: [{ name: 'Task 2' }],
@@ -54,6 +55,22 @@ export default {
         status: {
           conditions: [
             { reason: 'Failed', status: 'False', type: 'Succeeded' }
+          ],
+          retriesStatus: [
+            {
+              conditions: [
+                {
+                  reason: 'Failed',
+                  status: 'False',
+                  type: 'Succeeded'
+                }
+              ],
+              steps: [
+                { name: 'step 1', terminated: { reason: 'Error' } },
+                // The next step will be displayed as 'Not run' by the Dashboard
+                { name: 'step 2', terminated: { reason: 'Error' } }
+              ]
+            }
           ],
           steps: [
             { name: 'step 1', terminated: { reason: 'Error' } },
@@ -98,6 +115,9 @@ export const Default = {
     return (
       <TaskTree
         {...args}
+        onRetryChange={selectedRetry =>
+          updateArgs({ selectedRetry: `${selectedRetry}` })
+        }
         onSelect={({ selectedStepId: stepId, selectedTaskId: taskId }) => {
           updateArgs({ selectedStepId: stepId, selectedTaskId: taskId });
         }}
