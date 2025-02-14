@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import { fireEvent, waitFor } from '@testing-library/react';
-import Log from './Log';
+import Log, { logFormatRegex } from './Log';
 import { render } from '../../utils/test';
 
 describe('Log', () => {
@@ -348,4 +348,32 @@ describe('Log', () => {
     );
     await waitFor(() => getByText(/step failed/i));
   });
+
+  it.each([
+    {
+      label: 'UTC with second fractions',
+      line: '2025-02-14T15:07:17.123456789Z'
+    },
+    {
+      label: 'with timezone offset',
+      line: '2025-02-14T15:07:17.123456789-05:00'
+    },
+    { label: 'without second fractions', line: '2025-02-14T15:07:17Z' },
+    {
+      label: 'without second fractions and with timezone offset',
+      line: '2025-02-14T15:07:17+01:00'
+    },
+    {
+      label: 'without seconds',
+      line: '2025-02-14T15:07Z'
+    }
+  ])(
+    'logFormatRegex detects supported timestamp formats - $line',
+    ({ line }) => {
+      const {
+        groups: { timestamp }
+      } = logFormatRegex.exec(line);
+      expect(timestamp).toEqual(line);
+    }
+  );
 });

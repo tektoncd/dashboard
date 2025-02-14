@@ -31,8 +31,8 @@ import LogFormat from '../LogFormat';
 const itemSize = 16; // This should be kept in sync with the line-height in SCSS
 const defaultHeight = itemSize * 100 + itemSize / 2;
 
-const logFormatRegex =
-  /^((?<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3,9}Z)\s?)?(::(?<command>group|endgroup|error|warning|info|notice|debug)::)?(?<message>.*)?$/s;
+export const logFormatRegex =
+  /^((?<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?(.\d{3,9})?(Z|[+-]\d{2}:\d{2}))\s?)?(::(?<command>group|endgroup|error|warning|info|notice|debug)::)?(?<message>.*)?$/s;
 
 function LogsFilteredNotification({ displayedLogLines, totalLogLines }) {
   const intl = useIntl();
