@@ -26,7 +26,7 @@
   "dependencies": {
     "@carbon/react": "^1.76.0",
     "@codemirror/legacy-modes": "^6.4.3",
-    "@tanstack/react-query": "^4.36.1",
+    "@tanstack/react-query": "^5.66.5",
     "@tektoncd/dashboard-components": "*",
     "@tektoncd/dashboard-utils": "*",
     "@uiw/react-codemirror": "^4.23.8",
