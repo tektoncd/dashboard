@@ -43,7 +43,8 @@ updates:
     - "ok-to-test"
     - "go"
   - package-ecosystem: "npm"
-    directory: "**/*"
+    directories:
+      - "**/*"
     schedule:
       interval: "weekly"
       day: "sunday"
