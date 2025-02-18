@@ -1,0 +1,15 @@
+import{a as m}from"./chunk-D5ZWXAHU-BihnyLEY.js";import{j as o}from"./jsx-runtime-B0wN4eWF.js";import{u as l}from"./index-CbuwW4_d.js";import{M as c}from"./Modal-BjzrrbgF.js";import{T as u}from"./Table-C546lFM3.js";import"./v4-CtRu48qb.js";import"./index-DS1rTf2F.js";import"./index-BLsgEXh-.js";import"./usePrefix-DVhi0s40.js";import"./index-Cn2DnnuS.js";import"./index-CTl86HqP.js";import"./index-yR6ZHKQV.js";import"./index-CvulwabO.js";import"./index-7UTgOZSF.js";import"./Button-DXQXyzWq.js";import"./index-mhCn_TNf.js";import"./Tooltip-wylFaEsh.js";import"./index-DN2bqo_D.js";import"./keys-fZP-1wUt.js";import"./events-OVwOsPzJ.js";import"./bucket-6-KyTwAsSL.js";import"./Icon-Dlg6_ItC.js";import"./bucket-3-igrvqujs.js";import"./requiredIfGivenPropIsTruthy-CU7JwK8h.js";import"./wrapFocus-Cvvm2ck9.js";import"./noopFn-g4z370MD.js";import"./Text-9nRGETFr.js";import"./debounce-DBudwqRe.js";import"./index-DhdmMkKS.js";import"./bucket-0-B3IHR_5I.js";import"./mergeRefs-CTUecegF.js";import"./index-CLdR1d0e.js";import"./bucket-12-DVDhO4p7.js";import"./Search-C-UQoaUd.js";import"./FormContext-D3yeToZb.js";import"./bucket-14-DcJR6G3p.js";import"./bucket-15-DETD0dec.js";import"./index-CfoIBI3E.js";const i=({onClose:s,onSubmit:n,kind:r,resources:d,showNamespace:p=!0})=>{const e=l();return o.jsxs(c,{className:"tkn--delete-modal",open:!0,primaryButtonText:e.formatMessage({id:"dashboard.actions.deleteButton",defaultMessage:"Delete"}),secondaryButtonText:e.formatMessage({id:"dashboard.modal.cancelButton",defaultMessage:"Cancel"}),modalHeading:e.formatMessage({id:"dashboard.deleteResources.heading",defaultMessage:"Delete {kind}"},{kind:r}),onSecondarySubmit:s,onRequestSubmit:n,onRequestClose:s,danger:!0,children:[o.jsx("p",{children:e.formatMessage({id:"dashboard.deleteResources.confirm",defaultMessage:"Are you sure you want to delete these {kind}?"},{kind:r})}),o.jsx(u,{headers:[{key:"name",header:e.formatMessage({id:"dashboard.tableHeader.name",defaultMessage:"Name"})},p?{key:"namespace",header:"Namespace"}:null].filter(Boolean),rows:d.map(t=>({id:t.metadata.uid,name:t.metadata.name,namespace:t.metadata.namespace})),size:"sm"})]})};i.__docgenInfo={description:"",methods:[],displayName:"DeleteModal",props:{showNamespace:{defaultValue:{value:"true",computed:!1},required:!1}}};const Z={component:i,title:"DeleteModal"},a={args:{kind:"Pipelines",onClose:m("onClose"),onSubmit:m("onSubmit"),resources:[{metadata:{name:"my-pipeline",namespace:"my-namespace",uid:"700c9915-65f0-4309-b7e0-54d2e4dc8bea"}}],showNamespace:!1}};a.parameters={...a.parameters,docs:{...a.parameters?.docs,source:{originalSource:`{
+  args: {
+    kind: 'Pipelines',
+    onClose: action('onClose'),
+    onSubmit: action('onSubmit'),
+    resources: [{
+      metadata: {
+        name: 'my-pipeline',
+        namespace: 'my-namespace',
+        uid: '700c9915-65f0-4309-b7e0-54d2e4dc8bea'
+      }
+    }],
+    showNamespace: false
+  }
+}`,...a.parameters?.docs?.source}}};const $=["Default"];export{a as Default,$ as __namedExportsOrder,Z as default};

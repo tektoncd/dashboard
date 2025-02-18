@@ -1,0 +1,1 @@
+const c=r=>function(e){for(var n=arguments.length,f=new Array(n>1?n-1:0),t=1;t<n;t++)f[t-1]=arguments[t];for(let o=0;o<r.length&&!e.defaultPrevented;o++){const a=r[o];typeof a=="function"&&a(e,...f)}};export{c};

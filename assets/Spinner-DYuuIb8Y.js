@@ -1,0 +1,1 @@
+import{j as r}from"./jsx-runtime-B0wN4eWF.js";import{R as o}from"./bucket-14-DcJR6G3p.js";function a({children:e,className:s,size:n=20}){return r.jsx(o,{size:n,className:`tkn--spinner ${s}`,children:e})}a.__docgenInfo={description:"",methods:[],displayName:"Spinner",props:{size:{defaultValue:{value:"20",computed:!1},required:!1}}};export{a as S};

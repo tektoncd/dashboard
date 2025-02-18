@@ -1,0 +1,1 @@
+const e="tkn-dashboard:skipped",t={CLUSTER_TASK:"tekton.dev/clusterTask",DASHBOARD_DISPLAY_NAME:"dashboard.tekton.dev/displayName",MEMBER_OF:"tekton.dev/memberOf",PIPELINE:"tekton.dev/pipeline",PIPELINE_TASK:"tekton.dev/pipelineTask",TASK:"tekton.dev/task"};export{e as d,t as l};
