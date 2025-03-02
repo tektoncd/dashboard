@@ -29,7 +29,7 @@
     "@tanstack/react-query": "^4.36.1",
     "@tektoncd/dashboard-components": "*",
     "@tektoncd/dashboard-utils": "*",
-    "@uiw/react-codemirror": "^4.23.8",
+    "@uiw/react-codemirror": "^4.23.9",
     "git-url-parse": "^16.0.1",
     "js-yaml": "^4.1.0",
     "lodash.clonedeep": "^4.5.0",
