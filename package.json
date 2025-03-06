@@ -71,7 +71,7 @@
     "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^4.6.2",
-    "eslint-plugin-storybook": "^0.11.3",
+    "eslint-plugin-storybook": "^0.11.4",
     "jsdom": "^26.0.0",
     "lodash.difference": "^4.5.0",
     "lodash.omit": "^4.5.0",
