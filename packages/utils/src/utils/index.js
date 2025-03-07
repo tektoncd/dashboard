@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -10,14 +10,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/* eslint-disable import/extensions */
 
-import { labels as labelConstants } from './constants';
-import { getStatus } from './status';
+// Include .js extension in imports/exports to solve ES Modules and CommonJS
+// problem when importing dashboard-utils
+import { labels as labelConstants } from './constants.js';
+import { getStatus } from './status.js';
 
-export * from './constants';
-export * from './hooks';
-export { paths, urls } from './router';
-export { getStatus } from './status';
+export * from './constants.js';
+export * from './hooks.js';
+export { paths, urls } from './router.js';
+export { getStatus } from './status.js';
 
 export const ALL_NAMESPACES = '*';
 
