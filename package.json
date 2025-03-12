@@ -1,6 +1,6 @@
 {
   "name": "@tektoncd/dashboard",
-  "version": "0.1.0",
+  "version": "0.55.0-alpha.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -21,7 +21,9 @@
     "storybook": "storybook dev -p 5000",
     "storybook:build": "storybook build -o storybook-static && touch storybook-static/.nojekyll",
     "storybook:deploy": "npx gh-pages --dist ./storybook-static --dotfiles --no-history --message \"Deploy Storybook to GitHub Pages\"",
-    "test": "vitest"
+    "test": "vitest",
+    "version": "npm --workspaces version --preid alpha $npm_new_version && git add packages/",
+    "version:packages": "npm version --preid alpha -m \"Publish v%s of the @tektoncd/dashboard-* packages\""
   },
   "dependencies": {
     "@carbon/react": "^1.77.0",
