@@ -162,15 +162,25 @@ To update the Dashboard release on the [`dogfooding` cluster](https://dashboard.
 
 To release a new version of the npm packages, e.g. `@tektoncd/dashboard-components`:
 
-1. ensure you have checked out the latest change and that you're at the root of the project
-1. `npm --workspaces version <version>` where version is a valid semver string, e.g. `0.24.1-alpha.0`
-    - Note: On Windows set the npm script-shell to git-bash, e.g.: `npm config set script-shell "C:\\Program Files\\Git\\bin\\bash.exe"`
-1. commit the change and open a PR
-   - Note: both the PR title and commit message should use the following format:
+1. Prereqs:
+    1. Ensure you are at the root of the project
+    1. Check out the HEAD of the branch you wish to publish from, typically `main`
+    1. Verify that your working directory is clean
+    - Note: This process will intentionally exit early if your git working directory is not clean
+1. `npm run version:packages -- <type>` where type is one of `prerelease` or `preminor`
+    - `prerelease` will bump `0.24.1-alpha.0` to `0.24.1-alpha.1`
+    - `preminor` will bump `0.24.1-alpha.2` to `0.25.0-alpha.0` and should be used for the first publish after a new Dashboard release
+    - Note: On Windows you may need to set the npm script-shell to git-bash, e.g.: `npm config set script-shell "C:\\Program Files\\Git\\bin\\bash.exe"`
+1. Push the change to your fork and open a PR
+   - The command above should have created a commit with the correct message format and version
      > `Publish v<version> of the @tektoncd/dashboard-* packages`
- 
+
      e.g. `Publish v0.24.1-alpha.0 of the @tektoncd/dashboard-* packages`
-1. once the packages are published, build and publish the Storybook:
-   1. `npm run storybook:build` - optional, deploys to your fork (origin)
-   1. `npm run storybook:deploy -- --remote upstream`
-   1. verify that the updated version is available at https://tektoncd.github.io/dashboard/
+   - Use the commit message as the PR title
+1. The packages are automatically published once the PR is merged
+   - Verify there were no issues with the [publish workflow](https://github.com/tektoncd/dashboard/actions/workflows/publish.yml?query=event%3Apush+branch%3Amain)
+1. Once the packages are published, build and publish the Storybook:
+   1. `npm run storybook:build`
+   1. `npm run storybook:deploy` - optional, deploys to your fork's (origin) pages
+   1. `npm run storybook:deploy -- --remote upstream` - deploys to the `tektoncd/dashboard` repo's pages
+   1. Verify that the updated version is available at https://tektoncd.github.io/dashboard/
