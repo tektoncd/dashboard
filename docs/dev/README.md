@@ -25,7 +25,7 @@ This guide explains how to build, deploy and test the Tekton Dashboard. It cover
 In order to run the Tekton Dashboard, please make sure the requirements in [the install doc](../install.md) are met.
 
 You will also need the following tools in order to build the Dashboard locally and deploy it:
-1. [`go`](https://golang.org/doc/install): The language the Tekton Dashboard backend is built in. `go` version 1.22.x
+1. [`go`](https://golang.org/doc/install): The language the Tekton Dashboard backend is built in, see `go.mod` for the version expected
 1. [`git`](https://help.github.com/articles/set-up-git/): For source control
 1. [Node.js & npm](https://nodejs.org/): For building and running the frontend locally. See [`.nvmrc`](/.nvmrc) for version, or run `nvm use`
 1. [`ko`](https://github.com/google/ko): For building the backend locally. `ko` version v0.15.x
