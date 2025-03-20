@@ -115,8 +115,6 @@ linters:
   - style
   - test
   - unused
-output:
-  uniq-by-line: false
 issues:
   exclude-dirs:
   - vendor
@@ -126,6 +124,7 @@ issues:
   # Enable off-by-default rules for revive requiring that all exported elements have a properly formatted comment.
   - EXC0012 # https://golangci-lint.run/usage/false-positives/#exc0012
   - EXC0014 # https://golangci-lint.run/usage/false-positives/#exc0014
+  uniq-by-line: false
 run:
   issues-exit-code: 1
   build-tags:
