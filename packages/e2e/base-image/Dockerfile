@@ -16,7 +16,7 @@
 ARG CHROME_VERSION='130.0.6723.69-1'
 ARG NODE_VERSION='20.18.0'
 
-FROM cypress/factory@sha256:ee5b4993d3b6b753b722db4805b5b1fa98a0e74263d1f3d390ca254204524090
+FROM cypress/factory@sha256:4964ba58211854bd41b4686ed8e5ad3d17e28df509698c715477c3aac7af3c35
 
 LABEL maintainer "Tekton Authors <tekton-dev@googlegroups.com>"
 LABEL org.opencontainers.image.source=https://github.com/tektoncd/dashboard
