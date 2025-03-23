@@ -45,7 +45,7 @@
     "reconnecting-websocket": "^4.4.0"
   },
   "devDependencies": {
-    "@formatjs/cli": "^6.6.1",
+    "@formatjs/cli": "^6.6.2",
     "@rollup/plugin-yaml": "^4.1.2",
     "@storybook/addon-actions": "^8.6.8",
     "@storybook/addon-essentials": "^8.6.8",
