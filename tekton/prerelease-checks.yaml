@@ -1,4 +1,4 @@
-# Copyright 2021-2024 The Tekton Authors
+# Copyright 2021-2025 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ spec:
           exit 1
         fi
     - name: check-github-release
-      image: docker.io/library/python:3.6-alpine3.9@sha256:368f69f11e002a63d587791bb9652009dbb19a85f015698eac40d687e6f4ab19
+      image: docker.io/library/python:3.6-alpine3.9@sha256:f0b2142d5280c4e14162dce011b173c161cd7ccd1f562b6d97f6d14036954e2f
       script: |
         echo "Checking GitHub release"
         PACKAGE=$(echo $(params.package) | cut -d/ -f2,3)
