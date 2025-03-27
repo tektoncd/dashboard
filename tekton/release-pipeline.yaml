@@ -1,4 +1,4 @@
-# Copyright 2019-2024 The Tekton Authors
+# Copyright 2019-2025 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -73,7 +73,12 @@ spec:
   tasks:
     - name: git-clone
       taskRef:
-        name: git-clone
+        resolver: hub
+        params:
+          - name: name
+            value: git-clone
+          - name: version
+            value: "0.7"
       workspaces:
         - name: output
           workspace: workarea
@@ -86,7 +91,16 @@ spec:
     - name: precheck
       runAfter: [git-clone]
       taskRef:
-        name: dashboard-prerelease-checks
+        resolver: git
+        params:
+          - name: org
+            value: tektoncd
+          - name: repo
+            value: dashboard
+          - name: revision
+            value: $(params.gitRevision)
+          - name: pathInRepo
+            value: tekton/prerelease-checks.yaml
       params:
         - name: package
           value: $(params.package)
@@ -101,7 +115,16 @@ spec:
     - name: build
       runAfter: [precheck]
       taskRef:
-        name: build-dashboard
+        resolver: git
+        params:
+          - name: org
+            value: tektoncd
+          - name: repo
+            value: dashboard
+          - name: revision
+            value: $(params.gitRevision)
+          - name: pathInRepo
+            value: tekton/build.yaml
       workspaces:
         - name: source
           workspace: workarea
@@ -109,7 +132,16 @@ spec:
     - name: publish-images
       runAfter: [build]
       taskRef:
-        name: publish-dashboard-release
+        resolver: git
+        params:
+          - name: org
+            value: tektoncd
+          - name: repo
+            value: dashboard
+          - name: revision
+            value: $(params.gitRevision)
+          - name: pathInRepo
+            value: tekton/publish.yaml
       params:
         - name: package
           value: $(params.package)
@@ -143,7 +175,14 @@ spec:
     - name: publish-to-bucket
       runAfter: [publish-images]
       taskRef:
-        name: gcs-upload
+        resolver: bundles
+        params:
+          - name: bundle
+            value: gcr.io/tekton-releases/catalog/upstream/gcs-upload:0.3
+          - name: name
+            value: gcs-upload
+          - name: kind
+            value: task
       workspaces:
         - name: credentials
           workspace: release-secret
@@ -164,7 +203,14 @@ spec:
           operator: in
           values: ["true"]
       taskRef:
-        name: gcs-upload
+        resolver: bundles
+        params:
+          - name: bundle
+            value: gcr.io/tekton-releases/catalog/upstream/gcs-upload:0.3
+          - name: name
+            value: gcs-upload
+          - name: kind
+            value: task
       workspaces:
         - name: credentials
           workspace: release-secret
@@ -199,8 +245,13 @@ spec:
         steps:
           - name: create-results
             image: docker.io/library/alpine:3.20.3@sha256:beefdbd8a1da6d2915566fde36db9db0b524eb737fc57cd1367effd16dc0d06d
+            env:
+              - name: RELEASE_BUCKET
+                value: $(params.releaseBucket)
+              - name: VERSION_TAG
+                value: $(params.versionTag)
             script: |
-              BASE_URL=$(echo "$(params.releaseBucket)/previous/$(params.versionTag)")
+              BASE_URL=$(echo "${RELEASE_BUCKET}/previous/${VERSION_TAG}")
               # If the bucket is in the gs:// return the corresponding public https URL
               BASE_URL=$(echo ${BASE_URL} | sed 's,gs://,https://storage.googleapis.com/,g')
               echo "${BASE_URL}/release.yaml" > $(results.release.path)

@@ -29,16 +29,24 @@ spec:
   workspaces:
     - name: source-to-release
       description: The workspace where the repo has been cloned
+  stepTemplate:
+    env:
+      - name: PACKAGE
+        value: $(params.package)
+      - name: VERSION_TAG
+        value: $(params.versionTag)
+      - name: RELEASE_BUCKET
+        value: $(params.releaseBucket)
   steps:
     - name: check-git-tag
       image: ghcr.io/wolfi-dev/git:alpine@sha256:fed7036736d40fe460aa51f4df25b8862c6a5b137cdcceef80fc26a9bbb0386a
       script: |
         echo "Checking git tag"
         # Look for the tag in the list of tags
-        git ls-remote --tags https://$(params.package) | \
-          grep "$(params.versionTag)$" || exit 0
+        git ls-remote --tags https://${PACKAGE} | \
+          grep "${VERSION_TAG}$" || exit 0
         # If the version was found fail
-        echo "Version $(params.versionTag) already tagged for $(params.package)"
+        echo "Version ${VERSION_TAG} already tagged for ${PACKAGE}"
         exit 1
     - name: check-release-file
       image: gcr.io/google.com/cloudsdktool/cloud-sdk:515.0.0@sha256:c9052ef7d508207268fcf93a75f9ae0637f40559d1e373518494ec3acd16c4c2
@@ -46,8 +54,8 @@ spec:
         echo "Checking release file"
         # Check if the release file already exists
         # gsutil retuns 1 if the object was not found
-        if gsutil stat $(params.releaseBucket)/previous/$(params.versionTag)/release.yaml; then
-          echo "Release file already exists for $(params.versionTag) in the release bucket,"
+        if gsutil stat ${RELEASE_BUCKET}/previous/${VERSION_TAG}/release.yaml; then
+          echo "Release file already exists for ${VERSION_TAG} in the release bucket,"
           echo "but no git tag was found. To continue remove the release file first."
           exit 1
         fi
@@ -55,16 +63,16 @@ spec:
       image: docker.io/library/python:3.6-alpine3.9@sha256:f0b2142d5280c4e14162dce011b173c161cd7ccd1f562b6d97f6d14036954e2f
       script: |
         echo "Checking GitHub release"
-        PACKAGE=$(echo $(params.package) | cut -d/ -f2,3)
+        PACKAGE=$(echo ${PACKAGE} | cut -d/ -f2,3)
         # Check if the release exists on GitHub
         wget -q -O- --header 'Accept: application/vnd.github.v3+json' \
           https://api.github.com/repos/${PACKAGE}/releases | \
           python -c 'import sys; import json; print("\n".join([x["tag_name"] for x in json.load(sys.stdin)]))' | \
-          grep "$(params.versionTag)$" || exit 0
-        echo "Release $(params.versionTag) already exists for $(params.package)"
+          grep "${VERSION_TAG}$" || exit 0
+        echo "Release ${VERSION_TAG} already exists for ${PACKAGE}"
         exit 1
     - name: success-confirmation
       image: docker.io/library/alpine:3.20.3@sha256:beefdbd8a1da6d2915566fde36db9db0b524eb737fc57cd1367effd16dc0d06d
       script: |
-        echo "All pre-release checks for $(params.package) @ $(params.versionTag) were successful"
+        echo "All pre-release checks for ${PACKAGE} @ ${VERSION_TAG} were successful"
         echo "Happy releasing 😺"
