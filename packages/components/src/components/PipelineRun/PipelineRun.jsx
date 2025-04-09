@@ -49,7 +49,6 @@ export default /* istanbul ignore next */ function PipelineRun({
   forceLogPolling,
   getLogsToolbar,
   handleTaskSelected = /* istanbul ignore next */ () => {},
-  icon,
   loading,
   logLevels,
   maximizedLogsContainer,
@@ -232,7 +231,6 @@ export default /* istanbul ignore next */ function PipelineRun({
     return (
       <>
         <RunHeader
-          icon={icon}
           lastTransitionTime={lastTransitionTime}
           loading={loading}
           pipelineRun={pipelineRun}
@@ -315,7 +313,6 @@ export default /* istanbul ignore next */ function PipelineRun({
   return (
     <>
       <RunHeader
-        icon={icon}
         lastTransitionTime={lastTransitionTime}
         loading={loading}
         message={pipelineRunStatusMessage}
