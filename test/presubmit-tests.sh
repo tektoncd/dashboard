@@ -64,6 +64,11 @@ function post_build_tests() {
 }
 
 function get_node() {
+  if [ "$GITHUB_ACTIONS" == "true" ]; then
+    echo "Running in GitHub Actions, skipping nvm / Node.js install script"
+    return
+  fi
+
   echo "Installing Node.js"
   # nvm v0.40.1
   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/179d45050be0a71fd57591b0ed8aedf9b177ba10/install.sh | bash
