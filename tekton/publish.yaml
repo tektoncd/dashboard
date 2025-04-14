@@ -99,7 +99,7 @@ spec:
         cp ${DOCKER_CONFIG} /workspace/docker-config.json
 
     - name: run-ko
-      image: ghcr.io/tektoncd/plumbing/ko-gcloud:v20250413-cc5a88a24e@sha256:65383f08ec8565a145734d19dab62892bb5cedaeb94d65553f7a2609e22a4a06
+      image: ghcr.io/tektoncd/plumbing/ko-gcloud:v20250414-cc5a88a24e@sha256:11e855e980ffa78d9d5b8ec057bbfcb92e332edcf7229175e9a109f0cbd52d19
       env:
         - name: KO_DOCKER_REPO
           value: $(params.imageRegistry)/$(params.imageRegistryPath)
