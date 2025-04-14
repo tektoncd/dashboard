@@ -91,16 +91,15 @@ jobs:
         # protection config. Map name to corresponding version for use in steps
         include:
           - k8s-name: k8s-oldest
-            k8s-version: v1.29.x
+            k8s-version: v1.31.x
           - k8s-name: k8s-plus-one
-            k8s-version: v1.30.x
+            k8s-version: v1.32.x
 
     env:
+      ARTIFACTS: ${{ github.workspace }}/artifacts
       GOPATH: ${{ github.workspace }}
       GO111MODULE: on
-      KO_DOCKER_REPO: registry.local:5000/tekton
-      CLUSTER_DOMAIN: c${{ github.run_id }}.local
-      ARTIFACTS: ${{ github.workspace }}/artifacts
+      KO_DOCKER_REPO: kind.local
 
     steps:
       - name: Harden runner
@@ -113,16 +112,6 @@ jobs:
         with:
           path: ${{ github.workspace }}/src/github.com/tektoncd/dashboard
 
-      - name: Checkout setup-kind.sh
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          repository: tektoncd/pipeline
-          ref: d306d649df2dbd2badaba6a90459efd05c753d2f
-          path: scripts
-          sparse-checkout: |
-            hack/setup-kind.sh
-          sparse-checkout-cone-mode: false
-
       - name: Set up Go
         uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b # v5.4.0
         with:
@@ -131,11 +120,17 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./
+        env:
+          GO111MODULE: "on"
         run: |
           echo '::group::install ko'
           curl -L https://github.com/ko-build/ko/releases/download/v0.15.4/ko_0.15.4_Linux_x86_64.tar.gz | tar xzf - ko
           chmod +x ./ko
           sudo mv ko /usr/local/bin
+          echo '::endgroup::'
+
+          echo '::group::install kind'
+          go install sigs.k8s.io/kind@v0.27.0
           echo '::endgroup::'
 
           echo '::group::create required folders'
@@ -148,14 +143,10 @@ jobs:
         working-directory: ${{ github.workspace }}/src/github.com/tektoncd/dashboard
         env:
           DASHBOARD_MODE: ${{ matrix.dashboard-mode }}
+          SKIP_INITIALIZE: true
         run: |
-          ${{ github.workspace }}/scripts/hack/setup-kind.sh \
-            --registry-url $(echo ${KO_DOCKER_REPO} | cut -d'/' -f 1) \
-            --cluster-suffix c${{ github.run_id }}.local \
-            --nodes 3 \
+          ./test/e2e-tests-prow.sh \
             --k8s-version ${{ matrix.k8s-version }} \
-            --e2e-script ./test/e2e-tests-prow.sh \
-            --e2e-env ./test/e2e-tests-kind-prow.env
 
       - name: Upload test results
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
