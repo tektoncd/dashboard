@@ -83,10 +83,6 @@ function get_node() {
 function node_npm_install() {
   local failed=0
   get_node
-  echo "Configuring npm"
-  mkdir ~/.npm-global
-  npm config set prefix '~/.npm-global'
-  export PATH=$PATH:$HOME/.npm-global/bin
   echo "Installing package dependencies"
   npm ci || failed=1 # similar to `npm install` but ensures all versions from lock file
   return ${failed}
