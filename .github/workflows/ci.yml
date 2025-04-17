@@ -42,14 +42,6 @@ jobs:
           cache-dependency-path: "${{ github.workspace }}/src/github.com/tektoncd/dashboard/go.sum"
           go-version-file: "${{ github.workspace }}/src/github.com/tektoncd/dashboard/go.mod"
 
-      - name: Set up Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
-        with:
-          cache: npm
-          cache-dependency-path: src/github.com/tektoncd/dashboard/package-lock.json
-          node-version-file: src/github.com/tektoncd/dashboard/.nvmrc
-          registry-url: 'https://registry.npmjs.org/'
-
       - name: Install dependencies
         run: |
           echo "${GOPATH}/bin" >> "$GITHUB_PATH"
