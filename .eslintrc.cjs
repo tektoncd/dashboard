@@ -17,7 +17,11 @@ module.exports = {
     node: true
   },
   extends: [
-    'airbnb',
+    'eslint:recommended',
+    'plugin:import/recommended',
+    'plugin:react/recommended',
+    // 'plugin:react-hooks/recommended-legacy',
+    'plugin:jsx-a11y/recommended',
     'plugin:prettier/recommended',
     'plugin:cypress/recommended',
     'plugin:storybook/recommended',
@@ -46,7 +50,7 @@ module.exports = {
     ecmaFeatures: {
       jsx: true
     },
-    ecmaVersion: 2022,
+    ecmaVersion: 'latest',
     sourceType: 'module'
   },
   plugins: ['notice', 'react', 'formatjs'],
@@ -67,7 +71,11 @@ module.exports = {
     'import/no-named-as-default-member': 'off',
     'import/no-unresolved': [
       'error',
-      { ignore: ['\\.svg\\?react$', '\\.txt\\?raw$'] }
+      {
+        caseSensitive: true,
+        commonjs: true,
+        ignore: ['\\.svg\\?react$', '\\.txt\\?raw$']
+      }
     ],
     'import/prefer-default-export': 'off',
     'jsx-a11y/anchor-is-valid': 'off',
@@ -108,5 +116,16 @@ module.exports = {
         ignoreDeclarationSort: true
       }
     ]
+  },
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx']
+      }
+    },
+    'import/extensions': ['.js', '.jsx'],
+    react: {
+      version: 'detect'
+    }
   }
 };
