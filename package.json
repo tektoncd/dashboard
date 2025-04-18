@@ -32,7 +32,7 @@
     "@tektoncd/dashboard-components": "*",
     "@tektoncd/dashboard-utils": "*",
     "@uiw/react-codemirror": "^4.23.10",
-    "git-url-parse": "^16.0.3",
+    "git-url-parse": "^16.1.0",
     "js-yaml": "^4.1.0",
     "lodash.clonedeep": "^4.5.0",
     "lodash.keyby": "^4.6.0",
