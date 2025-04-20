@@ -80,7 +80,7 @@ spec:
     - name: IMAGES
   steps:
     - name: container-registry-auth
-      image: gcr.io/go-containerregistry/crane:debug@sha256:94f61956845714bea3b788445454ae4827f49a90dcd9dac28255c4cccb6220ad
+      image: gcr.io/go-containerregistry/crane:debug@sha256:fbdf6d55c5ae90d9ae637b9bd9f10119496fdf18a3b5f9cd3078ae6044161c18
       script: |
         #!/busybox/sh
         set -ex
@@ -99,7 +99,7 @@ spec:
         cp ${DOCKER_CONFIG} /workspace/docker-config.json
 
     - name: run-ko
-      image: ghcr.io/tektoncd/plumbing/ko-gcloud:v20250414-cc5a88a24e@sha256:11e855e980ffa78d9d5b8ec057bbfcb92e332edcf7229175e9a109f0cbd52d19
+      image: ghcr.io/tektoncd/plumbing/ko-gcloud:v20250420-f93e51e76d@sha256:e0d1086168fac6b78ab05f6020f15c0a3a1b5dec4b600e49a4ce221045dc57a2
       env:
         - name: KO_DOCKER_REPO
           value: $(params.imageRegistry)/$(params.imageRegistryPath)
@@ -175,7 +175,7 @@ spec:
           ${PRESERVE_IMPORT_PATH} > /workspace/built_images
 
     - name: tag-images
-      image: gcr.io/go-containerregistry/crane:debug@sha256:94f61956845714bea3b788445454ae4827f49a90dcd9dac28255c4cccb6220ad
+      image: gcr.io/go-containerregistry/crane:debug@sha256:fbdf6d55c5ae90d9ae637b9bd9f10119496fdf18a3b5f9cd3078ae6044161c18
       script: |
         #!/busybox/sh
         set -ex
