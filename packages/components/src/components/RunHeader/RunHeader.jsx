@@ -19,11 +19,12 @@ import FormattedDate from '../FormattedDate';
 
 export default function RunHeader({
   children,
+  displayRunHeader = true,
   lastTransitionTime,
   loading,
   message,
-  runName,
   reason,
+  runName,
   status,
   triggerHeader
 }) {
@@ -55,48 +56,55 @@ export default function RunHeader({
         return (
           runName && (
             <>
-              <h1 className="tkn--run-header--heading">
-                <div className="tkn--run-name" title={runName}>
-                  {runName}
-                </div>
-                <span className="tkn--time">
-                  {lastTransitionTime
-                    ? intl.formatMessage(
-                        {
-                          id: 'dashboard.lastUpdated',
-                          defaultMessage: 'Last updated {time}'
-                        },
-                        {
-                          time: (
-                            <FormattedDate date={lastTransitionTime} relative />
+              {displayRunHeader && (
+                <>
+                  <h1 className="tkn--run-header--heading">
+                    <div className="tkn--run-name" title={runName}>
+                      {runName}
+                    </div>
+                    <span className="tkn--time">
+                      {lastTransitionTime
+                        ? intl.formatMessage(
+                            {
+                              id: 'dashboard.lastUpdated',
+                              defaultMessage: 'Last updated {time}'
+                            },
+                            {
+                              time: (
+                                <FormattedDate
+                                  date={lastTransitionTime}
+                                  relative
+                                />
+                              )
+                            }
                           )
-                        }
-                      )
-                    : null}
-                </span>
-                {children}
-              </h1>
-              <div className="tkn--status">
-                <span className="tkn--status-label">{reason}</span>
-                {message && (
-                  <>
-                    <span className="tkn--status-message" title={message}>
-                      {message}
+                        : null}
                     </span>
-                    <CopyButton
-                      feedback={intl.formatMessage({
-                        id: 'dashboard.clipboard.copied',
-                        defaultMessage: 'Copied!'
-                      })}
-                      iconDescription={intl.formatMessage({
-                        id: 'dashboard.clipboard.copyStatusMessage',
-                        defaultMessage: 'Copy status message to clipboard'
-                      })}
-                      onClick={copyStatusMessage}
-                    />
-                  </>
-                )}
-              </div>
+                    {children}
+                  </h1>
+                  <div className="tkn--status">
+                    <span className="tkn--status-label">{reason}</span>
+                    {message && (
+                      <>
+                        <span className="tkn--status-message" title={message}>
+                          {message}
+                        </span>
+                        <CopyButton
+                          feedback={intl.formatMessage({
+                            id: 'dashboard.clipboard.copied',
+                            defaultMessage: 'Copied!'
+                          })}
+                          iconDescription={intl.formatMessage({
+                            id: 'dashboard.clipboard.copyStatusMessage',
+                            defaultMessage: 'Copy status message to clipboard'
+                          })}
+                          onClick={copyStatusMessage}
+                        />
+                      </>
+                    )}
+                  </div>
+                </>
+              )}
               {triggerHeader}
             </>
           )
