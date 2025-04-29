@@ -42,6 +42,7 @@ function getPipelineTask({ pipeline, pipelineRun, selectedTaskId, taskRun }) {
 
 export default /* istanbul ignore next */ function PipelineRun({
   customNotification,
+  displayRunHeader,
   enableLogAutoScroll,
   enableLogScrollButtons,
   error,
@@ -49,6 +50,7 @@ export default /* istanbul ignore next */ function PipelineRun({
   forceLogPolling,
   getLogsToolbar,
   handleTaskSelected = /* istanbul ignore next */ () => {},
+  handlePipelineRunInfo = () => {},
   loading,
   logLevels,
   maximizedLogsContainer,
@@ -59,6 +61,7 @@ export default /* istanbul ignore next */ function PipelineRun({
   pod,
   pollingInterval,
   runActions,
+  runStatus,
   selectedRetry,
   selectedStepId = null,
   selectedTaskId = null,
@@ -227,10 +230,21 @@ export default /* istanbul ignore next */ function PipelineRun({
     status: pipelineRunStatus
   } = getStatus(pipelineRun);
 
+  if (pipelineRun) {
+    handlePipelineRunInfo({
+      message: pipelineRunStatusMessage,
+      pipelineRunName,
+      reason: pipelineRunReason,
+      runStatus,
+      status: pipelineRunStatus
+    });
+  }
+
   if (pipelineRunError) {
     return (
       <>
         <RunHeader
+          displayRunHeader={displayRunHeader}
           lastTransitionTime={lastTransitionTime}
           loading={loading}
           pipelineRun={pipelineRun}
@@ -313,6 +327,7 @@ export default /* istanbul ignore next */ function PipelineRun({
   return (
     <>
       <RunHeader
+        displayRunHeader={displayRunHeader}
         lastTransitionTime={lastTransitionTime}
         loading={loading}
         message={pipelineRunStatusMessage}
