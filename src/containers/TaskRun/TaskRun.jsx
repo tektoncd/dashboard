@@ -49,7 +49,7 @@ import {
   useIsReadOnly,
   usePod,
   useSelectedNamespace,
-  useTaskByKind,
+  useTask,
   useTaskRun
 } from '../../api';
 import NotFound from '../NotFound';
@@ -128,9 +128,8 @@ export function TaskRunContainer({
     namespace
   });
 
-  const { data: task, isInitialLoading: isLoadingTask } = useTaskByKind(
+  const { data: task, isInitialLoading: isLoadingTask } = useTask(
     {
-      kind: taskRun?.spec.taskRef?.kind,
       name: taskRun?.spec.taskRef?.name,
       namespace
     },

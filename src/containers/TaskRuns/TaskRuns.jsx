@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -46,7 +46,7 @@ import {
   useTaskRuns
 } from '../../api';
 
-const { CLUSTER_TASK, TASK } = labels;
+const { TASK } = labels;
 
 /* istanbul ignore next */
 function TaskRuns() {
@@ -70,14 +70,8 @@ function TaskRuns() {
   const statusFilter = getStatusFilter(location);
 
   const taskFilter = filters.find(f => f.indexOf(`${TASK}=`) !== -1) || '';
-  const clusterTaskFilter =
-    filters.find(f => f.indexOf(`${CLUSTER_TASK}=`) !== -1) || '';
-  const kind = clusterTaskFilter ? 'ClusterTask' : 'Task';
 
-  const taskName =
-    kind === 'ClusterTask'
-      ? clusterTaskFilter.replace(`${CLUSTER_TASK}=`, '')
-      : taskFilter.replace(`${TASK}=`, '');
+  const taskName = taskFilter.replace(`${TASK}=`, '');
 
   const setStatusFilter = getStatusFilterHandler({ location, navigate });
 
@@ -267,10 +261,9 @@ function TaskRuns() {
         {
           onClick: () => {
             let queryString;
-            if (namespace !== ALL_NAMESPACES || kind !== 'Task') {
+            if (namespace !== ALL_NAMESPACES) {
               queryString = new URLSearchParams({
                 ...(namespace !== ALL_NAMESPACES && { namespace }),
-                ...(kind && { kind }),
                 ...(taskName && { taskName })
               }).toString();
             }

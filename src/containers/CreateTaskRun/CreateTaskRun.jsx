@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2024 The Tekton Authors
+Copyright 2020-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -18,7 +18,6 @@ import keyBy from 'lodash.keyby';
 import yaml from 'js-yaml';
 import {
   Button,
-  Dropdown,
   Form,
   FormGroup,
   InlineNotification,
@@ -27,7 +26,6 @@ import {
 import {
   ALL_NAMESPACES,
   generateId,
-  getTranslateWithId,
   resourceNameRegex,
   urls,
   useTitleSync
@@ -35,7 +33,6 @@ import {
 import { KeyValueList, Loading } from '@tektoncd/dashboard-components';
 import { useIntl } from 'react-intl';
 
-import ClusterTasksDropdown from '../ClusterTasksDropdown';
 import NamespacesDropdown from '../NamespacesDropdown';
 import ServiceAccountsDropdown from '../ServiceAccountsDropdown';
 import TasksDropdown from '../TasksDropdown';
@@ -45,21 +42,17 @@ import {
   generateNewTaskRunPayload,
   getTaskRunPayload,
   useSelectedNamespace,
-  useTaskByKind,
+  useTask,
   useTaskRun
 } from '../../api';
 import { isValidLabel } from '../../utils';
 
 const YAMLEditor = lazy(() => import('../YAMLEditor'));
 
-const clusterTaskItem = { id: 'clustertask', text: 'ClusterTask' };
-const taskItem = { id: 'task', text: 'Task' };
-
 const initialState = {
   creating: false,
   invalidLabels: {},
   invalidNodeSelector: {},
-  kind: 'Task',
   labels: [],
   namespace: '',
   nodeSelector: [],
@@ -84,8 +77,6 @@ const initialParamsState = paramSpecs => {
   );
 };
 
-const itemToString = ({ text }) => text;
-
 function CreateTaskRun() {
   const intl = useIntl();
   const location = useLocation();
@@ -95,7 +86,6 @@ function CreateTaskRun() {
   function getTaskDetails() {
     const urlSearchParams = new URLSearchParams(location.search);
     return {
-      kind: urlSearchParams.get('kind') || 'Task',
       taskName: urlSearchParams.get('taskName') || ''
     };
   }
@@ -118,14 +108,12 @@ function CreateTaskRun() {
     return urlSearchParams.get('mode') === 'yaml';
   }
 
-  const { kind: initialTaskKind, taskName: taskRefFromDetails } =
-    getTaskDetails();
+  const { taskName: taskRefFromDetails } = getTaskDetails();
   const [
     {
       creating,
       invalidLabels,
       invalidNodeSelector,
-      kind,
       labels,
       namespace,
       nodeSelector,
@@ -141,14 +129,13 @@ function CreateTaskRun() {
     setState
   ] = useState({
     ...initialState,
-    kind: initialTaskKind || 'Task',
     namespace: getNamespace(),
     taskRef: taskRefFromDetails,
     params: initialParamsState(null)
   });
 
-  const { data: task, error: taskError } = useTaskByKind(
-    { kind, name: taskRef, namespace },
+  const { data: task, error: taskError } = useTask(
+    { name: taskRef, namespace },
     { enabled: !!taskRef }
   );
 
@@ -235,12 +222,10 @@ function CreateTaskRun() {
   }
 
   function handleClose() {
-    const { kind: taskKind, taskName } = getTaskDetails();
+    const { taskName } = getTaskDetails();
     let url = urls.taskRuns.all();
     if (taskName && namespace && namespace !== ALL_NAMESPACES) {
-      url = urls.taskRuns[
-        taskKind === 'ClusterTask' ? 'byClusterTask' : 'byTask'
-      ]({
+      url = urls.taskRuns.byTask({
         namespace,
         taskName
       });
@@ -326,7 +311,6 @@ function CreateTaskRun() {
       setState(state => ({
         ...state,
         ...initialState,
-        kind: state.kind,
         namespace: text
       }));
 
@@ -336,24 +320,6 @@ function CreateTaskRun() {
       } else {
         queryParams.delete('namespace');
       }
-      queryParams.delete('taskName');
-      const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
-      navigate(browserURL);
-    }
-  }
-
-  function handleKindChange({ selectedItem }) {
-    const { text = '' } = selectedItem || {};
-    if (text !== kind) {
-      setState(state => ({
-        ...state,
-        ...initialState,
-        kind: text
-      }));
-
-      const queryParams = new URLSearchParams(location.search);
-      queryParams.set('kind', text);
-      queryParams.delete('namespace');
       queryParams.delete('taskName');
       const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
       navigate(browserURL);
@@ -413,7 +379,6 @@ function CreateTaskRun() {
     setState(state => ({ ...state, creating: true }));
 
     createTaskRun({
-      kind,
       labels: labels.reduce((acc, { key, value }) => {
         acc[key] = value;
         return acc;
@@ -491,7 +456,6 @@ function CreateTaskRun() {
     }
 
     const taskRun = getTaskRunPayload({
-      kind,
       labels: labels.reduce((acc, { key, value }) => {
         acc[key] = value;
         return acc;
@@ -580,18 +544,6 @@ function CreateTaskRun() {
           />
         )}
         <FormGroup legendText="">
-          <Dropdown
-            id="create-taskrun--kind-dropdown"
-            titleText="Kind"
-            label=""
-            initialSelectedItem={
-              kind === 'ClusterTask' ? clusterTaskItem : taskItem
-            }
-            items={[taskItem, clusterTaskItem]}
-            itemToString={itemToString}
-            onChange={handleKindChange}
-            translateWithId={getTranslateWithId(intl)}
-          />
           <NamespacesDropdown
             id="create-taskrun--namespaces-dropdown"
             invalid={validationError && !namespace}
@@ -602,33 +554,18 @@ function CreateTaskRun() {
             selectedItem={namespace ? { id: namespace, text: namespace } : ''}
             onChange={handleNamespaceChange}
           />
-          {kind === 'Task' && (
-            <TasksDropdown
-              id="create-taskrun--tasks-dropdown"
-              namespace={namespace}
-              invalid={validationError && !taskRef}
-              invalidText={intl.formatMessage({
-                id: 'dashboard.createTaskRun.invalidTask',
-                defaultMessage: 'Task cannot be empty'
-              })}
-              selectedItem={taskRef ? { id: taskRef, text: taskRef } : ''}
-              disabled={namespace === ''}
-              onChange={handleTaskChange}
-            />
-          )}
-          {kind === 'ClusterTask' && (
-            <ClusterTasksDropdown
-              id="create-taskrun--clustertasks-dropdown"
-              namespace={namespace}
-              invalid={validationError && !taskRef}
-              invalidText={intl.formatMessage({
-                id: 'dashboard.createTaskRun.invalidTask',
-                defaultMessage: 'Task cannot be empty'
-              })}
-              selectedItem={taskRef ? { id: taskRef, text: taskRef } : ''}
-              onChange={handleTaskChange}
-            />
-          )}
+          <TasksDropdown
+            id="create-taskrun--tasks-dropdown"
+            namespace={namespace}
+            invalid={validationError && !taskRef}
+            invalidText={intl.formatMessage({
+              id: 'dashboard.createTaskRun.invalidTask',
+              defaultMessage: 'Task cannot be empty'
+            })}
+            selectedItem={taskRef ? { id: taskRef, text: taskRef } : ''}
+            disabled={namespace === ''}
+            onChange={handleTaskChange}
+          />
         </FormGroup>
         <FormGroup legendText="">
           <KeyValueList

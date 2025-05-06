@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -19,8 +19,6 @@ import { getAPIWrapper, getQueryClient } from '../utils/test';
 import { server } from '../../config_frontend/msw';
 
 import * as API from '.';
-import * as ClusterTasksAPI from './clusterTasks';
-import * as TasksAPI from './tasks';
 import * as comms from './comms';
 import * as utils from './utils';
 
@@ -61,41 +59,6 @@ it('useAPIResource', async () => {
   await waitFor(() => result.current.isFetching);
   await waitFor(() => !result.current.isFetching);
   expect(result.current.data).toEqual(apiResource);
-});
-
-it('useTaskByKind', () => {
-  const params = { fake: 'params' };
-  const clusterTaskQuery = { fake: 'clusterTaskQuery' };
-  const taskQuery = { fake: 'taskQuery' };
-  vi.spyOn(ClusterTasksAPI, 'useClusterTask').mockImplementation(
-    () => clusterTaskQuery
-  );
-  vi.spyOn(TasksAPI, 'useTask').mockImplementation(() => taskQuery);
-
-  let returnValue = API.useTaskByKind({ ...params, kind: 'ClusterTask' });
-  expect(ClusterTasksAPI.useClusterTask).toHaveBeenCalledWith(
-    expect.objectContaining(params),
-    undefined
-  );
-  expect(ClusterTasksAPI.useClusterTask).not.toHaveBeenCalledWith(
-    expect.objectContaining({ kind: expect.any(String) }),
-    undefined
-  );
-  expect(TasksAPI.useTask).not.toHaveBeenCalled();
-  expect(returnValue).toEqual(clusterTaskQuery);
-  API.useClusterTask.mockClear();
-
-  returnValue = API.useTaskByKind({ ...params, kind: 'Task' });
-  expect(ClusterTasksAPI.useClusterTask).not.toHaveBeenCalled();
-  expect(TasksAPI.useTask).toHaveBeenCalledWith(
-    expect.objectContaining(params),
-    undefined
-  );
-  expect(TasksAPI.useTask).not.toHaveBeenCalledWith(
-    expect.objectContaining({ kind: expect.any(String) }),
-    undefined
-  );
-  expect(returnValue).toEqual(taskQuery);
 });
 
 it('useNamespaces', async () => {

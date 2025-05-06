@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -20,7 +20,6 @@ import CreateTaskRun from './CreateTaskRun';
 import * as API from '../../api';
 import * as APIUtils from '../../api/utils';
 import * as ServiceAccountsAPI from '../../api/serviceAccounts';
-import * as ClusterTasksAPI from '../../api/clusterTasks';
 import * as TasksAPI from '../../api/tasks';
 
 const tasks = [
@@ -58,22 +57,6 @@ const tasks = [
     spec: {}
   }
 ];
-const clusterTasks = [
-  {
-    metadata: {
-      name: 'clustertask-1',
-      uid: 'id-task-1'
-    },
-    spec: {}
-  },
-  {
-    metadata: {
-      name: 'clustertask-2',
-      uid: 'id-task-2'
-    },
-    spec: {}
-  }
-];
 
 const serviceAccount = {
   metadata: {
@@ -91,9 +74,6 @@ describe('CreateTaskRun', () => {
       () => ({ data: [serviceAccount] })
     );
     vi.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({ data: tasks }));
-    vi.spyOn(ClusterTasksAPI, 'useClusterTasks').mockImplementation(() => ({
-      data: clusterTasks
-    }));
 
     vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [

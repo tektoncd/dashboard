@@ -25,14 +25,6 @@ export const paths = {
     return '/about';
   },
   byNamespace,
-  clusterTasks: {
-    all() {
-      return '/clustertasks';
-    },
-    byName() {
-      return '/clustertasks/:name';
-    }
-  },
   clusterInterceptors: {
     all() {
       return '/clusterinterceptors';
@@ -224,11 +216,6 @@ function filteredURL({ baseURL, label, name }) {
 urls.pipelineRuns.byPipeline = ({ namespace, pipelineName: name }) => {
   const baseURL = urls.pipelineRuns.byNamespace({ namespace });
   return filteredURL({ baseURL, label: labels.PIPELINE, name });
-};
-
-urls.taskRuns.byClusterTask = ({ taskName: name }) => {
-  const baseURL = urls.taskRuns.all();
-  return filteredURL({ baseURL, label: labels.CLUSTER_TASK, name });
 };
 
 urls.taskRuns.byTask = ({ namespace, taskName: name }) => {

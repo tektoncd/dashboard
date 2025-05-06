@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -69,7 +69,6 @@ export function cancelTaskRun({ name, namespace }) {
 }
 
 export function getTaskRunPayload({
-  kind,
   labels,
   namespace,
   nodeSelector,
@@ -89,7 +88,7 @@ export function getTaskRunPayload({
     spec: {
       taskRef: {
         name: taskName,
-        kind: kind || 'Task'
+        kind: 'Task'
       }
     }
   };
@@ -116,7 +115,6 @@ export function getTaskRunPayload({
 }
 
 export function createTaskRun({
-  kind,
   labels,
   namespace,
   nodeSelector,
@@ -127,7 +125,6 @@ export function createTaskRun({
   timeout
 }) {
   const payload = getTaskRunPayload({
-    kind,
     labels,
     namespace,
     nodeSelector,

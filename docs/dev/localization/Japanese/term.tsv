@@ -148,8 +148,6 @@ PipelineRun	PipelineRun
 PipelineRuns	PipelineRun
 Taskrun	Taskrun
 Taskruns	Taskrun
-ClusterTask	ClusterTask
-ClusterTasks	ClusterTask
 ClusterTriggerBinding	ClusterTriggerBinding
 Secret	Secret
 Secrets	Secret
