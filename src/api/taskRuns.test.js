@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -85,19 +85,6 @@ describe('createTaskRun', () => {
       const { spec: sentSpec } = sentBody;
       expect(sentSpec.taskRef.name).toEqual(taskName);
       expect(sentSpec.taskRef.kind).toEqual('Task');
-    });
-  });
-
-  it('handles ClusterTask in taskRef', () => {
-    const taskName = 'fake-task';
-    vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
-      Promise.resolve(body)
-    );
-    return API.createTaskRun({ taskName, kind: 'ClusterTask' }).then(() => {
-      expect(comms.post).toHaveBeenCalled();
-      const sentBody = comms.post.mock.lastCall[1];
-      const { spec: sentSpec } = sentBody;
-      expect(sentSpec.taskRef.kind).toEqual('ClusterTask');
     });
   });
 

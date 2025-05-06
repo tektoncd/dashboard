@@ -412,24 +412,22 @@ export function getTranslateWithId(intl) {
   };
 }
 
-export function getTaskSpecFromTaskRef({ clusterTasks, pipelineTask, tasks }) {
+export function getTaskSpecFromTaskRef({ pipelineTask, tasks }) {
   if (!pipelineTask.taskRef) {
     return {};
   }
 
-  const definitions =
-    pipelineTask.taskRef.kind === 'ClusterTask' ? clusterTasks : tasks;
-  const definition = (definitions || []).find(
+  const definition = (tasks || []).find(
     task => task.metadata.name === pipelineTask.taskRef.name
   );
 
   return definition?.spec || {};
 }
 
-export function getPlaceholderTaskRun({ clusterTasks, pipelineTask, tasks }) {
+export function getPlaceholderTaskRun({ pipelineTask, tasks }) {
   const { name: pipelineTaskName, taskSpec } = pipelineTask;
   const specToDisplay =
-    taskSpec || getTaskSpecFromTaskRef({ clusterTasks, pipelineTask, tasks });
+    taskSpec || getTaskSpecFromTaskRef({ pipelineTask, tasks });
   const { steps = [] } = specToDisplay;
 
   return {
@@ -470,7 +468,6 @@ function addDashboardLabels({ displayName, pipelineTask, taskRun }) {
 }
 
 export function getTaskRunsWithPlaceholders({
-  clusterTasks,
   pipeline,
   pipelineRun,
   taskRuns,
@@ -545,7 +542,7 @@ export function getTaskRunsWithPlaceholders({
       taskRunsToDisplay.push(
         addDashboardLabels({
           pipelineTask,
-          taskRun: getPlaceholderTaskRun({ clusterTasks, pipelineTask, tasks })
+          taskRun: getPlaceholderTaskRun({ pipelineTask, tasks })
         })
       );
     }

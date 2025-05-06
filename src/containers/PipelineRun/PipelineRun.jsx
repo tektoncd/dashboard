@@ -39,7 +39,6 @@ import {
   deletePipelineRun,
   rerunPipelineRun,
   startPipelineRun,
-  useClusterTasks,
   useEvents,
   useExternalLogsURL,
   useIsLogStreamingEnabled,
@@ -147,14 +146,12 @@ export /* istanbul ignore next */ function PipelineRunContainer({
     namespace
   });
 
-  // TODO: only request the Tasks / ClusterTasks we actually need
+  // TODO: only request the Tasks we actually need
   const {
     data: tasks = [],
     error: tasksError,
     isLoading: isLoadingTasks
   } = useTasks({ namespace });
-  const { data: clusterTasks = [], isLoading: isLoadingClusterTasks } =
-    useClusterTasks({});
 
   const pipelineName = pipelineRun?.spec.pipelineRef?.name;
   const { data: pipeline, isInitialLoading: isLoadingPipeline } = usePipeline(
@@ -165,7 +162,6 @@ export /* istanbul ignore next */ function PipelineRunContainer({
   const error = pipelineRunError || tasksError || taskRunsError;
 
   const taskRuns = getTaskRunsWithPlaceholders({
-    clusterTasks,
     pipeline,
     pipelineRun,
     taskRuns: taskRunsResponse,
@@ -496,7 +492,6 @@ export /* istanbul ignore next */ function PipelineRunContainer({
     isLoadingPipelineRun ||
     isLoadingTaskRuns ||
     isLoadingTasks ||
-    isLoadingClusterTasks ||
     isLoadingPipeline;
 
   if (!isLoading && (pipelineRunError || !pipelineRun)) {
@@ -594,7 +589,7 @@ export /* istanbul ignore next */ function PipelineRunContainer({
         showLogLevels={showLogLevels}
         showLogTimestamps={showTimestamps}
         taskRuns={taskRuns}
-        tasks={tasks.concat(clusterTasks)}
+        tasks={tasks}
         view={view}
       />
     </>

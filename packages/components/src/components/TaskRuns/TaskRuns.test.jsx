@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -60,23 +60,6 @@ it('TaskRuns renders correct data', async () => {
               }
             ]
           }
-        },
-        {
-          kind: 'TaskRun',
-          metadata: {
-            creationTimestamp: '2019-11-28T15:10:52Z',
-            name: `cluster-taskrun`,
-            namespace: 'default-namespace',
-            uid: 'fake-clustertaskrun-uid'
-          },
-          spec: {
-            taskRef: {
-              kind: 'ClusterTask',
-              name: 'cluster-task'
-            },
-            timeout: '1h0m0s'
-          },
-          status: {}
         }
       ]}
       getRunActions={() => [
@@ -91,8 +74,6 @@ it('TaskRuns renders correct data', async () => {
   expect(queryByText('pipeline0-task')).toBeTruthy();
   expect(queryAllByText('default-namespace')[0]).toBeTruthy();
   expect(queryByTitle(/FAKE_REASON/i)).toBeTruthy();
-  expect(queryByText('cluster-task')).toBeTruthy();
-  expect(queryByText('cluster-taskrun')).toBeTruthy();
 });
 
 it('TaskRuns renders pending', async () => {

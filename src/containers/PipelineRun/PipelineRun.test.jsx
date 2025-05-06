@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,7 +16,6 @@ import { createIntl } from 'react-intl';
 import { paths, urls } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
-import * as ClusterTasksAPI from '../../api/clusterTasks';
 import * as PipelineRunsAPI from '../../api/pipelineRuns';
 import * as PipelinesAPI from '../../api/pipelines';
 import * as TaskRunsAPI from '../../api/taskRuns';
@@ -41,9 +40,6 @@ it('PipelineRunContainer renders data', async () => {
   }));
   vi.spyOn(TaskRunsAPI, 'useTaskRuns').mockImplementation(() => ({ data: [] }));
   vi.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({ data: [] }));
-  vi.spyOn(ClusterTasksAPI, 'useClusterTasks').mockImplementation(() => ({
-    data: []
-  }));
 
   const { getByText } = renderWithRouter(<PipelineRunContainer intl={intl} />);
   await waitFor(() => getByText(pipelineRun.metadata.name));
@@ -61,10 +57,6 @@ it('PipelineRunContainer renders not found state', async () => {
     error: null
   }));
   vi.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({
-    data: [],
-    error: null
-  }));
-  vi.spyOn(ClusterTasksAPI, 'useClusterTasks').mockImplementation(() => ({
     data: [],
     error: null
   }));
@@ -95,10 +87,6 @@ it('PipelineRunContainer renders error state', async () => {
     error: null
   }));
   vi.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({
-    data: [],
-    error: null
-  }));
-  vi.spyOn(ClusterTasksAPI, 'useClusterTasks').mockImplementation(() => ({
     data: [],
     error: null
   }));

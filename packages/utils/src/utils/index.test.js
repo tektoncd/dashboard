@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -603,16 +603,6 @@ describe('getTaskSpecFromTaskRef', () => {
     const taskSpec = getTaskSpecFromTaskRef({
       pipelineTask: { taskRef: { kind: 'Task', name } },
       tasks: [task]
-    });
-    expect(taskSpec).toEqual(task.spec);
-  });
-
-  it('handles ClusterTasks', () => {
-    const name = 'fakeTaskName';
-    const task = { metadata: { name }, spec: { fake: 'taskSpec' } };
-    const taskSpec = getTaskSpecFromTaskRef({
-      pipelineTask: { taskRef: { kind: 'ClusterTask', name } },
-      clusterTasks: [task]
     });
     expect(taskSpec).toEqual(task.spec);
   });

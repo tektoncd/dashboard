@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,6 @@ limitations under the License.
 import { paths, urls } from '@tektoncd/dashboard-utils';
 
 import {
-  ClusterTasks,
   CreateCustomRun,
   CreatePipelineRun,
   CreateTaskRun,
@@ -33,21 +32,6 @@ import {
 import { getTektonPipelinesAPIVersion, tektonAPIGroup } from '../api/utils';
 
 export default [
-  {
-    path: paths.clusterTasks.all(),
-    element: <ClusterTasks />
-  },
-  {
-    path: paths.clusterTasks.byName(),
-    element: <CustomResourceDefinition />,
-    handle: {
-      group: tektonAPIGroup,
-      isResourceDetails: true,
-      kind: 'clustertasks',
-      path: paths.clusterTasks.byName(),
-      version: 'v1beta1'
-    }
-  },
   {
     path: paths.customRuns.all(),
     element: <CustomRuns />,

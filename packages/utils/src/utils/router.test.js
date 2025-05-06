@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -43,14 +43,6 @@ describe('byNamespace', () => {
     const path = '/path';
     expect(urls.byNamespace({ namespace, path })).toEqual(
       generatePath(paths.byNamespace({ path }), { namespace, path })
-    );
-  });
-});
-
-describe('clusterTasks', () => {
-  it('all', () => {
-    expect(urls.clusterTasks.all()).toEqual(
-      generatePath(paths.clusterTasks.all())
     );
   });
 });
@@ -281,17 +273,6 @@ describe('stepActions', () => {
 describe('taskRuns', () => {
   it('all', () => {
     expect(urls.taskRuns.all()).toEqual(generatePath(paths.taskRuns.all()));
-  });
-
-  it('byClusterTask', () => {
-    const base = 'http://localhost';
-    const url = new URL(urls.taskRuns.byClusterTask({ taskName }), base);
-    expect(url.pathname).toEqual(
-      generatePath(paths.taskRuns.all(), { namespace })
-    );
-    expect(url.searchParams.get('labelSelector')).toEqual(
-      `${labels.CLUSTER_TASK}=${taskName}`
-    );
   });
 
   it('byName', () => {

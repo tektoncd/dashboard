@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,8 +15,6 @@ import { useQuery } from '@tanstack/react-query';
 import { labels as labelConstants } from '@tektoncd/dashboard-utils';
 import deepClone from 'lodash.clonedeep';
 
-import { useClusterTask } from './clusterTasks';
-import { useTask } from './tasks';
 import { get, getAPIRoot, post } from './comms';
 import {
   apiRoot,
@@ -30,7 +28,6 @@ import {
 import importResourcesPipelineRunTemplate from './resources/import-resources-pipelinerun.yaml';
 
 export { NamespaceContext, useSelectedNamespace } from './utils';
-export * from './clusterTasks';
 export * from './clusterTriggerBindings';
 export * from './customRuns';
 export * from './eventListeners';
@@ -55,13 +52,6 @@ export function useCustomResources(
     queryConfig,
     version
   });
-}
-
-export function useTaskByKind({ kind, ...rest }, queryConfig) {
-  if (kind === 'ClusterTask') {
-    return useClusterTask({ ...rest }, queryConfig);
-  }
-  return useTask({ ...rest }, queryConfig);
 }
 
 export async function getInstallProperties() {
