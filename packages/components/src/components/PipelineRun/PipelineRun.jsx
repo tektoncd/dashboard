@@ -61,7 +61,6 @@ export default /* istanbul ignore next */ function PipelineRun({
   pod,
   pollingInterval,
   runActions,
-  runStatus,
   selectedRetry,
   selectedStepId = null,
   selectedTaskId = null,
@@ -235,7 +234,6 @@ export default /* istanbul ignore next */ function PipelineRun({
       message: pipelineRunStatusMessage,
       pipelineRunName,
       reason: pipelineRunReason,
-      runStatus,
       status: pipelineRunStatus
     });
   }
