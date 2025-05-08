@@ -232,7 +232,7 @@ export default /* istanbul ignore next */ function PipelineRun({
   if (pipelineRun) {
     handlePipelineRunInfo({
       message: pipelineRunStatusMessage,
-      pipelineRunName,
+      name: pipelineRunName,
       reason: pipelineRunReason,
       status: pipelineRunStatus
     });
