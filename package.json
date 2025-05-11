@@ -64,7 +64,7 @@
     "dotenv": "^16.5.0",
     "eslint": "^8.57.1",
     "eslint-config-airbnb": "^19.0.0",
-    "eslint-config-prettier": "^10.1.2",
+    "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-cypress": "^3.6.0",
     "eslint-plugin-formatjs": "^4.13.3",
     "eslint-plugin-import": "^2.31.0",
