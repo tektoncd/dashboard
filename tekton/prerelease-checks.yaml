@@ -39,7 +39,7 @@ spec:
         value: $(params.releaseBucket)
   steps:
     - name: check-git-tag
-      image: ghcr.io/wolfi-dev/git:alpine@sha256:a6332642919f805170547928e0ca1e1bded99d95aa5f10e19327938072b63b84
+      image: ghcr.io/wolfi-dev/git:alpine@sha256:417c784e70a83e0ae172f134c40316161f480736fdac78369088c850e0a98ae2
       script: |
         echo "Checking git tag"
         # Look for the tag in the list of tags
@@ -49,7 +49,7 @@ spec:
         echo "Version ${VERSION_TAG} already tagged for ${PACKAGE}"
         exit 1
     - name: check-release-file
-      image: gcr.io/google.com/cloudsdktool/cloud-sdk:520.0.0@sha256:77e797ef9a4764a9bac068f7952dd6605155e0243a69f193b485be8a799951a3
+      image: gcr.io/google.com/cloudsdktool/cloud-sdk:521.0.0@sha256:b98cfa4c9f1cb622326cc43df31c8731032258e707cfd959718b10d32e01915d
       script: |
         echo "Checking release file"
         # Check if the release file already exists
