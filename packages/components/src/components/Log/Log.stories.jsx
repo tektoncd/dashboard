@@ -42,6 +42,7 @@ export default {
       themeOverride: 'dark'
     }
   },
+  subcomponents: { LogsToolbar },
   title: 'Log'
 };
 
