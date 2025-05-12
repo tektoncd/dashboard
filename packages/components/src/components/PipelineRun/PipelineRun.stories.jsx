@@ -231,6 +231,7 @@ export default {
   },
   component: PipelineRun,
   decorators: [Story => <Story />],
+  subcomponents: { LogsToolbar },
   title: 'PipelineRun'
 };
 
