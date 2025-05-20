@@ -82,7 +82,7 @@ spec:
       workspaces:
         - name: output
           workspace: workarea
-          subpath: git
+          subPath: git
       params:
         - name: url
           value: https://$(params.package)
@@ -111,7 +111,7 @@ spec:
       workspaces:
         - name: source-to-release
           workspace: workarea
-          subpath: git
+          subPath: git
     - name: build
       runAfter: [precheck]
       taskRef:
@@ -128,7 +128,7 @@ spec:
       workspaces:
         - name: source
           workspace: workarea
-          subpath: git
+          subPath: git
     - name: publish-images
       runAfter: [build]
       taskRef:
@@ -166,10 +166,10 @@ spec:
       workspaces:
         - name: source
           workspace: workarea
-          subpath: git
+          subPath: git
         - name: output
           workspace: workarea
-          subpath: bucket
+          subPath: bucket
         - name: release-secret
           workspace: release-images-secret
     - name: publish-to-bucket
@@ -188,7 +188,7 @@ spec:
           workspace: release-secret
         - name: source
           workspace: workarea
-          subpath: bucket
+          subPath: bucket
       params:
         - name: location
           value: $(params.releaseBucket)/previous/$(params.versionTag)
@@ -216,7 +216,7 @@ spec:
           workspace: release-secret
         - name: source
           workspace: workarea
-          subpath: bucket
+          subPath: bucket
       params:
         - name: location
           value: $(params.releaseBucket)/latest
