@@ -49,7 +49,7 @@ spec:
         echo "Version ${VERSION_TAG} already tagged for ${PACKAGE}"
         exit 1
     - name: check-release-file
-      image: gcr.io/google.com/cloudsdktool/cloud-sdk:522.0.0@sha256:723e6ce56d5eb1d64bd0089ec4aef88de036d878583ad0828a11addde083ffc9
+      image: gcr.io/google.com/cloudsdktool/cloud-sdk:523.0.1@sha256:59404471b06981074ab821230ced1cffa8be84799be5edadc60e2f8cf164fbfc
       script: |
         echo "Checking release file"
         # Check if the release file already exists
