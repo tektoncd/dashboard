@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2024 The Tekton Authors
+Copyright 2020-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,10 +17,12 @@ import { useIntl } from 'react-intl';
 import {
   dashboardReasonSkipped,
   getParams,
+  getTranslateWithId,
   taskRunHasWarning
 } from '@tektoncd/dashboard-utils';
 import {
   ContentSwitcher,
+  Dropdown,
   Switch,
   Tab,
   TabList,
@@ -35,6 +37,8 @@ import DetailsHeader from '../DetailsHeader';
 import Param from '../Param';
 import Table from '../Table';
 import ViewYAML from '../ViewYAML';
+
+const itemToString = item => (item ? item.text : '');
 
 function HelpIcon({ title }) {
   if (!title) {
@@ -68,16 +72,21 @@ const defaults = {
 };
 
 const TaskRunDetails = ({
+  fullTaskRun,
+  getLogsToolbar,
+  logs: Logs,
+  onRetryChange,
   onViewChange = defaults.onViewChange,
   pod,
+  selectedRetry,
   skippedTask,
   task = defaults.task,
   taskRun = defaults.taskRun,
   view
 }) => {
   const intl = useIntl();
-  const displayName = taskRun.metadata.name;
-  const taskSpec = task?.spec || taskRun.spec.taskSpec;
+  const displayName = taskRun.metadata?.name;
+  const taskSpec = task?.spec || taskRun.spec?.taskSpec;
 
   const paramsDescriptions = getDescriptions(taskSpec?.params);
   const resultsDescriptions = getDescriptions(taskSpec?.results);
@@ -101,7 +110,16 @@ const TaskRunDetails = ({
 
   useEffect(() => {
     setPodContent('resource');
+
+    /* istanbul ignore if */
+    if (!view && Logs) {
+      onViewChange('logs');
+    }
   }, [displayName, view]);
+
+  if (!taskRun.metadata) {
+    return null;
+  }
 
   const headers = [
     {
@@ -162,6 +180,7 @@ const TaskRunDetails = ({
   ) : null;
 
   const tabs = [
+    Logs && 'logs',
     paramsTable && 'params',
     resultsTable && 'results',
     'status',
@@ -175,6 +194,31 @@ const TaskRunDetails = ({
 
   const tabList = [];
   const tabPanels = [];
+  /* istanbul ignore if */
+  if (Logs) {
+    tabList.push(
+      <Tab key="logs">
+        {intl.formatMessage({
+          id: 'dashboard.taskRun.logs',
+          defaultMessage: 'Logs'
+        })}
+      </Tab>
+    );
+    tabPanels.push(
+      <TabPanel key="logs">
+        {selectedTabIndex === tabPanels.length && (
+          <div className="tkn--step-status">
+            <Logs
+              pod={pod}
+              skippedTask={skippedTask}
+              task={task}
+              taskRun={taskRun}
+            />
+          </div>
+        )}
+      </TabPanel>
+    );
+  }
   if (paramsTable) {
     tabList.push(
       <Tab key="params">
@@ -273,6 +317,42 @@ const TaskRunDetails = ({
     );
   }
 
+  let retryMenuTitle;
+  /* istanbul ignore if */
+  if (Logs && (selectedRetry || fullTaskRun?.status?.retriesStatus)) {
+    retryMenuTitle = intl.formatMessage({
+      id: 'dashboard.pipelineRun.retries.view',
+      defaultMessage: 'View retries'
+    });
+  }
+
+  /* istanbul ignore next */
+  const retryMenuItems =
+    Logs &&
+    fullTaskRun?.status.retriesStatus
+      ?.map((_retryStatus, index) => {
+        return {
+          id: index,
+          text: intl.formatMessage(
+            {
+              id: 'dashboard.pipelineRun.retries.viewAttempt',
+              defaultMessage: 'Attempt #{retryNumber, number}'
+            },
+            { retryNumber: index }
+          )
+        };
+      })
+      .concat({
+        id: '',
+        text: intl.formatMessage(
+          {
+            id: 'dashboard.pipelineRun.retries.viewLatestAttempt',
+            defaultMessage: 'Latest attempt #{retryNumber, number}'
+          },
+          { retryNumber: fullTaskRun.status.retriesStatus.length }
+        )
+      });
+
   return (
     <div className="tkn--step-details">
       <DetailsHeader
@@ -281,7 +361,37 @@ const TaskRunDetails = ({
         reason={skippedTask ? dashboardReasonSkipped : null}
         taskRun={taskRun}
         type="taskRun"
-      />
+      >
+        {Logs && fullTaskRun?.status?.retriesStatus ? (
+          <Dropdown
+            autoAlign
+            className="tkn--taskrun-retries-dropdown"
+            hideLabel
+            id={`${taskRun.metadata.uid}-retry`}
+            initialSelectedItem={
+              retryMenuItems[
+                selectedRetry || fullTaskRun.status.retriesStatus.length - 1
+              ]
+            }
+            items={retryMenuItems}
+            itemToString={itemToString}
+            label={retryMenuTitle}
+            onChange={({ selectedItem }) => {
+              onRetryChange(selectedItem.id);
+            }}
+            size="sm"
+            titleText={retryMenuTitle}
+            translateWithId={getTranslateWithId(intl)}
+            type="inline"
+          />
+        ) : null}
+        {getLogsToolbar
+          ? getLogsToolbar({
+              id: 'logs-toolbar',
+              taskRun
+            })
+          : null}
+      </DetailsHeader>
       <Tabs
         onChange={event => onViewChange(tabs[event.selectedIndex])}
         selectedIndex={selectedTabIndex}

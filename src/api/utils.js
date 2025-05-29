@@ -105,6 +105,14 @@ export function getTektonPipelinesAPIVersion() {
   return isPipelinesV1ResourcesEnabled() ? 'v1' : 'v1beta1';
 }
 
+export function isPipelineRunTabLayoutEnabled() {
+  return localStorage.getItem('tkn-pipelinerun-tab-layout') === 'true';
+}
+
+export function setPipelineRunTabLayoutEnabled(enabled) {
+  localStorage.setItem('tkn-pipelinerun-tab-layout', enabled);
+}
+
 export const NamespaceContext = createContext();
 NamespaceContext.displayName = 'Namespace';
 

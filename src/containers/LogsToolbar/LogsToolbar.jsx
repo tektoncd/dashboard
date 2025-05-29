@@ -27,17 +27,20 @@ export default function LogsToolbarContainer({
   stepStatus,
   taskRun
 }) {
-  const { container } = stepStatus;
+  const { container } = stepStatus || {};
   const { namespace } = taskRun.metadata;
   const { podName } = taskRun.status;
 
-  const logURL = isUsingExternalLogs
-    ? getExternalLogURL({ container, externalLogsURL, namespace, podName })
-    : getPodLogURL({
-        container,
-        name: podName,
-        namespace
-      });
+  let logURL;
+  if (container) {
+    logURL = isUsingExternalLogs
+      ? getExternalLogURL({ container, externalLogsURL, namespace, podName })
+      : getPodLogURL({
+          container,
+          name: podName,
+          namespace
+        });
+  }
 
   return (
     <LogsToolbar

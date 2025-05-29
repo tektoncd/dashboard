@@ -54,6 +54,7 @@ import NotFound from '../NotFound';
 import {
   getLogLevels,
   isLogTimestampsEnabled,
+  isPipelineRunTabLayoutEnabled,
   setLogLevels,
   setLogTimestampsEnabled
 } from '../../api/utils';
@@ -86,6 +87,8 @@ export /* istanbul ignore next */ function PipelineRunContainer({
     setShowTimestamps(show);
     setLogTimestampsEnabled(show);
   }
+
+  const [enableTabLayout] = useState(isPipelineRunTabLayoutEnabled());
 
   const { name, namespace } = params;
 
@@ -552,8 +555,9 @@ export /* istanbul ignore next */ function PipelineRunContainer({
       )}
       <PipelineRun
         duration={duration}
-        enableLogAutoScroll
-        enableLogScrollButtons
+        enableLogAutoScroll={!enableTabLayout}
+        enableLogScrollButtons={!enableTabLayout}
+        enableTabLayout={enableTabLayout}
         error={error}
         fetchLogs={getLogsRetriever({
           externalLogsURL,

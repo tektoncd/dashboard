@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,12 +13,19 @@ limitations under the License.
 
 @use '@carbon/react/scss/config' as *;
 @use '@carbon/react/scss/theme' as *;
+@use '@carbon/react/scss/type' as *;
 
 .tkn--tasks {
-  display: flex;
-  flex-wrap: nowrap;
-  min-block-size: calc(100vb - 16rem);
-  align-items: stretch;
+  // for legacy layout we need to flex the tasks
+  // but for the new tab layout in a narrow window
+  // we need to allow the tabs to appear horizontally
+  // across the top of the container
+  &:not(:has(> .#{$prefix}--tabs)) {
+    display: flex;
+    flex-wrap: nowrap;
+    min-block-size: calc(100vb - 16rem);
+    align-items: stretch;
+  }
 
   .tkn--task-tree {
     flex-shrink: 0;
@@ -39,8 +46,62 @@ limitations under the License.
       background-color: $layer-hover;
     }
   }
+
+  > .#{$prefix}--css-grid {
+    padding-inline: 0;
+    height: calc(100cqh - 350px);
+  }
 }
 
 .#{$prefix}--snippet--multi {
   overflow-x: auto
+}
+
+.tkn--task-logs {
+  .#{$prefix}--accordion__heading {
+    position: sticky;
+    inset-block-start: 4rem;
+    background-color: var(--cds-layer-01);
+    // this needs to be lower than the run header to prevent it bleeding through
+    // popovers or other menus such as the log settings
+    z-index: 9996;
+
+    &:hover {
+      position: sticky;
+    }
+  }
+
+  .#{$prefix}--accordion__title {
+    display: flex;
+    align-items: center;
+
+    .tkn--step-name {
+      flex-grow: 1;
+    }
+
+    .tkn--step-duration {
+      @include type-style('helper-text-01');
+      margin-inline-end: 0.5rem;
+    }
+
+    svg {
+      margin-inline-end: 0.5rem;
+    }
+  }
+
+  .#{$prefix}--accordion__content {
+    padding-inline-end: 1rem;
+
+    .tkn--step-definition {
+      margin-block-end: 0.75rem;
+
+      summary {
+        @include type-style('helper-text-01');
+      }
+
+      .#{$prefix}--snippet--multi {
+        inline-size: auto;
+      }
+    }
+  }
 }

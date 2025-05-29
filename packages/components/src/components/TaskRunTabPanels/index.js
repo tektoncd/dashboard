@@ -12,21 +12,4 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
-import { usePrefix } from '@carbon/react';
-
-const RunMetadataColumn = ({ columnHeader, columnContent }) => {
-  if (!columnContent) {
-    return null;
-  }
-  const carbonPrefix = usePrefix();
-  return (
-    <div className="tkn--metadata-column">
-      <h3 className={`${carbonPrefix}--label tkn--metadata-column-header`}>
-        {columnHeader}
-      </h3>
-      <div className="tkn--metadata-column-content">{columnContent}</div>
-    </div>
-  );
-};
-
-export default RunMetadataColumn;
+export { default } from './TaskRunTabPanels';

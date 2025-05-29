@@ -137,19 +137,24 @@ pre.tkn--log {
   .tkn--log-container:has(code:not(:empty)) + .tkn--log-trailer {
     margin-block-start: 1rem;
   }
+}
 
-  .tkn--log-settings-menu-content {
-    padding-block-end: .5rem;
-    padding-block-start: 1rem;
-    padding-inline: 1rem;
-    font-family: 'IBM Plex Sans', sans-serif;
-    color: $text-secondary;
+.tkn--log-settings-menu {
+  // needs to appear over sticky headers
+  z-index: 9998;
+}
 
-    hr {
-      border: none;
-      margin-block: 1rem;
-      background: $border-subtle;
-      block-size: 1px;
-    }
+.tkn--log-settings-menu-content {
+  padding-block-end: .5rem;
+  padding-block-start: 1rem;
+  padding-inline: 1rem;
+  font-family: 'IBM Plex Sans', sans-serif;
+  color: $text-secondary;
+
+  hr {
+    border: none;
+    margin-block: 1rem;
+    background: $border-subtle;
+    block-size: 1px;
   }
 }

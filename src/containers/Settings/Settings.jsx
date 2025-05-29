@@ -1,5 +1,5 @@
 /*
-Copyright 2021-2024 The Tekton Authors
+Copyright 2021-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -22,7 +22,9 @@ import {
 
 import { getTheme, setTheme } from '../../utils';
 import {
+  isPipelineRunTabLayoutEnabled,
   isPipelinesV1ResourcesEnabled,
+  setPipelineRunTabLayoutEnabled,
   setPipelinesV1ResourcesEnabled
 } from '../../api/utils';
 
@@ -93,6 +95,23 @@ export function Settings() {
               defaultMessage: 'On'
             })}
             onToggle={checked => setPipelinesV1ResourcesEnabled(checked)}
+          />
+          <Toggle
+            defaultToggled={isPipelineRunTabLayoutEnabled()}
+            id="tkn--pipelinerun-tab-layout-toggle"
+            labelText={intl.formatMessage({
+              id: 'dashboard.pipelineRun.tabLayout.label',
+              defaultMessage: 'Enable new PipelineRun details layout (preview)'
+            })}
+            labelA={intl.formatMessage({
+              id: 'dashboard.toggle.off',
+              defaultMessage: 'Off'
+            })}
+            labelB={intl.formatMessage({
+              id: 'dashboard.toggle.on',
+              defaultMessage: 'On'
+            })}
+            onToggle={checked => setPipelineRunTabLayoutEnabled(checked)}
           />
         </Stack>
       </div>

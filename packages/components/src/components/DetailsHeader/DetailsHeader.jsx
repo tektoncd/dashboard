@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -19,6 +19,7 @@ import FormattedDuration from '../FormattedDuration';
 import StatusIcon from '../StatusIcon';
 
 export default function DetailsHeader({
+  children,
   displayName,
   exitCode,
   hasWarning,
@@ -171,6 +172,7 @@ export default function DetailsHeader({
           {displayName}
         </span>
         <span className="tkn--status-label">{statusLabel}</span>
+        {children}
       </h2>
       {duration}
     </header>
