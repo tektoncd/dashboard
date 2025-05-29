@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,7 +13,7 @@ limitations under the License.
 /* eslint-disable formatjs/no-literal-string-in-jsx */
 
 import { getStatus } from '@tektoncd/dashboard-utils';
-import { action } from '@storybook/addon-actions';
+import { action } from 'storybook/actions';
 import { TrashCan as Delete } from '@carbon/react/icons';
 import { Dropdown } from '@carbon/react';
 import { withRouter } from 'storybook-addon-remix-react-router';

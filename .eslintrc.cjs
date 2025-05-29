@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -67,7 +67,14 @@ module.exports = {
     'import/no-named-as-default-member': 'off',
     'import/no-unresolved': [
       'error',
-      { ignore: ['\\.svg\\?react$', '\\.txt\\?raw$'] }
+      {
+        ignore: [
+          '\\.svg\\?react$',
+          '\\.txt\\?raw$',
+          // eslint-plugin-import doesn't currently support `exports` so complains about `storybook/actions` etc.
+          'storybook/.*'
+        ]
+      }
     ],
     'import/prefer-default-export': 'off',
     'jsx-a11y/anchor-is-valid': 'off',

@@ -12,8 +12,8 @@ limitations under the License.
 */
 
 import { dashboardReasonSkipped } from '@tektoncd/dashboard-utils';
-import { action } from '@storybook/addon-actions';
-import { useArgs } from '@storybook/preview-api';
+import { action } from 'storybook/actions';
+import { useArgs } from 'storybook/preview-api';
 
 import Task from './Task';
 
