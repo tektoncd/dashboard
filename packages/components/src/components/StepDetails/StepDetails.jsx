@@ -86,7 +86,7 @@ const StepDetails = ({
                   intl.formatMessage({
                     id: 'dashboard.taskRun.logs.skipped',
                     defaultMessage:
-                      'This step did not run as the task was skipped. See task status for more details.'
+                      'This step did not run as the task was skipped. See status for more details.'
                   })
                 }
               />

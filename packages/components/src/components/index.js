@@ -48,6 +48,8 @@ export { default as Table } from './Table';
 export { default as Task } from './Task';
 export { default as TaskRuns } from './TaskRuns';
 export { default as TaskRunDetails } from './TaskRunDetails';
+export { default as TaskRunTabPanels } from './TaskRunTabPanels';
+export { default as TaskRunTabs } from './TaskRunTabs';
 export { default as TaskTree } from './TaskTree';
 export { default as TooltipDropdown } from './TooltipDropdown';
 export { default as Trigger } from './Trigger';

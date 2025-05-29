@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,6 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+@use '@carbon/react/scss/config' as *;
 @use '@carbon/react/scss/theme' as *;
 
 header.tkn--step-details-header {
@@ -24,12 +25,23 @@ header.tkn--step-details-header {
     font-size: 1.3rem;
     font-weight: 400;
     display: flex;
+    gap: 0.75rem;
     line-height: 1.5rem;
     align-items: baseline;
 
-    svg {
-      flex-shrink: 0;
-      align-self: normal;
+    .tkn--taskrun-retries-dropdown {
+      margin-inline-start: 0.5rem;
+      z-index: 9998;
+
+      .#{$prefix}--dropdown--sm {
+        block-size: 1.75rem;
+        max-block-size: 1.75rem;
+      }
+    }
+
+    .#{$prefix}--btn-set {
+      margin-inline-start: 0.5rem;
+      align-self: center;
     }
 
     .tkn--run-details-name {
@@ -45,9 +57,10 @@ header.tkn--step-details-header {
 
     > .tkn--status-icon {
       vertical-align: top;
-      margin-inline-end: 0.75rem;
       inline-size: 24px;
       block-size: 24px;
+      flex-shrink: 0;
+      align-self: normal;
 
       &.tkn--spinner {
         position: relative;
@@ -64,7 +77,7 @@ header.tkn--step-details-header {
 
     > .tkn--status-label {
       font-size: 0.9rem;
-      margin-inline-start: 0.75rem;
+      margin-inline-end: auto;
     }
   }
 
