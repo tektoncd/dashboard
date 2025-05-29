@@ -13,10 +13,10 @@ limitations under the License.
 
 const config = {
   addons: [
-    '@storybook/addon-essentials',
     '@storybook/addon-links',
     '@storybook/addon-themes',
-    'storybook-addon-remix-react-router'
+    'storybook-addon-remix-react-router',
+    '@storybook/addon-docs'
   ],
   core: { disableTelemetry: true },
   docs: {
