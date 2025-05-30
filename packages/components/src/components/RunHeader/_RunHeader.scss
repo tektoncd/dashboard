@@ -14,13 +14,29 @@ limitations under the License.
 @use '@carbon/react/scss/theme' as *;
 @use '@carbon/react/scss/type' as *;
 
+// todos: use carbon tokens for spacing etc..
+.tkn--runmetadata-container{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  padding: 10px;
+  background: $layer;
+  margin-block-end: 15px;
+
+  .tkn--metadata-column-header{
+    font-size: 0.875rem;
+    letter-spacing:0.16px;
+    font-weight: 600;
+    padding: 0.5rem 1rem 0 1rem;
+  }
+  .tkn-metadata-column-content{
+    padding: 1rem 1rem 0 1rem;
+  }
+}
 header.tkn--pipeline-run-header {
   @include type-style('body-compact-01');
   line-height: 1;
-  background: $layer;
   margin-block-end: 2em;
   padding-block: 0.4em;
-  padding-inline-start: 1.5em;
   padding-inline-end: 0;
 
   .tkn--header-skeleton {
@@ -34,13 +50,16 @@ header.tkn--pipeline-run-header {
     display: flex;
     align-items: baseline;
     block-size: 3rem;
-    margin-block-end: 0;
+    margin-block-end: 1rem;
+    display:flex;
+    align-items: center;
 
     .tkn--run-name {
       min-inline-size: 5rem;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      margin-right: 20px;
     }
 
     .tkn--time {
@@ -53,20 +72,25 @@ header.tkn--pipeline-run-header {
 
     .tkn--actions-dropdown {
       margin-inline-start: auto;
-      margin-inline-end: 0.5rem;
     }
   }
 
+  .tkn--status-label {
+    margin-inline-end: 1.15rem;
+    font-size: 0.875rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: $text-secondary;
+    display: flex;
+
+    svg{
+      margin-inline-end: 5px;
+    }
+  }
   .tkn--status {
     display: flex;
     align-items: baseline;
 
-    .tkn--status-label {
-      margin-inline-end: 1.15rem;
-      font-size: 0.95rem;
-      font-weight: 400;
-      letter-spacing: 0.02em;
-    }
 
     .tkn--status-message {
       line-height: 1rem;
@@ -79,36 +103,4 @@ header.tkn--pipeline-run-header {
     }
   }
 
-  // catch all for unknown states
-  &:not([data-succeeded]) {
-    .tkn--status-label {
-      color: $text-secondary;
-    }
-  }
-
-  &[data-succeeded='True'] {
-    .tkn--status-label {
-      color: $support-success;
-    }
-  }
-
-  &[data-succeeded='False'],
-  &[data-succeeded='Unknown'][data-reason='PipelineRunCouldntCancel'] {
-    .tkn--status-label {
-      color: $support-error;
-    }
-  }
-
-  &[data-succeeded='Unknown'][data-reason='PipelineRunPending'] {
-    .tkn--status-label {
-      color: $text-secondary;
-    }
-  }
-
-  &[data-succeeded='Unknown'][data-reason='Running'],
-  &[data-succeeded='Unknown'][data-reason='PipelineRunStopping'] {
-    .tkn--status-label {
-      color: $support-info;
-    }
-  }
 }
