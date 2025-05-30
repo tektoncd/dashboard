@@ -213,6 +213,17 @@ function filteredURL({ baseURL, label, name }) {
   return `${baseURL}?${searchParams}`;
 }
 
+urls.pipelineRuns.tags = ({ namespace, tag, name, resourceType }) => {
+  let baseURL;
+  if (resourceType === 'PipelineRun') {
+    baseURL = urls.pipelineRuns.byNamespace({ namespace });
+  } else if (resourceType === 'TaskRun') {
+    baseURL = urls.taskRuns.byNamespace({ namespace });
+  }
+  const label = tag;
+  return filteredURL({ baseURL, label, name });
+};
+
 urls.pipelineRuns.byPipeline = ({ namespace, pipelineName: name }) => {
   const baseURL = urls.pipelineRuns.byNamespace({ namespace });
   return filteredURL({ baseURL, label: labels.PIPELINE, name });

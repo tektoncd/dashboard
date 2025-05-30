@@ -12,28 +12,29 @@ limitations under the License.
 */
 
 import { useIntl } from 'react-intl';
-import { CopyButton, SkeletonPlaceholder } from '@carbon/react';
-import { copyToClipboard } from '@tektoncd/dashboard-utils';
-
-import FormattedDate from '../FormattedDate';
+import { SkeletonPlaceholder } from '@carbon/react';
+import RunTimeMetadata from '../RunTimeMetadata';
+import RunMetadataColumn from '../RunMetadataColumn';
+import TagsWithOverflow from '../TagWithOverflow/TagsWithOverflow';
+import StatusIcon from '../StatusIcon';
 
 export default function RunHeader({
   children,
+  description,
   displayRunHeader = true,
+  duration = null,
+  resource,
   lastTransitionTime,
   loading,
   message,
+  namespace,
   reason,
   runName,
   status,
-  triggerHeader
+  triggerHeader,
+  triggerInfo
 }) {
   const intl = useIntl();
-
-  /* istanbul ignore next */
-  function copyStatusMessage() {
-    copyToClipboard(message);
-  }
 
   return (
     <header
@@ -57,55 +58,60 @@ export default function RunHeader({
           runName && (
             <>
               {displayRunHeader && (
-                <>
-                  <h1 className="tkn--run-header--heading">
-                    <div className="tkn--run-name" title={runName}>
-                      {runName}
-                    </div>
-                    <span className="tkn--time">
-                      {lastTransitionTime
-                        ? intl.formatMessage(
-                            {
-                              id: 'dashboard.lastUpdated',
-                              defaultMessage: 'Last updated {time}'
-                            },
-                            {
-                              time: (
-                                <FormattedDate
-                                  date={lastTransitionTime}
-                                  relative
-                                />
-                              )
-                            }
-                          )
-                        : null}
-                    </span>
-                    {children}
-                  </h1>
-                  <div className="tkn--status">
-                    <span className="tkn--status-label">{reason}</span>
-                    {message && (
-                      <>
-                        <span className="tkn--status-message" title={message}>
-                          {message}
-                        </span>
-                        <CopyButton
-                          feedback={intl.formatMessage({
-                            id: 'dashboard.clipboard.copied',
-                            defaultMessage: 'Copied!'
-                          })}
-                          iconDescription={intl.formatMessage({
-                            id: 'dashboard.clipboard.copyStatusMessage',
-                            defaultMessage: 'Copy status message to clipboard'
-                          })}
-                          onClick={copyStatusMessage}
-                        />
-                      </>
-                    )}
+                <h1 className="tkn--run-header--heading">
+                  <div className="tkn--run-name" title={runName}>
+                    {runName}
                   </div>
-                </>
+                  <span className="tkn--status-label" title={message || reason}>
+                    <StatusIcon reason={reason} status={status} />
+                    <div>{reason}</div>
+                  </span>
+                  {children}
+                </h1>
               )}
-              {triggerHeader}
+              <div className="tkn--runmetadata-container">
+                <div className="tkn--columns">
+                  {triggerInfo ? (
+                    <RunMetadataColumn
+                      columnHeader={intl.formatMessage({
+                        id: 'dashboard.runMetadata.triggeredBy',
+                        defaultMessage: 'Triggered by'
+                      })}
+                      columnContent={triggerInfo}
+                    />
+                  ) : null}
+                  {!triggerHeader && resource && (
+                    <RunMetadataColumn
+                      columnHeader={intl.formatMessage({
+                        id: 'dashboard.runMetadata.labels',
+                        defaultMessage: 'Labels'
+                      })}
+                      columnContent={
+                        <TagsWithOverflow
+                          resource={resource}
+                          namespace={namespace}
+                        />
+                      }
+                    />
+                  )}
+                  {triggerHeader}
+                  {lastTransitionTime ? (
+                    <RunMetadataColumn
+                      columnHeader={intl.formatMessage({
+                        id: 'dashboard.runMetadata.time',
+                        defaultMessage: 'Time'
+                      })}
+                      columnContent={
+                        <RunTimeMetadata
+                          lastTransitionTime={lastTransitionTime}
+                          duration={duration}
+                        />
+                      }
+                    />
+                  ) : null}
+                </div>
+                <div className="tkn--info-row">{description}</div>
+              </div>
             </>
           )
         );
