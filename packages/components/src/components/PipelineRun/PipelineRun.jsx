@@ -69,11 +69,16 @@ export default /* istanbul ignore next */ function PipelineRun({
   showLogTimestamps,
   taskRuns,
   tasks,
+  labels = pipelineRun?.metadata?.labels,
   triggerHeader,
   view = null
 }) {
   const intl = useIntl();
   const [isLogsMaximized, setIsLogsMaximized] = useState(false);
+
+  const namespace = pipelineRun?.metadata?.namespace;
+  const pipelineRefName =
+    pipelineRun?.spec?.pipelineRef && pipelineRun?.spec?.pipelineRef?.name;
 
   function getPipelineRunError() {
     if (!pipelineRun.status?.taskRuns && !pipelineRun.status?.childReferences) {
@@ -237,13 +242,24 @@ export default /* istanbul ignore next */ function PipelineRun({
       status: pipelineRunStatus
     });
   }
-
+  let triggerInfo = null;
+  if (pipelineRun?.metadata) {
+    triggerInfo = (
+      <>
+        {pipelineRun?.metadata?.labels?.['triggers.tekton.dev/eventlistener']}
+        {pipelineRun?.metadata?.labels?.['triggers.tekton.dev/trigger']}
+      </>
+    );
+  }
   if (pipelineRunError) {
     return (
       <>
         <RunHeader
           displayRunHeader={displayRunHeader}
           lastTransitionTime={lastTransitionTime}
+          triggerInfo={triggerInfo}
+          labels={labels}
+          namespace={namespace}
           loading={loading}
           pipelineRun={pipelineRun}
           runName={pipelineRun.pipelineRunName}
@@ -325,8 +341,12 @@ export default /* istanbul ignore next */ function PipelineRun({
   return (
     <>
       <RunHeader
+        pipelineRefName={pipelineRefName}
         displayRunHeader={displayRunHeader}
         lastTransitionTime={lastTransitionTime}
+        triggerInfo={triggerInfo}
+        labels={labels}
+        namespace={namespace}
         loading={loading}
         message={pipelineRunStatusMessage}
         runName={pipelineRunName}
