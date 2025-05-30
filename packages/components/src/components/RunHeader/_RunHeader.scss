@@ -13,14 +13,38 @@ limitations under the License.
 
 @use '@carbon/react/scss/theme' as *;
 @use '@carbon/react/scss/type' as *;
+@use '@carbon/react/scss/spacing' as *;
+
+.tkn--runmetadata-container {
+  background: $layer;
+
+  .tkn--metadata-column-header {
+    padding: 0.5rem 1rem 0 1rem;
+  }
+
+  .tkn--metadata-column-content {
+    padding: 0 1rem 0 1rem;
+  }
+
+  .tkn--info-row {
+    grid-column: 1 / -1;
+    padding-block-end: 1rem;
+  }
+
+  .tkn--columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-auto-rows: auto;
+    grid-column: 1 / -1;
+    padding: $spacing-03;
+  }
+}
 
 header.tkn--pipeline-run-header {
   @include type-style('body-compact-01');
   line-height: 1;
-  background: $layer;
   margin-block-end: 2em;
   padding-block: 0.4em;
-  padding-inline-start: 1.5em;
   padding-inline-end: 0;
 
   .tkn--header-skeleton {
@@ -33,14 +57,17 @@ header.tkn--pipeline-run-header {
     @include type-style('heading-04');
     display: flex;
     align-items: baseline;
-    block-size: 3rem;
-    margin-block-end: 0;
+    block-size: $spacing-09;
+    margin-block-end: $spacing-05;
+    display: flex;
+    align-items: center;
 
     .tkn--run-name {
       min-inline-size: 5rem;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      margin-inline-end: $spacing-05;
     }
 
     .tkn--time {
@@ -53,7 +80,16 @@ header.tkn--pipeline-run-header {
 
     .tkn--actions-dropdown {
       margin-inline-start: auto;
-      margin-inline-end: 0.5rem;
+    }
+  }
+
+  .tkn--status-label {
+    @include type-style('label-02');
+    display: flex;
+    margin-inline-end: $spacing-05;
+
+    svg {
+      margin-inline-end: $spacing-02;
     }
   }
 
@@ -61,12 +97,6 @@ header.tkn--pipeline-run-header {
     display: flex;
     align-items: baseline;
 
-    .tkn--status-label {
-      margin-inline-end: 1.15rem;
-      font-size: 0.95rem;
-      font-weight: 400;
-      letter-spacing: 0.02em;
-    }
 
     .tkn--status-message {
       line-height: 1rem;
@@ -76,39 +106,6 @@ header.tkn--pipeline-run-header {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-    }
-  }
-
-  // catch all for unknown states
-  &:not([data-succeeded]) {
-    .tkn--status-label {
-      color: $text-secondary;
-    }
-  }
-
-  &[data-succeeded='True'] {
-    .tkn--status-label {
-      color: $support-success;
-    }
-  }
-
-  &[data-succeeded='False'],
-  &[data-succeeded='Unknown'][data-reason='PipelineRunCouldntCancel'] {
-    .tkn--status-label {
-      color: $support-error;
-    }
-  }
-
-  &[data-succeeded='Unknown'][data-reason='PipelineRunPending'] {
-    .tkn--status-label {
-      color: $text-secondary;
-    }
-  }
-
-  &[data-succeeded='Unknown'][data-reason='Running'],
-  &[data-succeeded='Unknown'][data-reason='PipelineRunStopping'] {
-    .tkn--status-label {
-      color: $support-info;
     }
   }
 }

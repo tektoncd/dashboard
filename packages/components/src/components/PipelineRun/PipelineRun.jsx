@@ -42,15 +42,17 @@ function getPipelineTask({ pipeline, pipelineRun, selectedTaskId, taskRun }) {
 
 export default /* istanbul ignore next */ function PipelineRun({
   customNotification,
+  description,
   displayRunHeader,
+  duration,
   enableLogAutoScroll,
   enableLogScrollButtons,
   error,
   fetchLogs,
   forceLogPolling,
   getLogsToolbar,
-  handleTaskSelected = /* istanbul ignore next */ () => {},
   handlePipelineRunInfo = () => {},
+  handleTaskSelected = /* istanbul ignore next */ () => {},
   loading,
   logLevels,
   maximizedLogsContainer,
@@ -74,6 +76,9 @@ export default /* istanbul ignore next */ function PipelineRun({
 }) {
   const intl = useIntl();
   const [isLogsMaximized, setIsLogsMaximized] = useState(false);
+  const namespace = pipelineRun?.metadata?.namespace;
+  const pipelineRefName =
+    pipelineRun?.spec?.pipelineRef && pipelineRun?.spec?.pipelineRef?.name;
 
   function getPipelineRunError() {
     if (!pipelineRun.status?.taskRuns && !pipelineRun.status?.childReferences) {
@@ -237,13 +242,38 @@ export default /* istanbul ignore next */ function PipelineRun({
       status: pipelineRunStatus
     });
   }
+  let triggerInfo = null;
+
+  if (pipelineRun?.metadata?.labels) {
+    const eventListener =
+      pipelineRun.metadata.labels[labelConstants.EVENT_LISTENER];
+    const trigger = pipelineRun.metadata.labels[labelConstants.TRIGGER];
+
+    if (eventListener || trigger) {
+      triggerInfo = (
+        <span
+          title={`EventListener: ${eventListener || '-'}\nTrigger: ${
+            trigger || '-'
+          }`}
+        >
+          {eventListener && <div>{eventListener}</div>}
+          {trigger && <div>{trigger}</div>}
+        </span>
+      );
+    }
+  }
 
   if (pipelineRunError) {
     return (
       <>
         <RunHeader
+          description={description}
           displayRunHeader={displayRunHeader}
           lastTransitionTime={lastTransitionTime}
+          duration={duration}
+          triggerInfo={triggerInfo}
+          resource={pipelineRun}
+          namespace={namespace}
           loading={loading}
           pipelineRun={pipelineRun}
           runName={pipelineRun.pipelineRunName}
@@ -325,8 +355,14 @@ export default /* istanbul ignore next */ function PipelineRun({
   return (
     <>
       <RunHeader
+        description={description}
+        pipelineRefName={pipelineRefName}
         displayRunHeader={displayRunHeader}
+        duration={duration}
         lastTransitionTime={lastTransitionTime}
+        triggerInfo={triggerInfo}
+        resource={pipelineRun}
+        namespace={namespace}
         loading={loading}
         message={pipelineRunStatusMessage}
         runName={pipelineRunName}
