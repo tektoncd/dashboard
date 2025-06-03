@@ -54,7 +54,7 @@
     "@testing-library/react": "^12.1.5",
     "@testing-library/react-hooks": "^8.0.1",
     "@vitejs/plugin-react-swc": "^3.10.0",
-    "@vitest/coverage-istanbul": "^3.1.4",
+    "@vitest/coverage-istanbul": "^3.2.0",
     "dotenv": "^16.5.0",
     "eslint": "^8.57.1",
     "eslint-config-airbnb": "^19.0.0",
