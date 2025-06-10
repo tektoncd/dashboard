@@ -51,6 +51,7 @@ updates:
     groups:
       storybook:
         patterns:
+          - "eslint-plugin-storybook"
           - "storybook"
           - "@storybook/*"
       vitest:
