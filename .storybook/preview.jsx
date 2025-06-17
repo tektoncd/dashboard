@@ -32,7 +32,10 @@ const parameters = {
       offsetY: 0
     }
   },
-  controls: { hideNoControlsWarning: true }
+  controls: { hideNoControlsWarning: true },
+  docs: {
+    codePanel: true
+  }
 };
 
 const decorators = [
@@ -57,7 +60,6 @@ const decorators = [
 const preview = {
   decorators,
   parameters
-  // tags: ['autodocs'] // revisit with Storybook 9 and code panel
 };
 
 export default preview;
