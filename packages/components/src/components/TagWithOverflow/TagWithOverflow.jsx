@@ -12,13 +12,7 @@ limitations under the License.
 */
 
 import { useState } from 'react';
-import {
-  Modal,
-  OperationalTag,
-  Popover,
-  PopoverContent,
-  TextInput
-} from '@carbon/react';
+import { Modal, Popover, PopoverContent, TextInput } from '@carbon/react';
 import './TagWithOverflow.scss';
 import { urls } from '@tektoncd/dashboard-utils';
 import Link from '../Link';
@@ -28,28 +22,6 @@ export default function CustomTags({
   namespace,
   LinkComponent = Link
 }) {
-  // temp for testing modal
-  const sampleTags = {
-    'tekton.dev/pipeline': 'hello-pipeline',
-    'triggers.tekton.dev/eventlistener': 'hello-listener',
-    'triggers.tekton.dev/trigger': 'Test',
-    'triggers.tekton.dev/triggers-eventid':
-      'e9742d5b-00e4-4124-9aa1-da2fd670f2da',
-    'tekton.dev/pipeline1': 'hello-pipeline2',
-    'triggers.tekton.dev/eventlistener1': 'hello-listener3',
-    'triggers.tekton.dev/trigger1': 'Test1',
-    'triggers.tekton.dev/triggers-eventid1':
-      'e9742d5b-00e4-4124-9aa1-da2fd670f2da5',
-    'tekton.dev/pipeline2': 'hello-pipeline2',
-    'triggers.tekton.dev/eventlistener3': 'hello-listener3',
-    'triggers.tekton.dev/trigger2': 'Test1',
-    'triggers.tekton.dev/triggers-eventid2':
-      'e9742d5b-00e4-4124-9aa1-da2fd670f2da5',
-    'triggers.tekton.dev/trigger4': 'Test1',
-    'triggers.tekton.dev/triggers-eventid3':
-      'e9742d5b-00e4-4124-9aa1-da2fd670f2da5'
-  };
-
   const labelEntries = Object.entries(labels);
   const maxVisibleTags = 2;
   const maxOverflowTags = 5;
@@ -61,32 +33,11 @@ export default function CustomTags({
   const remainingTags = labelEntries.slice(maxVisibleTags + maxOverflowTags);
   const totalHiddenTags = labelEntries.length - maxVisibleTags;
 
-  // const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [open, setOpen] = useState(false);
 
   let pipelineRunsByPipelineURL;
-
-  //  only for operational tags
-
-  // const handleTagClick = (key, value) => {
-  //   if (namespace) {
-  //     const getPipelineRunsByPipelineURL = urls.pipelineRuns.tags;
-  //     const tag = key;
-  //     const name = value;
-  //     pipelineRunsByPipelineURL = getPipelineRunsByPipelineURL({
-  //       namespace,
-  //       tag,
-  //       name
-  //     });
-  //     // usenavigate
-  //     window.location.href = pipelineRunsByPipelineURL;
-  //   }
-  //   if (isMenuOpen) {
-  //     setIsMenuOpen(false);
-  //   }
-  // };
 
   const handleModalOpen = () => {
     setIsModalOpen(true);
@@ -118,19 +69,13 @@ export default function CustomTags({
           name
         });
         return (
-          <>
-            <LinkComponent
-              to={pipelineRunsByPipelineURL}
-              title={`${key}: ${value}`}
-            >
-              {`${key}: ${value}`}
-            </LinkComponent>
-            {/* <OperationalTag
-              text={`${key}: ${value}`}
-              type="gray"
-              onClick={() => handleTagClick(key, value)}
-            /> */}
-          </>
+          <LinkComponent
+            key={key}
+            to={pipelineRunsByPipelineURL}
+            title={`${key}: ${value}`}
+          >
+            {`${key}: ${value}`}
+          </LinkComponent>
         );
       })}
 
@@ -173,20 +118,13 @@ export default function CustomTags({
                     name
                   });
                   return (
-                    <>
-                      <LinkComponent
-                        to={pipelineRunsByPipelineURL}
-                        title={`${key}: ${value}`}
-                      >
-                        {`${key}: ${value}`}
-                      </LinkComponent>
-                      {/* <OperationalTag
+                    <LinkComponent
                       key={key}
-                      text={`${key}: ${value}`}
-                      type="gray"
-                      onClick={() => handleTagClick(key, value)}
-                    /> */}
-                    </>
+                      to={pipelineRunsByPipelineURL}
+                      title={`${key}: ${value}`}
+                    >
+                      {`${key}: ${value}`}
+                    </LinkComponent>
                   );
                 })}
                 {remainingTags.length > 0 && (
@@ -195,7 +133,7 @@ export default function CustomTags({
                     className="tkn--button-tag tnk--tag-popover-container"
                     onClick={handleModalOpen}
                   >
-                    {`+${remainingTags.length} more`}
+                    {`+${remainingTags.length}`}
                   </button>
                 )}
               </div>
@@ -209,7 +147,7 @@ export default function CustomTags({
           onRequestClose={handleModalClose}
           modalHeading="All Tags"
           primaryButtonText="Close"
-          passiveModal="true"
+          passiveModal
         >
           <TextInput
             id="search"
@@ -229,13 +167,8 @@ export default function CustomTags({
                 name
               });
               return (
-                // <OperationalTag
-                //   key={key}
-                //   text={`${key}: ${value}`}
-                //   type="gray"
-                //   onClick={() => handleTagClick(key, value)}
-                // />
                 <LinkComponent
+                  key={key}
                   to={pipelineRunsByPipelineURL}
                   title={`${key}: ${value}`}
                 >

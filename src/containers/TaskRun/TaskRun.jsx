@@ -490,6 +490,8 @@ export function TaskRunContainer({
         />
       )}
       <RunHeader
+        namespace={namespace}
+        labels={taskRun.metadata?.labels}
         lastTransitionTime={taskRun.status?.startTime}
         message={taskRunStatusMessage}
         reason={taskRunStatusReason}
