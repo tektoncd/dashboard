@@ -27,7 +27,6 @@ export default function RunHeader({
   loading,
   message,
   namespace,
-  pipelineRefName,
   reason,
   runName,
   status,
@@ -90,7 +89,8 @@ export default function RunHeader({
                       columnContent={
                         <TagsWithOverflow
                           resource={resource}
-                          namespace={namespace}                        />
+                          namespace={namespace}
+                        />
                       }
                     />
                   ) : (

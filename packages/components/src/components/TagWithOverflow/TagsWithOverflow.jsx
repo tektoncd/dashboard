@@ -32,7 +32,6 @@ export default function TagsWithOverflow({
   const intl = useIntl();
   const carbonPrefix = usePrefix();
 
-
   const labels = resource.metadata?.labels || {};
   const labelEntries = Object.entries(labels);
   const maxVisibleTags = 4;
