@@ -100,7 +100,7 @@ const PipelineRuns = ({
     }
 
     return (
-      <span
+      <span // add to triggers tooltip
         title={`EventListener: ${eventListener || '-'}\nTrigger: ${
           trigger || '-'
         }`}

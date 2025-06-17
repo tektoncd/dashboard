@@ -15,14 +15,14 @@ import { useIntl } from 'react-intl';
 import { SkeletonPlaceholder } from '@carbon/react';
 import RunTimeMetadata from '../RunTimeMetadata';
 import RunMetadataColumn from '../RunMetadataColumn';
-import CustomTags from '../TagWithOverflow/TagWithOverflow';
+import TagsWithOverflow from '../TagWithOverflow/TagsWithOverflow';
 import StatusIcon from '../StatusIcon';
 
 export default function RunHeader({
   children,
   displayRunHeader = true,
   duration = null,
-  labels,
+  resource,
   lastTransitionTime,
   loading,
   message,
@@ -81,18 +81,16 @@ export default function RunHeader({
                       columnContent={triggerInfo}
                     />
                   ) : null}
-                  {!triggerHeader && labels ? (
+                  {!triggerHeader && resource ? (
                     <RunMetadataColumn
                       columnHeader={intl.formatMessage({
                         id: 'dashboard.runMetadata.labels',
                         defaultMessage: 'Labels'
                       })}
                       columnContent={
-                        <CustomTags
-                          labels={labels}
-                          namespace={namespace}
-                          pipelineRefName={pipelineRefName}
-                        />
+                        <TagsWithOverflow
+                          resource={resource}
+                          namespace={namespace}                        />
                       }
                     />
                   ) : (

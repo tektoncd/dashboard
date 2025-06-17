@@ -12,42 +12,22 @@ limitations under the License.
 */
 
 // todos: update with carbon tokens...
-// find  carbon tag styles cds-- ...
-  .tkn--button-tag, .tkn--overflow-menu-container a  {
+// find  carbon tag styles cds-- ... cds--tag
+  .tkn--overflow-menu-container a  {
     max-width: 350px; 
     display: inline-block;
-    align-items: center;
-    justify-content: center;
     border: 1px solid #8d8d8d;
-    border-radius: 16px;
-    padding: 2px 0 2px 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    padding: 4px 0 2px 0;
     margin: 4px;
-    white-space: nowrap;
-  
     padding-inline: 0.5rem;
-    background-color: #525252; 
     color: #e0e0e0 !important; 
     font-size: 12px; 
-    font-weight: normal; 
-    cursor: pointer;
-    transition: background-color 0.2s, border-color 0.2s;
-
-    &:hover {
-      background-color: #636363;
-    }
-
-    &:focus {
-      outline: none;
-      box-shadow: 0 0 4px rgba(0, 0, 0, 0.2); 
-    }
   }
-  .tnk--tag-popover-container{
+  .tkn--tag-popover-container{
     position: absolute;
     display: inline-flex;
   }
 
-  .tnk--tag-list{
+  .tkn--tag-list{
     margin-block-start: 10px;
   }

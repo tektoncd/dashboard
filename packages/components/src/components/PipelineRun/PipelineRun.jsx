@@ -72,8 +72,7 @@ export default /* istanbul ignore next */ function PipelineRun({
   taskRuns,
   tasks,
   triggerHeader,
-  view = null,
-  labels = pipelineRun?.metadata?.labels
+  view = null
 }) {
   const intl = useIntl();
   const [isLogsMaximized, setIsLogsMaximized] = useState(false);
@@ -268,7 +267,7 @@ export default /* istanbul ignore next */ function PipelineRun({
           lastTransitionTime={lastTransitionTime}
           duration={duration}
           triggerInfo={triggerInfo}
-          labels={labels}
+          resource={pipelineRun}
           namespace={namespace}
           loading={loading}
           pipelineRun={pipelineRun}
@@ -357,7 +356,7 @@ export default /* istanbul ignore next */ function PipelineRun({
         duration={duration}
         lastTransitionTime={lastTransitionTime}
         triggerInfo={triggerInfo}
-        labels={labels}
+        resource={pipelineRun}
         namespace={namespace}
         loading={loading}
         message={pipelineRunStatusMessage}
