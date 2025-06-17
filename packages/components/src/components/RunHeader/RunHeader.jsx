@@ -15,25 +15,24 @@ import { useIntl } from 'react-intl';
 import { SkeletonPlaceholder } from '@carbon/react';
 import RunTimeMetadata from '../RunTimeMetadata';
 import RunMetadataColumn from '../RunMetadataColumn';
-import CustomTags from '../TagWithOverflow/TagWithOverflow';
+import TagsWithOverflow from '../TagWithOverflow/TagsWithOverflow';
 import StatusIcon from '../StatusIcon';
 
 export default function RunHeader({
   children,
+  description,
   displayRunHeader = true,
   duration = null,
-  labels,
+  resource,
   lastTransitionTime,
   loading,
   message,
   namespace,
-  pipelineRefName,
   reason,
   runName,
   status,
   triggerHeader,
-  triggerInfo,
-  extraInfo
+  triggerInfo
 }) {
   const intl = useIntl();
 
@@ -72,7 +71,7 @@ export default function RunHeader({
               )}
               <div className="tkn--runmetadata-container">
                 <div className="tkn--columns">
-                  {triggerInfo && !triggerHeader ? (
+                  {triggerInfo ? (
                     <RunMetadataColumn
                       columnHeader={intl.formatMessage({
                         id: 'dashboard.runMetadata.triggeredBy',
@@ -81,23 +80,21 @@ export default function RunHeader({
                       columnContent={triggerInfo}
                     />
                   ) : null}
-                  {!triggerHeader && labels ? (
+                  {!triggerHeader && resource && (
                     <RunMetadataColumn
                       columnHeader={intl.formatMessage({
                         id: 'dashboard.runMetadata.labels',
                         defaultMessage: 'Labels'
                       })}
                       columnContent={
-                        <CustomTags
-                          labels={labels}
+                        <TagsWithOverflow
+                          resource={resource}
                           namespace={namespace}
-                          pipelineRefName={pipelineRefName}
                         />
                       }
                     />
-                  ) : (
-                    triggerHeader
                   )}
+                  {triggerHeader}
                   {lastTransitionTime ? (
                     <RunMetadataColumn
                       columnHeader={intl.formatMessage({
@@ -113,7 +110,7 @@ export default function RunHeader({
                     />
                   ) : null}
                 </div>
-                <div className="tkn--info-row">{extraInfo}</div>
+                <div className="tkn--info-row">{description}</div>
               </div>
             </>
           )

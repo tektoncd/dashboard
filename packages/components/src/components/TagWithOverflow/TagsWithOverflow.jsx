@@ -11,19 +11,30 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { useIntl } from 'react-intl';
 import { useState } from 'react';
-import { Modal, Popover, PopoverContent, TextInput } from '@carbon/react';
-import './TagWithOverflow.scss';
+import {
+  Modal,
+  Popover,
+  PopoverContent,
+  TextInput,
+  usePrefix
+} from '@carbon/react';
+import './TagsWithOverflow.scss';
 import { urls } from '@tektoncd/dashboard-utils';
 import Link from '../Link';
 
-export default function CustomTags({
-  labels,
+export default function TagsWithOverflow({
   namespace,
+  resource,
   LinkComponent = Link
 }) {
+  const intl = useIntl();
+  const carbonPrefix = usePrefix();
+
+  const labels = resource.metadata?.labels || {};
   const labelEntries = Object.entries(labels);
-  const maxVisibleTags = 2;
+  const maxVisibleTags = 4;
   const maxOverflowTags = 5;
   const visibleTags = labelEntries.slice(0, maxVisibleTags);
   const overflowTags = labelEntries.slice(
@@ -32,12 +43,10 @@ export default function CustomTags({
   );
   const remainingTags = labelEntries.slice(maxVisibleTags + maxOverflowTags);
   const totalHiddenTags = labelEntries.length - maxVisibleTags;
-
+  const resourceType = resource.kind;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [open, setOpen] = useState(false);
-
-  let pipelineRunsByPipelineURL;
 
   const handleModalOpen = () => {
     setIsModalOpen(true);
@@ -57,30 +66,26 @@ export default function CustomTags({
       value.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const getPipelineRunsByPipelineURL = ({ tag, name }) =>
+    urls.pipelineRuns.tags({ namespace, tag, name, resourceType });
+
+  const renderTagLink = tags =>
+    tags.map(([key, value]) => (
+      <LinkComponent
+        className={`${carbonPrefix}--tag ${carbonPrefix}--tag__label`}
+        key={key}
+        to={getPipelineRunsByPipelineURL({ namespace, tag: key, name: value })}
+        title={`${key}: ${value}`}
+      >
+        {`${key}: ${value}`}
+      </LinkComponent>
+    ));
+
   return (
     <div className="tkn--overflow-menu-container">
-      {visibleTags.map(([key, value]) => {
-        const tag = key;
-        const name = value;
-        const getPipelineRunsByPipelineURL = urls.pipelineRuns.tags;
-        pipelineRunsByPipelineURL = getPipelineRunsByPipelineURL({
-          namespace,
-          tag,
-          name
-        });
-        return (
-          <LinkComponent
-            key={key}
-            to={pipelineRunsByPipelineURL}
-            title={`${key}: ${value}`}
-          >
-            {`${key}: ${value}`}
-          </LinkComponent>
-        );
-      })}
-
+      {renderTagLink(visibleTags)}
       {totalHiddenTags > 0 && (
-        <div className="tnk--tag-popover-container">
+        <div className="tkn--tag-popover-container">
           <Popover
             className="tkn--tag-popover"
             dropShadow
@@ -90,14 +95,9 @@ export default function CustomTags({
           >
             <button
               type="button"
-              className="tkn--button-tag"
+              className={`${carbonPrefix}--tag`}
               onClick={() => {
                 setOpen(!open);
-              }}
-              onKeyDown={event => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                  setOpen(event);
-                }
               }}
             >
               {`+${totalHiddenTags}`}
@@ -108,29 +108,11 @@ export default function CustomTags({
                   padding: '0.5rem'
                 }}
               >
-                {overflowTags.map(([key, value]) => {
-                  const tag = key;
-                  const name = value;
-                  const getPipelineRunsByPipelineURL = urls.pipelineRuns.tags;
-                  pipelineRunsByPipelineURL = getPipelineRunsByPipelineURL({
-                    namespace,
-                    tag,
-                    name
-                  });
-                  return (
-                    <LinkComponent
-                      key={key}
-                      to={pipelineRunsByPipelineURL}
-                      title={`${key}: ${value}`}
-                    >
-                      {`${key}: ${value}`}
-                    </LinkComponent>
-                  );
-                })}
+                {renderTagLink(overflowTags)}
                 {remainingTags.length > 0 && (
                   <button
                     type="button"
-                    className="tkn--button-tag tnk--tag-popover-container"
+                    className={`${carbonPrefix}--tag tkn--tag-popover-container`}
                     onClick={handleModalOpen}
                   >
                     {`+${remainingTags.length}`}
@@ -145,38 +127,30 @@ export default function CustomTags({
         <Modal
           open={isModalOpen}
           onRequestClose={handleModalClose}
-          modalHeading="All Tags"
-          primaryButtonText="Close"
+          modalHeading={intl.formatMessage({
+            id: 'dashboard.runMetadata.allTags',
+            defaultMessage: 'All tags'
+          })}
+          primaryButtonText={intl.formatMessage({
+            id: 'dashboard.modal.close',
+            defaultMessage: 'Close'
+          })}
           passiveModal
         >
           <TextInput
-            id="search"
-            labelText="Search"
-            placeholder="Search for a tag"
+            id="tkn--runMetadata--label-search"
+            labelText={intl.formatMessage({
+              id: 'dashboard.runMetadata.searchLabel',
+              defaultMessage: 'Search'
+            })}
+            placeholder={intl.formatMessage({
+              id: 'dashboard.runMetadata.searchForTag',
+              defaultMessage: 'Search for a tag'
+            })}
             value={searchQuery}
             onChange={handleSearchChange}
           />
-          <div className="tkn--tag-list">
-            {filteredTags.map(([key, value]) => {
-              const tag = key;
-              const name = value;
-              const getPipelineRunsByPipelineURL = urls.pipelineRuns.tags;
-              pipelineRunsByPipelineURL = getPipelineRunsByPipelineURL({
-                namespace,
-                tag,
-                name
-              });
-              return (
-                <LinkComponent
-                  key={key}
-                  to={pipelineRunsByPipelineURL}
-                  title={`${key}: ${value}`}
-                >
-                  {`${key}: ${value}`}
-                </LinkComponent>
-              );
-            })}
-          </div>
+          <div className="tkn--tag-list">{renderTagLink(filteredTags)}</div>
         </Modal>
       )}
     </div>

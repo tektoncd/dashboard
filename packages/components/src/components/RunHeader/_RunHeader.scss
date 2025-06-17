@@ -15,34 +15,31 @@ limitations under the License.
 @use '@carbon/react/scss/type' as *;
 @use '@carbon/react/scss/spacing' as *;
 
-// todos: use carbon tokens for spacing etc..
-.tkn--runmetadata-container{
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  grid-auto-rows: auto;    
-  padding: $spacing-03;
+.tkn--runmetadata-container {
   background: $layer;
 
-  .tkn--metadata-column-header{
+  .tkn--metadata-column-header {
     padding: 0.5rem 1rem 0 1rem;
   }
-  .tkn-metadata-column-content{
+
+  .tkn-metadata-column-content {
     padding: 0 1rem 0 1rem;
   }
 
   .tkn--info-row {
-    grid-column: 1 / -1; 
+    grid-column: 1 / -1;
     padding-block-end: 1rem;
   }
 
-.tkn--columns {
- display: grid;
- grid-template-columns: inherit; 
- grid-column: 1 / -1;
+  .tkn--columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-auto-rows: auto;
+    grid-column: 1 / -1;
+    padding: $spacing-03;
+  }
 }
 
-
-}
 header.tkn--pipeline-run-header {
   @include type-style('body-compact-01');
   line-height: 1;
@@ -62,7 +59,7 @@ header.tkn--pipeline-run-header {
     align-items: baseline;
     block-size: $spacing-09;
     margin-block-end: $spacing-05;
-    display:flex;
+    display: flex;
     align-items: center;
 
     .tkn--run-name {
@@ -70,7 +67,7 @@ header.tkn--pipeline-run-header {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      margin-right: 20px;
+      margin-inline-end: $spacing-05;
     }
 
     .tkn--time {
@@ -87,17 +84,14 @@ header.tkn--pipeline-run-header {
   }
 
   .tkn--status-label {
-    margin-inline-end: 1.15rem;
-    font-size: 0.875rem;
-    font-weight: 400;
-    letter-spacing: 0.02em;
-    color: $text-secondary;
+    @include type-style('label-02');
     display: flex;
 
-    svg{
-      margin-inline-end: 5px;
+    svg {
+      margin-inline-end: $spacing-02;
     }
   }
+
   .tkn--status {
     display: flex;
     align-items: baseline;
@@ -113,5 +107,4 @@ header.tkn--pipeline-run-header {
       text-overflow: ellipsis;
     }
   }
-
 }
