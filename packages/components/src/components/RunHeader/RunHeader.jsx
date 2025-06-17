@@ -21,6 +21,7 @@ import StatusIcon from '../StatusIcon';
 export default function RunHeader({
   children,
   displayRunHeader = true,
+  duration = null,
   labels,
   lastTransitionTime,
   loading,
@@ -31,7 +32,8 @@ export default function RunHeader({
   runName,
   status,
   triggerHeader,
-  triggerInfo
+  triggerInfo,
+  extraInfo
 }) {
   const intl = useIntl();
 
@@ -69,45 +71,49 @@ export default function RunHeader({
                 </h1>
               )}
               <div className="tkn--runmetadata-container">
-                {triggerInfo ? (
-                  <RunMetadataColumn
-                    columnHeader={intl.formatMessage({
-                      id: 'dashboard.runMetadata.triggeredBy',
-                      defaultMessage: 'Triggered by'
-                    })}
-                    columnContent={triggerInfo}
-                  />
-                ) : null}
-                {!triggerHeader && labels ? (
-                  <RunMetadataColumn
-                    columnHeader={intl.formatMessage({
-                      id: 'dashboard.runMetadata.labels',
-                      defaultMessage: 'Labels'
-                    })}
-                    columnContent={
-                      <CustomTags
-                        labels={labels}
-                        namespace={namespace}
-                        pipelineRefName={pipelineRefName}
-                      />
-                    }
-                  />
-                ) : (
-                  triggerHeader
-                )}
-                {lastTransitionTime ? (
-                  <RunMetadataColumn
-                    columnHeader={intl.formatMessage({
-                      id: 'dashboard.runMetadata.time',
-                      defaultMessage: 'Time'
-                    })}
-                    columnContent={
-                      <RunTimeMetadata
-                        lastTransitionTime={lastTransitionTime}
-                      />
-                    }
-                  />
-                ) : null}
+                <div className="tkn--columns">
+                  {triggerInfo && !triggerHeader ? (
+                    <RunMetadataColumn
+                      columnHeader={intl.formatMessage({
+                        id: 'dashboard.runMetadata.triggeredBy',
+                        defaultMessage: 'Triggered by'
+                      })}
+                      columnContent={triggerInfo}
+                    />
+                  ) : null}
+                  {!triggerHeader && labels ? (
+                    <RunMetadataColumn
+                      columnHeader={intl.formatMessage({
+                        id: 'dashboard.runMetadata.labels',
+                        defaultMessage: 'Labels'
+                      })}
+                      columnContent={
+                        <CustomTags
+                          labels={labels}
+                          namespace={namespace}
+                          pipelineRefName={pipelineRefName}
+                        />
+                      }
+                    />
+                  ) : (
+                    triggerHeader
+                  )}
+                  {lastTransitionTime ? (
+                    <RunMetadataColumn
+                      columnHeader={intl.formatMessage({
+                        id: 'dashboard.runMetadata.time',
+                        defaultMessage: 'Time'
+                      })}
+                      columnContent={
+                        <RunTimeMetadata
+                          lastTransitionTime={lastTransitionTime}
+                          duration={duration}
+                        />
+                      }
+                    />
+                  ) : null}
+                </div>
+                <div className="tkn--info-row">{extraInfo}</div>
               </div>
             </>
           )

@@ -13,24 +13,35 @@ limitations under the License.
 
 @use '@carbon/react/scss/theme' as *;
 @use '@carbon/react/scss/type' as *;
+@use '@carbon/react/scss/spacing' as *;
 
 // todos: use carbon tokens for spacing etc..
 .tkn--runmetadata-container{
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  padding: 10px;
+  grid-auto-rows: auto;    
+  padding: $spacing-03;
   background: $layer;
-  margin-block-end: 15px;
 
   .tkn--metadata-column-header{
-    font-size: 0.875rem;
-    letter-spacing:0.16px;
-    font-weight: 600;
     padding: 0.5rem 1rem 0 1rem;
   }
   .tkn-metadata-column-content{
-    padding: 1rem 1rem 0 1rem;
+    padding: 0 1rem 0 1rem;
   }
+
+  .tkn--info-row {
+    grid-column: 1 / -1; 
+    padding-block-end: 1rem;
+  }
+
+.tkn--columns {
+ display: grid;
+ grid-template-columns: inherit; 
+ grid-column: 1 / -1;
+}
+
+
 }
 header.tkn--pipeline-run-header {
   @include type-style('body-compact-01');
@@ -49,8 +60,8 @@ header.tkn--pipeline-run-header {
     @include type-style('heading-04');
     display: flex;
     align-items: baseline;
-    block-size: 3rem;
-    margin-block-end: 1rem;
+    block-size: $spacing-09;
+    margin-block-end: $spacing-05;
     display:flex;
     align-items: center;
 

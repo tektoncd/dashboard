@@ -10,15 +10,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+import { usePrefix } from '@carbon/react';
 
 const RunMetadataColumn = ({ columnHeader, columnContent }) => {
   if (!columnContent) {
     return null;
   }
-
+  const carbonPrefix = usePrefix();
   return (
     <div className="tkn--metadata-column">
-      <h3 className="tkn--metadata-column-header">{columnHeader}</h3>
+      <h3 className={`${carbonPrefix}--label tkn--metadata-column-header`}>
+        {columnHeader}
+      </h3>
       <div className="tkn-metadata-column-content">{columnContent}</div>
     </div>
   );
