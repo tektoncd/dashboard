@@ -42,12 +42,12 @@ function getPipelineTask({ pipeline, pipelineRun, selectedTaskId, taskRun }) {
 
 export default /* istanbul ignore next */ function PipelineRun({
   customNotification,
+  description,
   displayRunHeader,
   duration,
   enableLogAutoScroll,
   enableLogScrollButtons,
   error,
-  extraInfo,
   fetchLogs,
   forceLogPolling,
   getLogsToolbar,
@@ -243,18 +243,22 @@ export default /* istanbul ignore next */ function PipelineRun({
     });
   }
   let triggerInfo = null;
-  // check this
+
   if (pipelineRun?.metadata?.labels) {
     const eventListener =
-      pipelineRun.metadata.labels['triggers.tekton.dev/eventlistener'];
-    const trigger = pipelineRun.metadata.labels['triggers.tekton.dev/trigger'];
+      pipelineRun.metadata.labels[labelConstants.EVENT_LISTENER];
+    const trigger = pipelineRun.metadata.labels[labelConstants.TRIGGER];
 
     if (eventListener || trigger) {
       triggerInfo = (
-        <>
+        <span
+          title={`EventListener: ${eventListener || '-'}\nTrigger: ${
+            trigger || '-'
+          }`}
+        >
           {eventListener}
           {trigger}
-        </>
+        </span>
       );
     }
   }
@@ -263,6 +267,7 @@ export default /* istanbul ignore next */ function PipelineRun({
     return (
       <>
         <RunHeader
+          description={description}
           displayRunHeader={displayRunHeader}
           lastTransitionTime={lastTransitionTime}
           duration={duration}
@@ -273,7 +278,6 @@ export default /* istanbul ignore next */ function PipelineRun({
           pipelineRun={pipelineRun}
           runName={pipelineRun.pipelineRunName}
           reason="Error"
-          extraInfo={extraInfo}
           status={pipelineRunStatus}
           triggerHeader={triggerHeader}
         />
@@ -351,6 +355,7 @@ export default /* istanbul ignore next */ function PipelineRun({
   return (
     <>
       <RunHeader
+        description={description}
         pipelineRefName={pipelineRefName}
         displayRunHeader={displayRunHeader}
         duration={duration}
@@ -364,7 +369,6 @@ export default /* istanbul ignore next */ function PipelineRun({
         reason={pipelineRunReason}
         status={pipelineRunStatus}
         triggerHeader={triggerHeader}
-        extraInfo={extraInfo}
       >
         {runActions}
       </RunHeader>

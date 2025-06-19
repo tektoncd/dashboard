@@ -17,10 +17,6 @@ limitations under the License.
 
 // todos: use carbon tokens for spacing etc..
 .tkn--runmetadata-container{
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  grid-auto-rows: auto;    
-  padding: $spacing-03;
   background: $layer;
 
   .tkn--metadata-column-header{
@@ -37,8 +33,10 @@ limitations under the License.
 
 .tkn--columns {
  display: grid;
- grid-template-columns: inherit; 
+ grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+ grid-auto-rows: auto;
  grid-column: 1 / -1;
+ padding: $spacing-03;
 }
 
 

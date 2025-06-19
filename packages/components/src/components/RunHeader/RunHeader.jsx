@@ -20,6 +20,7 @@ import StatusIcon from '../StatusIcon';
 
 export default function RunHeader({
   children,
+  description,
   displayRunHeader = true,
   duration = null,
   resource,
@@ -31,8 +32,7 @@ export default function RunHeader({
   runName,
   status,
   triggerHeader,
-  triggerInfo,
-  extraInfo
+  triggerInfo
 }) {
   const intl = useIntl();
 
@@ -111,7 +111,7 @@ export default function RunHeader({
                     />
                   ) : null}
                 </div>
-                <div className="tkn--info-row">{extraInfo}</div>
+                <div className="tkn--info-row">{description}</div>
               </div>
             </>
           )

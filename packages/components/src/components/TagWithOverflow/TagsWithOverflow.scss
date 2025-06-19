@@ -10,19 +10,32 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+@use '@carbon/react/scss/config' as *;
 
-// todos: update with carbon tokens...
-// find  carbon tag styles cds-- ... cds--tag
-  .tkn--overflow-menu-container a  {
-    max-width: 350px; 
-    display: inline-block;
-    border: 1px solid #8d8d8d;
-    padding: 4px 0 2px 0;
-    margin: 4px;
-    padding-inline: 0.5rem;
-    color: #e0e0e0 !important; 
-    font-size: 12px; 
-  }
+// styling link as tags
+// needed some of the carbon link styles interfere with the tag styles
+.tkn--overflow-menu-container a,
+button {
+  font-size: 12px;
+  color: #e0e0e0 !important;
+  display: inline-block;
+  max-width: 350px;
+  padding: 4px 0 2px 0;
+  padding-inline: 0.5rem;
+
+}
+
+.tkn--overflow-menu-container .#{$prefix}--link {
+  margin: 0px 4px 4px 0px;
+}
+
+.tkn--overflow-menu-container .#{$prefix}--tag:not(.#{$prefix}--link) {
+  margin: 0px;
+}
+.tkn--overflow-menu-container:has(.#{$prefix}--tag){
+  margin-top: -2px;
+}
+
   .tkn--tag-popover-container{
     position: absolute;
     display: inline-flex;
