@@ -71,7 +71,7 @@ export default function RunHeader({
               )}
               <div className="tkn--runmetadata-container">
                 <div className="tkn--columns">
-                  {triggerInfo && !triggerHeader ? (
+                  {triggerInfo ? (
                     <RunMetadataColumn
                       columnHeader={intl.formatMessage({
                         id: 'dashboard.runMetadata.triggeredBy',
@@ -80,7 +80,7 @@ export default function RunHeader({
                       columnContent={triggerInfo}
                     />
                   ) : null}
-                  {!triggerHeader && resource ? (
+                  {!triggerHeader && resource && (
                     <RunMetadataColumn
                       columnHeader={intl.formatMessage({
                         id: 'dashboard.runMetadata.labels',
@@ -93,9 +93,8 @@ export default function RunHeader({
                         />
                       }
                     />
-                  ) : (
-                    triggerHeader
                   )}
+                  {triggerHeader}
                   {lastTransitionTime ? (
                     <RunMetadataColumn
                       columnHeader={intl.formatMessage({

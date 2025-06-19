@@ -213,7 +213,6 @@ function filteredURL({ baseURL, label, name }) {
   return `${baseURL}?${searchParams}`;
 }
 
-// better way to implement?
 urls.pipelineRuns.tags = ({ namespace, tag, name, resourceType }) => {
   let baseURL;
   if (resourceType === 'PipelineRun') {

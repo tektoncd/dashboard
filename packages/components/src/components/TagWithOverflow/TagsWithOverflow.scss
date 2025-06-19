@@ -12,8 +12,8 @@ limitations under the License.
 */
 @use '@carbon/react/scss/config' as *;
 
-// styling link as tags
-// needed some of the carbon link styles interfere with the tag styles
+// styling links as tags
+// needed as some of the carbon link styles interfere with the tag styles
 .tkn--overflow-menu-container a,
 button {
   font-size: 12px;
@@ -32,15 +32,16 @@ button {
 .tkn--overflow-menu-container .#{$prefix}--tag:not(.#{$prefix}--link) {
   margin: 0px;
 }
-.tkn--overflow-menu-container:has(.#{$prefix}--tag){
+
+.tkn--overflow-menu-container:has(.#{$prefix}--tag) {
   margin-top: -2px;
 }
 
-  .tkn--tag-popover-container{
-    position: absolute;
-    display: inline-flex;
-  }
+.tkn--tag-popover-container {
+  position: absolute;
+  display: inline-flex;
+}
 
-  .tkn--tag-list{
-    margin-block-start: 10px;
-  }
+.tkn--tag-list {
+  margin-block-start: 10px;
+}
