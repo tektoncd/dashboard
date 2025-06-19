@@ -48,7 +48,7 @@ jobs:
           GO111MODULE="on" go install github.com/google/go-licenses@v1.0.0
 
           # Install GolangCI linter: https://github.com/golangci/golangci-lint/
-          GOLANGCI_VERSION=1.64.8
+          GOLANGCI_VERSION=2.1.6
           curl -sL https://github.com/golangci/golangci-lint/releases/download/v${GOLANGCI_VERSION}/golangci-lint-${GOLANGCI_VERSION}-linux-amd64.tar.gz | tar -C /usr/local/bin -xvzf - --strip-components=1 --wildcards "*/golangci-lint"
 
       - name: Run tests

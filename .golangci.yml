@@ -1,133 +1,155 @@
-# Documentation: https://golangci-lint.run/usage/configuration/
-
-linters-settings:
-  gomodguard:
-    blocked:
-      modules:
-        - github.com/ghodss/yaml:
-            recommendations:
-              - sigs.k8s.io/yaml
-  depguard:
-    rules:
-      prevent_unmaintained_packages:
-        list-mode: lax # allow unless explicitely denied
-        files:
-          - $all
-          - "!$test"
-        allow:
-          - $gostd
-        deny:
-          - pkg: io/ioutil
-            desc: "replaced by io and os packages since Go 1.16: https://tip.golang.org/doc/go1.16#ioutil"
-          - pkg: github.com/ghodss/yaml
-            desc: "use sigs.k8s.io/yaml instead, to be consistent"
+version: "2"
+run:
+  build-tags:
+    - e2e
+  modules-download-mode: mod
+  issues-exit-code: 1
 linters:
   enable:
-  - bodyclose
-  - containedctx
-  - decorder
-  - dogsled
-  - dupword
-  - errcheck
-  - errchkjson
-  - errname
-  - errorlint
-  - exhaustive
-  - goconst
-  - gocritic
-  - gofmt
-  - goimports
-  - gomodguard
-  - gosec
-  - gosimple
-  - govet
-  - maintidx
-  - makezero
-  - misspell
-  - musttag
-  - nakedret
-  - nilerr
-  - nilnil
-  - noctx
-  - nolintlint
-  - nosprintfhostport
-  - thelper
-  - typecheck
-  - unconvert
-  - unused
-  - usestdlibvars
-  - whitespace
+    - asasalint
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - canonicalheader
+    - containedctx
+    - copyloopvar
+    - decorder
+    - dogsled
+    - dupword
+    - durationcheck
+    - errchkjson
+    - errname
+    - errorlint
+    - exhaustive
+    - exptostd
+    - fatcontext
+    - forbidigo
+    - ginkgolinter
+    - gocheckcompilerdirectives
+    - gochecksumtype
+    - goconst
+    - gocritic
+    - goheader
+    - gomodguard
+    - goprintffuncname
+    - gosec
+    - gosmopolitan
+    - grouper
+    - importas
+    - inamedparam
+    - interfacebloat
+    - intrange
+    - loggercheck
+    - maintidx
+    - makezero
+    - misspell
+    - musttag
+    - nakedret
+    - nilerr
+    - nilnesserr
+    - nilnil
+    - noctx
+    - nolintlint
+    - nosprintfhostport
+    - perfsprint
+    - promlinter
+    - protogetter
+    - reassign
+    - rowserrcheck
+    - sloglint
+    - spancheck
+    - sqlclosecheck
+    - tagalign
+    - testableexamples
+    - testifylint
+    - thelper
+    - unconvert
+    - usestdlibvars
+    - usetesting
+    - whitespace
+    - zerologlint
   disable:
-  - contextcheck
-  - cyclop
-  - depguard
-  - dupl
-  - err113
-  - exhaustruct
-  - forcetypeassert
-  - funlen
-  - gci
-  - gochecknoglobals
-  - gochecknoinits
-  - gocognit
-  - gocyclo
-  - godot
-  - godox
-  - gofumpt
-  - gomoddirectives
-  - iface
-  - ireturn
-  - lll
-  - mirror
-  - mnd
-  - nestif
-  - nlreturn
-  - nonamedreturns
-  - paralleltest
-  - prealloc
-  - predeclared
-  - recvcheck
-  - revive
-  - staticcheck
-  - stylecheck
-  - tagliatelle
-  - testpackage
-  - tparallel
-  - unparam
-  - varnamelen
-  - wastedassign
-  - wrapcheck
-  - wsl
-  # Enabling presets means that new linters that we automatically adopt new
-  # linters that augment a preset. This also opts us in for replacement linters
-  # when a linter is deprecated.
-  presets:
-  - bugs
-  - comment
-  - complexity
-  - error
-  - format
-  - import
-  - metalinter
-  - module
-  - performance
-  - sql
-  - style
-  - test
-  - unused
+    - contextcheck
+    - cyclop
+    - depguard
+    - dupl
+    - err113
+    - exhaustruct
+    - forcetypeassert
+    - funlen
+    - gochecknoglobals
+    - gochecknoinits
+    - gocognit
+    - gocyclo
+    - godot
+    - godox
+    - gomoddirectives
+    - iface
+    - ireturn
+    - lll
+    - mirror
+    - mnd
+    - nestif
+    - nlreturn
+    - nonamedreturns
+    - paralleltest
+    - prealloc
+    - predeclared
+    - recvcheck
+    - revive
+    - staticcheck
+    - tagliatelle
+    - testpackage
+    - tparallel
+    - unparam
+    - varnamelen
+    - wastedassign
+    - wrapcheck
+    - wsl
+  settings:
+    depguard:
+      rules:
+        prevent_unmaintained_packages:
+          list-mode: lax
+          files:
+            - $all
+            - '!$test'
+          allow:
+            - $gostd
+          deny:
+            - pkg: io/ioutil
+              desc: 'replaced by io and os packages since Go 1.16: https://tip.golang.org/doc/go1.16#ioutil'
+            - pkg: github.com/ghodss/yaml
+              desc: use sigs.k8s.io/yaml instead, to be consistent
+    gomodguard:
+      blocked:
+        modules:
+          - github.com/ghodss/yaml:
+              recommendations:
+                - sigs.k8s.io/yaml
+  exclusions:
+    generated: lax
+    presets:
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - vendor
+      - third_party$
+      - builtin$
+      - examples$
 issues:
-  exclude-dirs:
-  - vendor
   max-issues-per-linter: 0
   max-same-issues: 0
-  include:
-  # Enable off-by-default rules for revive requiring that all exported elements have a properly formatted comment.
-  - EXC0012 # https://golangci-lint.run/usage/false-positives/#exc0012
-  - EXC0014 # https://golangci-lint.run/usage/false-positives/#exc0014
   uniq-by-line: false
-run:
-  issues-exit-code: 1
-  build-tags:
-  - e2e
-  timeout: 10m
-  modules-download-mode: mod
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - vendor
+      - third_party$
+      - builtin$
+      - examples$
