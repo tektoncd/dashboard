@@ -36,6 +36,7 @@ export { default as PipelineRuns } from './PipelineRuns';
 export { default as Portal } from './Portal';
 export { default as ResourceDetails } from './ResourceDetails';
 export { default as RunHeader } from './RunHeader';
+export { default as RunMetadataColumn } from './RunMetadataColumn';
 export { default as RunTimeMetadata } from './RunTimeMetadata';
 export { default as Spinner } from './Spinner';
 export { default as StatusFilterDropdown } from './StatusFilterDropdown';
