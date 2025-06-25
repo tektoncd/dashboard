@@ -70,8 +70,8 @@ function get_node() {
   fi
 
   echo "Installing Node.js"
-  # nvm v0.40.1
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/179d45050be0a71fd57591b0ed8aedf9b177ba10/install.sh | bash
+  # nvm v0.40.3
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/977563e97ddc66facf3a8e31c6cff01d236f09bd/install.sh | bash
   export NVM_DIR="$HOME/.nvm"
   source "$NVM_DIR/nvm.sh"
   nvm --version
