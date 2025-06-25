@@ -1,4 +1,4 @@
-# Copyright 2024 The Tekton Authors
+# Copyright 2024-2025 The Tekton Authors
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -13,8 +13,8 @@
 # https://www.ubuntuupdates.org/package/google_chrome/stable/main/base/google-chrome-stable
 # https://nodejs.org/en/about/previous-releases
 
-ARG CHROME_VERSION='130.0.6723.69-1'
-ARG NODE_VERSION='20.18.0'
+ARG CHROME_VERSION='138.0.7204.49-1'
+ARG NODE_VERSION='20.19.3'
 
 FROM cypress/factory@sha256:0c3e87fe48a31650b9439dd4e0b20dd55b3bea9330e3757ed1e0a1ec325c507b
 

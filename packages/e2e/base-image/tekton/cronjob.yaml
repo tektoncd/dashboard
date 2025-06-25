@@ -1,4 +1,4 @@
-# Copyright 2024 The Tekton Authors
+# Copyright 2024-2025 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -42,4 +42,4 @@ spec:
             - name: CONTEXT_PATH
               value: packages/e2e/base-image
             - name: TAGS
-              value: latest,node20.18.0-chrome130
+              value: latest,node20.19.3-chrome138

@@ -1,4 +1,4 @@
-# Copyright 2019-2024 The Tekton Authors
+# Copyright 2019-2025 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ spec:
     - name: source
   steps:
     - name: build-static
-      image: docker.io/library/node:20.18.0-slim@sha256:ec35a66c9a0a275b027debde05247c081f8b2f0c43d7399d3a6ad5660cee2f6a
+      image: docker.io/library/node:20.19.3-slim@sha256:accd529f51eca09980605f278570579a9b9d32f952aa35a0758bc724fcc134ae
       workingDir: $(workspaces.source.path)
       env:
         - name: CI
