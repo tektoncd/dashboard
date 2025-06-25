@@ -17,11 +17,13 @@ export const labels = {
   DASHBOARD_DESCRIPTION: 'dashboard.tekton.dev/description',
   DASHBOARD_DISPLAY_NAME: 'dashboard.tekton.dev/displayName',
   DASHBOARD_IMPORT: 'dashboard.tekton.dev/import',
+  EVENT_LISTENER: 'triggers.tekton.dev/eventlistener',
   MEMBER_OF: 'tekton.dev/memberOf',
   PIPELINE: 'tekton.dev/pipeline',
   PIPELINE_RUN: 'tekton.dev/pipelineRun',
   PIPELINE_TASK: 'tekton.dev/pipelineTask',
-  TASK: 'tekton.dev/task'
+  TASK: 'tekton.dev/task',
+  TRIGGER: 'triggers.tekton.dev/trigger'
 };
 
 export const pipelineRunStatuses = {

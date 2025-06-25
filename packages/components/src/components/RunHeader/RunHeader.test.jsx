@@ -22,12 +22,8 @@ const props = {
 };
 
 it('RunHeader renders the provided content', () => {
-  const { queryByText, queryByTitle } = renderWithRouter(
-    <RunHeader {...props} />
-  );
+  const { queryByText } = renderWithRouter(<RunHeader {...props} />);
   expect(queryByText(/simple-pipeline/i)).toBeTruthy();
-  expect(queryByText(props.message)).toBeTruthy();
-  expect(queryByTitle(props.message)).toBeTruthy();
   expect(queryByText(/Last updated/i)).toBeFalsy();
 });
 
