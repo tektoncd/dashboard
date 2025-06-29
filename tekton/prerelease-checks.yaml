@@ -39,7 +39,7 @@ spec:
         value: $(params.releaseBucket)
   steps:
     - name: check-git-tag
-      image: ghcr.io/wolfi-dev/git:alpine@sha256:f8ed5ea402ee8c0c25a4b148a3f0151953e931ceea4195a89fcb22ef9171c14f
+      image: ghcr.io/wolfi-dev/git:alpine@sha256:6d9687c289b01ca6f4d7997d2b4baa838f18cbdee2525ad82c9d5b4453f38d09
       script: |
         echo "Checking git tag"
         # Look for the tag in the list of tags
