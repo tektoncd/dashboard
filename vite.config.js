@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { defineConfig, splitVendorChunkPlugin } from 'vite';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import svgr from 'vite-plugin-svgr';
 import yaml from '@rollup/plugin-yaml';
@@ -44,12 +44,7 @@ export default defineConfig(({ mode }) => ({
   esbuild: {
     target: 'es2022'
   },
-  plugins: [
-    react({ devTarget: 'es2022' }),
-    svgr(),
-    yaml(),
-    splitVendorChunkPlugin()
-  ],
+  plugins: [react({ devTarget: 'es2022' }), svgr(), yaml()],
   resolve: {
     extensions: ['.js', '.jsx']
   },
