@@ -1,4 +1,4 @@
-# Copyright 2022-2024 The Tekton Authors
+# Copyright 2022-2025 The Tekton Authors
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -9,7 +9,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM ghcr.io/tektoncd/dashboard/dashboard-e2e-base:node20.18.0-chrome130@sha256:d1f3068cfb5ec95eb6e3e732788bf70e4c88c43d491a031d953b0c312e66c23d
+FROM ghcr.io/tektoncd/dashboard/dashboard-e2e-base:node20.19.3-chrome138@sha256:6ca889424f0e60dd622d4bf54d04d3fc46606ef7bea68f1faf1d89d9ef943bd2
 
 ENTRYPOINT ["npm", "run", "test:ci"]
 CMD ["--", "--browser", "chrome"]
