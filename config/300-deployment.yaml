@@ -45,6 +45,26 @@ spec:
         app.kubernetes.io/part-of: tekton-dashboard
         app: tekton-dashboard
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: NotIn
+                  values:
+                  - windows
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: dashboard
+                  app.kubernetes.io/component: dashboard
+                  app.kubernetes.io/instance: default
+                  app.kubernetes.io/part-of: tekton-dashboard
+              topologyKey: kubernetes.io/hostname
+            weight: 100
       serviceAccountName: tekton-dashboard
       volumes: []
       nodeSelector:
