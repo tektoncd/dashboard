@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2024 The Tekton Authors
+Copyright 2020-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -268,13 +268,16 @@ export function About() {
             <ArrowIcon size={24} className="tkn--about-arrow" />
           </div>
         </ClickableTile>
-        <ClickableTile href="https://hub.tekton.dev/">
+        <ClickableTile href="https://artifacthub.io/packages/search?kind=23&kind=7&kind=11">
           <div className="tkn--about-pictogram">
             <HubPictogram />
           </div>
           <div className="tkn--about-docs-description">
-            <h3>Tekton Hub</h3>
-            <p>Discover, search, and share reusable Tasks and Pipelines</p>
+            <h3>Artifact Hub</h3>
+            <p>
+              Discover, search, and share reusable StepActions, Tasks, and
+              Pipelines
+            </p>
             <ArrowIcon size={24} className="tkn--about-arrow" />
           </div>
         </ClickableTile>
