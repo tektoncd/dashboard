@@ -256,8 +256,8 @@ export default /* istanbul ignore next */ function PipelineRun({
             trigger || '-'
           }`}
         >
-          {eventListener}
-          {trigger}
+          {eventListener && <div>{eventListener}</div>}
+          {trigger && <div>{trigger}</div>}
         </span>
       );
     }

@@ -22,7 +22,7 @@ const RunMetadataColumn = ({ columnHeader, columnContent }) => {
       <h3 className={`${carbonPrefix}--label tkn--metadata-column-header`}>
         {columnHeader}
       </h3>
-      <div className="tkn-metadata-column-content">{columnContent}</div>
+      <div className="tkn--metadata-column-content">{columnContent}</div>
     </div>
   );
 };
