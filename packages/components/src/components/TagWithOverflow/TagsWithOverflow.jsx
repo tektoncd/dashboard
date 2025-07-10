@@ -128,8 +128,8 @@ export default function TagsWithOverflow({
           open={isModalOpen}
           onRequestClose={handleModalClose}
           modalHeading={intl.formatMessage({
-            id: 'dashboard.runMetadata.allTags',
-            defaultMessage: 'All tags'
+            id: 'dashboard.runMetadata.allLabels',
+            defaultMessage: 'All labels'
           })}
           primaryButtonText={intl.formatMessage({
             id: 'dashboard.modal.close',
@@ -144,8 +144,8 @@ export default function TagsWithOverflow({
               defaultMessage: 'Search'
             })}
             placeholder={intl.formatMessage({
-              id: 'dashboard.runMetadata.searchForTag',
-              defaultMessage: 'Search for a tag'
+              id: 'dashboard.runMetadata.searchForLabel',
+              defaultMessage: 'Search for a label'
             })}
             value={searchQuery}
             onChange={handleSearchChange}

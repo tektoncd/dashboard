@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -64,30 +64,32 @@ describe('TagsWithOverflow with overflow', () => {
   });
 
   it('open modal with remaining tags', () => {
-    const { getByText, getByPlaceholderText } = renderWithRouter(
+    const { getByText, getByPlaceholderText, queryByRole } = renderWithRouter(
       <TagsWithOverflow resource={resource} namespace={namespace} />
     );
     fireEvent.click(getByText('+11'));
     fireEvent.click(getByText('+6'));
-    const modalHeading = document.querySelector('h2');
-    expect(modalHeading.textContent).to.equal('All tags');
-    expect(getByPlaceholderText('Search for a tag')).toBeTruthy();
+    const dialog = queryByRole('dialog');
+    expect(dialog).toBeTruthy();
+    const modalHeading = within(dialog).queryByText('All labels');
+    expect(modalHeading).toBeTruthy();
+    expect(getByPlaceholderText('Search for a label')).toBeTruthy();
   });
 
   it('filter tags in modal', () => {
-    const { getByText, getByPlaceholderText } = renderWithRouter(
+    const { getByText, getByPlaceholderText, queryByRole } = renderWithRouter(
       <TagsWithOverflow resource={resource} namespace={namespace} />
     );
     fireEvent.click(getByText('+11'));
     fireEvent.click(getByText('+6'));
-    fireEvent.change(getByPlaceholderText('Search for a tag'), {
+    fireEvent.change(getByPlaceholderText('Search for a label'), {
       target: { value: 'tag3' }
     });
 
-    const modal = document.querySelector('.cds--modal-content');
-    const filteredTags = within(modal).getAllByTitle('tag3: value3');
+    const dialog = queryByRole('dialog');
+    const filteredTags = within(dialog).getAllByTitle('tag3: value3');
     expect(filteredTags.length).toBe(1);
     expect(filteredTags[0]).toBeTruthy();
-    expect(within(modal).queryByText('tag10: value10')).not.toBeTruthy();
+    expect(within(dialog).queryByText('tag10: value10')).not.toBeTruthy();
   });
 });
