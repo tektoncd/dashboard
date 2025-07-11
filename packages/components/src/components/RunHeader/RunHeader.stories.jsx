@@ -12,6 +12,7 @@ limitations under the License.
 */
 /* eslint-disable formatjs/no-literal-string-in-jsx */
 
+import { withRouter } from 'storybook-addon-remix-react-router';
 import RunHeader from './RunHeader';
 
 const now = new Date();
@@ -22,7 +23,8 @@ export default {
     runName: 'simple-pipeline-run-1'
   },
   component: RunHeader,
-  title: 'RunHeader'
+  title: 'RunHeader',
+  decorators: [withRouter()]
 };
 
 export const Default = {};
@@ -32,7 +34,12 @@ export const Running = {
     lastTransitionTime: now,
     message: 'Not all Tasks have completed executing',
     reason: 'Running',
-    status: 'Unknown'
+    status: 'Unknown',
+    labels: {
+      'tekton.dev/pipeline': 'hello-pipeline',
+      'triggers-eventid': 'e9742d5b-00e4-4124-9aa1-da2fd670f2da'
+    },
+    namespace: 'default'
   }
 };
 
