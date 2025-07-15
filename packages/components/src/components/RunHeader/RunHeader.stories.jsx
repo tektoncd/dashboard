@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,9 +17,20 @@ import RunHeader from './RunHeader';
 
 const now = new Date();
 
+const pipelineRun = {
+  metadata: {
+    labels: {
+      'tekton.dev/pipeline': 'ci-pipeline',
+      gitRepo: 'tektoncd/dashboard',
+      gitBranch: 'main'
+    }
+  }
+};
+
 export default {
   args: {
     name: 'simple-pipeline',
+    resource: pipelineRun,
     runName: 'simple-pipeline-run-1'
   },
   component: RunHeader,
@@ -63,16 +74,43 @@ export const Failed = {
 
 export const Loading = { args: { loading: true } };
 
+export const WithDuration = {
+  args: {
+    ...Complete.args,
+    duration: 30_000 // 30s
+  }
+};
+
 export const WithTriggerInfo = {
   args: {
-    lastTransitionTime: now,
-    message: 'All Tasks have completed executing',
-    reason: 'Completed',
-    status: 'True',
+    ...Complete.args,
     triggerHeader: (
       <span>
         Triggered by <a href="#">Update README.md</a>
       </span>
     )
+  }
+};
+
+export const WithLabelOverflow = {
+  args: {
+    ...WithDuration.args,
+    resource: {
+      metadata: {
+        labels: {
+          'app.kubernetes.io/managed-by': 'tekton-pipelines',
+          'tekton.dev/memberOf': 'tasks',
+          'tekton.dev/pipeline': 'deploy-configmap',
+          'tekton.dev/pipelineRun': 'deploy-configmap-prow-config-8zkk2',
+          'tekton.dev/pipelineRunUID': '4ed13cb0-87c6-4da4-8500-cd4d69c46416',
+          'tekton.dev/pipelineTask': 'deploy',
+          'tekton.dev/task': 'deploy-configmap',
+          'triggers.tekton.dev/eventlistener': 'tekton-cd',
+          'triggers.tekton.dev/trigger': 'configmaps',
+          'triggers.tekton.dev/triggers-eventid':
+            'c2cd171d-2e51-47ca-b34e-42eda846a1d5'
+        }
+      }
+    }
   }
 };

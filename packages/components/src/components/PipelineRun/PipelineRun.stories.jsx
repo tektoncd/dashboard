@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import { useArgs } from 'storybook/preview-api';
+import { withRouter } from 'storybook-addon-remix-react-router';
 import { labels as labelConstants } from '@tektoncd/dashboard-utils';
 
 import PipelineRun from '.';
@@ -143,6 +144,9 @@ taskRunWithRetries.status.retriesStatus = [
 
 const pipelineRun = {
   metadata: {
+    labels: {
+      'tekton.dev/pipeline': 'pipeline'
+    },
     name: 'pipeline-run',
     namespace: 'cb4552a6-b2d7-45e2-9773-3d4ca33909ff',
     uid: '7c266264-4d4d-45e3-ace0-041be8f7d06e'
@@ -189,6 +193,9 @@ const pipelineRun = {
 
 const pipelineRunWithMinimalStatus = {
   metadata: {
+    labels: {
+      'tekton.dev/pipeline': 'pipeline'
+    },
     name: 'pipeline-run',
     namespace: 'cb4552a6-b2d7-45e2-9773-3d4ca33909ff',
     uid: '7c266264-4d4d-45e3-ace0-041be8f7d06e'
@@ -230,7 +237,7 @@ export default {
     view: undefined
   },
   component: PipelineRun,
-  decorators: [Story => <Story />],
+  decorators: [Story => <Story />, withRouter()],
   subcomponents: { LogsToolbar },
   title: 'PipelineRun'
 };

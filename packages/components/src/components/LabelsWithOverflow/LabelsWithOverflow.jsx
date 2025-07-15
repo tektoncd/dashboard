@@ -167,6 +167,7 @@ export default function LabelsWithOverflow({
           passiveModal
         >
           <TextInput
+            data-modal-primary-focus
             id="tkn--runMetadata--label-search"
             labelText={intl.formatMessage({
               id: 'dashboard.runMetadata.searchLabel',
