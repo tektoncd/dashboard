@@ -514,6 +514,17 @@ export /* istanbul ignore next */ function PipelineRunContainer({
 
   const runActions = pipelineRunActions();
 
+  let duration;
+  if (pipelineRun?.status) {
+    const { status } = getStatus(pipelineRun);
+    const createdTime = new Date(pipelineRun.status.startTime).getTime();
+    let endTime = Date.now();
+    if (status === 'False' || status === 'True') {
+      endTime = new Date(pipelineRun.status.completionTime).getTime();
+    }
+    duration = endTime - createdTime;
+  }
+
   return (
     <>
       <div id="tkn--maximized-logs-container" ref={maximizedLogsContainer} />
@@ -540,6 +551,7 @@ export /* istanbul ignore next */ function PipelineRunContainer({
         />
       )}
       <PipelineRun
+        duration={duration}
         enableLogAutoScroll
         enableLogScrollButtons
         error={error}
