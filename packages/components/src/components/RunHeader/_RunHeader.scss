@@ -42,6 +42,10 @@ limitations under the License.
   .tkn--run-metadata-time .tkn--run-details-time {
     margin-block-start: $spacing-03;
   }
+
+  .tkn--triggerInfo div{
+    margin-block-end: 0.5rem;
+  }
 }
 
 header.tkn--pipeline-run-header {

@@ -55,6 +55,32 @@ it('RunHeader renders the failed state', () => {
   expect(queryByText(/failed/i)).toBeTruthy();
 });
 
+it('RunHeader renders the error notification when there is a pipelineRun error', () => {
+  const { queryByText } = renderWithRouter(
+    <RunHeader
+      {...props}
+      pipelineRunError
+      reason="Error"
+      message="PipelineRun error"
+    />
+  );
+  expect(queryByText(/Unable to load PipelineRun: Error/i)).toBeTruthy();
+  expect(queryByText(/PipelineRun error/i)).toBeTruthy();
+});
+
+it('RunHeader renders the error notification when there is a pipelineRun failure', () => {
+  const { queryByText } = renderWithRouter(
+    <RunHeader
+      {...props}
+      showFailureMessage
+      reason="PipelineValidationFailed"
+      message="Validation failed for pipeline run"
+    />
+  );
+  expect(queryByText(/Status message:/i)).toBeTruthy();
+  expect(queryByText(/Validation failed for pipeline run/i)).toBeTruthy();
+});
+
 it('RunHeader renders the loading state', () => {
   const { queryByTitle } = renderWithRouter(<RunHeader loading />);
   expect(queryByTitle(/loading/i)).toBeTruthy();

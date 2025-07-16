@@ -176,6 +176,7 @@
   "dashboard.pagination.previousPage": "이전 페이지",
   "dashboard.parameters.title": "매개변수",
   "dashboard.pipelineRun.error": "PipelineRun 로드 중 오류 발생",
+  "dashboard.pipelineRun.errorMessage": "",
   "dashboard.pipelineRun.failed": "PipelineRun을 로드할 수 없음",
   "dashboard.pipelineRun.failedMessage": "PipelineRun 세부사항을 로드할 수 없습니다. {reason}",
   "dashboard.pipelineRun.logEmpty": "로그 출력이 없음",

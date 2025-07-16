@@ -176,6 +176,7 @@
   "dashboard.pagination.previousPage": "",
   "dashboard.parameters.title": "",
   "dashboard.pipelineRun.error": "載入 PipelineRun 時發生錯誤",
+  "dashboard.pipelineRun.errorMessage": "",
   "dashboard.pipelineRun.failed": "無法載入 PipelineRun",
   "dashboard.pipelineRun.failedMessage": "無法載入 PipelineRun 詳細資料：{reason}",
   "dashboard.pipelineRun.logEmpty": "沒有日誌輸出",
