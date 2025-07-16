@@ -13,26 +13,26 @@ limitations under the License.
 
 import { fireEvent, within } from '@testing-library/react';
 import { renderWithRouter } from '../../utils/test';
-import TagsWithOverflow from './TagsWithOverflow';
+import LabelsWithOverflow from './LabelsWithOverflow';
 
 const resource = {
   metadata: {
     labels: {
-      tag1: 'value1',
-      tag2: 'value2',
-      tag3: 'value3',
-      tag4: 'value4',
-      tag5: 'value5',
-      tag6: 'value6',
-      tag7: 'value7',
-      tag8: 'value8',
-      tag9: 'value9',
-      tag10: 'value10',
-      tag11: 'value11',
-      tag12: 'value12',
-      tag13: 'value13',
-      tag14: 'value14',
-      tag15: 'value15'
+      label1: 'value1',
+      label2: 'value2',
+      label3: 'value3',
+      label4: 'value4',
+      label5: 'value5',
+      label6: 'value6',
+      label7: 'value7',
+      label8: 'value8',
+      label9: 'value9',
+      label10: 'value10',
+      label11: 'value11',
+      label12: 'value12',
+      label13: 'value13',
+      label14: 'value14',
+      label15: 'value15'
     }
   },
   kind: 'PipelineRun'
@@ -40,32 +40,32 @@ const resource = {
 
 const namespace = 'default';
 
-describe('TagsWithOverflow with overflow', () => {
-  it('renders visible tags', () => {
+describe('LabelsWithOverflow with overflow', () => {
+  it('renders visible labels', () => {
     const { getByText } = renderWithRouter(
-      <TagsWithOverflow resource={resource} namespace={namespace} />
+      <LabelsWithOverflow resource={resource} namespace={namespace} />
     );
-    expect(getByText('tag1: value1')).toBeTruthy();
-    expect(getByText('tag2: value2')).toBeTruthy();
-    expect(getByText('tag3: value3')).toBeTruthy();
-    expect(getByText('tag4: value4')).toBeTruthy();
+    expect(getByText('label1: value1')).toBeTruthy();
+    expect(getByText('label2: value2')).toBeTruthy();
+    expect(getByText('label3: value3')).toBeTruthy();
+    expect(getByText('label4: value4')).toBeTruthy();
   });
 
-  it('renders overflow tags with popover', () => {
+  it('renders overflow labels with popover', () => {
     const { getByText } = renderWithRouter(
-      <TagsWithOverflow resource={resource} namespace={namespace} />
+      <LabelsWithOverflow resource={resource} namespace={namespace} />
     );
     fireEvent.click(getByText('+11'));
-    expect(getByText('tag5: value5')).toBeTruthy();
-    expect(getByText('tag6: value6')).toBeTruthy();
-    expect(getByText('tag7: value7')).toBeTruthy();
-    expect(getByText('tag8: value8')).toBeTruthy();
-    expect(getByText('tag9: value9')).toBeTruthy();
+    expect(getByText('label5: value5')).toBeTruthy();
+    expect(getByText('label6: value6')).toBeTruthy();
+    expect(getByText('label7: value7')).toBeTruthy();
+    expect(getByText('label8: value8')).toBeTruthy();
+    expect(getByText('label9: value9')).toBeTruthy();
   });
 
-  it('open modal with remaining tags', () => {
+  it('open modal with remaining labels', () => {
     const { getByText, getByPlaceholderText, queryByRole } = renderWithRouter(
-      <TagsWithOverflow resource={resource} namespace={namespace} />
+      <LabelsWithOverflow resource={resource} namespace={namespace} />
     );
     fireEvent.click(getByText('+11'));
     fireEvent.click(getByText('+6'));
@@ -76,20 +76,20 @@ describe('TagsWithOverflow with overflow', () => {
     expect(getByPlaceholderText('Search for a label')).toBeTruthy();
   });
 
-  it('filter tags in modal', () => {
+  it('filter labels in modal', () => {
     const { getByText, getByPlaceholderText, queryByRole } = renderWithRouter(
-      <TagsWithOverflow resource={resource} namespace={namespace} />
+      <LabelsWithOverflow resource={resource} namespace={namespace} />
     );
     fireEvent.click(getByText('+11'));
     fireEvent.click(getByText('+6'));
     fireEvent.change(getByPlaceholderText('Search for a label'), {
-      target: { value: 'tag3' }
+      target: { value: 'label3' }
     });
 
     const dialog = queryByRole('dialog');
-    const filteredTags = within(dialog).getAllByTitle('tag3: value3');
+    const filteredTags = within(dialog).getAllByTitle('label3: value3');
     expect(filteredTags.length).toBe(1);
     expect(filteredTags[0]).toBeTruthy();
-    expect(within(dialog).queryByText('tag10: value10')).not.toBeTruthy();
+    expect(within(dialog).queryByText('label10: value10')).not.toBeTruthy();
   });
 });

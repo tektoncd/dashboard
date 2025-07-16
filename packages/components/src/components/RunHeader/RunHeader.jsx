@@ -15,7 +15,7 @@ import { useIntl } from 'react-intl';
 import { SkeletonPlaceholder } from '@carbon/react';
 import RunTimeMetadata from '../RunTimeMetadata';
 import RunMetadataColumn from '../RunMetadataColumn';
-import TagsWithOverflow from '../TagWithOverflow/TagsWithOverflow';
+import LabelsWithOverflow from '../LabelsWithOverflow/LabelsWithOverflow';
 import StatusIcon from '../StatusIcon';
 
 export default function RunHeader({
@@ -87,7 +87,7 @@ export default function RunHeader({
                         defaultMessage: 'Labels'
                       })}
                       columnContent={
-                        <TagsWithOverflow
+                        <LabelsWithOverflow
                           resource={resource}
                           namespace={namespace}
                         />
