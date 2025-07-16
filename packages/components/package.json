@@ -1,6 +1,6 @@
 {
   "name": "@tektoncd/dashboard-components",
-  "version": "0.58.0-alpha.0",
+  "version": "0.60.0-alpha.0",
   "author": {
     "name": "The Tekton Authors"
   },
