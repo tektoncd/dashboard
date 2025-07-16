@@ -176,6 +176,7 @@
   "dashboard.pagination.previousPage": "Previous page",
   "dashboard.parameters.title": "Parameters",
   "dashboard.pipelineRun.error": "Error loading PipelineRun",
+  "dashboard.pipelineRun.errorMessage": "Status message:",
   "dashboard.pipelineRun.failed": "Cannot load PipelineRun",
   "dashboard.pipelineRun.failedMessage": "Unable to load PipelineRun: {reason}",
   "dashboard.pipelineRun.logEmpty": "No log available",

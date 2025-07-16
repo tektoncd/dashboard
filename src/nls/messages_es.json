@@ -176,6 +176,7 @@
   "dashboard.pagination.previousPage": "",
   "dashboard.parameters.title": "",
   "dashboard.pipelineRun.error": "Error al cargar PipelineRun",
+  "dashboard.pipelineRun.errorMessage": "",
   "dashboard.pipelineRun.failed": "No se puede cargar PipelineRun",
   "dashboard.pipelineRun.failedMessage": "No se han podido cargar los detalles de PipelineRun: {reason}",
   "dashboard.pipelineRun.logEmpty": "No hay salida de registros",

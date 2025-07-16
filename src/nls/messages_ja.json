@@ -176,6 +176,7 @@
   "dashboard.pagination.previousPage": "",
   "dashboard.parameters.title": "パラメータ",
   "dashboard.pipelineRun.error": "PipelineRunのロード中にエラーが発生しました",
+  "dashboard.pipelineRun.errorMessage": "",
   "dashboard.pipelineRun.failed": "PipelineRunをロードできません",
   "dashboard.pipelineRun.failedMessage": "PipelineRunをロードできません：{reason}",
   "dashboard.pipelineRun.logEmpty": "ログがありません",

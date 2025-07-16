@@ -176,6 +176,7 @@
   "dashboard.pagination.previousPage": "",
   "dashboard.parameters.title": "",
   "dashboard.pipelineRun.error": "Errore nel caricamento dell'esecuzione pipeline",
+  "dashboard.pipelineRun.errorMessage": "",
   "dashboard.pipelineRun.failed": "Impossibile caricare l'esecuzione pipeline",
   "dashboard.pipelineRun.failedMessage": "Impossibile caricare i dettagli dell'esecuzione pipeline: {reason}",
   "dashboard.pipelineRun.logEmpty": "Nessun output di log",
