@@ -213,14 +213,13 @@ function filteredURL({ baseURL, label, name }) {
   return `${baseURL}?${searchParams}`;
 }
 
-urls.pipelineRuns.tags = ({ namespace, tag, name, resourceType }) => {
+urls.pipelineRuns.labels = ({ namespace, label, name, resourceType }) => {
   let baseURL;
   if (resourceType === 'PipelineRun') {
     baseURL = urls.pipelineRuns.byNamespace({ namespace });
   } else if (resourceType === 'TaskRun') {
     baseURL = urls.taskRuns.byNamespace({ namespace });
   }
-  const label = tag;
   return filteredURL({ baseURL, label, name });
 };
 

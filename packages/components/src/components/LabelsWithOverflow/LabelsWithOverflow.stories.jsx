@@ -12,15 +12,15 @@ limitations under the License.
 */
 
 import { withRouter } from 'storybook-addon-remix-react-router';
-import TagsWithOverflow from './TagsWithOverflow';
+import LabelsWithOverflow from './LabelsWithOverflow';
 
 export default {
-  title: 'TagWithOverflow',
-  component: TagsWithOverflow,
+  title: 'LabelsWithOverflow',
+  component: LabelsWithOverflow,
   decorators: [withRouter()]
 };
 
-export const Default = args => <TagsWithOverflow {...args} />;
+export const Default = args => <LabelsWithOverflow {...args} />;
 Default.args = {
   resource: {
     metadata: {

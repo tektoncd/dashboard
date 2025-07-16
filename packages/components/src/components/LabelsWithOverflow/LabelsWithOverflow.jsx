@@ -20,11 +20,11 @@ import {
   TextInput,
   usePrefix
 } from '@carbon/react';
-import './TagsWithOverflow.scss';
+import './LabelsWithOverflow.scss';
 import { urls } from '@tektoncd/dashboard-utils';
 import Link from '../Link';
 
-export default function TagsWithOverflow({
+export default function LabelsWithOverflow({
   namespace,
   resource,
   LinkComponent = Link
@@ -35,15 +35,17 @@ export default function TagsWithOverflow({
 
   const labels = resource.metadata?.labels || {};
   const labelEntries = Object.entries(labels);
-  const maxVisibleTags = 4;
-  const maxOverflowTags = 5;
-  const visibleTags = labelEntries.slice(0, maxVisibleTags);
-  const overflowTags = labelEntries.slice(
-    maxVisibleTags,
-    maxVisibleTags + maxOverflowTags
+  const maxVisibleLabels = 4;
+  const maxOverflowLabels = 5;
+  const visibleLabels = labelEntries.slice(0, maxVisibleLabels);
+  const overflowLabels = labelEntries.slice(
+    maxVisibleLabels,
+    maxVisibleLabels + maxOverflowLabels
   );
-  const remainingTags = labelEntries.slice(maxVisibleTags + maxOverflowTags);
-  const totalHiddenTags = labelEntries.length - maxVisibleTags;
+  const remainingLabels = labelEntries.slice(
+    maxVisibleLabels + maxOverflowLabels
+  );
+  const totalHiddenLabels = labelEntries.length - maxVisibleLabels;
   const resourceType = resource.kind;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -64,21 +66,25 @@ export default function TagsWithOverflow({
     setSearchQuery(event.target.value);
   };
 
-  const filteredTags = labelEntries.filter(
+  const filteredLabels = labelEntries.filter(
     ([key, value]) =>
       key.toLowerCase().includes(searchQuery.toLowerCase()) ||
       value.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const getPipelineRunsByPipelineURL = ({ tag, name }) =>
-    urls.pipelineRuns.tags({ namespace, tag, name, resourceType });
+  const getPipelineRunsByPipelineURL = ({ label, name }) =>
+    urls.pipelineRuns.labels({ namespace, label, name, resourceType });
 
-  const renderTagLink = tags =>
-    tags.map(([key, value]) => (
+  const renderLabelLink = allLabels =>
+    allLabels.map(([key, value]) => (
       <LinkComponent
         className={`${carbonPrefix}--tag ${carbonPrefix}--tag__label`}
         key={key}
-        to={getPipelineRunsByPipelineURL({ namespace, tag: key, name: value })}
+        to={getPipelineRunsByPipelineURL({
+          namespace,
+          label: key,
+          name: value
+        })}
         title={`${key}: ${value}`}
       >
         {`${key}: ${value}`}
@@ -102,8 +108,8 @@ export default function TagsWithOverflow({
 
   return (
     <div className="tkn--overflow-menu-container">
-      {renderTagLink(visibleTags)}
-      {totalHiddenTags > 0 && (
+      {renderLabelLink(visibleLabels)}
+      {totalHiddenLabels > 0 && (
         <div className="tkn--tag-popover-container">
           <Popover
             className="tkn--tag-popover"
@@ -123,7 +129,7 @@ export default function TagsWithOverflow({
                 setOpen(!open);
               }}
             >
-              {`+${totalHiddenTags}`}
+              {`+${totalHiddenLabels}`}
             </button>
             <PopoverContent>
               <div
@@ -131,14 +137,14 @@ export default function TagsWithOverflow({
                   padding: '0.5rem'
                 }}
               >
-                {renderTagLink(overflowTags)}
-                {remainingTags.length > 0 && (
+                {renderLabelLink(overflowLabels)}
+                {remainingLabels.length > 0 && (
                   <button
                     type="button"
                     className={`${carbonPrefix}--tag tkn--tag-popover-container`}
                     onClick={handleModalOpen}
                   >
-                    {`+${remainingTags.length}`}
+                    {`+${remainingLabels.length}`}
                   </button>
                 )}
               </div>
@@ -173,7 +179,7 @@ export default function TagsWithOverflow({
             value={searchQuery}
             onChange={handleSearchChange}
           />
-          <div className="tkn--tag-list">{renderTagLink(filteredTags)}</div>
+          <div className="tkn--tag-list">{renderLabelLink(filteredLabels)}</div>
         </Modal>
       )}
     </div>
