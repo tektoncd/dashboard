@@ -11,6 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+@use '@carbon/react/scss/spacing' as *;
+
 $colors: (
   "black": rgb(0, 0, 0),
   "red": rgb(187, 0, 0),
@@ -128,7 +130,7 @@ $colors: (
     // account for lines with no explicit log level
     .tkn--log-line--level,
     .tkn--log-line--content {
-      margin-inline-start: 0.5rem;
+      margin-inline-start: $spacing-03;
     }
 
     // reset for lines with log level so we only apply indent on log level
@@ -139,7 +141,7 @@ $colors: (
 
   .tkn--log-line--level {
     display: inline-block;
-    padding-inline: 4px;
+    padding-inline: $spacing-02;
     background-color: var(--tkn-log-level-badge-background);
     color: var(--tkn-log-level-badge-color);
   }
@@ -150,9 +152,9 @@ $colors: (
 // enabled but for some reason there are no timestamps to show (maybe external
 // logs that didn't capture timestamps at runtime)
 .tkn--log:has(.tkn--log-line--timestamp:not(:empty)) .tkn--log-line--timestamp {
-  margin-inline-end: 0.5rem;
+  margin-inline-end: $spacing-01;
 }
 
 .tkn--log-line--level {
-  margin-inline-end: 0.5rem;
+  margin-inline-end: $spacing-03;
 }
