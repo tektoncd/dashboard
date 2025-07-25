@@ -338,6 +338,7 @@ export class LogContainer extends Component {
 
     let previousTimestamp;
     let currentGroupIndex = null;
+    let countEndGroupCommands = 0;
     const parsedLogs = logs.reduce((acc, line, index) => {
       const parsedLogLine = parseLogLine(line);
       if (!parsedLogLine.timestamp) {
@@ -362,6 +363,7 @@ export class LogContainer extends Component {
         }
       } else if (isEndGroup) {
         currentGroupIndex = null;
+        countEndGroupCommands++; // eslint-disable-line no-plusplus
         // we don't render anything for the endgroup command
         return acc;
       }
@@ -393,11 +395,15 @@ export class LogContainer extends Component {
       return acc;
     }, []);
 
+    // need to include endgroup commands in count of displayed log lines
+    // otherwise we end up with wrong message about hidden lines displayed to
+    // user even when all groups are expanded
+    const displayedLogLines = parsedLogs.length + countEndGroupCommands;
     if (parsedLogs.length < 20_000) {
       return (
         <>
           <LogsFilteredNotification
-            displayedLogLines={parsedLogs.length}
+            displayedLogLines={displayedLogLines}
             totalLogLines={logs.length}
           />
           <LogFormat
@@ -416,7 +422,7 @@ export class LogContainer extends Component {
     return (
       <>
         <LogsFilteredNotification
-          displayedLogLines={parsedLogs.length}
+          displayedLogLines={displayedLogLines}
           totalLogLines={logs.length}
         />
         <List
