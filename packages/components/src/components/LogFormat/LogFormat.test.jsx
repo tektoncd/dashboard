@@ -361,7 +361,7 @@ describe('LogFormat', () => {
       // accept anything (`.*`) for test purposes as it may be localised
       // and we're more concerned with the structure here
       new RegExp(
-        `<div class="tkn--log-line"><span class="tkn--log-line--timestamp"><span title="${timestamp}">.*</span></span><span class="tkn--log-line--content">Hello</span></div>`
+        `<div class="tkn--log-line"><span class="tkn--log-line--timestamp"><span title="${timestamp}">.*</span> </span><span class="tkn--log-line--content">Hello</span></div>`
       )
     );
   });
