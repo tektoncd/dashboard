@@ -308,6 +308,9 @@ const LogFormat = ({
               formatTooltip={() => timestamp}
               includeSeconds
             />
+            {
+              ' ' /* include space character between timestamp and rest of content for better copy-paste experience */
+            }
           </span>
         )}
         {fields.level && getDecoratedLevel(level)}
