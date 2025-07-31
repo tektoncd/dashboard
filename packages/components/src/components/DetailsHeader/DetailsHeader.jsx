@@ -37,10 +37,13 @@ export default function DetailsHeader({
       ({ finishedAt: endTime, startedAt: startTime } =
         stepStatus.terminated || {});
     }
+    if (!endTime) {
+      endTime = new Date();
+    }
 
     return (
       <span className="tkn--run-details-time">
-        {startTime && endTime && new Date(startTime).getTime() !== 0
+        {startTime && new Date(startTime).getTime() !== 0
           ? intl.formatMessage(
               {
                 id: 'dashboard.run.duration',
