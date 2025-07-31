@@ -69,7 +69,12 @@ export default function TaskRunTabs({
             // use the resource creation to include total time for all retries
             taskRun.metadata.creationTimestamp
           ).getTime();
-          const endTime = new Date(taskRun.status.completionTime).getTime();
+          // default to current time for end, will only update when there's a
+          // change to the task run resource so may not be 100% accurate but
+          // users have requested this so it's displayed as best-effort
+          const endTime = taskRun.status.completionTime
+            ? new Date(taskRun.status.completionTime).getTime()
+            : Date.now();
           duration = endTime - createdTime;
         }
 
