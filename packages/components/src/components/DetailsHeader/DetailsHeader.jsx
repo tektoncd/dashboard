@@ -38,27 +38,26 @@ export default function DetailsHeader({
         stepStatus.terminated || {});
     }
 
-    if (!startTime || !endTime || new Date(startTime).getTime() === 0) {
-      return null;
-    }
-
     return (
       <span className="tkn--run-details-time">
-        {intl.formatMessage(
-          {
-            id: 'dashboard.run.duration',
-            defaultMessage: 'Duration: {duration}'
-          },
-          {
-            duration: (
-              <FormattedDuration
-                milliseconds={
-                  new Date(endTime).getTime() - new Date(startTime).getTime()
-                }
-              />
+        {startTime && endTime && new Date(startTime).getTime() !== 0
+          ? intl.formatMessage(
+              {
+                id: 'dashboard.run.duration',
+                defaultMessage: 'Duration: {duration}'
+              },
+              {
+                duration: (
+                  <FormattedDuration
+                    milliseconds={
+                      new Date(endTime).getTime() -
+                      new Date(startTime).getTime()
+                    }
+                  />
+                )
+              }
             )
-          }
-        )}
+          : ' '}
       </span>
     );
   }
