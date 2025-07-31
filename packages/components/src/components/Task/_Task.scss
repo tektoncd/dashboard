@@ -145,7 +145,19 @@ limitations under the License.
   }
 }
 
-.tkn--tasks:has(.#{$prefix}--tabs.tkn--task-list) {
+.tkn--tasks > .#{$prefix}--tabs {
+  .tkn--task-title {
+    margin-block-start: 0.25rem;
+    margin-block-end: 0;
+    line-height: 1.75;
+  }
+
+  .tkn--task-duration {
+    margin-block-end: 0.25rem;
+  }
+}
+
+.tkn--tasks:has(> .#{$prefix}--tabs, .#{$prefix}--tabs.tkn--task-list) {
   > .#{$prefix}--css-grid {
     max-inline-size: 100%;
 
@@ -153,6 +165,12 @@ limitations under the License.
       // to stop log content bleeding through the sticky header
       padding-block-start: 0;
     }
+  }
+
+  > .#{$prefix}--tab-content {
+    // to stop log content bleeding through the sticky header
+    padding-block-start: 0;
+    padding-inline: 0;
   }
 
   .tkn--step-details {
