@@ -64,7 +64,7 @@ limitations under the License.
     background-color: var(--cds-layer-01);
     // this needs to be lower than the run header to prevent it bleeding through
     // popovers or other menus such as the log settings
-    z-index: 9996;
+    z-index: 5996;
 
     &:hover {
       position: sticky;
