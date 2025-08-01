@@ -330,22 +330,26 @@ export default /* istanbul ignore next */ function PipelineRun({
       tasks?.find(t => t.metadata.name === taskRun.spec.taskRef.name)) ||
     {};
 
-  const definition = getStepDefinition({
-    selectedStepId,
-    task,
-    taskRun
-  });
-
   const stepStatus = getStepStatus({
     selectedStepId,
     taskRun
   });
 
-  const logContainer = getLogContainer({
-    stepName: selectedStepId,
-    stepStatus,
-    taskRun
-  });
+  let definition;
+  let logContainer;
+  if (!enableTabLayout) {
+    definition = getStepDefinition({
+      selectedStepId,
+      task,
+      taskRun
+    });
+
+    logContainer = getLogContainer({
+      stepName: selectedStepId,
+      stepStatus,
+      taskRun
+    });
+  }
 
   const skippedTasks = pipelineRun.status?.skippedTasks || [];
   const skippedTask = skippedTasks.find(

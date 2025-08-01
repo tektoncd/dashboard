@@ -224,28 +224,32 @@ function Logs({
               </>
             }
           >
-            <details className="tkn--step-definition">
-              <summary>
-                {intl.formatMessage({
-                  id: 'dashboard.step.definition',
-                  defaultMessage: 'Definition'
-                })}
-              </summary>
+            {expandedSteps[step.name] ? (
+              <>
+                <details className="tkn--step-definition">
+                  <summary>
+                    {intl.formatMessage({
+                      id: 'dashboard.step.definition',
+                      defaultMessage: 'Definition'
+                    })}
+                  </summary>
 
-              <StepDefinition
-                definition={getStepDefinition({
-                  selectedStepId: step.name,
-                  task,
+                  <StepDefinition
+                    definition={getStepDefinition({
+                      selectedStepId: step.name,
+                      task,
+                      taskRun
+                    })}
+                  />
+                </details>
+                {getLogContainer({
+                  disableLogsToolbar: true,
+                  stepName: step.name,
+                  stepStatus: step,
                   taskRun
                 })}
-              />
-            </details>
-            {getLogContainer({
-              disableLogsToolbar: true,
-              stepName: step.name,
-              stepStatus: step,
-              taskRun
-            })}
+              </>
+            ) : null}
           </AccordionItem>
         );
       })}
@@ -272,6 +276,20 @@ const TaskRunTabPanels = ({
   taskRuns,
   view
 }) => {
+  const logsComponent = (
+    <Logs
+      expandedSteps={expandedSteps}
+      getLogContainer={getLogContainer}
+      onStepSelected={onStepSelected}
+      pod={pod}
+      selectedRetry={selectedRetry}
+      selectedTaskId={selectedTaskId}
+      skippedTask={skippedTask}
+      task={task}
+      taskRun={taskRunToUse}
+    />
+  );
+
   return (
     <TabPanels>
       {/* only render panel content when active */}
@@ -285,17 +303,7 @@ const TaskRunTabPanels = ({
             <TaskRunDetails
               fullTaskRun={taskRun}
               getLogsToolbar={view === 'logs' && getLogsToolbar}
-              logs={props => (
-                <Logs
-                  {...props}
-                  expandedSteps={expandedSteps}
-                  getLogContainer={getLogContainer}
-                  onStepSelected={onStepSelected}
-                  selectedRetry={selectedRetry}
-                  selectedTaskId={selectedTaskId}
-                  task={task}
-                />
-              )}
+              logs={logsComponent}
               onRetryChange={onRetryChange}
               onViewChange={onViewChange}
               pod={pod}

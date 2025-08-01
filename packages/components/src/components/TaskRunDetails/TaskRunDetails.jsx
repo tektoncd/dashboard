@@ -74,7 +74,7 @@ const defaults = {
 const TaskRunDetails = ({
   fullTaskRun,
   getLogsToolbar,
-  logs: Logs,
+  logs,
   onRetryChange,
   onViewChange = defaults.onViewChange,
   pod,
@@ -112,7 +112,7 @@ const TaskRunDetails = ({
     setPodContent('resource');
 
     /* istanbul ignore if */
-    if (!view && Logs) {
+    if (!view && logs) {
       onViewChange('logs');
     }
   }, [displayName, view]);
@@ -180,7 +180,7 @@ const TaskRunDetails = ({
   ) : null;
 
   const tabs = [
-    Logs && 'logs',
+    logs && 'logs',
     paramsTable && 'params',
     resultsTable && 'results',
     'status',
@@ -195,7 +195,7 @@ const TaskRunDetails = ({
   const tabList = [];
   const tabPanels = [];
   /* istanbul ignore if */
-  if (Logs) {
+  if (logs) {
     tabList.push(
       <Tab key="logs">
         {intl.formatMessage({
@@ -207,14 +207,7 @@ const TaskRunDetails = ({
     tabPanels.push(
       <TabPanel key="logs">
         {selectedTabIndex === tabPanels.length && (
-          <div className="tkn--step-status">
-            <Logs
-              pod={pod}
-              skippedTask={skippedTask}
-              task={task}
-              taskRun={taskRun}
-            />
-          </div>
+          <div className="tkn--step-status">{logs}</div>
         )}
       </TabPanel>
     );
@@ -319,7 +312,7 @@ const TaskRunDetails = ({
 
   let retryMenuTitle;
   /* istanbul ignore if */
-  if (Logs && (selectedRetry || fullTaskRun?.status?.retriesStatus)) {
+  if (logs && (selectedRetry || fullTaskRun?.status?.retriesStatus)) {
     retryMenuTitle = intl.formatMessage({
       id: 'dashboard.pipelineRun.retries.view',
       defaultMessage: 'View retries'
@@ -328,8 +321,8 @@ const TaskRunDetails = ({
 
   /* istanbul ignore next */
   const retryMenuItems =
-    Logs &&
-    fullTaskRun?.status.retriesStatus
+    logs &&
+    fullTaskRun?.status?.retriesStatus
       ?.map((_retryStatus, index) => {
         return {
           id: index,
@@ -362,7 +355,7 @@ const TaskRunDetails = ({
         taskRun={taskRun}
         type="taskRun"
       >
-        {Logs && fullTaskRun?.status?.retriesStatus ? (
+        {logs && fullTaskRun?.status?.retriesStatus ? (
           <Dropdown
             autoAlign
             className="tkn--taskrun-retries-dropdown"
