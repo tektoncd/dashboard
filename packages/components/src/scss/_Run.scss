@@ -66,7 +66,8 @@ limitations under the License.
     // popovers or other menus such as the log settings
     z-index: 5996;
 
-    &:hover {
+    &:focus, &:hover {
+      // prevent Carbon from reverting to position: relative
       position: sticky;
     }
   }
