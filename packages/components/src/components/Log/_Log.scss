@@ -144,7 +144,7 @@ pre.tkn--log {
   z-index: 5998;
 }
 
-.tkn--log-settings-menu-content {
+.#{$prefix}--popover-content.tkn--log-settings-menu-content {
   padding-block-end: .5rem;
   padding-block-start: 1rem;
   padding-inline: 1rem;
