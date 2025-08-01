@@ -197,7 +197,7 @@ const TaskRunDetails = ({
   /* istanbul ignore if */
   if (logs) {
     tabList.push(
-      <Tab key="logs">
+      <Tab data-tab="logs" key="logs">
         {intl.formatMessage({
           id: 'dashboard.taskRun.logs',
           defaultMessage: 'Logs'
@@ -214,7 +214,7 @@ const TaskRunDetails = ({
   }
   if (paramsTable) {
     tabList.push(
-      <Tab key="params">
+      <Tab data-tab="params" key="params">
         {intl.formatMessage({
           id: 'dashboard.taskRun.params',
           defaultMessage: 'Parameters'
@@ -231,7 +231,7 @@ const TaskRunDetails = ({
   }
   if (resultsTable) {
     tabList.push(
-      <Tab key="results">
+      <Tab data-tab="results" key="results">
         {intl.formatMessage({
           id: 'dashboard.taskRun.results',
           defaultMessage: 'Results'
@@ -247,7 +247,7 @@ const TaskRunDetails = ({
     );
   }
   tabList.push(
-    <Tab key="status">
+    <Tab data-tab="status" key="status">
       {intl.formatMessage({
         id: 'dashboard.taskRun.status',
         defaultMessage: 'Status'
@@ -275,7 +275,11 @@ const TaskRunDetails = ({
     </TabPanel>
   );
   if (!skippedTask && pod) {
-    tabList.push(<Tab key="pod">Pod</Tab>);
+    tabList.push(
+      <Tab data-tab="pod" key="pod">
+        Pod
+      </Tab>
+    );
     tabPanels.push(
       <TabPanel key="pod">
         {selectedTabIndex === tabPanels.length && (

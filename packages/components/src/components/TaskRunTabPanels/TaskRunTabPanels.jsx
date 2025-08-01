@@ -198,6 +198,10 @@ function Logs({
 
         return (
           <AccordionItem
+            className="tkn--step"
+            data-status={stepStatus}
+            data-reason={reason}
+            data-termination-reason={terminationReason}
             open={expandedSteps[step.name]}
             onHeadingClick={({ isOpen }) => {
               onStepSelected({
