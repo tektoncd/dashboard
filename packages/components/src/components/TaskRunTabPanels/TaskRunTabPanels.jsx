@@ -70,6 +70,181 @@ function AccordionItem({ children, open, ...rest }) {
   );
 }
 
+function Step({
+  expandedSteps,
+  getLogContainer,
+  isSidecar,
+  onStepSelected,
+  selectedRetry,
+  selectedTaskId,
+  step,
+  steps,
+  task,
+  taskRun,
+  taskRunReason
+}) {
+  const intl = useIntl();
+  const stepNamePrefix = isSidecar ? 'sidecar:' : '';
+
+  let duration;
+  if (step.terminated) {
+    const { finishedAt, startedAt } = step.terminated;
+
+    if (finishedAt && startedAt && new Date(startedAt).getTime() !== 0) {
+      duration = (
+        <FormattedDuration
+          milliseconds={
+            new Date(finishedAt).getTime() - new Date(startedAt).getTime()
+          }
+        />
+      );
+    }
+  }
+
+  const stepData = getStepData({
+    reason: taskRunReason,
+    selectedStepId: step.name,
+    steps
+  });
+
+  const { exitCode, stepReason, stepStatus, terminationReason } = stepData;
+
+  function getStatusLabel() {
+    if (terminationReason === 'Skipped') {
+      return intl.formatMessage({
+        id: 'dashboard.taskRun.status.skipped',
+        defaultMessage: 'Skipped'
+      });
+    }
+    if (
+      stepStatus === 'cancelled' ||
+      (stepStatus === 'terminated' &&
+        (taskRunReason === 'TaskRunCancelled' ||
+          taskRunReason === 'TaskRunTimeout'))
+    ) {
+      return intl.formatMessage({
+        id: 'dashboard.taskRun.status.cancelled',
+        defaultMessage: 'Cancelled'
+      });
+    }
+
+    if (stepStatus === 'running') {
+      return intl.formatMessage({
+        id: 'dashboard.taskRun.status.running',
+        defaultMessage: 'Running'
+      });
+    }
+
+    if (stepStatus === 'terminated') {
+      if (stepReason === 'Completed') {
+        return exitCode !== 0
+          ? intl.formatMessage(
+              {
+                id: 'dashboard.taskRun.status.succeeded.warning',
+                defaultMessage: 'Completed with exit code {exitCode}'
+              },
+              { exitCode }
+            )
+          : intl.formatMessage({
+              id: 'dashboard.taskRun.status.succeeded',
+              defaultMessage: 'Completed'
+            });
+      }
+      return intl.formatMessage({
+        id: 'dashboard.taskRun.status.failed',
+        defaultMessage: 'Failed'
+      });
+    }
+
+    if (stepStatus === 'waiting') {
+      return intl.formatMessage({
+        id: 'dashboard.taskRun.status.waiting',
+        defaultMessage: 'Waiting'
+      });
+    }
+
+    return intl.formatMessage({
+      id: 'dashboard.taskRun.status.notRun',
+      defaultMessage: 'Not run'
+    });
+  }
+
+  const statusLabel = getStatusLabel();
+
+  return (
+    <AccordionItem
+      className="tkn--step"
+      data-status={stepStatus}
+      data-reason={stepReason}
+      data-termination-reason={terminationReason}
+      open={expandedSteps[`${stepNamePrefix}${step.name}`]}
+      onHeadingClick={({ isOpen }) => {
+        onStepSelected({
+          isOpen,
+          selectedRetry,
+          selectedStepId: `${stepNamePrefix}${step.name}`,
+          selectedTaskId,
+          taskRunName: taskRun.metadata?.name
+        });
+      }}
+      title={
+        <>
+          <StatusIcon
+            DefaultIcon={props => <DefaultIcon size={20} {...props} />}
+            hasWarning={exitCode !== 0}
+            reason={stepReason}
+            status={stepStatus}
+            terminationReason={terminationReason}
+            title={statusLabel}
+            type="inverse"
+          />
+          <span className="tkn--step-name">
+            {isSidecar
+              ? intl.formatMessage(
+                  {
+                    id: 'dashboard.taskRun.sidecar',
+                    defaultMessage: 'Sidecar: {name}'
+                  },
+                  { name: step.name }
+                )
+              : step.name}
+          </span>
+          <span className="tkn--step-duration">{duration}</span>
+        </>
+      }
+    >
+      {expandedSteps[`${stepNamePrefix}${step.name}`] ? (
+        <>
+          <details className="tkn--step-definition">
+            <summary>
+              {intl.formatMessage({
+                id: 'dashboard.step.definition',
+                defaultMessage: 'Definition'
+              })}
+            </summary>
+
+            <StepDefinition
+              definition={getStepDefinition({
+                isSidecar,
+                selectedStepId: step.name,
+                task,
+                taskRun
+              })}
+            />
+          </details>
+          {getLogContainer({
+            disableLogsToolbar: true,
+            isSidecar,
+            stepName: step.name,
+            stepStatus: step,
+            taskRun
+          })}
+        </>
+      ) : null}
+    </AccordionItem>
+  );
+}
+
 function Logs({
   expandedSteps,
   getLogContainer,
@@ -84,7 +259,7 @@ function Logs({
 
   const taskRunStatus = getStatus(taskRun);
   const { reason } = taskRunStatus;
-  const { steps } = taskRun.status || {};
+  const { sidecars, steps } = taskRun.status || {};
 
   if (!steps) {
     return (
@@ -110,153 +285,37 @@ function Logs({
 
   return (
     <Accordion align="end" className="tkn--task-logs" ordered size="md">
-      {steps.map(step => {
-        let duration;
-        if (step.terminated) {
-          const { finishedAt, startedAt } = step.terminated;
-
-          if (finishedAt && startedAt && new Date(startedAt).getTime() !== 0) {
-            duration = (
-              <FormattedDuration
-                milliseconds={
-                  new Date(finishedAt).getTime() - new Date(startedAt).getTime()
-                }
-              />
-            );
-          }
-        }
-
-        const stepData = getStepData({
-          reason,
-          selectedStepId: step.name,
-          steps
-        });
-
-        const { exitCode, stepReason, stepStatus, terminationReason } =
-          stepData;
-
-        function getStatusLabel() {
-          if (terminationReason === 'Skipped') {
-            return intl.formatMessage({
-              id: 'dashboard.taskRun.status.skipped',
-              defaultMessage: 'Skipped'
-            });
-          }
-          if (
-            stepStatus === 'cancelled' ||
-            (stepStatus === 'terminated' &&
-              (reason === 'TaskRunCancelled' || reason === 'TaskRunTimeout'))
-          ) {
-            return intl.formatMessage({
-              id: 'dashboard.taskRun.status.cancelled',
-              defaultMessage: 'Cancelled'
-            });
-          }
-
-          if (stepStatus === 'running') {
-            return intl.formatMessage({
-              id: 'dashboard.taskRun.status.running',
-              defaultMessage: 'Running'
-            });
-          }
-
-          if (stepStatus === 'terminated') {
-            if (reason === 'Completed') {
-              return exitCode !== 0
-                ? intl.formatMessage(
-                    {
-                      id: 'dashboard.taskRun.status.succeeded.warning',
-                      defaultMessage: 'Completed with exit code {exitCode}'
-                    },
-                    { exitCode }
-                  )
-                : intl.formatMessage({
-                    id: 'dashboard.taskRun.status.succeeded',
-                    defaultMessage: 'Completed'
-                  });
-            }
-            return intl.formatMessage({
-              id: 'dashboard.taskRun.status.failed',
-              defaultMessage: 'Failed'
-            });
-          }
-
-          if (stepStatus === 'waiting') {
-            return intl.formatMessage({
-              id: 'dashboard.taskRun.status.waiting',
-              defaultMessage: 'Waiting'
-            });
-          }
-
-          return intl.formatMessage({
-            id: 'dashboard.taskRun.status.notRun',
-            defaultMessage: 'Not run'
-          });
-        }
-
-        const statusLabel = getStatusLabel();
-
-        return (
-          <AccordionItem
-            className="tkn--step"
-            data-status={stepStatus}
-            data-reason={reason}
-            data-termination-reason={terminationReason}
-            open={expandedSteps[step.name]}
-            onHeadingClick={({ isOpen }) => {
-              onStepSelected({
-                isOpen,
-                selectedRetry,
-                selectedStepId: step.name,
-                selectedTaskId,
-                taskRunName: taskRun.metadata?.name
-              });
-            }}
-            title={
-              <>
-                <StatusIcon
-                  DefaultIcon={props => <DefaultIcon size={20} {...props} />}
-                  hasWarning={exitCode !== 0}
-                  reason={stepReason}
-                  status={stepStatus}
-                  terminationReason={terminationReason}
-                  title={statusLabel}
-                  type="inverse"
-                />
-                <span className="tkn--step-name">{step.name}</span>
-                <span className="tkn--step-duration">{duration}</span>
-              </>
-            }
-          >
-            {expandedSteps[step.name] ? (
-              <>
-                <details className="tkn--step-definition">
-                  <summary>
-                    {intl.formatMessage({
-                      id: 'dashboard.step.definition',
-                      defaultMessage: 'Definition'
-                    })}
-                  </summary>
-
-                  <StepDefinition
-                    definition={getStepDefinition({
-                      selectedStepId: step.name,
-                      task,
-                      taskRun
-                    })}
-                  />
-                </details>
-                {getLogContainer({
-                  disableLogsToolbar: true,
-                  stepName: step.name,
-                  stepStatus: step,
-                  taskRun
-                })}
-              </>
-            ) : null}
-          </AccordionItem>
-        );
-      })}
+      {steps.map(step => (
+        <Step
+          expandedSteps={expandedSteps}
+          getLogContainer={getLogContainer}
+          key={step.name}
+          onStepSelected={onStepSelected}
+          selectedRetry={selectedRetry}
+          selectedTaskId={selectedTaskId}
+          taskRunReason={reason}
+          step={step}
+          steps={steps}
+          task={task}
+          taskRun={taskRun}
+        />
+      ))}
+      {(sidecars || []).map(sidecar => (
+        <Step
+          expandedSteps={expandedSteps}
+          getLogContainer={getLogContainer}
+          isSidecar
+          key={sidecar.name}
+          onStepSelected={onStepSelected}
+          selectedRetry={selectedRetry}
+          selectedTaskId={selectedTaskId}
+          taskRunReason={reason}
+          step={sidecar}
+          steps={sidecars}
+          task={task}
+          taskRun={taskRun}
+        />
+      ))}
     </Accordion>
   );
 }
@@ -280,7 +339,7 @@ const TaskRunTabPanels = ({
   taskRuns,
   view
 }) => {
-  const logsComponent = (
+  const logs = (
     <Logs
       expandedSteps={expandedSteps}
       getLogContainer={getLogContainer}
@@ -307,7 +366,7 @@ const TaskRunTabPanels = ({
             <TaskRunDetails
               fullTaskRun={taskRun}
               getLogsToolbar={view === 'logs' && getLogsToolbar}
-              logs={logsComponent}
+              logs={logs}
               onRetryChange={onRetryChange}
               onViewChange={onViewChange}
               pod={pod}
