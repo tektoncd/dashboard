@@ -365,17 +365,15 @@ const TaskRunDetails = ({
             className="tkn--taskrun-retries-dropdown"
             hideLabel
             id={`${taskRun.metadata.uid}-retry`}
-            initialSelectedItem={
-              retryMenuItems[
-                selectedRetry || fullTaskRun.status.retriesStatus.length - 1
-              ]
-            }
             items={retryMenuItems}
             itemToString={itemToString}
             label={retryMenuTitle}
             onChange={({ selectedItem }) => {
               onRetryChange(selectedItem.id);
             }}
+            selectedItem={
+              retryMenuItems[selectedRetry || retryMenuItems.length - 1]
+            }
             size="sm"
             titleText={retryMenuTitle}
             translateWithId={getTranslateWithId(intl)}
