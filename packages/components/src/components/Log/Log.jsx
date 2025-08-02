@@ -447,7 +447,11 @@ export class LogContainer extends Component {
   };
 
   getTrailerMessage = ({ exitCode, reason, terminationReason }) => {
-    const { forcePolling, intl } = this.props;
+    const { forcePolling, intl, isSidecar } = this.props;
+
+    if (isSidecar) {
+      return null;
+    }
 
     if (terminationReason === 'Skipped') {
       return intl.formatMessage({

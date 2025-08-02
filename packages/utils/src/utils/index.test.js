@@ -469,6 +469,31 @@ describe('getStepDefinition', () => {
     const definition = getStepDefinition({ selectedStepId, task, taskRun });
     expect(definition).toEqual(step);
   });
+
+  it('handles sidecars', () => {
+    const selectedStepId = 'a-sidecar';
+    const sidecar = { name: selectedStepId };
+    const task = {};
+    const taskRun = {
+      spec: {
+        taskRef: {
+          name: 'dummy-task'
+        }
+      },
+      status: {
+        taskSpec: {
+          sidecars: [sidecar]
+        }
+      }
+    };
+    const definition = getStepDefinition({
+      isSidecar: true,
+      selectedStepId,
+      task,
+      taskRun
+    });
+    expect(definition).toEqual(sidecar);
+  });
 });
 
 it('getStepStatus', () => {

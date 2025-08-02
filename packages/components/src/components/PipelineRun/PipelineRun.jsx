@@ -110,6 +110,7 @@ export default /* istanbul ignore next */ function PipelineRun({
 
   function getLogContainer({
     disableLogsToolbar,
+    isSidecar,
     stepName,
     stepStatus,
     taskRun
@@ -141,6 +142,7 @@ export default /* istanbul ignore next */ function PipelineRun({
           }
           fetchLogs={() => fetchLogs({ stepName, stepStatus, taskRun })}
           forcePolling={forceLogPolling}
+          isSidecar={isSidecar}
           key={`${selectedTaskId}:${stepName}:${selectedRetry}`}
           logLevels={logLevels}
           pollingInterval={pollingInterval}
