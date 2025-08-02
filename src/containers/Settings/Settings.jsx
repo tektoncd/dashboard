@@ -11,6 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useTitleSync } from '@tektoncd/dashboard-utils';
 import { RadioTile, Stack, TileGroup, Toggle } from '@carbon/react';
@@ -37,6 +38,12 @@ export function Settings() {
     })
   });
 
+  const [theme, setThemeState] = useState(() => getTheme());
+  function onSelectTheme(selectedTheme) {
+    setThemeState(selectedTheme);
+    setTheme(selectedTheme);
+  }
+
   return (
     <div className="tkn--settings">
       <h1 id="main-content-header">
@@ -52,8 +59,8 @@ export function Settings() {
             defaultMessage: 'Theme'
           })}
           name="theme-group"
-          valueSelected={getTheme()}
-          onChange={theme => setTheme(theme)}
+          valueSelected={theme}
+          onChange={selectedTheme => onSelectTheme(selectedTheme)}
         >
           <RadioTile value="system" name="theme">
             <SystemIcon />
