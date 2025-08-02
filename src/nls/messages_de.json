@@ -253,6 +253,7 @@
   "dashboard.taskRun.logs.unavailable": "",
   "dashboard.taskRun.params": "",
   "dashboard.taskRun.results": "",
+  "dashboard.taskRun.sidecar": "",
   "dashboard.taskRun.status": "Status",
   "dashboard.taskRun.status.cancelled": "Abgebrochen",
   "dashboard.taskRun.status.failed": "Fehlgeschlagen",

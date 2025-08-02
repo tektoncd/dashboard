@@ -253,6 +253,7 @@
   "dashboard.taskRun.logs.unavailable": "",
   "dashboard.taskRun.params": "매개변수",
   "dashboard.taskRun.results": "결과",
+  "dashboard.taskRun.sidecar": "",
   "dashboard.taskRun.status": "상태",
   "dashboard.taskRun.status.cancelled": "취소됨",
   "dashboard.taskRun.status.failed": "실패",

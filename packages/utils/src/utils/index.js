@@ -123,23 +123,30 @@ export function applyStepTemplate({ step, stepTemplate }) {
   return definition;
 }
 
-export function getStepDefinition({ selectedStepId, task, taskRun }) {
+export function getStepDefinition({
+  isSidecar,
+  selectedStepId,
+  task,
+  taskRun
+}) {
   if (!selectedStepId) {
     return null;
   }
 
   const stepTemplate =
-    taskRun.status?.taskSpec?.stepTemplate ||
-    taskRun.spec?.taskSpec?.stepTemplate ||
-    task?.spec?.stepTemplate;
+    !isSidecar &&
+    (taskRun.status?.taskSpec?.stepTemplate ||
+      taskRun.spec?.taskSpec?.stepTemplate ||
+      task?.spec?.stepTemplate);
 
   let stepDefinitions = [];
-  if (taskRun.status?.taskSpec?.steps) {
-    stepDefinitions = taskRun.status.taskSpec.steps;
-  } else if (taskRun.spec?.taskSpec?.steps) {
-    stepDefinitions = taskRun.spec.taskSpec.steps;
-  } else if (task?.spec?.steps) {
-    stepDefinitions = task.spec.steps;
+  const field = isSidecar ? 'sidecars' : 'steps';
+  if (taskRun.status?.taskSpec?.[field]) {
+    stepDefinitions = taskRun.status.taskSpec[field];
+  } else if (taskRun.spec?.taskSpec?.[field]) {
+    stepDefinitions = taskRun.spec.taskSpec[field];
+  } else if (task?.spec?.[field]) {
+    stepDefinitions = task.spec[field];
   }
 
   const definition = stepDefinitions?.find(
@@ -159,7 +166,7 @@ export function getStepDefinition({ selectedStepId, task, taskRun }) {
   // ['unnamed-2', 'unnamed-4']
   // but the order will be consistent with unnamed steps in the definition
   const statusSteps =
-    taskRun.status.steps?.filter(({ name }) => name.startsWith('unnamed-')) ||
+    taskRun.status[field]?.filter(({ name }) => name.startsWith('unnamed-')) ||
     [];
   const unnamedSteps = stepDefinitions.filter(({ name }) => !name);
 

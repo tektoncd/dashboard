@@ -253,6 +253,7 @@
   "dashboard.taskRun.logs.unavailable": "No logs are available. See status for more details.",
   "dashboard.taskRun.params": "Parameters",
   "dashboard.taskRun.results": "Results",
+  "dashboard.taskRun.sidecar": "Sidecar: {name}",
   "dashboard.taskRun.status": "Status",
   "dashboard.taskRun.status.cancelled": "Cancelled",
   "dashboard.taskRun.status.failed": "Failed",

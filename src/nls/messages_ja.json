@@ -253,6 +253,7 @@
   "dashboard.taskRun.logs.unavailable": "",
   "dashboard.taskRun.params": "パラメータ",
   "dashboard.taskRun.results": "結果",
+  "dashboard.taskRun.sidecar": "",
   "dashboard.taskRun.status": "ステータス",
   "dashboard.taskRun.status.cancelled": "キャンセル済み",
   "dashboard.taskRun.status.failed": "失敗",
