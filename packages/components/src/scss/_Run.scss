@@ -60,11 +60,11 @@ limitations under the License.
 .tkn--task-logs {
   .#{$prefix}--accordion__heading {
     position: sticky;
-    inset-block-start: 4rem;
+    inset-block-start: 6.5rem;
     background-color: var(--cds-layer-01);
     // this needs to be lower than the run header to prevent it bleeding through
     // popovers or other menus such as the log settings
-    z-index: 5996;
+    z-index: 5995;
 
     &:focus, &:hover {
       // prevent Carbon from reverting to position: relative

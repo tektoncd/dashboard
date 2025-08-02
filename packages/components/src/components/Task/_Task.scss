@@ -175,6 +175,13 @@ limitations under the License.
 
   .tkn--step-details {
     overflow: initial;
+
+    > .#{$prefix}--tabs {
+      position: sticky;
+      inset-block-start: 4.4rem;
+      z-index: 5996;
+      background-color: $layer;
+    }
   }
 
   header.tkn--step-details-header {
