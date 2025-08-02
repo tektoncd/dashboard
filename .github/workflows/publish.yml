@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: read
-      # required for npm package provenance
+      # required for OIDC
       id-token: write
     steps:
       - name: Check for publish commit
@@ -129,9 +129,8 @@ jobs:
           registry-url: 'https://registry.npmjs.org/'
       - name: Publish dry run
         if: ${{ steps.checkPublishCommit.outcome == 'success' && github.event_name == 'pull_request' }}
-        run: npm publish --workspaces --provenance --access public --dry-run
+        # npm@11: You must specify a tag using --tag when publishing a prerelease version.
+        run: npm publish --workspaces --access public --tag latest --dry-run
       - name: Publish
         if: ${{ steps.checkPublishCommit.outcome == 'success' && github.event_name == 'push' }}
-        run: npm publish --workspaces --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        run: npm publish --workspaces --access public --tag latest
