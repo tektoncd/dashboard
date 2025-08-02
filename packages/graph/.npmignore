@@ -1,0 +1,3 @@
+*.stories.js
+*.stories.jsx
+**/examples/

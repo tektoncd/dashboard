@@ -117,7 +117,7 @@ export const Skipped = {
 export const Toolbar = {
   args: {
     fetchLogs: async () =>
-      (await import('./samples/timestamps_log_levels.txt?raw')).default,
+      (await import('./examples/timestamps_log_levels.txt?raw')).default,
     logLevels: {
       error: true,
       warning: true,
