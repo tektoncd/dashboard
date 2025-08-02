@@ -23,7 +23,8 @@ import { Pending as DefaultIcon } from '@carbon/react/icons';
 import {
   getStatus,
   getStepDefinition,
-  getStepStatusReason
+  getStepStatusReason,
+  updateUnexecutedSteps
 } from '@tektoncd/dashboard-utils';
 
 import TaskRunDetails from '../TaskRunDetails';
@@ -32,7 +33,10 @@ import FormattedDuration from '../FormattedDuration';
 import StepDefinition from '../StepDefinition';
 
 function getStepData({ reason, selectedStepId, steps }) {
-  const step = steps.find(stepToCheck => stepToCheck.name === selectedStepId);
+  const stepsToUse = updateUnexecutedSteps(steps);
+  const step = stepsToUse.find(
+    stepToCheck => stepToCheck.name === selectedStepId
+  );
   if (!step) {
     return null;
   }
@@ -87,7 +91,7 @@ function Step({
   const stepNamePrefix = isSidecar ? 'sidecar:' : '';
 
   let duration;
-  if (step.terminated) {
+  if (step.terminated && step.terminationReason !== 'Skipped') {
     const { finishedAt, startedAt } = step.terminated;
 
     if (finishedAt && startedAt && new Date(startedAt).getTime() !== 0) {
@@ -119,8 +123,7 @@ function Step({
     if (
       stepStatus === 'cancelled' ||
       (stepStatus === 'terminated' &&
-        (taskRunReason === 'TaskRunCancelled' ||
-          taskRunReason === 'TaskRunTimeout'))
+        (stepReason === 'TaskRunCancelled' || stepReason === 'TaskRunTimeout'))
     ) {
       return intl.formatMessage({
         id: 'dashboard.taskRun.status.cancelled',
