@@ -179,7 +179,7 @@ limitations under the License.
     > .#{$prefix}--tabs {
       position: sticky;
       inset-block-start: 4.4rem;
-      z-index: 5996;
+      z-index: 4996;
       background-color: $layer;
     }
   }
@@ -188,6 +188,6 @@ limitations under the License.
     padding: 1rem 0 0 0;
     position: sticky;
     inset-block-start: 0;
-    z-index: 5997;
+    z-index: 4997;
   }
 }

@@ -64,7 +64,7 @@ limitations under the License.
     background-color: var(--cds-layer-01);
     // this needs to be lower than the run header to prevent it bleeding through
     // popovers or other menus such as the log settings
-    z-index: 5995;
+    z-index: 4995;
 
     &:focus, &:hover {
       // prevent Carbon from reverting to position: relative
