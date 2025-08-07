@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 const { defineConfig } = require('cypress');
-const { unlink } = require('node:fs/promises');
+const { unlinkSync } = require('node:fs');
 
 const isCI = process.env.CI === 'true';
 
@@ -25,12 +25,10 @@ module.exports = defineConfig({
       config.env.carbonPrefix = 'cds'; // eslint-disable-line no-param-reassign
 
       on('after:spec', (spec, results) => {
-        if (isCI && results && results.video && results.stats.failures === 0) {
+        if (isCI && results?.video && results.stats.failures === 0) {
           console.log('Deleting video for passing test'); // eslint-disable-line no-console
-          return unlink(results.video);
+          unlinkSync(results.video);
         }
-
-        return null;
       });
 
       return config;
