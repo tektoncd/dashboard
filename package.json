@@ -53,7 +53,7 @@
     "@storybook/react-vite": "^9.1.1",
     "@testing-library/react": "^12.1.5",
     "@testing-library/react-hooks": "^8.0.1",
-    "@vitejs/plugin-react-swc": "^3.11.0",
+    "@vitejs/plugin-react-swc": "^4.0.0",
     "@vitest/coverage-istanbul": "^3.2.4",
     "dotenv": "^17.2.1",
     "eslint": "^8.57.1",
