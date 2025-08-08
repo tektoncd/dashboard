@@ -30,7 +30,11 @@ const getDecoratedLevel = level => {
     return null;
   }
 
-  return <span className="tkn--log-line--level">{level}</span>;
+  return (
+    <>
+      <span className="tkn--log-line--level">{level}</span>{' '}
+    </>
+  );
 };
 
 const getXtermColor = commandStack => {
