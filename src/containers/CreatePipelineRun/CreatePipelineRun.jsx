@@ -21,6 +21,7 @@ import {
   Form,
   FormGroup,
   InlineNotification,
+  TextArea,
   TextInput,
   Toggle
 } from '@carbon/react';
@@ -686,12 +687,9 @@ function CreatePipelineRun() {
         {paramSpecs && paramSpecs.length !== 0 && (
           <FormGroup legendText="Params">
             {paramSpecs.map(paramSpec => (
-              <TextInput
-                id={`create-pipelinerun--param-${paramSpec.name}`}
-                key={`create-pipelinerun--param-${paramSpec.name}`}
-                labelText={paramSpec.name}
+              <TextArea
                 helperText={paramSpec.description}
-                placeholder={paramSpec.default || paramSpec.name}
+                id={`create-pipelinerun--param-${paramSpec.name}`}
                 invalid={
                   validationError &&
                   !params[paramSpec.name] &&
@@ -701,10 +699,13 @@ function CreatePipelineRun() {
                   id: 'dashboard.createRun.invalidParams',
                   defaultMessage: 'Params cannot be empty'
                 })}
-                value={params[paramSpec.name] || ''}
+                key={`create-pipelinerun--param-${paramSpec.name}`}
+                labelText={paramSpec.name}
                 onChange={({ target: { value } }) =>
                   handleParamChange(paramSpec.name, value)
                 }
+                placeholder={paramSpec.default || paramSpec.name}
+                value={params[paramSpec.name] || ''}
               />
             ))}
           </FormGroup>
