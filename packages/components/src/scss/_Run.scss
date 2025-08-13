@@ -49,7 +49,8 @@ limitations under the License.
 
   > .#{$prefix}--css-grid {
     padding-inline: 0;
-    height: calc(100cqh - 350px);
+    min-block-size: calc(100cqb - 350px);
+    max-block-size: calc(100vb - 4rem);
   }
 }
 
