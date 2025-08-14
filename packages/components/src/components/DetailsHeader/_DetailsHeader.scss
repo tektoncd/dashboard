@@ -42,6 +42,12 @@ header.tkn--step-details-header {
     .#{$prefix}--btn-set {
       margin-inline: 0.5rem;
       align-self: center;
+      align-items: baseline;
+
+      .cds--btn--icon-only {
+        inline-size: 2rem;
+        block-size: 2rem;
+      }
     }
 
     .tkn--run-details-name {

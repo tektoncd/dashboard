@@ -50,7 +50,8 @@ limitations under the License.
   > .#{$prefix}--css-grid {
     padding-inline: 0;
     min-block-size: calc(100cqb - 350px);
-    max-block-size: calc(100vb - 4rem);
+    // allow some overscroll so step header can be sticky to top of content
+    max-block-size: calc(100vb + 4rem);
   }
 }
 
@@ -61,7 +62,7 @@ limitations under the License.
 .tkn--task-logs {
   .#{$prefix}--accordion__heading {
     position: sticky;
-    inset-block-start: 6.5rem;
+    inset-block-start: 6.9rem;
     background-color: var(--cds-layer-01);
     // this needs to be lower than the run header to prevent it bleeding through
     // popovers or other menus such as the log settings
