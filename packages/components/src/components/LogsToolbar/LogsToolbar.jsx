@@ -47,7 +47,7 @@ const LogsToolbar = ({
     <div className={`${carbonPrefix}--btn-set`}>
       {onToggleMaximized ? (
         <button
-          className={`${carbonPrefix}--btn ${carbonPrefix}--btn--icon-only ${carbonPrefix}--copy-btn`}
+          className={`${carbonPrefix}--btn ${carbonPrefix}--btn--sm ${carbonPrefix}--layout--size-sm ${carbonPrefix}--btn--icon-only ${carbonPrefix}--copy-btn`}
           onClick={onToggleMaximized}
           type="button"
         >
@@ -75,7 +75,7 @@ const LogsToolbar = ({
       {url ? (
         <>
           <a
-            className={`${carbonPrefix}--btn ${carbonPrefix}--btn--icon-only ${carbonPrefix}--copy-btn`}
+            className={`${carbonPrefix}--btn ${carbonPrefix}--btn--sm ${carbonPrefix}--layout--size-sm ${carbonPrefix}--btn--icon-only ${carbonPrefix}--copy-btn`}
             href={url}
             target="_blank"
             rel="noopener noreferrer"
@@ -90,7 +90,7 @@ const LogsToolbar = ({
             </Launch>
           </a>
           <a
-            className={`${carbonPrefix}--btn ${carbonPrefix}--btn--icon-only ${carbonPrefix}--copy-btn`}
+            className={`${carbonPrefix}--btn ${carbonPrefix}--btn--sm ${carbonPrefix}--layout--size-sm ${carbonPrefix}--btn--icon-only ${carbonPrefix}--copy-btn`}
             download={name}
             href={url}
           >

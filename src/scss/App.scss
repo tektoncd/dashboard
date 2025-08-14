@@ -112,7 +112,7 @@ body {
   margin-block-start: 1rem;
 }
 
-#tkn--maximized-logs-container {
+#tkn--maximized-logs-container, #tkn--maximized-taskrun-container {
   position: absolute;
   inset-block-start: 0;
   inset-inline-start: 0;
@@ -121,11 +121,41 @@ body {
   z-index: -1;
 
   &:not(:empty) {
+    background-color: $layer;
     z-index: 9999;
   }
+}
 
-  .tkn--log {
-    min-block-size: 100%;
+#tkn--maximized-taskrun-container {
+  // full screen instead of just content area
+  position: fixed;
+}
+
+#tkn--maximized-logs-container .tkn--log {
+  min-block-size: 100%;
+}
+
+#tkn--maximized-taskrun-container .tkn--step-details {
+  block-size: 100%;
+  overflow: auto;
+
+  > .#{$prefix}--tabs {
+    background-color: $layer;
+  }
+
+  > .#{$prefix}--tab-content {
+    padding: 0;
+  }
+
+  header.tkn--step-details-header {
+    padding: 1rem 0 0 1rem;
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 4997;
+  }
+
+  .tkn--task-logs .cds--accordion__heading {
+    inset-block-start: 4.4rem;
   }
 }
 

@@ -12,6 +12,7 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
+import { Fragment } from 'react';
 import { useIntl } from 'react-intl';
 import {
   Accordion,
@@ -27,6 +28,7 @@ import {
   updateUnexecutedSteps
 } from '@tektoncd/dashboard-utils';
 
+import Portal from '../Portal';
 import TaskRunDetails from '../TaskRunDetails';
 import StatusIcon from '../StatusIcon';
 import FormattedDuration from '../FormattedDuration';
@@ -329,8 +331,11 @@ const TaskRunTabPanels = ({
   expandedSteps,
   getLogContainer,
   getLogsToolbar,
+  isMaximized,
+  maximizedContainer,
   onRetryChange,
   onStepSelected,
+  onToggleMaximized,
   onViewChange,
   pod,
   preTaskRun,
@@ -358,6 +363,8 @@ const TaskRunTabPanels = ({
     />
   );
 
+  const TaskRunRoot = isMaximized && maximizedContainer ? Portal : Fragment;
+
   return (
     <TabPanels>
       {/* only render panel content when active */}
@@ -367,21 +374,26 @@ const TaskRunTabPanels = ({
       {taskRuns.map((taskRun, index) => (
         <TabPanel key={taskRun.metadata?.uid || index}>
           {selectedIndex === index + 1 ? (
-            // taskRunToUse may include additional matrix / retry data
-            <TaskRunDetails
-              fullTaskRun={taskRun}
-              getLogsToolbar={view === 'logs' && getLogsToolbar}
-              logs={logs}
-              onRetryChange={onRetryChange}
-              onViewChange={onViewChange}
-              pod={pod}
-              selectedRetry={selectedRetry}
-              selectedStepId={selectedStepId}
-              skippedTask={skippedTask}
-              task={task}
-              taskRun={taskRunToUse}
-              view={view}
-            />
+            <TaskRunRoot
+              {...(isMaximized ? { container: maximizedContainer } : null)}
+            >
+              <TaskRunDetails
+                fullTaskRun={taskRun}
+                getLogsToolbar={view === 'logs' && getLogsToolbar}
+                isMaximized={isMaximized}
+                logs={logs}
+                onRetryChange={onRetryChange}
+                onToggleMaximized={onToggleMaximized}
+                onViewChange={onViewChange}
+                pod={pod}
+                selectedRetry={selectedRetry}
+                selectedStepId={selectedStepId}
+                skippedTask={skippedTask}
+                task={task}
+                taskRun={taskRunToUse} // may include additional matrix / retry data
+                view={view}
+              />
+            </TaskRunRoot>
           ) : null}
         </TabPanel>
       ))}

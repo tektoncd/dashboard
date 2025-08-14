@@ -74,8 +74,10 @@ const defaults = {
 const TaskRunDetails = ({
   fullTaskRun,
   getLogsToolbar,
+  isMaximized,
   logs,
   onRetryChange,
+  onToggleMaximized,
   onViewChange = defaults.onViewChange,
   pod,
   selectedRetry,
@@ -383,6 +385,8 @@ const TaskRunDetails = ({
         {getLogsToolbar
           ? getLogsToolbar({
               id: 'logs-toolbar',
+              isMaximized,
+              onToggleMaximized,
               taskRun
             })
           : null}

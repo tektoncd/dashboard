@@ -107,6 +107,7 @@ export /* istanbul ignore next */ function PipelineRunContainer({
   const view = queryParams.get(VIEW);
 
   const maximizedLogsContainer = useRef();
+  const maximizedTaskRunContainer = useRef();
   const [showRunActionNotification, setShowRunActionNotification] =
     useState(null);
 
@@ -531,6 +532,10 @@ export /* istanbul ignore next */ function PipelineRunContainer({
   return (
     <>
       <div id="tkn--maximized-logs-container" ref={maximizedLogsContainer} />
+      <div
+        id="tkn--maximized-taskrun-container"
+        ref={maximizedTaskRunContainer}
+      />
       {showRunActionNotification?.logsURL && (
         <ActionableNotification
           inline
@@ -579,6 +584,7 @@ export /* istanbul ignore next */ function PipelineRunContainer({
           />
         )}
         maximizedLogsContainer={maximizedLogsContainer.current}
+        maximizedTaskRunContainer={maximizedTaskRunContainer.current}
         onRetryChange={retry => {
           if (Number.isInteger(retry)) {
             queryParams.set(RETRY, retry);
