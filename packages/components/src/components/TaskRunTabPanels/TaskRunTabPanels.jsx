@@ -32,8 +32,9 @@ import StatusIcon from '../StatusIcon';
 import FormattedDuration from '../FormattedDuration';
 import StepDefinition from '../StepDefinition';
 
-function getStepData({ reason, selectedStepId, steps }) {
-  const stepsToUse = updateUnexecutedSteps(steps);
+function getStepData({ isSidecar, reason, selectedStepId, steps }) {
+  // sidecars run in parallel to the regular steps, so keep their actual status
+  const stepsToUse = isSidecar ? steps : updateUnexecutedSteps(steps);
   const step = stepsToUse.find(
     stepToCheck => stepToCheck.name === selectedStepId
   );
@@ -106,6 +107,7 @@ function Step({
   }
 
   const stepData = getStepData({
+    isSidecar,
     reason: taskRunReason,
     selectedStepId: step.name,
     steps
