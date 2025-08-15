@@ -379,7 +379,7 @@ const TaskRunTabPanels = ({
             >
               <TaskRunDetails
                 fullTaskRun={taskRun}
-                getLogsToolbar={view === 'logs' && getLogsToolbar}
+                getLogsToolbar={getLogsToolbar}
                 isMaximized={isMaximized}
                 logs={logs}
                 onRetryChange={onRetryChange}
