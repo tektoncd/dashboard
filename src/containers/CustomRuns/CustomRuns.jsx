@@ -1,5 +1,5 @@
 /*
-Copyright 2022-2024 The Tekton Authors
+Copyright 2022-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -30,12 +30,14 @@ import {
   FormattedDuration,
   Link,
   StatusIcon,
+  StopModal,
   Table
 } from '@tektoncd/dashboard-components';
 import {
   Add,
   Calendar as CalendarIcon,
   TrashCan as DeleteIcon,
+  StopOutline,
   Time as TimeIcon,
   Lightning as TriggersIcon,
   UndefinedFilled as UndefinedIcon
@@ -120,14 +122,18 @@ function CustomRuns() {
   const [cancelSelection, setCancelSelection] = useState(null);
   const [deleteError, setDeleteError] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showStopModal, setShowStopModal] = useState(false);
   const [toBeDeleted, setToBeDeleted] = useState([]);
+  const [toBeStopped, setToBeStopped] = useState([]);
 
   const isReadOnly = useIsReadOnly();
 
   useEffect(() => {
     setDeleteError(null);
     setShowDeleteModal(false);
+    setShowStopModal(false);
     setToBeDeleted([]);
+    setToBeStopped([]);
   }, [JSON.stringify(filters), namespace]);
 
   const {
@@ -173,15 +179,40 @@ function CustomRuns() {
     setCancelSelection(() => handleCancel);
   }
 
+  function openStopModal(selectedRows, handleCancel) {
+    const resourcesById = keyBy(runs, 'metadata.uid');
+    const resourcesToBeStopped = selectedRows.map(
+      ({ id }) => resourcesById[id]
+    );
+
+    setShowStopModal(true);
+    setToBeStopped(resourcesToBeStopped);
+    setCancelSelection(() => handleCancel);
+  }
+
   function closeDeleteModal() {
     setShowDeleteModal(false);
     setToBeDeleted([]);
+  }
+
+  function closeStopModal() {
+    setShowStopModal(false);
+    setToBeStopped([]);
   }
 
   function cancel(run) {
     cancelCustomRun({
       name: run.metadata.name,
       namespace: run.metadata.namespace
+    }).catch(err => {
+      err.response.text().then(text => {
+        const statusCode = err.response.status;
+        let errorMessage = `error code ${statusCode}`;
+        if (text) {
+          errorMessage = `${text} (error code ${statusCode})`;
+        }
+        setDeleteError(errorMessage);
+      });
     });
   }
 
@@ -217,6 +248,13 @@ function CustomRuns() {
     const deletions = toBeDeleted.map(resource => deleteResource(resource));
     closeDeleteModal();
     await Promise.all(deletions);
+    cancelSelection();
+  }
+
+  async function handleStop() {
+    const stops = toBeStopped.map(resource => cancel(resource));
+    closeStopModal();
+    await Promise.all(stops);
     cancelSelection();
   }
 
@@ -335,6 +373,14 @@ function CustomRuns() {
   const batchActionButtons = isReadOnly
     ? []
     : [
+        {
+          onClick: openStopModal,
+          text: intl.formatMessage({
+            id: 'dashboard.actions.stopButton',
+            defaultMessage: 'Stop'
+          }),
+          icon: StopOutline
+        },
         {
           onClick: openDeleteModal,
           text: intl.formatMessage({
@@ -548,6 +594,15 @@ function CustomRuns() {
                 onClose={closeDeleteModal}
                 onSubmit={handleDelete}
                 resources={toBeDeleted}
+                showNamespace={namespace === ALL_NAMESPACES}
+              />
+            ) : null}
+            {showStopModal ? (
+              <StopModal
+                kind="CustomRuns"
+                onClose={closeStopModal}
+                onSubmit={handleStop}
+                resources={toBeStopped}
                 showNamespace={namespace === ALL_NAMESPACES}
               />
             ) : null}
