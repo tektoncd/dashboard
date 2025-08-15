@@ -12,9 +12,11 @@ limitations under the License.
 */
 
 import { useEffect, useRef, useState } from 'react';
+import { InlineNotification } from '@carbon/react';
 import {
   ActionableNotification,
   Actions,
+  CancelStatusOptions,
   PipelineRun
 } from '@tektoncd/dashboard-components';
 import {
@@ -28,7 +30,6 @@ import {
   urls,
   useTitleSync
 } from '@tektoncd/dashboard-utils';
-import { InlineNotification, RadioTile, TileGroup } from '@carbon/react';
 
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useIntl } from 'react-intl';
@@ -383,46 +384,10 @@ export /* istanbul ignore next */ function PipelineRunContainer({
                   { name: resource.metadata.name }
                 )}
               </p>
-              <TileGroup
-                legend={intl.formatMessage({
-                  id: 'dashboard.tableHeader.status',
-                  defaultMessage: 'Status'
-                })}
-                name="cancelStatus-group"
-                valueSelected={cancelStatus}
-                onChange={status => setCancelStatus(status)}
-              >
-                <RadioTile name="cancelStatus" value="Cancelled">
-                  <span>Cancelled</span>
-                  <p className="tkn--tile--description">
-                    {intl.formatMessage({
-                      id: 'dashboard.cancelPipelineRun.cancelled.description',
-                      defaultMessage:
-                        'Interrupt any currently executing tasks and skip finally tasks'
-                    })}
-                  </p>
-                </RadioTile>
-                <RadioTile name="cancelStatus" value="CancelledRunFinally">
-                  <span>CancelledRunFinally</span>
-                  <p className="tkn--tile--description">
-                    {intl.formatMessage({
-                      id: 'dashboard.cancelPipelineRun.cancelledRunFinally.description',
-                      defaultMessage:
-                        'Interrupt any currently executing non-finally tasks, then execute finally tasks'
-                    })}
-                  </p>
-                </RadioTile>
-                <RadioTile name="cancelStatus" value="StoppedRunFinally">
-                  <span>StoppedRunFinally</span>
-                  <p className="tkn--tile--description">
-                    {intl.formatMessage({
-                      id: 'dashboard.cancelPipelineRun.stoppedRunFinally.description',
-                      defaultMessage:
-                        'Allow any currently executing tasks to complete but do not schedule any new non-finally tasks, then execute finally tasks'
-                    })}
-                  </p>
-                </RadioTile>
-              </TileGroup>
+              <CancelStatusOptions
+                cancelStatus={cancelStatus}
+                onChangeCancelStatus={setCancelStatus}
+              />
             </>
           )
         }

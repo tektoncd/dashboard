@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,11 +16,12 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
-import { RadioTile, TileGroup } from '@carbon/react';
 import {
+  CancelStatusOptions,
   DeleteModal,
   PipelineRuns as PipelineRunsList,
-  StatusFilterDropdown
+  StatusFilterDropdown,
+  StopModal
 } from '@tektoncd/dashboard-components';
 import {
   ALL_NAMESPACES,
@@ -37,7 +38,7 @@ import {
   urls,
   useTitleSync
 } from '@tektoncd/dashboard-utils';
-import { Add, TrashCan as Delete } from '@carbon/react/icons';
+import { Add, TrashCan as Delete, StopOutline } from '@carbon/react/icons';
 
 import ListPageLayout from '../ListPageLayout';
 import { sortRunsByStartTime } from '../../utils';
@@ -72,7 +73,9 @@ export function PipelineRuns() {
   const [cancelStatus, setCancelStatus] = useState('Cancelled');
   const [deleteError, setDeleteError] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showStopModal, setShowStopModal] = useState(false);
   const [toBeDeleted, setToBeDeleted] = useState([]);
+  const [toBeStopped, setToBeStopped] = useState([]);
 
   const isReadOnly = useIsReadOnly();
 
@@ -94,7 +97,9 @@ export function PipelineRuns() {
   useEffect(() => {
     setDeleteError(null);
     setShowDeleteModal(false);
+    setShowStopModal(false);
     setToBeDeleted([]);
+    setToBeStopped([]);
   }, [JSON.stringify(filters), namespace]);
 
   const {
@@ -154,6 +159,11 @@ export function PipelineRuns() {
     setToBeDeleted([]);
   }
 
+  function closeStopModal() {
+    setShowStopModal(false);
+    setToBeStopped([]);
+  }
+
   function deleteRun(pipelineRun) {
     const { name, namespace: resourceNamespace } = pipelineRun.metadata;
     deletePipelineRun({ name, namespace: resourceNamespace }).catch(err => {
@@ -190,6 +200,23 @@ export function PipelineRuns() {
     );
     setShowDeleteModal(true);
     setToBeDeleted(resourcesToBeDeleted);
+    setCancelSelection(() => handleCancel);
+  }
+
+  async function handleStop() {
+    const stops = toBeStopped.map(resource => cancel(resource));
+    closeStopModal();
+    await Promise.all(stops);
+    cancelSelection();
+  }
+
+  function openStopModal(selectedRows, handleCancel) {
+    const pipelineRunsById = keyBy(pipelineRuns, 'metadata.uid');
+    const resourcesToBeStopped = selectedRows.map(
+      ({ id }) => pipelineRunsById[id]
+    );
+    setShowStopModal(true);
+    setToBeStopped(resourcesToBeStopped);
     setCancelSelection(() => handleCancel);
   }
 
@@ -259,46 +286,10 @@ export function PipelineRuns() {
                   { name: resource.metadata.name }
                 )}
               </p>
-              <TileGroup
-                legend={intl.formatMessage({
-                  id: 'dashboard.tableHeader.status',
-                  defaultMessage: 'Status'
-                })}
-                name="cancelStatus-group"
-                valueSelected={cancelStatus}
-                onChange={status => setCancelStatus(status)}
-              >
-                <RadioTile name="cancelStatus" value="Cancelled">
-                  <span>Cancelled</span>
-                  <p className="tkn--tile--description">
-                    {intl.formatMessage({
-                      id: 'dashboard.cancelPipelineRun.cancelled.description',
-                      defaultMessage:
-                        'Interrupt any currently executing tasks and skip finally tasks'
-                    })}
-                  </p>
-                </RadioTile>
-                <RadioTile name="cancelStatus" value="CancelledRunFinally">
-                  <span>CancelledRunFinally</span>
-                  <p className="tkn--tile--description">
-                    {intl.formatMessage({
-                      id: 'dashboard.cancelPipelineRun.cancelledRunFinally.description',
-                      defaultMessage:
-                        'Interrupt any currently executing non-finally tasks, then execute finally tasks'
-                    })}
-                  </p>
-                </RadioTile>
-                <RadioTile name="cancelStatus" value="StoppedRunFinally">
-                  <span>StoppedRunFinally</span>
-                  <p className="tkn--tile--description">
-                    {intl.formatMessage({
-                      id: 'dashboard.cancelPipelineRun.stoppedRunFinally.description',
-                      defaultMessage:
-                        'Allow any currently executing tasks to complete but do not schedule any new non-finally tasks, then execute finally tasks'
-                    })}
-                  </p>
-                </RadioTile>
-              </TileGroup>
+              <CancelStatusOptions
+                cancelStatus={cancelStatus}
+                onChangeCancelStatus={setCancelSelection}
+              />
             </>
           )
         }
@@ -373,6 +364,14 @@ export function PipelineRuns() {
     ? []
     : [
         {
+          onClick: openStopModal,
+          text: intl.formatMessage({
+            id: 'dashboard.actions.stopButton',
+            defaultMessage: 'Stop'
+          }),
+          icon: StopOutline
+        },
+        {
           onClick: openDeleteModal,
           text: intl.formatMessage({
             id: 'dashboard.actions.deleteButton',
@@ -421,6 +420,17 @@ export function PipelineRuns() {
               onClose={closeDeleteModal}
               onSubmit={handleDelete}
               resources={toBeDeleted}
+              showNamespace={namespace === ALL_NAMESPACES}
+            />
+          ) : null}
+          {showStopModal ? (
+            <StopModal
+              cancelStatus={cancelStatus}
+              kind="PipelineRuns"
+              onClose={closeStopModal}
+              onSubmit={handleStop}
+              resources={toBeStopped}
+              onChangeCancelStatus={setCancelStatus}
               showNamespace={namespace === ALL_NAMESPACES}
             />
           ) : null}

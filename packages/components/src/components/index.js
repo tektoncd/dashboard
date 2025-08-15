@@ -14,6 +14,7 @@ limitations under the License.
 
 export { default as ActionableNotification } from './ActionableNotification';
 export { default as Actions } from './Actions';
+export { default as CancelStatusOptions } from './CancelStatusOptions';
 export { default as DataTableSkeleton } from './DataTableSkeleton';
 export { default as DetailsHeader } from './DetailsHeader';
 export { default as DeleteModal } from './DeleteModal';
@@ -44,6 +45,7 @@ export { default as StatusIcon } from './StatusIcon';
 export { default as Step } from './Step';
 export { default as StepDefinition } from './StepDefinition';
 export { default as StepDetails } from './StepDetails';
+export { default as StopModal } from './StopModal';
 export { default as Table } from './Table';
 export { default as Task } from './Task';
 export { default as TaskRuns } from './TaskRuns';
