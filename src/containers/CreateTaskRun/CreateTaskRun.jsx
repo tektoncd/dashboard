@@ -21,6 +21,7 @@ import {
   Form,
   FormGroup,
   InlineNotification,
+  TextArea,
   TextInput
 } from '@carbon/react';
 import {
@@ -648,12 +649,9 @@ function CreateTaskRun() {
         {paramSpecs && paramSpecs.length !== 0 && (
           <FormGroup legendText="Params">
             {paramSpecs.map(paramSpec => (
-              <TextInput
-                id={`create-taskrun--param-${paramSpec.name}`}
-                key={`create-taskrun--param-${paramSpec.name}`}
-                labelText={paramSpec.name}
+              <TextArea
                 helperText={paramSpec.description}
-                placeholder={paramSpec.default || paramSpec.name}
+                id={`create-taskrun--param-${paramSpec.name}`}
                 invalid={
                   validationError &&
                   !params[paramSpec.name] &&
@@ -663,10 +661,13 @@ function CreateTaskRun() {
                   id: 'dashboard.createRun.invalidParams',
                   defaultMessage: 'Params cannot be empty'
                 })}
-                value={params[paramSpec.name] || ''}
+                key={`create-taskrun--param-${paramSpec.name}`}
+                labelText={paramSpec.name}
                 onChange={({ target: { value } }) =>
                   handleParamChange(paramSpec.name, value)
                 }
+                placeholder={paramSpec.default || paramSpec.name}
+                value={params[paramSpec.name] || ''}
               />
             ))}
           </FormGroup>
