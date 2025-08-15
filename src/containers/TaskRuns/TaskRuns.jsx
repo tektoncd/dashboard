@@ -18,6 +18,7 @@ import keyBy from 'lodash.keyby';
 import {
   DeleteModal,
   StatusFilterDropdown,
+  StopModal,
   TaskRuns as TaskRunsList
 } from '@tektoncd/dashboard-components';
 import {
@@ -33,7 +34,7 @@ import {
   urls,
   useTitleSync
 } from '@tektoncd/dashboard-utils';
-import { Add, TrashCan as Delete } from '@carbon/react/icons';
+import { Add, TrashCan as Delete, StopOutline } from '@carbon/react/icons';
 
 import ListPageLayout from '../ListPageLayout';
 import { sortRunsByStartTime } from '../../utils';
@@ -61,7 +62,9 @@ function TaskRuns() {
 
   const [deleteError, setDeleteError] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showStopModal, setShowStopModal] = useState(false);
   const [toBeDeleted, setToBeDeleted] = useState([]);
+  const [toBeStopped, setToBeStopped] = useState([]);
   const [cancelSelection, setCancelSelection] = useState(null);
 
   const isReadOnly = useIsReadOnly();
@@ -80,7 +83,9 @@ function TaskRuns() {
   useEffect(() => {
     setDeleteError(null);
     setShowDeleteModal(false);
+    setShowStopModal(false);
     setToBeDeleted([]);
+    setToBeStopped([]);
   }, [JSON.stringify(filters), namespace]);
 
   const {
@@ -117,12 +122,26 @@ function TaskRuns() {
     cancelTaskRun({
       name: taskRun.metadata.name,
       namespace: taskRun.metadata.namespace
+    }).catch(err => {
+      err.response.text().then(text => {
+        const statusCode = err.response.status;
+        let errorMessage = `error code ${statusCode}`;
+        if (text) {
+          errorMessage = `${text} (error code ${statusCode})`;
+        }
+        setDeleteError(errorMessage);
+      });
     });
   }
 
   function closeDeleteModal() {
     setShowDeleteModal(false);
     setToBeDeleted([]);
+  }
+
+  function closeStopModal() {
+    setShowStopModal(false);
+    setToBeStopped([]);
   }
 
   function deleteTask(taskRun) {
@@ -152,6 +171,20 @@ function TaskRuns() {
     const taskRunsById = keyBy(taskRuns, 'metadata.uid');
     setShowDeleteModal(true);
     setToBeDeleted(selectedRows.map(({ id }) => taskRunsById[id]));
+    setCancelSelection(() => handleCancelSelection);
+  }
+
+  async function handleStop() {
+    const stops = toBeStopped.map(resource => cancel(resource));
+    closeStopModal();
+    await Promise.all(stops);
+    cancelSelection();
+  }
+
+  function openStopModal(selectedRows, handleCancelSelection) {
+    const taskRunsById = keyBy(taskRuns, 'metadata.uid');
+    setShowStopModal(true);
+    setToBeStopped(selectedRows.map(({ id }) => taskRunsById[id]));
     setCancelSelection(() => handleCancelSelection);
   }
 
@@ -283,6 +316,14 @@ function TaskRuns() {
     ? []
     : [
         {
+          onClick: openStopModal,
+          text: intl.formatMessage({
+            id: 'dashboard.actions.stopButton',
+            defaultMessage: 'Stop'
+          }),
+          icon: StopOutline
+        },
+        {
           onClick: openDeleteModal,
           text: intl.formatMessage({
             id: 'dashboard.actions.deleteButton',
@@ -328,6 +369,15 @@ function TaskRuns() {
               onClose={closeDeleteModal}
               onSubmit={handleDelete}
               resources={toBeDeleted}
+              showNamespace={namespace === ALL_NAMESPACES}
+            />
+          ) : null}
+          {showStopModal ? (
+            <StopModal
+              kind="TaskRuns"
+              onClose={closeStopModal}
+              onSubmit={handleStop}
+              resources={toBeStopped}
               showNamespace={namespace === ALL_NAMESPACES}
             />
           ) : null}
