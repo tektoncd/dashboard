@@ -53,6 +53,11 @@ limitations under the License.
 @use '@tektoncd/dashboard-components/src/components/Trigger/Trigger';
 @use '@tektoncd/dashboard-components/src/components/ViewYAML/ViewYAML';
 
+:root {
+  // used to control position of sticky headers on run details page
+  --tkn-global-header-offset: 3rem;
+}
+
 html,
 #root,
 .tkn--main-content {
@@ -61,12 +66,16 @@ html,
 
 body {
   // to prevent unwanted scroll when content doesn't fill full height
-  block-size: calc(100% - 3rem);
+  block-size: calc(100% - var(--tkn-global-header-offset));
+}
+
+body:has(.tkn--taskrun--maximized) {
+  overflow: hidden;
 }
 
 #main-content {
   // height of the main header, added for accessibility of skip to main content link
-  scroll-margin-block-start: 3rem;
+  scroll-margin-block-start: var(--tkn-global-header-offset);
 }
 
 .#{$prefix}--btn.link-btn.#{$prefix}--btn--ghost {
@@ -112,7 +121,7 @@ body {
   margin-block-start: 1rem;
 }
 
-#tkn--maximized-logs-container, #tkn--maximized-taskrun-container {
+#tkn--maximized-logs-container {
   position: absolute;
   inset-block-start: 0;
   inset-inline-start: 0;
@@ -120,42 +129,13 @@ body {
   block-size: 100vb;
   z-index: -1;
 
+  .tkn--log {
+    min-block-size: 100%;
+  }
+
   &:not(:empty) {
     background-color: $layer;
     z-index: 9999;
-  }
-}
-
-#tkn--maximized-taskrun-container {
-  // full screen instead of just content area
-  position: fixed;
-}
-
-#tkn--maximized-logs-container .tkn--log {
-  min-block-size: 100%;
-}
-
-#tkn--maximized-taskrun-container .tkn--step-details {
-  block-size: 100%;
-  overflow: auto;
-
-  > .#{$prefix}--tabs {
-    background-color: $layer;
-  }
-
-  > .#{$prefix}--tab-content {
-    padding: 0;
-  }
-
-  header.tkn--step-details-header {
-    padding: 1rem 0 0 1rem;
-    position: sticky;
-    inset-block-start: 0;
-    z-index: 4997;
-  }
-
-  .tkn--task-logs .cds--accordion__heading {
-    inset-block-start: 4.4rem;
   }
 }
 
