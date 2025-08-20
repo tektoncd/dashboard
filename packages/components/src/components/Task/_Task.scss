@@ -162,6 +162,8 @@ limitations under the License.
     max-inline-size: 100%;
 
     > .#{$prefix}--tab-content {
+      // we don't want 2 scrollbars, prefer the one on body
+      overflow-y: visible;
       // to stop log content bleeding through the sticky header
       padding-block-start: 0;
     }
@@ -178,7 +180,7 @@ limitations under the License.
 
     > .#{$prefix}--tabs {
       position: sticky;
-      inset-block-start: 4.4rem;
+      inset-block-start: 7.4rem;
       z-index: 4996;
       background-color: $layer;
     }
@@ -187,7 +189,13 @@ limitations under the License.
   header.tkn--step-details-header {
     padding: 1rem 0 0 0;
     position: sticky;
-    inset-block-start: 0;
+    inset-block-start: 3rem;
     z-index: 4997;
   }
+}
+
+.#{$prefix}--tabs.tkn--task-list {
+  position: sticky;
+  inset-block-start: 3rem;
+  max-block-size: calc(100vb - 3rem);
 }
