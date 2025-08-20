@@ -175,27 +175,29 @@ limitations under the License.
     padding-inline: 0;
   }
 
-  .tkn--step-details {
-    overflow: initial;
-
-    > .#{$prefix}--tabs {
-      position: sticky;
-      inset-block-start: 7.4rem;
-      z-index: 4996;
-      background-color: $layer;
-    }
-  }
-
   header.tkn--step-details-header {
     padding: 1rem 0 0 0;
     position: sticky;
-    inset-block-start: 3rem;
+    inset-block-start: var(--tkn-global-header-offset);
     z-index: 4997;
+  }
+
+  .tkn--step-details {
+    > .#{$prefix}--tabs {
+      position: sticky;
+      inset-block-start: calc(var(--tkn-global-header-offset) + 4.4rem);
+      z-index: 4996;
+      background-color: $layer;
+    }
+
+    &:not(.tkn--taskrun--maximized) {
+      overflow: initial;
+    }
   }
 }
 
 .#{$prefix}--tabs.tkn--task-list {
   position: sticky;
-  inset-block-start: 3rem;
-  max-block-size: calc(100vb - 3rem);
+  inset-block-start: var(--tkn-global-header-offset);
+  max-block-size: calc(100vb - var(--tkn-global-header-offset));
 }

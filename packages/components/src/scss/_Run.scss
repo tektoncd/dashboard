@@ -59,8 +59,8 @@ limitations under the License.
 .tkn--task-logs {
   .#{$prefix}--accordion__heading {
     position: sticky;
-    inset-block-start: 9.9rem;
-    background-color: var(--cds-layer-01);
+    inset-block-start: calc(6.9rem + var(--tkn-global-header-offset));
+    background-color: $layer-01;
     // this needs to be lower than the run header to prevent it bleeding through
     // popovers or other menus such as the log settings
     z-index: 4995;
@@ -104,4 +104,15 @@ limitations under the License.
       }
     }
   }
+}
+
+.tkn--step-details.tkn--taskrun--maximized {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  block-size: 100vb;
+  overflow: auto;
+
+  // need to include units here otherwise breaks calc()
+  --tkn-global-header-offset: 0rem;
 }

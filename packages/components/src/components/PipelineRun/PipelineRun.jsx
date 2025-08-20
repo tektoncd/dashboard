@@ -58,7 +58,6 @@ export default /* istanbul ignore next */ function PipelineRun({
   loading,
   logLevels,
   maximizedLogsContainer,
-  maximizedTaskRunContainer,
   onRetryChange,
   onViewChange = /* istanbul ignore next */ () => {},
   pipeline,
@@ -431,12 +430,9 @@ export default /* istanbul ignore next */ function PipelineRun({
                 getLogContainer={getLogContainer}
                 getLogsToolbar={getLogsToolbar}
                 isMaximized={isTaskRunMaximized}
-                maximizedContainer={maximizedTaskRunContainer}
                 onRetryChange={onRetryChange}
                 onStepSelected={onStepSelected}
-                onToggleMaximized={
-                  !!maximizedTaskRunContainer && onToggleTaskRunMaximized
-                }
+                onToggleMaximized={onToggleTaskRunMaximized}
                 onViewChange={onViewChange}
                 pod={pod}
                 preTaskRun={preTaskRun}
