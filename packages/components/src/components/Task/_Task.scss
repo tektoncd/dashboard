@@ -200,7 +200,7 @@ limitations under the License.
   }
 }
 
-.#{$prefix}--tabs.tkn--task-list {
+.#{$prefix}--tabs.#{$prefix}--tabs--vertical.tkn--task-list {
   position: sticky;
   inset-block-start: var(--tkn-global-header-offset);
   max-block-size: calc(100vb - var(--tkn-global-header-offset));
