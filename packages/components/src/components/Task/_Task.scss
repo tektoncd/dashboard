@@ -193,6 +193,10 @@ limitations under the License.
     &:not(.tkn--taskrun--maximized) {
       overflow: initial;
     }
+
+    .#{$prefix}--snippet--multi {
+      max-inline-size: none;
+    }
   }
 }
 
