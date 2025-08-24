@@ -20,7 +20,7 @@ limitations under the License.
   // but for the new tab layout in a narrow window
   // we need to allow the tabs to appear horizontally
   // across the top of the container
-  &:not(:has(> .#{$prefix}--tabs)) {
+  &:not(:has(> .#{$prefix}--tabs, > .tkn--step-details:first-child)) {
     display: flex;
     flex-wrap: nowrap;
     min-block-size: calc(100vb - 16rem);

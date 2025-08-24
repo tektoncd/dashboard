@@ -157,7 +157,8 @@ limitations under the License.
   }
 }
 
-.tkn--tasks:has(> .#{$prefix}--tabs, .#{$prefix}--tabs.tkn--task-list) {
+// 'tab layout' styles for: PipelineRun vertical tabs, PipelineRun horizontal tabs, TaskRun
+.tkn--tasks:has(> .#{$prefix}--tabs, .#{$prefix}--tabs.tkn--task-list, > .tkn--step-details:first-child) {
   > .#{$prefix}--css-grid {
     max-inline-size: 100%;
 

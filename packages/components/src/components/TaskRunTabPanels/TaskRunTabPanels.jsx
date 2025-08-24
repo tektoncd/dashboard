@@ -16,8 +16,8 @@ import { useIntl } from 'react-intl';
 import {
   Accordion,
   AccordionItem as CarbonAccordionItem,
-  TabPanel,
-  TabPanels
+  TabPanel as CarbonTabPanel,
+  TabPanels as CarbonTabPanels
 } from '@carbon/react';
 import { Pending as DefaultIcon } from '@carbon/react/icons';
 import {
@@ -341,6 +341,8 @@ const TaskRunTabPanels = ({
   selectedStepId,
   selectedTaskId,
   skippedTask,
+  TabPanel = CarbonTabPanel,
+  TabPanels = CarbonTabPanels,
   task,
   taskRun: taskRunToUse,
   taskRuns,

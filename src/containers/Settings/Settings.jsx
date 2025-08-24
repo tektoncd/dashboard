@@ -108,7 +108,8 @@ export function Settings() {
             id="tkn--pipelinerun-tab-layout-toggle"
             labelText={intl.formatMessage({
               id: 'dashboard.pipelineRun.tabLayout.label',
-              defaultMessage: 'Enable new PipelineRun details layout (preview)'
+              defaultMessage:
+                'Enable new PipelineRun and TaskRun details layout (preview)'
             })}
             labelA={intl.formatMessage({
               id: 'dashboard.toggle.off',
