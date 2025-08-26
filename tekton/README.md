@@ -145,6 +145,16 @@ kubectl patch serviceaccount $ACCOUNT \
   -p "{\"secrets\": [{\"name\": \"$GENERIC_SECRET\"}]}"
 ```
 
+## Automated Nightly builds with github action workflow
+
+The GitHub Actions workflow provides an alternative approach for automated nightly builds with GitHub infrastructure.
+
+[The nightly release workflow](../.github/workflows/nightly-release.yaml) is triggered daily at 03:00 UTC via cron schedule
+The workflow is configured to reuses the same pipelines used for standard releases with varied param values.
+
+- [release-pipeline.yaml](release-pipeline.yaml)
+- [publish.yaml](publish.yaml)
+
 ## Update dogfooding
 
 To update the Dashboard release on the [`dogfooding` cluster](https://dashboard.dogfooding.tekton.dev/):

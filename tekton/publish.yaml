@@ -30,10 +30,10 @@ spec:
       description: Extra args to be passed to ko
       default: "--preserve-import-paths"
     - name: versionTag
-      description: The vX.Y.Z version that the artifacts should be tagged with (including `v`)
+      description: The version, vX.Y.Z for stable, vYYYYMMDD-abc1234 for nightly that the artifacts should be tagged with (including `v`).
     - name: imageRegistry
       description: The target image registry
-      default: gcr.io
+      default: ghcr.io
     - name: imageRegistryPath
       description: The path (project) in the image registry
     - name: imageRegistryRegions
