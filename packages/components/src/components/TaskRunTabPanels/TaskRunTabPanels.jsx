@@ -195,7 +195,7 @@ function Step({
       title={
         <>
           <StatusIcon
-            DefaultIcon={props => <DefaultIcon size={20} {...props} />}
+            DefaultIcon={props => <DefaultIcon {...props} />}
             hasWarning={exitCode !== 0}
             reason={stepReason}
             status={stepStatus}

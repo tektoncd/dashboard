@@ -109,9 +109,10 @@ export default function TaskRunTabs({
           >
             <div className="tkn--task-title" title={title}>
               <StatusIcon
-                DefaultIcon={props => <DefaultIcon size={20} {...props} />}
+                DefaultIcon={props => <DefaultIcon {...props} />}
                 hasWarning={hasWarning}
                 reason={reason}
+                size={17}
                 status={status}
               />
               <span className="tkn--task-title--name">{title}</span>
