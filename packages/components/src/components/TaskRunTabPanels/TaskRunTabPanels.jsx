@@ -292,7 +292,11 @@ function Logs({
     <Accordion align="end" className="tkn--task-logs" ordered size="md">
       {steps.map(step => (
         <Step
-          expandedSteps={expandedSteps}
+          expandedSteps={{
+            ...expandedSteps,
+            // automatically expand the step when there's only one
+            ...(steps.length === 1 ? { [step.name]: true } : null)
+          }}
           getLogContainer={getLogContainer}
           key={step.name}
           onStepSelected={onStepSelected}

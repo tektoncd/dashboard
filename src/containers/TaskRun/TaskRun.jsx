@@ -174,7 +174,7 @@ export function TaskRunContainer({
   }
 
   function getLogContainer({ stepName, stepStatus, taskRun: run }) {
-    if (!selectedStepId || !stepStatus) {
+    if ((!selectedStepId && !stepName) || !stepStatus) {
       return null;
     }
 
