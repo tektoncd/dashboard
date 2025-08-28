@@ -106,7 +106,7 @@ export function getTektonPipelinesAPIVersion() {
 }
 
 export function isPipelineRunTabLayoutEnabled() {
-  return localStorage.getItem('tkn-pipelinerun-tab-layout') === 'true';
+  return localStorage.getItem('tkn-pipelinerun-tab-layout') !== 'false';
 }
 
 export function setPipelineRunTabLayoutEnabled(enabled) {
