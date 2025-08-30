@@ -195,7 +195,7 @@
   "dashboard.pipelineRun.stepCompleted.exitCode": "Step completed with exit code {exitCode}",
   "dashboard.pipelineRun.stepFailed": "Step failed",
   "dashboard.pipelineRun.stepSkipped": "Step skipped",
-  "dashboard.pipelineRun.tabLayout.label": "Enable new PipelineRun and TaskRun details layout (preview)",
+  "dashboard.pipelineRun.tabLayout.label": "Enable new PipelineRun and TaskRun details layout",
   "dashboard.pipelineRuns.error": "Error loading PipelineRuns",
   "dashboard.pipelines.errorLoading": "Error loading Pipelines",
   "dashboard.pipelines.v1Resources.label": "Use Tekton Pipelines API version v1",

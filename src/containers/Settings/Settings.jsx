@@ -109,7 +109,7 @@ export function Settings() {
             labelText={intl.formatMessage({
               id: 'dashboard.pipelineRun.tabLayout.label',
               defaultMessage:
-                'Enable new PipelineRun and TaskRun details layout (preview)'
+                'Enable new PipelineRun and TaskRun details layout'
             })}
             labelA={intl.formatMessage({
               id: 'dashboard.toggle.off',
