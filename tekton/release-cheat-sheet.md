@@ -4,7 +4,7 @@ These steps provide a no-frills guide to performing an official release
 of Tekton Dashboard. To follow these steps you'll need a checkout of
 the dashboard repo, a terminal window and a text editor.
 
-1. [Setup a context to connect to the dogfooding cluster](#setup-dogfooding-context) if you haven't already.
+1. [Setup a context to connect to the release cluster](#setup-context) if you haven't already.
 
 1. `cd` to root of Dashboard git checkout.
 
@@ -42,8 +42,10 @@ the dashboard repo, a terminal window and a text editor.
 
    **If you are back-porting include this flag: `--param=releaseAsLatest="false"`**
 
+   **Note:** Change the context name in the following commands if using the GCP `dogfooding` cluster instead
+
     ```bash
-    tkn --context dogfooding pipeline start dashboard-release \
+    tkn --context tekton-ci-cd pipeline start dashboard-release \
       --serviceaccount=release-right-meow \
       --param=gitRevision="${TEKTON_RELEASE_GIT_SHA}" \
       --param=imageRegistry=ghcr.io \
@@ -65,15 +67,15 @@ the dashboard repo, a terminal window and a text editor.
 1. Once the PipelineRun is complete, check its results:
 
     ```bash
-    tkn --context dogfooding pr describe <pipeline-run-name>
+    tkn --context tekton-ci-cd pr describe <pipeline-run-name>
 
     (...)
     📝 Results
 
-    NAME                    VALUE
-    release                 https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.32.0/release.yaml
-    release-full            https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.32.0/release-full.yaml
-
+    NAME             VALUE
+    ∙ commit-sha     41751e228930c03a1e310d548bc2c529747ca423
+    ∙ release-file   https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.61.0/release.yaml
+    ∙ release-file-full   https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.61.0/release-full.yaml
     (...)
     ```
 
@@ -130,21 +132,25 @@ Creating the release announcement is currently a manual process but will be auto
 
      ```bash
      # Test latest
-     kubectl --context my-dev-cluster apply --filename     https://storage.googleapis.com/tekton-releases/dashboard/latest/release-full.yaml
+     kubectl --context my-dev-cluster apply --filename https://storage.googleapis.com/tekton-releases/dashboard/latest/release-full.yaml
      ```
 
      ```bash
      # Test backport
-     kubectl --context my-dev-cluster apply --filename     https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.32.0/release-full.yaml
+     kubectl --context my-dev-cluster apply --filename https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.32.0/release-full.yaml
      ```
 
 1. Announce the release in Slack channels #general, #announcements, and #dashboard.
 
-1. Update the website sync config to include the new release by adding the new tag to the top of the list in https://github.com/tektoncd/website/blob/main/sync/config/dashboard.yaml
+1. Update [the plumbing repo](https://github.com/tektoncd/plumbing/blob/d244554a42d7b6a5f1180c58c513eeecc9febcde/tekton/cd/dashboard/overlays/oci-ci-cd/kustomization.yaml#L4) to deploy the latest version to the `tekton-ci-cd` cluster on OCI.
+
+1. For major releases, update the [website sync config](https://github.com/tektoncd/website/blob/main/sync/config/dashboard.yaml) to include the new release branch at the top of the list.
 
 Congratulations, you're done!
 
-## Setup dogfooding context
+## Setup context
+
+### GCP dogfooding cluster
 
 1. Configure `kubectl` to connect to
    [the dogfooding cluster](https://github.com/tektoncd/plumbing/blob/main/docs/dogfooding.md):
@@ -158,6 +164,19 @@ Congratulations, you're done!
 
    ```bash
    kubectl config rename-context gke_tekton-releases_us-central1-a_dogfooding dogfooding
+   ```
+
+### OCI tekton-ci-cd cluster
+
+1. Configure `kubectl` to connect to the cluster:
+    ```bash
+    oci ce cluster create-kubeconfig --cluster-id $CLUSTER_OCID --file $HOME/.kube/config --region $CLUSTER_REGION --token-version 2.0.0 --kube-endpoint PUBLIC_ENDPOINT
+    ```
+
+1. Give the context a short memorable name such as `tekton-ci-cd`:
+
+   ```bash
+   kubectl config rename-context cluster-c3h3zdippcq tekton-ci-cd
    ```
 
 ## Important: Switch `kubectl` back to your own cluster by default.
