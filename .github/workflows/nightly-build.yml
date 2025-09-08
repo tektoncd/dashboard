@@ -70,6 +70,7 @@ jobs:
             --param imageRegistryPath="${{ env.IMAGE_REGISTRY_PATH }}" \
             --param imageRegistryUser="${{ env.IMAGE_REGISTRY_USER }}" \
             --param imageRegistryRegions="" \
+            --param koExtraArgs="" \
             --param serviceAccountPath=release.json \
             --param serviceAccountImagesPath=credentials \
             --param releaseAsLatest="true" \
