@@ -197,6 +197,32 @@ export function getStepStatusReason(step) {
   return { exitCode, reason, status };
 }
 
+export function orderStepsFromTaskRun(steps, taskRun) {
+  const stepsOrder = (taskRun.status?.taskSpec?.steps || [])
+    .map(step => step?.name)
+    .filter(stepName => typeof stepName === 'string');
+
+  if (!stepsOrder || stepsOrder.length === 0) {
+    return steps;
+  }
+
+  const orderedSteps = [];
+  const stepsMap = new Map(steps.map(step => [step.name, step]));
+
+  stepsOrder.forEach(stepName => {
+    if (stepsMap.has(stepName)) {
+      orderedSteps.push(stepsMap.get(stepName));
+      stepsMap.delete(stepName);
+    }
+  });
+
+  stepsMap.forEach(step => {
+    orderedSteps.push(step);
+  });
+
+  return orderedSteps;
+}
+
 export function isPending(reason, status) {
   return (
     !status ||

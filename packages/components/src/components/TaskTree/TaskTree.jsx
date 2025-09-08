@@ -14,7 +14,8 @@ limitations under the License.
 import {
   dashboardReasonSkipped,
   getStatus,
-  labels as labelConstants
+  labels as labelConstants,
+  orderStepsFromTaskRun
 } from '@tektoncd/dashboard-utils';
 import Task from '../Task';
 
@@ -113,7 +114,7 @@ const TaskTree = ({
             selectDefaultStep={selectDefaultStep}
             selectedRetry={expanded && selectedRetry}
             selectedStepId={selectedStepId}
-            steps={steps}
+            steps={orderStepsFromTaskRun(steps, taskRunToUse)}
             succeeded={status}
             taskRun={taskRun}
           />
