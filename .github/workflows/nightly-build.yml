@@ -39,7 +39,7 @@ jobs:
         id: version
         run: |
           latest_sha=${{ github.sha }}
-          date_tag=$(date +v%Y%m%d-${latest_sha:0:7})
+          date_tag=$(date +v%Y%m%d-${latest_sha:0:10})
           echo "version_tag=${date_tag}" >> "$GITHUB_OUTPUT"
           echo "latest_sha=${latest_sha}" >> "$GITHUB_OUTPUT"
 
