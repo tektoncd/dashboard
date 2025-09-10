@@ -204,4 +204,34 @@ describe('DetailsHeader', () => {
     );
     expect(queryByText(/duration/i)).toBeTruthy();
   });
+
+  it('renders the description for an inline TaskRun', () => {
+    const taskRun = {
+      spec: {
+        taskSpec: {
+          description: 'This is a task description'
+        }
+      }
+    };
+
+    const { queryByText } = render(
+      <DetailsHeader {...props} taskRun={taskRun} type="taskRun" />
+    );
+    expect(queryByText(/This is a task description/i)).toBeTruthy();
+  });
+
+  it('renders the description for a TaskRun remotely resolved', () => {
+    const taskRun = {
+      status: {
+        taskSpec: {
+          description: 'This is a task description'
+        }
+      }
+    };
+
+    const { queryByText } = render(
+      <DetailsHeader {...props} taskRun={taskRun} type="taskRun" />
+    );
+    expect(queryByText(/This is a task description/i)).toBeTruthy();
+  });
 });
