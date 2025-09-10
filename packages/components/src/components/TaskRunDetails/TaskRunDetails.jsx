@@ -89,8 +89,15 @@ const TaskRunDetails = ({
 }) => {
   const intl = useIntl();
   const displayName = taskRun.metadata?.name;
-  const taskSpec = task?.spec || taskRun.spec?.taskSpec;
 
+  let taskSpec
+  if (taskRun.status?.taskSpec) {
+    taskSpec = taskRun.status.taskSpec;
+  } else if (taskRun.spec?.taskSpec) {
+    taskSpec = taskRun.spec.taskSpec;
+  } else if (task.spec) {
+    taskSpec = task.spec;
+  }
   const paramsDescriptions = getDescriptions(taskSpec?.params);
   const resultsDescriptions = getDescriptions(taskSpec?.results);
 

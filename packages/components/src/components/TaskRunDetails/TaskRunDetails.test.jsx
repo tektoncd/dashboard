@@ -84,6 +84,32 @@ describe('TaskRunDetails', () => {
     expect(queryByText(description)).toBeTruthy();
   });
 
+  it('renders params with description from taskSpec remotely resolved', () => {
+    const taskRunName = 'task-run-name';
+    const paramKey = 'k';
+    const paramValue = 'v';
+    const params = [{ name: paramKey, value: paramValue }];
+    const description = 'param_description';
+    const { queryByLabelText, queryByText } = render(
+      <TaskRunDetails
+        taskRun={{
+          metadata: { name: taskRunName },
+          spec: {
+            params,
+          },
+          status: {
+            taskSpec: { params: [{ name: paramKey, description }] }
+          },
+        }}
+      />
+    );
+
+    expect(queryByText(paramKey)).toBeTruthy();
+    expect(queryByText(paramValue)).toBeTruthy();
+    fireEvent.click(queryByLabelText(description));
+    expect(queryByText(description)).toBeTruthy();
+  });
+
   it('does not render tabs whose fields are not provided', () => {
     const taskRun = {
       metadata: { name: 'task-run-name' },
@@ -152,6 +178,24 @@ describe('TaskRunDetails', () => {
         taskSpec: { results: [{ name: resultName, description }] }
       },
       status: { taskResults: [{ name: resultName, value: 'hello' }] }
+    };
+    const { queryByLabelText, queryByText } = render(
+      <TaskRunDetails taskRun={taskRun} view="results" />
+    );
+    fireEvent.click(queryByLabelText(description));
+    expect(queryByText(description)).toBeTruthy();
+  });
+
+  it('renders results with description from taskSpec remotely resolved', () => {
+    const resultName = 'message';
+    const description = 'result_description';
+    const taskRun = {
+      metadata: { name: 'task-run-name' },
+      spec: {},
+      status: {
+        taskResults: [{ name: resultName, value: 'hello' }],
+        taskSpec: { results: [{ name: resultName, description }] }
+      },
     };
     const { queryByLabelText, queryByText } = render(
       <TaskRunDetails taskRun={taskRun} view="results" />
