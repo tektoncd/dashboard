@@ -114,3 +114,18 @@ export const WithLabelOverflow = {
     }
   }
 };
+
+export const WithDescription = {
+  args: {
+    ...Default.args,
+    description: "This is a pipeline description"
+  }
+};
+
+
+export const WithDescriptionAndDuration = {
+  args: {
+    ...WithDuration.args,
+    description: "This is a pipeline description"
+  }
+};
