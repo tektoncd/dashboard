@@ -14,7 +14,7 @@ limitations under the License.
 
 import { Component, createRef } from 'react';
 import { Button, PrefixContext, SkeletonText } from '@carbon/react';
-import { FixedSizeList as List } from 'react-window';
+import { List } from 'react-window';
 import { injectIntl, useIntl } from 'react-intl';
 import { getStepStatusReason, isRunning } from '@tektoncd/dashboard-utils';
 import { DownToBottom, Information, UpToTop } from '@carbon/react/icons';
@@ -264,34 +264,30 @@ export class LogContainer extends Component {
       <div className="button-container">
         {isLogTopUnseen ? (
           <Button
+            autoAlign
             className={`${carbonPrefix}--copy-btn`}
             hasIconOnly
             iconDescription={scrollButtonTopMessage}
             id="log-scroll-to-start-btn"
             onClick={this.scrollToTopLog}
-            renderIcon={() => (
-              <UpToTop>
-                <title>{scrollButtonTopMessage}</title>
-              </UpToTop>
-            )}
+            renderIcon={UpToTop}
             size="sm"
-            tooltipPosition="right"
+            tooltipAlignment="end"
+            tooltipPosition="left"
           />
         ) : null}
         {isLogBottomUnseen ? (
           <Button
+            autoAlign
             className={`${carbonPrefix}--copy-btn`}
             iconDescription={scrollButtonBottomMessage}
             hasIconOnly
             id="log-scroll-to-end-btn"
             onClick={this.scrollToBottomLog}
-            renderIcon={() => (
-              <DownToBottom>
-                <title>{scrollButtonBottomMessage}</title>
-              </DownToBottom>
-            )}
+            renderIcon={DownToBottom}
             size="sm"
-            tooltipPosition="right"
+            tooltipAlignment="end"
+            tooltipPosition="left"
           />
         ) : null}
       </div>
@@ -426,22 +422,19 @@ export class LogContainer extends Component {
           totalLogLines={logs.length}
         />
         <List
-          height={height}
-          itemCount={parsedLogs.length}
-          itemData={parsedLogs}
-          itemSize={itemSize}
-          width="100%"
-        >
-          {({ data, index, style }) => (
-            <div style={style}>
-              <LogFormat
-                fields={{ level: showLevels, timestamp: showTimestamps }}
-                logs={[data[index]]}
-                onToggleGroup={this.onToggleGroup}
-              />
-            </div>
+          rowComponent={({ data, index, style }) => (
+            <LogFormat
+              fields={{ level: showLevels, timestamp: showTimestamps }}
+              logs={[data[index]]}
+              onToggleGroup={this.onToggleGroup}
+              style={style}
+            />
           )}
-        </List>
+          rowCount={parsedLogs.length}
+          rowProps={{ data: parsedLogs }}
+          rowHeight={itemSize}
+          style={{ height }}
+        />
       </>
     );
   };

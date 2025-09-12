@@ -87,6 +87,7 @@ export const ANSICodes = {
 
 export const Windowed = {
   args: {
+    enableLogScrollButtons: true,
     fetchLogs: () => long,
     showLevels: true,
     showTimestamps: true,
