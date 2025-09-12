@@ -150,6 +150,13 @@ export default function DetailsHeader({
     statusLabel = getStatusLabel();
   }
 
+  let description
+  if (taskRun.status?.taskSpec?.description) {
+    description = taskRun.status.taskSpec.description;
+  } else if (taskRun.spec?.taskSpec?.description) {
+    description = taskRun.spec.taskSpec.description;
+  }
+
   return (
     <header
       className="tkn--step-details-header"
@@ -176,6 +183,7 @@ export default function DetailsHeader({
         <span className="tkn--status-label">{statusLabel}</span>
         {children}
       </h2>
+      <span className="tkn--run-details-description">{description}</span>
       {duration}
     </header>
   );

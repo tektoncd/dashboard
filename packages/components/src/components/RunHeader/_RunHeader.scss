@@ -116,4 +116,11 @@ header.tkn--pipeline-run-header {
       text-overflow: ellipsis;
     }
   }
+
+  .tkn--run-header--description {
+    grid-column: 1 / -1;
+    padding-block-end: 1rem;
+    padding-left: $spacing-06;
+    padding-right: $spacing-06;
+  }
 }

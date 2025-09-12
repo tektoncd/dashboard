@@ -88,7 +88,15 @@ header.tkn--step-details-header {
   }
 
   .tkn--run-details-time {
-    display: inline-block;
+    display: block;
+    margin-block: 0.5rem;
+    margin-inline-start: 2.25rem;
+    margin-inline-end: 0;
+    font-size: 0.75rem;
+  }
+
+  .tkn--run-details-description {
+    display: block;
     margin-block: 0.5rem;
     margin-inline-start: 2.25rem;
     margin-inline-end: 0;

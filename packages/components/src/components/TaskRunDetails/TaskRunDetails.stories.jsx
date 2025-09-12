@@ -204,3 +204,46 @@ export const Skipped = {
     }
   }
 };
+
+export const WithDescription = {
+  args: {
+    taskRun: {
+      metadata: { name: 'my-task', namespace: 'my-namespace' },
+      spec: {
+        params,
+        taskSpec: {
+          params: [
+            {
+              name: params[0].name,
+              description: 'A useful description of the param…'
+            }
+          ],
+          results: [
+            {
+              name: results[0].name,
+              description: 'A useful description of the result…'
+            }
+          ]
+        }
+      },
+      status: {
+        completionTime: '2021-03-03T15:25:34Z',
+        podName: 'my-task-h7d6j-pod-pdtb7',
+        startTime: '2021-03-03T15:25:27Z',
+        results,
+        taskSpec: {
+          description: "This is a task description"
+        }
+      }
+    }
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    return (
+      <TaskRunDetails
+        {...args}
+        onViewChange={selectedView => updateArgs({ view: selectedView })}
+      />
+    );
+  }
+};

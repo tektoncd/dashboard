@@ -87,6 +87,14 @@ export default /* istanbul ignore next */ function PipelineRun({
   const pipelineRefName =
     pipelineRun?.spec?.pipelineRef && pipelineRun?.spec?.pipelineRef?.name;
 
+  if (pipelineRun?.status?.pipelineSpec?.description) {
+    description = pipelineRun?.status?.pipelineSpec?.description;
+  } else if (pipelineRun?.spec?.pipelineSpec?.description) {
+    description = pipelineRun?.spec?.pipelineSpec?.description;
+  } else if (pipeline?.spec?.description) {
+    description = pipeline?.spec?.description;
+  }
+
   function showPipelineRunError() {
     if (!pipelineRun.status?.taskRuns && !pipelineRun.status?.childReferences) {
       return null;
