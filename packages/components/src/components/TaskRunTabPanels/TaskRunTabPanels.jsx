@@ -24,6 +24,7 @@ import {
   getStatus,
   getStepDefinition,
   getStepStatusReason,
+  orderStepsFromTaskRun,
   updateUnexecutedSteps
 } from '@tektoncd/dashboard-utils';
 
@@ -288,9 +289,11 @@ function Logs({
     );
   }
 
+  const orderedSteps = orderStepsFromTaskRun(steps, taskRun);
+
   return (
     <Accordion align="end" className="tkn--task-logs" ordered size="md">
-      {steps.map(step => (
+      {orderedSteps.map(step => (
         <Step
           expandedSteps={{
             ...expandedSteps,
@@ -304,7 +307,7 @@ function Logs({
           selectedTaskId={selectedTaskId}
           taskRunReason={reason}
           step={step}
-          steps={steps}
+          steps={orderedSteps}
           task={task}
           taskRun={taskRun}
         />

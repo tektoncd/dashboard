@@ -34,6 +34,7 @@ import {
   getTaskRunsWithPlaceholders,
   getTaskSpecFromTaskRef,
   isRunning,
+  orderStepsFromTaskRun,
   taskRunHasWarning,
   updateUnexecutedSteps
 } from '.';
@@ -527,6 +528,242 @@ it('getStepStatusReason', () => {
     status: undefined
   });
   expect(getStepStatusReason()).toEqual({});
+});
+
+describe('orderStepsFromTaskRun', () => {
+  it('should return steps unchanged when taskRun has no status', () => {
+    const steps = [
+      { name: 'step1', data: 'value1' },
+      { name: 'step2', data: 'value2' }
+    ];
+    const taskRun = {};
+
+    const result = orderStepsFromTaskRun(steps, taskRun);
+    expect(result).toEqual(steps);
+  });
+
+  it('should return steps unchanged when taskRun status has no taskSpec', () => {
+    const steps = [
+      { name: 'step1', data: 'value1' },
+      { name: 'step2', data: 'value2' }
+    ];
+    const taskRun = {
+      status: {}
+    };
+
+    const result = orderStepsFromTaskRun(steps, taskRun);
+    expect(result).toEqual(steps);
+  });
+
+  it('should return steps unchanged when taskSpec has no steps', () => {
+    const steps = [
+      { name: 'step1', data: 'value1' },
+      { name: 'step2', data: 'value2' }
+    ];
+    const taskRun = {
+      status: {
+        taskSpec: {}
+      }
+    };
+
+    const result = orderStepsFromTaskRun(steps, taskRun);
+    expect(result).toEqual(steps);
+  });
+
+  it('should return steps unchanged when taskSpec steps array is empty', () => {
+    const steps = [
+      { name: 'step1', data: 'value1' },
+      { name: 'step2', data: 'value2' }
+    ];
+    const taskRun = {
+      status: {
+        taskSpec: {
+          steps: []
+        }
+      }
+    };
+
+    const result = orderStepsFromTaskRun(steps, taskRun);
+    expect(result).toEqual(steps);
+  });
+
+  it('should order steps according to taskSpec order', () => {
+    const steps = [
+      { name: 'step-c', data: 'value-c' },
+      { name: 'step-a', data: 'value-a' },
+      { name: 'step-b', data: 'value-b' }
+    ];
+    const taskRun = {
+      status: {
+        taskSpec: {
+          steps: [{ name: 'step-a' }, { name: 'step-b' }, { name: 'step-c' }]
+        }
+      }
+    };
+
+    const result = orderStepsFromTaskRun(steps, taskRun);
+    expect(result).toEqual([
+      { name: 'step-a', data: 'value-a' },
+      { name: 'step-b', data: 'value-b' },
+      { name: 'step-c', data: 'value-c' }
+    ]);
+  });
+
+  it('should handle steps not present in taskSpec by appending them at the end', () => {
+    const steps = [
+      { name: 'step-c', data: 'value-c' },
+      { name: 'step-a', data: 'value-a' },
+      { name: 'step-extra', data: 'value-extra' },
+      { name: 'step-b', data: 'value-b' }
+    ];
+    const taskRun = {
+      status: {
+        taskSpec: {
+          steps: [{ name: 'step-a' }, { name: 'step-b' }]
+        }
+      }
+    };
+
+    const result = orderStepsFromTaskRun(steps, taskRun);
+    expect(result).toEqual([
+      { name: 'step-a', data: 'value-a' },
+      { name: 'step-b', data: 'value-b' },
+      { name: 'step-c', data: 'value-c' },
+      { name: 'step-extra', data: 'value-extra' }
+    ]);
+  });
+
+  it('should handle taskSpec steps that are not present in the steps array', () => {
+    const steps = [
+      { name: 'step-a', data: 'value-a' },
+      { name: 'step-c', data: 'value-c' }
+    ];
+    const taskRun = {
+      status: {
+        taskSpec: {
+          steps: [
+            { name: 'step-a' },
+            { name: 'step-b' }, // This step is not in the steps array
+            { name: 'step-c' }
+          ]
+        }
+      }
+    };
+
+    const result = orderStepsFromTaskRun(steps, taskRun);
+    expect(result).toEqual([
+      { name: 'step-a', data: 'value-a' },
+      { name: 'step-c', data: 'value-c' }
+    ]);
+  });
+
+  it('should handle empty steps array', () => {
+    const steps = [];
+    const taskRun = {
+      status: {
+        taskSpec: {
+          steps: [{ name: 'step-a' }, { name: 'step-b' }]
+        }
+      }
+    };
+
+    const result = orderStepsFromTaskRun(steps, taskRun);
+    expect(result).toEqual([]);
+  });
+
+  it('should handle taskSpec steps with undefined or null names', () => {
+    const steps = [
+      { name: 'step-a', data: 'value-a' },
+      { name: 'step-b', data: 'value-b' }
+    ];
+    const taskRun = {
+      status: {
+        taskSpec: {
+          steps: [
+            { name: 'step-b' },
+            { name: null },
+            { name: undefined },
+            { name: 'step-a' },
+            {}
+          ]
+        }
+      }
+    };
+
+    const result = orderStepsFromTaskRun(steps, taskRun);
+    expect(result).toEqual([
+      { name: 'step-b', data: 'value-b' },
+      { name: 'step-a', data: 'value-a' }
+    ]);
+  });
+
+  it('should handle taskSpec steps with non-string names', () => {
+    const steps = [
+      { name: 'step-a', data: 'value-a' },
+      { name: 'step-b', data: 'value-b' }
+    ];
+    const taskRun = {
+      status: {
+        taskSpec: {
+          steps: [
+            { name: 123 },
+            { name: 'step-b' },
+            { name: true },
+            { name: 'step-a' },
+            { name: [] }
+          ]
+        }
+      }
+    };
+
+    const result = orderStepsFromTaskRun(steps, taskRun);
+    expect(result).toEqual([
+      { name: 'step-b', data: 'value-b' },
+      { name: 'step-a', data: 'value-a' }
+    ]);
+  });
+
+  it('should preserve all step properties during reordering', () => {
+    const steps = [
+      {
+        name: 'step-b',
+        image: 'ubuntu',
+        command: ['echo'],
+        args: ['hello'],
+        env: [{ name: 'VAR1', value: 'value1' }]
+      },
+      {
+        name: 'step-a',
+        image: 'alpine',
+        script: 'echo world',
+        workingDir: '/tmp'
+      }
+    ];
+    const taskRun = {
+      status: {
+        taskSpec: {
+          steps: [{ name: 'step-a' }, { name: 'step-b' }]
+        }
+      }
+    };
+
+    const result = orderStepsFromTaskRun(steps, taskRun);
+    expect(result).toEqual([
+      {
+        name: 'step-a',
+        image: 'alpine',
+        script: 'echo world',
+        workingDir: '/tmp'
+      },
+      {
+        name: 'step-b',
+        image: 'ubuntu',
+        command: ['echo'],
+        args: ['hello'],
+        env: [{ name: 'VAR1', value: 'value1' }]
+      }
+    ]);
+  });
 });
 
 describe('getStatusFilter', () => {

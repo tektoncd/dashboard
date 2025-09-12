@@ -173,3 +173,35 @@ it('TaskTree handles click event on Step', () => {
   fireEvent.click(getByText(/build/i));
   expect(onSelect).toHaveBeenCalledTimes(1);
 });
+
+it('TaskTree with steps order in taskSpec', () => {
+  const props = getProps();
+  props.taskRuns[0].status.taskSpec = {
+    steps: [{ name: 'test' }, { name: 'build' }]
+  };
+
+  const { container } = render(<TaskTree {...props} />);
+  const stepElements = container.querySelectorAll('.tkn--step-list li');
+  expect(stepElements[0].textContent).toContain('test');
+  expect(stepElements[1].textContent).toContain('build');
+});
+
+it('TaskTree handles invalid step names in taskSpec', () => {
+  const props = getProps();
+  props.taskRuns[0].status.taskSpec = {
+    steps: [
+      { name: 'test' },
+      {
+        /* missing name */
+      },
+      { name: null },
+      { name: 'build' }
+    ]
+  };
+
+  const { container } = render(<TaskTree {...props} />);
+  const stepElements = container.querySelectorAll('.tkn--step-list li');
+  expect(stepElements.length).toBe(2);
+  expect(stepElements[0].textContent).toContain('test');
+  expect(stepElements[1].textContent).toContain('build');
+});
