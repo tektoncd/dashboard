@@ -57,7 +57,7 @@ spec:
             - name: repo
           steps:
             - name: clone
-              image: ghcr.io/wolfi-dev/git:alpine@sha256:a8771b4163f4e9089ddb544426d6c637e3a542de204b455210e735c0cbd3a344
+              image: ghcr.io/wolfi-dev/git:alpine@sha256:443c694e7904fbd451b0ce35fdfb5104b8123959f6340850df80dd593e61d616
               env:
                 - name: PARAM_URL
                   value: $(params.repositoryURL)
