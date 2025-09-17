@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2024 The Tekton Authors
+Copyright 2020-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -62,5 +62,19 @@ describe('getLogsToolbar', () => {
       namespace,
       podName
     });
+  });
+
+  it('should handle missing TaskRun status', () => {
+    const container = 'fake_container';
+    const namespace = 'fake_namespace';
+    const stepStatus = { container };
+    const taskRun = { metadata: { namespace } };
+    vi.spyOn(API, 'getPodLogURL');
+    vi.spyOn(API, 'getExternalLogURL');
+
+    render(<LogsToolbarContainer stepStatus={stepStatus} taskRun={taskRun} />);
+
+    expect(API.getExternalLogURL).not.toHaveBeenCalled();
+    expect(API.getPodLogURL).not.toHaveBeenCalled();
   });
 });
