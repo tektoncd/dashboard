@@ -136,7 +136,7 @@ export default function RunHeader({
                     />
                   ) : null}
                 </div>
-                <div className="tkn--info-row">{description}</div>
+                <div className="tkn--run-header--description">{description}</div>
               </div>
             </>
           )

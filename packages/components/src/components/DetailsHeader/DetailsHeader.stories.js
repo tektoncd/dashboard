@@ -14,7 +14,7 @@ limitations under the License.
 import { dashboardReasonSkipped } from '@tektoncd/dashboard-utils';
 import DetailsHeader from './DetailsHeader';
 
-const getTaskRun = ({ reason, status, terminationReason }) => ({
+const getTaskRun = ({ reason, status, terminationReason, startTime, completionTime, description }) => ({
   status: {
     conditions: [
       {
@@ -23,7 +23,12 @@ const getTaskRun = ({ reason, status, terminationReason }) => ({
         terminationReason,
         type: 'Succeeded'
       }
-    ]
+    ],
+    completionTime: completionTime,
+    startTime: startTime,
+    taskSpec: {
+      description: description
+    }
   }
 });
 
@@ -122,5 +127,32 @@ export const Running = {
     displayName: 'build',
     status: 'running',
     taskRun: getTaskRun({ reason: 'Running', status: 'Unknown' })
+  }
+};
+
+export const WithDescription = {
+  args: {
+    displayName: 'build',
+    reason: 'Completed',
+    status: 'terminated',
+    taskRun: getTaskRun({ reason: 'Succeeded', status: 'True', description: 'This is a task description'}),
+  }
+};
+
+export const WithDuration = {
+  args: {
+    displayName: 'build',
+    reason: 'Completed',
+    status: 'terminated',
+    taskRun: getTaskRun({ reason: 'Succeeded', status: 'True', startTime: '2025-09-11T11:50:10Z', completionTime: '2025-09-11T11:55:15Z'}),
+  }
+};
+
+export const WithDurationAndDescription = {
+  args: {
+    displayName: 'build',
+    reason: 'Completed',
+    status: 'terminated',
+    taskRun: getTaskRun({ reason: 'Succeeded', status: 'True', startTime: '2025-09-11T11:50:10Z', completionTime: '2025-09-11T11:55:15Z', description: 'This is a task description'}),
   }
 };
