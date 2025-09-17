@@ -100,7 +100,8 @@ const linkify = (str, styleObj, classNameString) => {
 const LogFormat = ({
   fields = { message: true },
   logs = [],
-  onToggleGroup
+  onToggleGroup,
+  ...rest
 }) => {
   let properties = {
     classes: {},
@@ -341,7 +342,7 @@ const LogFormat = ({
       line = [];
       return parse(part, index);
     });
-  return <code>{convert()}</code>;
+  return <code {...rest}>{convert()}</code>;
 };
 
 export default LogFormat;
