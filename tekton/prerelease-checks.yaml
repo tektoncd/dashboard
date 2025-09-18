@@ -53,7 +53,7 @@ spec:
       script: |
         echo "Checking release file"
         # Check if the release file already exists
-        # gsutil retuns 1 if the object was not found
+        # gsutil returns 1 if the object was not found
         if gsutil stat ${RELEASE_BUCKET}/previous/${VERSION_TAG}/release.yaml; then
           echo "Release file already exists for ${VERSION_TAG} in the release bucket,"
           echo "but no git tag was found. To continue remove the release file first."
