@@ -1,4 +1,5 @@
 name: Scorecard supply-chain security
+# Results can be viewed at https://scorecard.dev/viewer/?uri=github.com%2Ftektoncd%2Fdashboard
 
 # Declare default permissions as read only.
 permissions: read-all
