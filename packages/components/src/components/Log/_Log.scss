@@ -64,27 +64,27 @@ pre.tkn--log {
 
   .button-container {
     position: absolute;
-    clip-path: inset(0); // ensure the children with position:fixed are not shown outside this element.
+    // clip-path: inset(0); // ensure the children with position:fixed are not shown outside this element.
     inset-block-start: 3.125rem; //equals the maximum between padding-block-start of pre.tkn--log and between the page header height
     inset-block-end: 0;
     inset-inline-end: 0;
     inline-size: var(--tkn-log-inline-padding);
   }
 
-  #log-scroll-to-start-btn, #log-scroll-to-end-btn {
+  .cds--popover-container:has(#log-scroll-to-start-btn, #log-scroll-to-end-btn) {
     position: fixed;
     inset-inline-end: var(--tkn-log-element-right);
 
-    &::before { // the tooltip is not shown because it is outside of its parent .button-container (which has clip-path inset) But fin still appears.
-      content: none; // To remove fin of truncated tooltip. To  obtain higher specificity than Carbon css, id selector is needed.
-    }
+    // &::before { // the tooltip is not shown because it is outside of its parent .button-container (which has clip-path inset) But fin still appears.
+    //   content: none; // To remove fin of truncated tooltip. To  obtain higher specificity than Carbon css, id selector is needed.
+    // }
   }
-  
-  #log-scroll-to-start-btn {
+
+  .cds--popover-container:has(#log-scroll-to-start-btn) {
     inset-block-start: calc(var(--tkn-scroll-button-top) + 3.125rem); //3.125 rem is the maximum between padding-block-start of pre.tkn--log and between the page header height
   }
 
-  #log-scroll-to-end-btn {
+  .cds--popover-container:has(#log-scroll-to-end-btn) {
     inset-block-end: var(--tkn-scroll-button-bottom);
   }
 
