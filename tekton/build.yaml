@@ -21,7 +21,7 @@ spec:
     - name: source
   steps:
     - name: build-static
-      image: docker.io/library/node:20.19.3-slim@sha256:accd529f51eca09980605f278570579a9b9d32f952aa35a0758bc724fcc134ae
+      image: docker.io/library/node:24.10.0-slim@sha256:b8d2197aff9129d16c801a3e3e1b2a873c4946480f5a310f38056df2268c38d9
       workingDir: $(workspaces.source.path)
       env:
         - name: CI
