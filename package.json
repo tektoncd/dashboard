@@ -26,7 +26,7 @@
     "version:packages": "npm version --preid alpha -m \"Publish v%s of the @tektoncd/dashboard-* packages\""
   },
   "dependencies": {
-    "@carbon/react": "^1.85.1",
+    "@carbon/react": "^1.91.0",
     "@codemirror/legacy-modes": "^6.5.1",
     "@tanstack/react-query": "^4.41.0",
     "@tektoncd/dashboard-components": "*",
