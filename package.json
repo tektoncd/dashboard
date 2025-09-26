@@ -82,8 +82,8 @@
     "vitest": "^3.0.1"
   },
   "engines": {
-    "node": "^20.18.0",
-    "npm": "^10.8.2"
+    "node": "^24.8.0",
+    "npm": "^11.6.0"
   },
   "//": "Workspaces must be listed explicitly to ensure they're processed in the correct order until npm natively supports detecting the topological order. Exclude e2e as it needs to function as a standalone project and its dependencies should not be hoisted.",
   "workspaces": [
