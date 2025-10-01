@@ -21,7 +21,8 @@ module.exports = {
     'plugin:prettier/recommended',
     'plugin:cypress/recommended',
     'plugin:storybook/recommended',
-    'plugin:react/jsx-runtime'
+    'plugin:react/jsx-runtime',
+    'plugin:depend/recommended'
   ],
   globals: {
     afterAll: true,
