@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import { getGenerateNamePrefixForRerun } from '@tektoncd/dashboard-utils';
-import deepClone from 'lodash.clonedeep';
 
 import { deleteRequest, patch, post } from './comms';
 import {
@@ -157,7 +156,7 @@ export function generateNewTaskRunPayload({ taskRun, rerun }) {
   const { annotations, labels, name, namespace, generateName } =
     taskRun.metadata;
 
-  const payload = deepClone(taskRun);
+  const payload = structuredClone(taskRun);
   payload.apiVersion =
     payload.apiVersion || `tekton.dev/${getTektonPipelinesAPIVersion()}`;
   payload.kind = payload.kind || 'TaskRun';
