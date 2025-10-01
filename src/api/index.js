@@ -13,7 +13,6 @@ limitations under the License.
 
 import { useQuery } from '@tanstack/react-query';
 import { labels as labelConstants } from '@tektoncd/dashboard-utils';
-import deepClone from 'lodash.clonedeep';
 
 import { get, getAPIRoot, post } from './comms';
 import {
@@ -176,7 +175,7 @@ export function importResources({
   revision,
   serviceAccount
 }) {
-  const pipelineRun = deepClone(importResourcesPipelineRunTemplate);
+  const pipelineRun = structuredClone(importResourcesPipelineRunTemplate);
   const pipelinesAPIVersion = getTektonPipelinesAPIVersion();
 
   pipelineRun.apiVersion = `tekton.dev/${pipelinesAPIVersion}`;

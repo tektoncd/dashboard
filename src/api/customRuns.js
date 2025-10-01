@@ -1,5 +1,5 @@
 /*
-Copyright 2022-2024 The Tekton Authors
+Copyright 2022-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import { getGenerateNamePrefixForRerun } from '@tektoncd/dashboard-utils';
-import deepClone from 'lodash.clonedeep';
 
 import { deleteRequest, patch, post } from './comms';
 import {
@@ -100,7 +99,7 @@ export function generateNewCustomRunPayload({ customRun, rerun }) {
   const { annotations, labels, name, namespace, generateName } =
     customRun.metadata;
 
-  const payload = deepClone(customRun);
+  const payload = structuredClone(customRun);
   payload.apiVersion = payload.apiVersion || 'tekton.dev/v1beta1';
   payload.kind = payload.kind || 'CustomRun';
 
