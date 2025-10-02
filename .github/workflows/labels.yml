@@ -1,0 +1,29 @@
+name: Label Checker
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+      - unlabeled
+
+jobs:
+  check_labels:
+    name: Check kind labels
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        with:
+          egress-policy: audit
+
+      - uses: docker://agilepathway/pull-request-label-checker:v1.6.65@sha256:65e57fd98ba3ab6ca4fcbc5a0aef288dd984ee4ab988f124d83424d19b55b801
+        with:
+          prefix_mode: true
+          one_of: "kind/"
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
