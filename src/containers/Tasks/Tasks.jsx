@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,7 +15,6 @@ limitations under the License.
 import { useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { useIntl } from 'react-intl';
-import keyBy from 'lodash.keyby';
 import { Button } from '@carbon/react';
 import {
   ALL_NAMESPACES,
@@ -42,6 +41,7 @@ import {
   useSelectedNamespace,
   useTasks
 } from '../../api';
+import { keyBy } from '../../utils';
 
 function getFormattedResources({
   intl,

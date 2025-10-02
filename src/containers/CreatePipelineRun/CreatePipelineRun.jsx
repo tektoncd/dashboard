@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,6 @@ limitations under the License.
 
 import { lazy, Suspense, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import keyBy from 'lodash.keyby';
 import yaml from 'js-yaml';
 import {
   Button,
@@ -47,7 +46,7 @@ import {
   usePipelineRun,
   useSelectedNamespace
 } from '../../api';
-import { isValidLabel } from '../../utils';
+import { isValidLabel, keyBy } from '../../utils';
 
 const YAMLEditor = lazy(() => import('../YAMLEditor'));
 

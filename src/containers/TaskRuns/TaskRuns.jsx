@@ -14,7 +14,6 @@ limitations under the License.
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useIntl } from 'react-intl';
-import keyBy from 'lodash.keyby';
 import {
   DeleteModal,
   StatusFilterDropdown,
@@ -37,7 +36,7 @@ import {
 import { Add, TrashCan as Delete, StopOutline } from '@carbon/react/icons';
 
 import ListPageLayout from '../ListPageLayout';
-import { sortRunsByStartTime } from '../../utils';
+import { keyBy, sortRunsByStartTime } from '../../utils';
 import {
   cancelTaskRun,
   deleteTaskRun,

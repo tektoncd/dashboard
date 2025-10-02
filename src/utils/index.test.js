@@ -21,6 +21,7 @@ import {
   getTheme,
   getViewChangeHandler,
   I18N_DEV_KEY,
+  keyBy,
   setTheme,
   sortRunsByCreationTime,
   sortRunsByStartTime
@@ -350,6 +351,25 @@ describe('getTheme', () => {
     localStorage.setItem('tkn-theme', 'light');
     const theme = getTheme();
     expect(theme).toEqual('light');
+  });
+});
+
+describe('keyBy', () => {
+  it('handles null array', () => {
+    expect(keyBy(null)).toEqual({});
+  });
+
+  it('handles empty array', () => {
+    expect(keyBy([])).toEqual({});
+  });
+
+  it('handles array', () => {
+    const array = [
+      { name: 'a', value: '123' },
+      { name: 'b', value: 'xyz' }
+    ];
+    const key = 'name';
+    expect(keyBy(array, key)).toEqual({ a: array[0], b: array[1] });
   });
 });
 
