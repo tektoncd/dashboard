@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -20,6 +20,32 @@ const supportedLocales = import.meta.env.VITE_LOCALES_SUPPORTED.split(',');
 
 export const defaultLocale = import.meta.env.VITE_LOCALES_DEFAULT;
 export const I18N_DEV_KEY = 'tkn-locale-dev';
+
+/**
+ * Convert an array of objects to an object keyed by the field specified by `key`.
+ * In case multiple elements have the same value for `key`, the last such element
+ * overrides previous values.
+ *
+ * Example:
+ * `keyBy([{ title: 'a', value: '123' }, { title: 'xyz', value: '456' }], 'title')`
+ *
+ * Result:
+ * ```
+ * {
+ *  a: { title: 'a', value: '123' },
+ *  xyz: { title: 'xyz', value: '456' }
+ * }
+ * ```
+ */
+export function keyBy(array, key) {
+  return (array || []).reduce(
+    (acc, item) => ({
+      ...acc,
+      [item[key]]: item
+    }),
+    {}
+  );
+}
 
 export function sortRunsByStartTime(runs) {
   runs.sort((a, b) => {

@@ -14,7 +14,6 @@ limitations under the License.
 
 import { lazy, Suspense, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import keyBy from 'lodash.keyby';
 import yaml from 'js-yaml';
 import {
   Button,
@@ -46,7 +45,7 @@ import {
   useTask,
   useTaskRun
 } from '../../api';
-import { isValidLabel } from '../../utils';
+import { isValidLabel, keyBy } from '../../utils';
 
 const YAMLEditor = lazy(() => import('../YAMLEditor'));
 

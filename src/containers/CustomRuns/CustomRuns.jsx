@@ -15,7 +15,6 @@ limitations under the License.
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useIntl } from 'react-intl';
-import keyBy from 'lodash.keyby';
 import {
   ALL_NAMESPACES,
   getFilters,
@@ -52,7 +51,7 @@ import {
   useIsReadOnly,
   useSelectedNamespace
 } from '../../api';
-import { sortRunsByCreationTime } from '../../utils';
+import { keyBy, sortRunsByCreationTime } from '../../utils';
 
 function getRunTriggerInfo(run) {
   const { labels = {} } = run.metadata;
