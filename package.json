@@ -73,7 +73,7 @@
     "lodash.omit": "^4.5.0",
     "msw": "^2.11.3",
     "prettier": "^3.6.2",
-    "rollup-plugin-visualizer": "^6.0.3",
+    "rollup-plugin-visualizer": "^6.0.4",
     "sass-embedded": "^1.93.2",
     "storybook": "^9.1.10",
     "storybook-addon-remix-react-router": "^3.1.0",
