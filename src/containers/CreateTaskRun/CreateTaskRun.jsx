@@ -14,7 +14,7 @@ limitations under the License.
 
 import { lazy, Suspense, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import yaml from 'js-yaml';
+import yaml from 'yaml';
 import {
   Button,
   Form,
@@ -431,7 +431,7 @@ function CreateTaskRun() {
           taskRun: taskRunObject,
           rerun: false
         });
-        payloadYaml = yaml.dump(payload);
+        payloadYaml = yaml.stringify(payload, { singleQuote: true });
       }
       const loadingMessage = intl.formatMessage(
         {
@@ -477,7 +477,7 @@ function CreateTaskRun() {
     return (
       <Suspense fallback={<Loading />}>
         <YAMLEditor
-          code={yaml.dump(taskRun)}
+          code={yaml.stringify(taskRun, { singleQuote: true })}
           handleClose={handleCloseYAMLEditor}
           handleCreate={handleCreate}
           kind="TaskRun"

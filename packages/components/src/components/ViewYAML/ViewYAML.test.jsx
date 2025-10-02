@@ -42,7 +42,7 @@ it('YAML renders correctly', () => {
   expect(getByText(/apiVersion: tekton.dev\/v1alpha1/i)).toBeTruthy();
   expect(getByText(/kind: Resource/i)).toBeTruthy();
   expect(getByText(/metadata:/i)).toBeTruthy();
-  expect(getByText(/creationTimestamp: '1995-11-08T00:00:00Z'/i)).toBeTruthy();
+  expect(getByText(/creationTimestamp: 1995-11-08T00:00:00Z/i)).toBeTruthy();
   expect(getByText(/generation:/i)).toBeTruthy();
   expect(getByText(/labels:/i)).toBeTruthy();
   expect(getByText(/foo: bar/i)).toBeTruthy();

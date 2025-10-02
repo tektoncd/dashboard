@@ -1,5 +1,5 @@
 /*
-Copyright 2022-2024 The Tekton Authors
+Copyright 2022-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 import { useIntl } from 'react-intl';
 import { Button, Form, FormGroup, InlineNotification } from '@carbon/react';
-import yaml from 'js-yaml';
+import yaml from 'yaml';
 import { useEffect, useState } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { StreamLanguage } from '@codemirror/language';
@@ -77,7 +77,7 @@ export default function YAMLEditor({
 
     let resource;
     try {
-      resource = yaml.load(code);
+      resource = yaml.parse(code);
     } catch (e) {
       setValidationErrorMessage(e.message);
       return;

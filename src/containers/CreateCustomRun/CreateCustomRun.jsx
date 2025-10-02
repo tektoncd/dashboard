@@ -1,5 +1,5 @@
 /*
-Copyright 2023-2024 The Tekton Authors
+Copyright 2023-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,7 @@ limitations under the License.
 
 import { lazy, Suspense } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import yaml from 'js-yaml';
+import yaml from 'yaml';
 import { ALL_NAMESPACES, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import { Loading } from '@tektoncd/dashboard-components';
 import { useIntl } from 'react-intl';
@@ -87,7 +87,7 @@ function CreateCustomRun() {
         customRun: customRunObject,
         rerun: false
       });
-      payloadYaml = yaml.dump(payload);
+      payloadYaml = yaml.stringify(payload, { singleQuote: true });
     }
     const loadingMessage = intl.formatMessage(
       {
@@ -116,7 +116,7 @@ function CreateCustomRun() {
   return (
     <Suspense fallback={<Loading />}>
       <YAMLEditor
-        code={yaml.dump(customRun)}
+        code={yaml.stringify(customRun, { singleQuote: true })}
         handleClose={handleCloseYAMLEditor}
         handleCreate={handleCreate}
         kind="CustomRun"
