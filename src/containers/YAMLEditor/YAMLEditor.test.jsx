@@ -1,5 +1,5 @@
 /*
-Copyright 2022-2024 The Tekton Authors
+Copyright 2022-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -129,7 +129,9 @@ describe('YAMLEditor', () => {
 
     fireEvent.click(submitButton(queryAllByText));
     expect(getByText(/Please fix errors, then resubmit/)).toBeTruthy();
-    expect(getByText(/can not read a block mapping entry/)).toBeTruthy();
+    expect(
+      getByText(/Implicit map keys need to be followed by map values/)
+    ).toBeTruthy();
   });
 
   it('handle submit', async () => {

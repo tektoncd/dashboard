@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import yaml from 'js-yaml';
+import yaml from 'yaml';
 import { http, HttpResponse } from 'msw';
 
 import * as API from './pipelineRuns';
@@ -318,7 +318,7 @@ spec:
     name: simple
 `;
     expect(namespace).toEqual('test-namespace');
-    expect(yaml.dump(payload)).toEqual(expected);
+    expect(yaml.stringify(payload)).toEqual(expected);
   });
 
   it('rerun with all processed fields', () => {
@@ -372,7 +372,7 @@ spec:
     - name: param-2
 `;
     expect(namespace).toEqual('test-namespace');
-    expect(yaml.dump(payload)).toEqual(expected);
+    expect(yaml.stringify(payload)).toEqual(expected);
   });
 
   it('edit with minimum possible fields', () => {
@@ -405,7 +405,7 @@ spec:
     name: simple
 `;
     expect(namespace).toEqual('test-namespace');
-    expect(yaml.dump(payload)).toEqual(expected);
+    expect(yaml.stringify(payload)).toEqual(expected);
   });
 
   it('edit with all processed fields', () => {
@@ -459,6 +459,6 @@ spec:
     - name: param-2
 `;
     expect(namespace).toEqual('test-namespace');
-    expect(yaml.dump(payload)).toEqual(expected);
+    expect(yaml.stringify(payload)).toEqual(expected);
   });
 });

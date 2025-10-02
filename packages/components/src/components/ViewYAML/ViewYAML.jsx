@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import PropTypes from 'prop-types';
-import jsYaml from 'js-yaml';
+import YAML from 'yaml';
 import { classNames } from '@tektoncd/dashboard-utils';
 
 import { usePrefix } from '@carbon/react';
@@ -43,7 +43,7 @@ function ViewYAML({
     const clz = classNames(`${carbonPrefix}--snippet--multi`, className, {
       'tkn--view-yaml--dark': dark
     });
-    const yaml = jsYaml.dump(resource);
+    const yaml = YAML.stringify(resource, { singleQuote: true });
     yamlComponent = <YAMLRaw className={clz}>{yaml}</YAMLRaw>;
   }
 

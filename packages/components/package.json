@@ -20,12 +20,12 @@
   },
   "dependencies": {
     "@tektoncd/dashboard-utils": "file:../utils",
-    "js-yaml": "^4.1.0",
     "linkify-it": "^5.0.0",
     "prop-types": "^15.7.2",
     "react-intl-formatted-duration": "^4.0.0",
     "react-window": "^1.8.11",
-    "tlds": "^1.260.0"
+    "tlds": "^1.260.0",
+    "yaml": "^2.8.1"
   },
   "peerDependencies": {
     "@carbon/react": "^1.65.0",

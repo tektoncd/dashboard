@@ -1,5 +1,5 @@
 /*
-Copyright 2021-2024 The Tekton Authors
+Copyright 2021-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,7 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import { usePrefix } from '@carbon/react';
-import jsYaml from 'js-yaml';
+import yaml from 'yaml';
 
 function addLine({ addBullet, key, level, lines, path, rawString, value }) {
   let valueNode;
@@ -44,7 +44,7 @@ function addLine({ addBullet, key, level, lines, path, rawString, value }) {
         <>
           <span> </span>
           <span className="hljs-string">
-            {jsYaml.dump(value, { lineWidth: -1 })}
+            {yaml.stringify(value, { lineWidth: 0, singleQuote: true })}
           </span>
         </>
       );
@@ -98,7 +98,7 @@ function addLine({ addBullet, key, level, lines, path, rawString, value }) {
         {typeof key === 'number' ? (
           bullet
         ) : (
-          <span className="hljs-attr">{`${jsYaml.dump(key).trim()}:`}</span>
+          <span className="hljs-attr">{`${yaml.stringify(key, { singleQuote: true }).trim()}:`}</span>
         )}
         {valueNode}
       </span>
