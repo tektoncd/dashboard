@@ -25,8 +25,8 @@ env:
 
 jobs:
   build:
-    name: Nightly Build 
-    runs-on: ubuntu-latest
+    name: Nightly Build
+    runs-on: ubuntu-24.04
     if: github.repository_owner == 'tektoncd'  # do not run this elsewhere
 
     permissions:
@@ -60,7 +60,7 @@ jobs:
           image_registry_user: ${{ env.IMAGE_REGISTRY_USER }}
           ghcr_token: ${{ secrets.GHCR_TOKEN }}
           gcs_service_account_key: ${{ secrets.GCS_SERVICE_ACCOUNT_KEY }}
-      
+
       - name: Apply Build Pipeline Definition
         run: |
           kustomize build tekton | kubectl apply -f -
