@@ -43,7 +43,7 @@
     "yaml": "^2.8.1"
   },
   "devDependencies": {
-    "@formatjs/cli": "^6.7.2",
+    "@formatjs/cli": "^6.7.3",
     "@rollup/plugin-yaml": "^4.1.2",
     "@storybook/addon-docs": "^9.1.10",
     "@storybook/addon-links": "^9.1.10",
