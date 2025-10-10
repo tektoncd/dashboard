@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook, waitFor } from '@testing-library/react';
 import { labels } from '@tektoncd/dashboard-utils';
 import { http, HttpResponse } from 'msw';
 
@@ -34,14 +34,14 @@ it('useCustomResources', async () => {
     ]
   };
   server.use(http.get(/\/fake_kind\//, () => HttpResponse.json(resources)));
-  const { result, waitFor } = renderHook(
+  const { result } = renderHook(
     () => API.useCustomResources({ group, kind, version }),
     {
       wrapper: getAPIWrapper()
     }
   );
-  await waitFor(() => result.current.isFetching);
-  await waitFor(() => !result.current.isFetching);
+  await waitFor(() => expect(result.current.isFetching).toBe(true));
+  await waitFor(() => expect(result.current.isFetching).toBe(false));
   expect(result.current.data).toEqual(resources.items);
 });
 
@@ -53,11 +53,12 @@ it('useAPIResource', async () => {
   const apiResource = { fake: 'apiResource', name: kind };
   vi.spyOn(comms, 'get').mockResolvedValue({ resources: [apiResource] });
 
-  const { result, waitFor } = renderHook(() => API.useAPIResource(params), {
+  const { result } = renderHook(() => API.useAPIResource(params), {
     wrapper: getAPIWrapper()
   });
-  await waitFor(() => result.current.isFetching);
-  await waitFor(() => !result.current.isFetching);
+  expect(result.current.state).not.toBe('loading');
+  await waitFor(() => expect(result.current.isFetching).toBe(true));
+  await waitFor(() => expect(result.current.isFetching).toBe(false));
   expect(result.current.data).toEqual(apiResource);
 });
 
@@ -70,11 +71,11 @@ it('useNamespaces', async () => {
     ]
   };
   server.use(http.get(/\/namespaces\//, () => HttpResponse.json(namespaces)));
-  const { result, waitFor } = renderHook(() => API.useNamespaces(), {
+  const { result } = renderHook(() => API.useNamespaces(), {
     wrapper: getAPIWrapper()
   });
-  await waitFor(() => result.current.isFetching);
-  await waitFor(() => !result.current.isFetching);
+  await waitFor(() => expect(result.current.isFetching).toBe(true));
+  await waitFor(() => expect(result.current.isFetching).toBe(false));
   expect(result.current.data).toEqual(namespaces.items);
 });
 
@@ -86,14 +87,11 @@ it('usePod', async () => {
     spec: 'fake_spec'
   };
   server.use(http.get(/\/pods\//, () => HttpResponse.json(pod)));
-  const { result, waitFor } = renderHook(
-    () => API.usePod({ name, namespace }),
-    {
-      wrapper: getAPIWrapper()
-    }
-  );
-  await waitFor(() => result.current.isFetching);
-  await waitFor(() => !result.current.isFetching);
+  const { result } = renderHook(() => API.usePod({ name, namespace }), {
+    wrapper: getAPIWrapper()
+  });
+  await waitFor(() => expect(result.current.isFetching).toBe(true));
+  await waitFor(() => expect(result.current.isFetching).toBe(false));
   expect(result.current.data).toEqual(pod);
 });
 
@@ -106,14 +104,14 @@ it('useEvents', async () => {
     items: [{ metadata: { name: 'event1' } }, { metadata: { name: 'event2' } }]
   };
   server.use(http.get(/\/events\//, () => HttpResponse.json(events)));
-  const { result, waitFor } = renderHook(
+  const { result } = renderHook(
     () => API.useEvents({ involvedObjectKind, involvedObjectName, namespace }),
     {
       wrapper: getAPIWrapper()
     }
   );
-  await waitFor(() => result.current.isFetching);
-  await waitFor(() => !result.current.isFetching);
+  await waitFor(() => expect(result.current.isFetching).toBe(true));
+  await waitFor(() => expect(result.current.isFetching).toBe(false));
   expect(result.current.data).toEqual(events.items);
 });
 
@@ -398,11 +396,11 @@ describe('getInstallProperties', () => {
 it('useProperties', async () => {
   const properties = { fake: 'properties' };
   server.use(http.get(/\/properties$/, () => HttpResponse.json(properties)));
-  const { result, waitFor } = renderHook(() => API.useProperties(), {
+  const { result } = renderHook(() => API.useProperties(), {
     wrapper: getAPIWrapper()
   });
-  await waitFor(() => result.current.isFetching);
-  await waitFor(() => !result.current.isFetching);
+  await waitFor(() => expect(result.current.isFetching).toBe(true));
+  await waitFor(() => expect(result.current.isFetching).toBe(false));
   expect(result.current.data).toEqual(properties);
 });
 
@@ -429,11 +427,11 @@ it('other hooks that depend on useProperties', async () => {
     triggersVersion
   };
   server.use(http.get(/\/properties$/, () => HttpResponse.json(properties)));
-  const { result, waitFor } = renderHook(() => API.useProperties(), {
+  const { result } = renderHook(() => API.useProperties(), {
     wrapper: getAPIWrapper({ queryClient })
   });
-  await waitFor(() => result.current.isFetching);
-  await waitFor(() => !result.current.isFetching);
+  await waitFor(() => expect(result.current.isFetching).toBe(true));
+  await waitFor(() => expect(result.current.isFetching).toBe(false));
   expect(result.current.data).toEqual(properties);
 
   const { result: dashboardNamespaceResult } = renderHook(
@@ -494,11 +492,11 @@ it('useTenantNamespaces', async () => {
 
   const properties = { tenantNamespaces };
   server.use(http.get(/\/properties$/, () => HttpResponse.json(properties)));
-  const { result, waitFor } = renderHook(() => API.useProperties(), {
+  const { result } = renderHook(() => API.useProperties(), {
     wrapper: getAPIWrapper({ queryClient })
   });
-  await waitFor(() => result.current.isFetching);
-  await waitFor(() => !result.current.isFetching);
+  await waitFor(() => expect(result.current.isFetching).toBe(true));
+  await waitFor(() => expect(result.current.isFetching).toBe(false));
   expect(result.current.data).toEqual(properties);
 
   const { result: tenantNamespacesResult } = renderHook(
@@ -517,11 +515,11 @@ it('useDefaultNamespace', async () => {
 
   const properties = { defaultNamespace };
   server.use(http.get(/\/properties$/, () => HttpResponse.json(properties)));
-  const { result, waitFor } = renderHook(() => API.useProperties(), {
+  const { result } = renderHook(() => API.useProperties(), {
     wrapper: getAPIWrapper({ queryClient })
   });
-  await waitFor(() => result.current.isFetching);
-  await waitFor(() => !result.current.isFetching);
+  await waitFor(() => expect(result.current.isFetching).toBe(true));
+  await waitFor(() => expect(result.current.isFetching).toBe(false));
   expect(result.current.data).toEqual(properties);
 
   const { result: defaultNamespacesResult } = renderHook(
