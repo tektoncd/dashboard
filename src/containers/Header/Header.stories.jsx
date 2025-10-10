@@ -21,7 +21,7 @@ import { NamespaceContext } from '../../api';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      cacheTime: 1000 * 60 * 5, // 5 minutes
+      gcTime: 1000 * 60 * 5, // 5 minutes
       refetchOnWindowFocus: false,
       retry: false,
       staleTime: Infinity
