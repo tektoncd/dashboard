@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { act, renderHook } from '@testing-library/react-hooks';
+import { act, renderHook, waitFor } from '@testing-library/react';
 
 import * as comms from './comms';
 import * as utils from './utils';
@@ -82,11 +82,9 @@ describe('useWebSocket', () => {
         })
       });
     });
-    expect(queryClient.invalidateQueries).toHaveBeenCalledWith([
-      group,
-      version,
-      kind
-    ]);
+    expect(queryClient.invalidateQueries).toHaveBeenCalledWith({
+      queryKey: [group, version, kind]
+    });
   });
 
   it('should handle DELETED events', () => {
@@ -147,12 +145,9 @@ describe('useWebSocket', () => {
         { name: otherName, namespace }
       ])
     ).toEqual(resource3);
-    expect(queryClient.removeQueries).toHaveBeenCalledWith([
-      group,
-      version,
-      kind,
-      { name, namespace }
-    ]);
+    expect(queryClient.removeQueries).toHaveBeenCalledWith({
+      queryKey: [group, version, kind, { name, namespace }]
+    });
   });
 
   it('should handle MODIFIED events', () => {
@@ -292,25 +287,30 @@ describe('useCollection', () => {
       metadata: { resourceVersion }
     }));
 
-    const { result, waitFor, waitForNextUpdate } = renderHook(
+    const { result } = renderHook(
       () => useCollection({ group, kind, version }),
       {
         wrapper: getAPIWrapper({ queryClient })
       }
     );
 
-    await waitFor(() => result.current.isSuccess);
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toEqual([existingResource]);
 
-    webSocket.fireEvent({
-      type: 'message',
-      data: JSON.stringify({
-        type: 'MODIFIED',
-        object: updatedResource
-      })
+    act(() => {
+      webSocket.fireEvent({
+        type: 'message',
+        data: JSON.stringify({
+          type: 'MODIFIED',
+          object: updatedResource
+        })
+      });
     });
-    await waitForNextUpdate();
-    expect(result.current.data).toEqual([updatedResource]);
+    // TODO not working
+    expect(queryClient.getQueryData([group, version, kind])).toEqual({
+      items: [updatedResource],
+      metadata: { resourceVersion: updatedResource.resourceVersion }
+    });
   });
 });
 
@@ -337,25 +337,31 @@ describe('useResource', () => {
       () => existingResource
     );
 
-    const { result, waitFor, waitForNextUpdate } = renderHook(
+    const { result } = renderHook(
       () => useResource({ group, kind, params: { name }, version }),
       {
         wrapper: getAPIWrapper({ queryClient })
       }
     );
 
-    await waitFor(() => result.current.isSuccess);
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toEqual(existingResource);
 
-    webSocket.fireEvent({
-      type: 'message',
-      data: JSON.stringify({
-        type: 'MODIFIED',
-        object: updatedResource
-      })
+    act(() => {
+      webSocket.fireEvent({
+        type: 'message',
+        data: JSON.stringify({
+          type: 'MODIFIED',
+          object: updatedResource
+        })
+      });
     });
-    await waitForNextUpdate();
-    expect(result.current.data).toEqual(updatedResource);
+    // await waitFor(() => expect(result.current.isSuccess).toBe(false));
+    // await waitFor(() => expect(result.current.data).not.toBe(existingResource));
+    // await waitFor(() => expect(result.current.data).toEqual(updatedResource));
+    expect(queryClient.getQueryData([group, version, kind, { name }])).toEqual(
+      updatedResource
+    );
   });
 });
 

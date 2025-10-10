@@ -91,7 +91,7 @@ describe('YAMLEditor', () => {
     const { queryAllByText, getByRole, getByText } = renderWithRouter(
       <YAMLEditor kind="PipelineRun" />
     );
-    expect(getByRole(/textbox/)).toBeTruthy();
+    expect(getByRole('textbox')).toBeTruthy();
 
     expect(submitButton(queryAllByText)).toBeTruthy();
 
@@ -105,7 +105,7 @@ describe('YAMLEditor', () => {
       <YAMLEditor kind="PipelineRun" />
     );
 
-    fireEvent.paste(getByRole(/textbox/), {
+    fireEvent.paste(getByRole('textbox'), {
       target: { textContent: pipelineRunWithoutNamespace }
     });
 
@@ -121,7 +121,7 @@ describe('YAMLEditor', () => {
       <YAMLEditor kind="PipelineRun" />
     );
 
-    fireEvent.paste(getByRole(/textbox/), {
+    fireEvent.paste(getByRole('textbox'), {
       target: { textContent: pipelineRunIncorrectYaml }
     });
 
@@ -141,7 +141,7 @@ describe('YAMLEditor', () => {
     const { queryAllByText, getByText, getByRole } = renderWithRouter(
       <YAMLEditor kind="PipelineRun" handleCreate={handleCreate} />
     );
-    fireEvent.paste(getByRole(/textbox/), {
+    fireEvent.paste(getByRole('textbox'), {
       target: { textContent: pipelineRun }
     });
     await waitFor(() => {
@@ -165,7 +165,7 @@ describe('YAMLEditor', () => {
     const { queryAllByText, getByText, getByRole } = renderWithRouter(
       <YAMLEditor kind="PipelineRun" handleCreate={handleCreate} />
     );
-    fireEvent.paste(getByRole(/textbox/), {
+    fireEvent.paste(getByRole('textbox'), {
       target: { textContent: pipelineRun }
     });
     await waitFor(() => {
