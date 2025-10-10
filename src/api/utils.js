@@ -121,7 +121,7 @@ function getResourceVersion(resource) {
 }
 
 function handleCreated({ group, kind, payload: _, queryClient, version }) {
-  queryClient.invalidateQueries([group, version, kind]);
+  queryClient.invalidateQueries({ queryKey: [group, version, kind] });
 }
 
 function handleDeleted({ group, kind, payload, queryClient, version }) {
@@ -129,12 +129,9 @@ function handleDeleted({ group, kind, payload, queryClient, version }) {
     metadata: { name, namespace }
   } = payload;
   // remove any matching details page cache
-  queryClient.removeQueries([
-    group,
-    version,
-    kind,
-    { name, ...(namespace && { namespace }) }
-  ]);
+  queryClient.removeQueries({
+    queryKey: [group, version, kind, { name, ...(namespace && { namespace }) }]
+  });
   // remove resource from any list page caches
   queryClient.setQueriesData([group, version, kind], data => {
     if (!Array.isArray(data?.items)) {
@@ -196,7 +193,7 @@ export function useWebSocket({
 
   useEffect(() => {
     if (enabled === false) {
-      return null;
+      return;
     }
 
     function handleClose() {
