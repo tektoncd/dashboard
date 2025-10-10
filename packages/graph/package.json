@@ -30,7 +30,7 @@
   },
   "peerDependencies": {
     "@carbon/react": "^1.68.0",
-    "react": "^16.14.0 || ^17.0.2",
+    "react": "^16.14.0 || ^17.0.2 || ^18.3.0",
     "react-intl": "^7.0.1"
   },
   "engines": {

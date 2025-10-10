@@ -214,9 +214,9 @@ describe('CreatePipelineRun yaml mode', () => {
       }
     );
     await waitFor(() => {
-      expect(getByRole(/textbox/)).toBeTruthy();
+      expect(getByRole('textbox')).toBeTruthy();
     });
-    let actual = getByRole(/textbox/).textContent;
+    let actual = getByRole('textbox').textContent;
     actual = actual.replace(findNameRegexp, 'name: run-1111111111');
     expect(actual.trim()).toEqual(expectedPipelineRunOneLine);
   });
