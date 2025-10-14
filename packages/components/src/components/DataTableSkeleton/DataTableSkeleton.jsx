@@ -1,5 +1,5 @@
 /*
-Copyright 2024 The Tekton Authors
+Copyright 2024-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -42,7 +42,6 @@ export default function DataTableSkeleton({
     rows[i] = (
       <tr key={i}>
         {columnsArray.map(j => (
-          // eslint-disable-next-line jsx-a11y/control-has-associated-label
           <td key={j}>
             <span />
           </td>

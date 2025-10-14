@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -102,9 +102,9 @@ export default function Step({
       data-selected={selected || undefined}
       data-termination-reason={terminationReason}
     >
-      <span // eslint-disable-line jsx-a11y/no-static-element-interactions
+      <span
         className="tkn--step-link"
-        tabIndex="0" // eslint-disable-line jsx-a11y/no-noninteractive-tabindex
+        tabIndex="0"
         onClick={handleClick}
         onKeyUp={e => e.key === 'Enter' && handleClick(e)}
         role="button"

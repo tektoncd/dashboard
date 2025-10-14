@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -333,7 +333,7 @@ export function getLogLevels() {
   if (logLevels) {
     try {
       logLevels = JSON.parse(logLevels);
-    } catch (e) {
+    } catch (_error) {
       // we'll fallback to a default config below
       logLevels = null;
     }
@@ -360,11 +360,11 @@ export function setLogLevels(levels) {
 export function removeSystemAnnotations(resource) {
   Object.keys(resource.metadata.annotations).forEach(annotation => {
     if (annotation.startsWith('tekton.dev/')) {
-      delete resource.metadata.annotations[annotation]; // eslint-disable-line no-param-reassign
+      delete resource.metadata.annotations[annotation];
     }
   });
 
-  delete resource.metadata.annotations[ // eslint-disable-line no-param-reassign
+  delete resource.metadata.annotations[
     'kubectl.kubernetes.io/last-applied-configuration'
   ];
 }
@@ -372,7 +372,7 @@ export function removeSystemAnnotations(resource) {
 export function removeSystemLabels(resource) {
   Object.keys(resource.metadata.labels).forEach(label => {
     if (label.startsWith('tekton.dev/')) {
-      delete resource.metadata.labels[label]; // eslint-disable-line no-param-reassign
+      delete resource.metadata.labels[label];
     }
   });
 }

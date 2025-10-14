@@ -1,5 +1,5 @@
 /*
-Copyright 2022-2024 The Tekton Authors
+Copyright 2022-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,30 +16,31 @@ import { forwardRef } from 'react';
 import { useHref, useLinkClickHandler } from 'react-router-dom';
 import { Link as CarbonLink } from '@carbon/react';
 
-const Link = forwardRef(
-  ({ onClick, replace = false, state, target, to, ...rest }, ref) => {
-    const href = useHref(to);
-    const handleClick = useLinkClickHandler(to, {
-      replace,
-      state,
-      target
-    });
+const Link = forwardRef(function Link(
+  { onClick, replace = false, state, target, to, ...rest },
+  ref
+) {
+  const href = useHref(to);
+  const handleClick = useLinkClickHandler(to, {
+    replace,
+    state,
+    target
+  });
 
-    return (
-      <CarbonLink
-        {...rest}
-        href={href}
-        onClick={event => {
-          onClick?.(event);
-          if (!event.defaultPrevented) {
-            handleClick(event);
-          }
-        }}
-        ref={ref}
-        target={target}
-      />
-    );
-  }
-);
+  return (
+    <CarbonLink
+      {...rest}
+      href={href}
+      onClick={event => {
+        onClick?.(event);
+        if (!event.defaultPrevented) {
+          handleClick(event);
+        }
+      }}
+      ref={ref}
+      target={target}
+    />
+  );
+});
 
 export default Link;

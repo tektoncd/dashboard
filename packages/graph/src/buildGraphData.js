@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -95,18 +95,22 @@ function getTaskRunStatus(taskRun) {
 
 function addEdge({ child, graph, parent, singletonSource, singletonTarget }) {
   if (!parent.ports) {
-    parent.ports = []; // eslint-disable-line
+    parent.ports = [];
   }
   if (!child.ports) {
-    child.ports = []; // eslint-disable-line
+    child.ports = [];
   }
 
-  const sourcePort = `${parent.id}-` + (singletonSource ? 'pSourceSingleton' : `p${parent.ports.length}`); // eslint-disable-line
+  const sourcePort =
+    `${parent.id}-` +
+    (singletonSource ? 'pSourceSingleton' : `p${parent.ports.length}`);
   if (!parent.ports.find(_ => _.id === sourcePort)) {
     parent.ports.push({ id: sourcePort });
   }
 
-  const targetPort = `${child.id}-` + (singletonTarget ? 'pTargetSingleton' : `p${child.ports.length}`); // eslint-disable-line
+  const targetPort =
+    `${child.id}-` +
+    (singletonTarget ? 'pTargetSingleton' : `p${child.ports.length}`);
   if (!child.ports.find(_ => _.id === targetPort)) {
     child.ports.push({ id: targetPort });
   }
@@ -119,15 +123,15 @@ function addEdge({ child, graph, parent, singletonSource, singletonTarget }) {
     targetPort
   });
 
-  child.nParents++; // eslint-disable-line
-  parent.nChildren++; // eslint-disable-line
+  child.nParents++;
+  parent.nChildren++;
 }
 
 function addNodes({
   expanded,
   graph,
   pipeline,
-  pipelineRun, // eslint-disable-line no-unused-vars
+  _pipelineRun,
   taskRuns,
   tasks
 }) {
@@ -214,7 +218,7 @@ function wire({ graph, nodes, parentName, childName }) {
   if (parent) {
     addEdge({ graph, parent, child });
   } else {
-    console.error('parent not found', childName); // eslint-disable-line no-console
+    console.error('parent not found', childName);
   }
 }
 

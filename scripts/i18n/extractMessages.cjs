@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2023 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -10,7 +10,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
 require('dotenv').config();
 
 const difference = require('lodash.difference');
@@ -26,14 +25,11 @@ const messagesFilePrefix = 'messages_';
 const messagesPath = path.resolve(basePath, 'src/nls/');
 
 const defaultMessages = require(
-  path.resolve(
-    messagesPath,
-    `${messagesFilePrefix}${defaultLocale}.json`
-  )
+  path.resolve(messagesPath, `${messagesFilePrefix}${defaultLocale}.json`)
 );
 
 function log(...args) {
-  console.log(...args); // eslint-disable-line no-console
+  console.log(...args);
 }
 
 function sortMessages(messages) {
@@ -67,8 +63,9 @@ buildLocales
   .forEach(locale => {
     let translations = {};
     try {
-      translations =
-        require(`${basePath}/src/nls/${messagesFilePrefix}${locale}.json`);
+      translations = require(
+        `${basePath}/src/nls/${messagesFilePrefix}${locale}.json`
+      );
     } catch {
       log(`No message bundle found for '${locale}', one will be created.`);
     }
