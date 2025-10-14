@@ -613,7 +613,7 @@ function CreatePipelineRun() {
             })}
             invalidText={
               <span
-                dangerouslySetInnerHTML /* eslint-disable-line react/no-danger */={{
+                dangerouslySetInnerHTML={{
                   __html: intl.formatMessage(
                     {
                       id: 'dashboard.createRun.label.invalidText',
@@ -652,7 +652,7 @@ function CreatePipelineRun() {
             })}
             invalidText={
               <span
-                dangerouslySetInnerHTML /* eslint-disable-line react/no-danger */={{
+                dangerouslySetInnerHTML={{
                   __html: intl.formatMessage(
                     {
                       id: 'dashboard.createRun.label.invalidText',

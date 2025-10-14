@@ -22,11 +22,11 @@ module.exports = defineConfig({
     experimentalRunAllSpecs: true,
     experimentalStudio: true,
     setupNodeEvents(on, config) {
-      config.env.carbonPrefix = 'cds'; // eslint-disable-line no-param-reassign
+      config.env.carbonPrefix = 'cds';
 
       on('after:spec', (spec, results) => {
         if (isCI && results?.video && results.stats.failures === 0) {
-          console.log('Deleting video for passing test'); // eslint-disable-line no-console
+          console.log('Deleting video for passing test');
           unlinkSync(results.video);
         }
       });

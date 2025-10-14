@@ -18,7 +18,13 @@ import Container from './Container';
 const parameters = {
   options: {
     storySort: {
-      order: ['Getting started', 'Components', 'Containers', '*', 'Experimental']
+      order: [
+        'Getting started',
+        'Components',
+        'Containers',
+        '*',
+        'Experimental'
+      ]
     }
   },
   backgrounds: {

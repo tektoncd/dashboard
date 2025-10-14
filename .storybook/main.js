@@ -38,13 +38,28 @@ const config = {
     }
     return {};
   },
-  stories: (_config, { configType }) => ([
-    { directory: '.', files: 'Welcome.mdx' },
-    configType === 'DEVELOPMENT' ? { directory: '../src', files: '**/*.stories.@(js|jsx)', titlePrefix: 'Containers' } : null,
-    { directory: '../packages/components', files: '**/*.stories.@(js|jsx)', titlePrefix: 'Components' },
-    { directory: '../packages/graph', files: '**/*.stories.@(js|jsx)', titlePrefix: 'Experimental/Graph' }
-  ].filter(Boolean)),
-  async viteFinal(config, { configType }) {
+  stories: (_config, { configType }) =>
+    [
+      { directory: '.', files: 'Welcome.mdx' },
+      configType === 'DEVELOPMENT'
+        ? {
+            directory: '../src',
+            files: '**/*.stories.@(js|jsx)',
+            titlePrefix: 'Containers'
+          }
+        : null,
+      {
+        directory: '../packages/components',
+        files: '**/*.stories.@(js|jsx)',
+        titlePrefix: 'Components'
+      },
+      {
+        directory: '../packages/graph',
+        files: '**/*.stories.@(js|jsx)',
+        titlePrefix: 'Experimental/Graph'
+      }
+    ].filter(Boolean),
+  async viteFinal(config, { _configType }) {
     config.server.watch = {
       ignored: ['**/coverage/**']
     };
