@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,7 +15,7 @@ import { Component } from 'react';
 import { Graph as VXGraph } from '@visx/network';
 import ELK from 'elkjs/lib/elk.bundled';
 
-import Node from './Node'; // eslint-disable-line import/no-cycle
+import Node from './Node';
 import NodeLink from './NodeLink';
 
 export default class Graph extends Component {
@@ -65,7 +65,7 @@ export default class Graph extends Component {
           height: g.height
         });
       })
-      .catch(console.error); // eslint-disable-line no-console
+      .catch(console.error);
   };
 
   render() {

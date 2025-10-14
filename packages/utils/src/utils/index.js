@@ -10,8 +10,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-/* eslint-disable import/extensions */
-
 // Include .js extension in imports/exports to solve ES Modules and CommonJS
 // problem when importing dashboard-utils
 import { labels as labelConstants } from './constants.js';
@@ -86,7 +84,7 @@ function mergeContainerField({
     }
   });
 
-  definition[field] = items; // eslint-disable-line no-param-reassign
+  definition[field] = items;
 }
 
 export function applyStepTemplate({ step, stepTemplate }) {
@@ -457,7 +455,6 @@ export function getPlaceholderTaskRun({ pipelineTask, tasks }) {
 function addDashboardLabels({ displayName, pipelineTask, taskRun }) {
   const { description, displayName: pipelineTaskDisplayName } = pipelineTask;
   const displayNameToUse = displayName || pipelineTaskDisplayName;
-  // eslint-disable-next-line no-param-reassign
   taskRun.metadata.labels = {
     ...taskRun.metadata.labels,
     ...(description

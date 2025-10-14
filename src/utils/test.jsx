@@ -1,5 +1,5 @@
 /*
-Copyright 2021-2024 The Tekton Authors
+Copyright 2021-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -32,8 +32,8 @@ export function getQueryClient() {
       }
     },
     logger: {
-      log: console.log, // eslint-disable-line no-console
-      warn: console.warn, // eslint-disable-line no-console
+      log: console.log,
+      warn: console.warn,
       error: () => {}
     }
   });

@@ -363,7 +363,7 @@ export class LogContainer extends Component {
         }
       } else if (isEndGroup) {
         currentGroupIndex = null;
-        countEndGroupCommands++; // eslint-disable-line no-plusplus
+        countEndGroupCommands++;
         // we don't render anything for the endgroup command
         return acc;
       }
@@ -521,7 +521,7 @@ export class LogContainer extends Component {
       .read()
       .then(result => this.readChunks(result, decoder, logs))
       .catch(error => {
-        console.error(error); // eslint-disable-line no-console
+        console.error(error);
         return this.loadLog();
       });
   };
@@ -558,7 +558,7 @@ export class LogContainer extends Component {
         }
       }
     } catch (error) {
-      console.error(error); // eslint-disable-line no-console
+      console.error(error);
       this.setState({
         loading: false,
         logs: [
