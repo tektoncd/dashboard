@@ -1,5 +1,5 @@
 /*
-Copyright 2024 The Tekton Authors
+Copyright 2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -26,7 +26,7 @@ function ErrorPage() {
   const intl = useIntl();
 
   const error = useRouteError();
-  console.error(error); // eslint-disable-line no-console
+  console.error(error);
 
   return (
     <FlexGrid className="tkn--not-found">

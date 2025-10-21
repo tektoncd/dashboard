@@ -10,7 +10,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
 import { addons } from 'storybook/manager-api';
 // import { themes } from 'storybook/theming';
 
@@ -26,6 +25,6 @@ addons.setConfig({
     collapsedRoots: ['containers', 'experimental'],
     showRoots: true
   },
-  theme,
+  theme
   // theme: themes.dark
 });

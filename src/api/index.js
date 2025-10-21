@@ -60,7 +60,6 @@ export async function getInstallProperties() {
     data = await get(uri);
   } catch (error) {
     if (error?.response?.status === 404) {
-      // eslint-disable-next-line no-console
       console.warn(
         'Install properties not found, setting client-mode defaults'
       );
@@ -74,7 +73,6 @@ export async function getInstallProperties() {
         triggersVersion: 'Unknown'
       };
     } else {
-      // eslint-disable-next-line no-console
       console.error(
         'Failed loading install properties, setting read-only default',
         error
