@@ -252,6 +252,7 @@ const logsWithTimestampsAndLevels = `2024-11-14T14:10:53.354144861Z::info::Cloni
 2024-11-14T14:10:56.869719012Z::error::Sample error
 2024-11-14T14:10:56.869719012Z::warning::Sample warning
 2024-11-14T14:10:56.869719012Z::notice::Sample notice
+2024-11-14T14:10:56.869719012Z::trace::Sample trace
 2024-11-14T14:11:08.065631069Z ::info::Details of asset created:
 2024-11-14T14:11:11.849912684Z ┌─────┬──────┬────┬─────┐
 2024-11-14T14:11:11.849981080Z │ Key │ Type │ ID │ URL │
@@ -414,7 +415,8 @@ export const LogsWithTimestampsAndLevels = {
       warning: true,
       notice: true,
       info: true,
-      debug: false
+      debug: false,
+      trace: false
     },
     pipelineRun: pipelineRunWithMinimalStatus,
     selectedStepId: 'build',

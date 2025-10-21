@@ -345,7 +345,8 @@ export function getLogLevels() {
       warning: true,
       info: true,
       notice: true,
-      debug: false
+      debug: false,
+      trace: false
     };
   }
 

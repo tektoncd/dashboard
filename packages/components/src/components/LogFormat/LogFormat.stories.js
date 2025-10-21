@@ -130,6 +130,11 @@ export const LogLevelsAndTimestamps = {
           '[get_repo_params:39] | get_repo_server_name called for https://github.com/example-org/example-app. Repository Server Name identified as github.com'
       },
       {
+        timestamp: '2024-11-14T14:10:56.819947739Z',
+        level: 'trace',
+        message: '{ "metric_name": "script_duration", "value": 1234 }'
+      },
+      {
         timestamp: '2024-11-14T14:10:56.869719012Z',
         level: null,
         message: 'Sample with no log level'

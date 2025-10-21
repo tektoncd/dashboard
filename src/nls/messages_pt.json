@@ -152,6 +152,7 @@
   "dashboard.logs.logLevels.info": "",
   "dashboard.logs.logLevels.label": "",
   "dashboard.logs.logLevels.notice": "",
+  "dashboard.logs.logLevels.trace": "",
   "dashboard.logs.logLevels.warning": "",
   "dashboard.logs.maximize": "",
   "dashboard.logs.pending": "",
