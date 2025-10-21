@@ -152,6 +152,7 @@
   "dashboard.logs.logLevels.info": "Info (default)",
   "dashboard.logs.logLevels.label": "Log levels",
   "dashboard.logs.logLevels.notice": "Notice",
+  "dashboard.logs.logLevels.trace": "Trace",
   "dashboard.logs.logLevels.warning": "Warning",
   "dashboard.logs.maximize": "Maximize",
   "dashboard.logs.pending": "Final logs pending",

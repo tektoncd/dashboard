@@ -137,6 +137,7 @@
 2024-11-14T14:12:08.065631069Z ::info::Sample info
 2024-11-14T14:12:08.065631069Z Sample with no log level
 2024-11-14T14:12:08.065631069Z ::debug::Sample debug
+2024-11-14T14:12:08.065631069Z ::trace::Sample trace
 2024-11-14T14:12:08.065631069Z ::info::Details of asset created:
 2024-11-14T14:12:11.849912684Z ┌─────┬──────┬────┬─────┐
 2024-11-14T14:12:11.849981080Z │ Key │ Type │ ID │ URL │

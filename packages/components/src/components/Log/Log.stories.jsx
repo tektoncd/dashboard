@@ -123,7 +123,8 @@ export const Toolbar = {
       warning: true,
       info: true,
       notice: true,
-      debug: false
+      debug: false,
+      trace: false
     },
     showLevels: true,
     showTimestamps: false,

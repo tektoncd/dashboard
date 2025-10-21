@@ -114,6 +114,11 @@ $colors: (
     --tkn-log-level-badge-color: var(--cds-tag-color-purple);
   }
 
+  &.tkn--log-level--trace {
+    --tkn-log-level-badge-background: var(--cds-background);
+    --tkn-log-level-badge-color: var(--cds-text-primary);
+  }
+
   .tkn--log-line--timestamp {
     color: var(--cds-text-helper);
     font-weight: 300;
@@ -144,6 +149,11 @@ $colors: (
     padding-inline: $spacing-02;
     background-color: var(--tkn-log-level-badge-background);
     color: var(--tkn-log-level-badge-color);
+  }
+
+  &.tkn--log-level--trace .tkn--log-line--level {
+    outline: 1px solid var(--cds-background-inverse);
+    outline-offset: -1px;
   }
 }
 

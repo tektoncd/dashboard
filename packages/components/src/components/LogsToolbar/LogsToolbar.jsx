@@ -212,6 +212,17 @@ const LogsToolbar = ({
                   }}
                   checked={logLevels.debug}
                 />
+                <Checkbox
+                  id={`${id}-loglevels-trace-toggle`}
+                  labelText={intl.formatMessage({
+                    id: 'dashboard.logs.logLevels.trace',
+                    defaultMessage: 'Trace'
+                  })}
+                  onChange={(_event, { checked }) => {
+                    onToggleLogLevel({ trace: checked });
+                  }}
+                  checked={logLevels.trace}
+                />
               </CheckboxGroup>
             </>
           ) : null}
