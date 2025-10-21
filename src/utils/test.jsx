@@ -24,7 +24,7 @@ export function getQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        cacheTime: 1000 * 60 * 5, // 5 minutes
+        gcTime: 1000 * 60 * 5, // 5 minutes
         queryFn: defaultQueryFn,
         refetchOnWindowFocus: false,
         retry: false,
