@@ -278,7 +278,7 @@ function Logs({
   }
   if (skippedTask) {
     return (
-      <span>
+      <span className="tkn--task-skipped">
         {intl.formatMessage({
           id: 'dashboard.taskRun.logs.skipped',
           defaultMessage:

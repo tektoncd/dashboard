@@ -116,3 +116,7 @@ limitations under the License.
   // need to include units here otherwise breaks calc()
   --tkn-global-header-offset: 0rem;
 }
+
+.tkn--task-skipped {
+  @include type-style('body-compact-01');
+}
