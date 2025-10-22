@@ -28,7 +28,7 @@ DEFAULT_NAMESPACE=""
 TENANT_NAMESPACES=""
 STREAM_LOGS="true"
 EXTERNAL_LOGS=""
-BASE_RELEASE_URL="https://storage.googleapis.com/tekton-releases/dashboard"
+BASE_RELEASE_URL="https://infra.tekton.dev/tekton-releases/dashboard"
 
 # additional options passed to ko resolve
 KO_RESOLVE_OPTIONS="--image-label=org.opencontainers.image.source=https://github.com/tektoncd/dashboard"
@@ -531,7 +531,7 @@ while [[ $# -gt 0 ]]; do
       OVERRIDE_NAMESPACE="${1}"
       ;;
     '--nightly')
-      BASE_RELEASE_URL="https://storage.googleapis.com/tekton-releases-nightly/dashboard"
+      BASE_RELEASE_URL="https://infra.tekton.dev/tekton-nightly/dashboard"
       ;;
     '--output')
       shift

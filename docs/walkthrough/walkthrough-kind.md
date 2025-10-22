@@ -2,16 +2,16 @@
 
 This guide walks you through installing a working Tekton Dashboard locally from scratch. It covers the following topics:
 
-* [Before you begin](#before-you-begin)
-* [Creating a local Kubernetes cluster](#creating-a-local-kubernetes-cluster)
-* [Installing NGINX ingress controller](#installing-nginx-ingress-controller)
-* [Installing Tekton Pipelines](#installing-tekton-pipelines)
-* [Installing Tekton Triggers (optional)](#installing-tekton-triggers-optional)
-* [Installing Tekton Dashboard](#installing-tekton-dashboard)
-* [Setting up an Ingress rule to access the Dashboard](#setting-up-an-ingress-rule-to-access-the-dashboard)
-* [Importing resources from a Github repository](#importing-resources-from-a-github-repository)
-* [Viewing and managing resources from the Dashboard](#viewing-and-managing-resources-from-the-dashboard)
-* [Cleaning up](#cleaning-up)
+- [Tekton Dashboard walk-through - Kind](#tekton-dashboard-walk-through---kind)
+  - [Before you begin](#before-you-begin)
+  - [Creating a local Kubernetes cluster](#creating-a-local-kubernetes-cluster)
+  - [Installing NGINX ingress controller](#installing-nginx-ingress-controller)
+  - [Installing Tekton Pipelines](#installing-tekton-pipelines)
+  - [Installing Tekton Dashboard](#installing-tekton-dashboard)
+  - [Setting up an Ingress rule to access the Dashboard](#setting-up-an-ingress-rule-to-access-the-dashboard)
+  - [Importing resources from a Github repository](#importing-resources-from-a-github-repository)
+  - [Viewing and managing resources from the Dashboard](#viewing-and-managing-resources-from-the-dashboard)
+  - [Cleaning up](#cleaning-up)
 
 ## Before you begin
 
@@ -111,7 +111,7 @@ Tekton Dashboard requires to have Tekton Pipelines installed.
 Installing the latest Tekton Pipelines release is done by running the following command:
 
 ```bash
-kubectl apply --filename https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
+kubectl apply --filename https://infra.tekton.dev/tekton-releases/pipeline/latest/release.yaml
 
 kubectl wait -n tekton-pipelines \
   --for=condition=ready pod \

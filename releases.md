@@ -16,8 +16,8 @@ as follows:
       20th, depending on week-ends and readiness
 
 Tekton Dashboard produces nightly builds, publicly available at:
-- [read-only](https://storage.googleapis.com/tekton-releases-nightly/dashboard/latest/release.yaml)
-- [read/write](https://storage.googleapis.com/tekton-releases-nightly/dashboard/latest/release-full.yaml)
+- [read-only](https://infra.tekton.dev/tekton-nightly/dashboard/latest/release.yaml)
+- [read/write](https://infra.tekton.dev/tekton-nightly/dashboard/latest/release-full.yaml)
 
 The images for Dashboard releases are published to `ghcr.io/tektoncd/dashboard`.
 

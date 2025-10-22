@@ -73,15 +73,15 @@ install_ingress_nginx() {
 
 install_pipelines() {
   header 'Installing Tekton Pipelines'
-  kubectl apply --filename https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
+  kubectl apply --filename https://infra.tekton.dev/tekton-releases/pipeline/latest/release.yaml
   sleep 10
   kubectl wait -n tekton-pipelines --for=condition=ready pod --selector=app.kubernetes.io/part-of=tekton-pipelines,app.kubernetes.io/component=controller --timeout=90s
 }
 
 install_triggers() {
   header 'Installing Tekton Triggers'
-  kubectl apply --filename https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml
-  kubectl apply --filename https://storage.googleapis.com/tekton-releases/triggers/latest/interceptors.yaml
+  kubectl apply --filename https://infra.tekton.dev/tekton-releases/triggers/latest/release.yaml
+  kubectl apply --filename https://infra.tekton.dev/tekton-releases/triggers/latest/interceptors.yaml
   sleep 10
   kubectl wait -n tekton-pipelines --for=condition=ready pod --selector=app.kubernetes.io/part-of=tekton-triggers,app.kubernetes.io/component=controller --timeout=90s
 }
