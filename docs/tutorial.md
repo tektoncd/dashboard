@@ -83,7 +83,7 @@ To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
 
    ```bash
    kubectl apply --filename \
-   https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
+   https://infra.tekton.dev/tekton-releases/pipeline/latest/release.yaml
    ```
 
 1. Monitor the installation:
@@ -103,7 +103,7 @@ Hit *Ctrl + C* to stop monitoring.
 
    ```bash
    kubectl apply --filename \
-   https://storage.googleapis.com/tekton-releases/dashboard/latest/release-full.yaml
+   https://infra.tekton.dev/tekton-releases/dashboard/latest/release-full.yaml
    ```
 
    **NOTE**: release-full.yaml [installs dashboard in READ-WRITE mode](/docs/install.md#installing-tekton-dashboard-on-kubernetes).
