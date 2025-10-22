@@ -5,12 +5,12 @@
 To create a release:
 - verify the `CHROME_VERSION` and `NODE_VERSION` args in the [`Dockerfile`](../Dockerfile) on the main branch are correct
 - set a matching tag value in the `TAGS` environment variable in the [`CronJob`](./cronjob.yaml), e.g. `node20.11.0-chrome121`
-- apply the `CronJob` to the default namespace on the dogfooding cluster (`kubectl apply -k .`)
+- apply the `CronJob` to the default namespace on the infra cluster (`kubectl apply -k .`)
 - create a `Job` from the `CronJob` to trigger the release
   ```bash
   kubectl create job --from=cronjob/image-build-cron-trigger-dashboard-e2e-base dashboard-e2e-base-$(date +"%Y%m%d-%H%M")
   ```
-- check the status of the [resulting `PipelineRun`](https://dashboard.dogfooding.tekton.dev/#/namespaces/default/pipelineruns?labelSelector=plumbing.tekton.dev%2Fimage%3Ddashboard-e2e-base)
+- check the status of the [resulting `PipelineRun`](https://tekton.infra.tekton.dev/#/namespaces/default/pipelineruns?labelSelector=plumbing.tekton.dev%2Fimage%3Ddashboard-e2e-base)
 - confirm the image was [released and properly tagged](https://github.com/tektoncd/dashboard/pkgs/container/dashboard%2Fdashboard-e2e-base)
 - open a PR to update the [E2E test `Dockerfile`](../../Dockerfile) to reference the new image
 

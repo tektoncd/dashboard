@@ -42,8 +42,6 @@ the dashboard repo, a terminal window and a text editor.
 
    **If you are back-porting include this flag: `--param=releaseAsLatest="false"`**
 
-   **Note:** Change the context name in the following commands if using the GCP `dogfooding` cluster instead
-
     ```bash
     tkn --context tekton-ci-cd pipeline start dashboard-release \
       --serviceaccount=release-right-meow \
@@ -74,15 +72,15 @@ the dashboard repo, a terminal window and a text editor.
 
     NAME             VALUE
     ∙ commit-sha     41751e228930c03a1e310d548bc2c529747ca423
-    ∙ release-file   https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.61.0/release.yaml
-    ∙ release-file-full   https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.61.0/release-full.yaml
+    ∙ release-file   https://infra.tekton.dev/tekton-releases/dashboard/previous/v0.61.0/release.yaml
+    ∙ release-file-full   https://infra.tekton.dev/tekton-releases/dashboard/previous/v0.61.0/release-full.yaml
     (...)
     ```
 
     The `commit-sha` should match `$TEKTON_RELEASE_GIT_SHA`.
     The URLs can be opened in the browser or via `curl` to download the release manifests.
 
-1. The YAMLs are now released! Anyone installing Tekton Dashboard will now get the new version. Time to create a new GitHub release announcement
+4. The YAMLs are now released! Anyone installing Tekton Dashboard will now get the new version. Time to create a new GitHub release announcement
 
 ## Create a release announcement
 
@@ -132,12 +130,12 @@ Creating the release announcement is currently a manual process but will be auto
 
      ```bash
      # Test latest
-     kubectl --context my-dev-cluster apply --filename https://storage.googleapis.com/tekton-releases/dashboard/latest/release-full.yaml
+     kubectl --context my-dev-cluster apply --filename https://infra.tekton.dev/tekton-releases/dashboard/latest/release-full.yaml
      ```
 
      ```bash
      # Test backport
-     kubectl --context my-dev-cluster apply --filename https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.32.0/release-full.yaml
+     kubectl --context my-dev-cluster apply --filename https://infra.tekton.dev/tekton-releases/dashboard/previous/v0.32.0/release-full.yaml
      ```
 
 1. Announce the release in Slack channels #general, #announcements, and #dashboard.
@@ -150,30 +148,12 @@ Congratulations, you're done!
 
 ## Setup context
 
-### GCP dogfooding cluster
-
-1. Configure `kubectl` to connect to
-   [the dogfooding cluster](https://github.com/tektoncd/plumbing/blob/main/docs/dogfooding.md):
-
-    ```bash
-    gcloud container clusters get-credentials dogfooding --zone us-central1-a --project tekton-releases
-    ```
-
-1. Give [the context](https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/)
-   a short memorable name such as `dogfooding`:
-
-   ```bash
-   kubectl config rename-context gke_tekton-releases_us-central1-a_dogfooding dogfooding
-   ```
-
-### OCI tekton-ci-cd cluster
-
 1. Configure `kubectl` to connect to the cluster:
     ```bash
     oci ce cluster create-kubeconfig --cluster-id $CLUSTER_OCID --file $HOME/.kube/config --region $CLUSTER_REGION --token-version 2.0.0 --kube-endpoint PUBLIC_ENDPOINT
     ```
 
-1. Give the context a short memorable name such as `tekton-ci-cd`:
+2. Give the context a short memorable name such as `tekton-ci-cd`:
 
    ```bash
    kubectl config rename-context cluster-c3h3zdippcq tekton-ci-cd

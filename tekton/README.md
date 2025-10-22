@@ -9,12 +9,16 @@ Tekton! This directory contains the
 [`Pipelines`](https://github.com/tektoncd/pipeline/blob/main/docs/pipelines.md)
 that we use.
 
-* [How to create a release](#create-an-official-release)
-* [How to create a patch release](#create-a-patch-release)
-* [Automated nightly releases](#nightly-releases)
-* [Setup releases](#setup)
-* [Update dogfooding](#update-dogfooding)
-* [npm packages](#npm-packages)
+- [Tekton Dashboard CI/CD](#tekton-dashboard-cicd)
+  - [Create an official release](#create-an-official-release)
+  - [Create a patch release](#create-a-patch-release)
+  - [Nightly builds](#nightly-builds)
+  - [Setup](#setup)
+    - [Install Tekton](#install-tekton)
+    - [Install pipeline](#install-pipeline)
+    - [Service account and secrets](#service-account-and-secrets)
+  - [Update infra](#update-infra)
+  - [NPM Packages](#npm-packages)
 
 ## Create an official release
 
@@ -41,16 +45,18 @@ consumers of a project. In that case we'll make a patch release. To make one:
 1. [Create an official release](#create-an-official-release) for the patch, with the
    [patch version incremented](https://semver.org/)
 
-## Nightly releases
+## Nightly builds
 
-The nightly release pipeline is
-[triggered nightly by Tekton](https://github.com/tektoncd/plumbing/tree/main/tekton).
+The nightly build pipeline is triggered by [a GitHub Actions scheduled workflow](https://github.com/tektoncd/dashboard/actions/workflows/nightly-build.yml).
 
 This uses the same `Pipeline` and `Task`s as an official release.
 
-If you need to manually trigger a nightly release, switch to the `dogfooding` context and run the following:
+If you need to manually trigger a nightly build:
 
-`kubectl create job --from=cronjob/nightly-cron-trigger-dashboard-nightly-release dashboard-nightly-$(date +"%Y%m%d-%H%M")`
+- Navigate to the [nightly build workflow](https://github.com/tektoncd/dashboard/actions/workflows/nightly-build.yml)
+- Click 'Run workflow'
+- Optionally provide a Kubernetes version or storage bucket (you will typically leave these alone and use the default values)
+- Click 'Run workflow'
 
 ## Setup
 
@@ -70,38 +76,17 @@ kubectl create clusterrolebinding cluster-admin-binding-someusername \
 
 # Example, Tekton v0.29.0
 export TEKTON_VERSION=0.29.0
-kubectl apply --filename  https://storage.googleapis.com/tekton-releases/pipeline/previous/v${TEKTON_VERSION}/release.yaml
+kubectl apply --filename  https://infra.tekton.dev/tekton-releases/pipeline/previous/v${TEKTON_VERSION}/release.yaml
 ```
 
-### Install tasks and pipelines
+### Install pipeline
 
-Add all the `Tasks` to the cluster, including the
-[`git-clone`](https://github.com/tektoncd/catalog/tree/main/task/git-clone) and 
-[`gcs-upload`](https://github.com/tektoncd/catalog/tree/main/task/gcs-upload)
-Tasks from the
-[`tektoncd/catalog`](https://github.com/tektoncd/catalog), and the
-[release](https://github.com/tektoncd/plumbing/tree/main/tekton/resources/release) Tasks from
-[`tektoncd/plumbing`](https://github.com/tektoncd/plumbing).
-
-Use a version of the [`tektoncd/catalog`](https://github.com/tektoncd/catalog)
-tasks that is compatible with version of Tekton being released, usually `main`.
-Install Tasks from plumbing too:
-
+Apply the release pipeline from the `dashboard` repo:
 ```bash
-# Apply the Tasks we are using from the catalog
-kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-clone/0.2/git-clone.yaml
-kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/gcs-upload/0.1/gcs-upload.yaml
-# Apply the Tasks we are using from tektoncd/plumbing
-kubectl apply -f https://raw.githubusercontent.com/tektoncd/plumbing/main/tekton/resources/release/base/prerelease_checks.yaml
-```
-
-Apply the tasks from the `dashboard` repo:
-```bash
-# Apply the Tasks and Pipelines we use from this repo
-kubectl apply -f tekton/build.yaml
-kubectl apply -f tekton/publish.yaml
 kubectl apply -f tekton/release-pipeline.yaml
 ```
+
+The release pipeline references required tasks via remote resolvers, so the tasks do not need to be manually applied to the cluster.
 
 `Tasks` and `Pipelines` from this repo are:
 
@@ -111,52 +96,22 @@ kubectl apply -f tekton/release-pipeline.yaml
   [`ko`](https://github.com/google/ko) to build all of the container images we
   release and generate the `release.yaml`
 - [`release-pipeline.yaml`](./release-pipeline.yaml) - This `Pipeline`
-  uses the above `Task`s
+  uses the above `Task`s, along with others from the catalog.
 
 ### Service account and secrets
 
 In order to release, these Pipelines use the `release-right-meow` service account,
-which uses `release-secret` and has
-[`Storage Admin`](https://cloud.google.com/container-registry/docs/access-control)
-access to
-[`tekton-releases`]((https://github.com/tektoncd/plumbing/blob/main/gcp.md))
-and
-[`tekton-releases-nightly`]((https://github.com/tektoncd/plumbing/blob/main/gcp.md)).
+which uses `release-secret` and has write access to the storage buckets which are exposed to users at [tekton-nightly](https://infra.tekton.dev/tekton-nightly) and [tekton-releases](https://infra.tekton.dev/tekton-releases).
 
-After creating these service accounts in GCP, the kubernetes service account and
-secret were created with:
+The release infrastructure and config is managed via tektoncd/plumbing and tektoncd/infra.
 
-```bash
-KEY_FILE=release.json
-GENERIC_SECRET=release-secret
-ACCOUNT=release-right-meow
+## Update infra
 
-# Connected to the `prow` in the `tekton-releases` GCP project
-GCP_ACCOUNT="$ACCOUNT@tekton-releases.iam.gserviceaccount.com"
+To update the Dashboard release on the [infra cluster](https://tekton.infra.tekton.dev/):
 
-# 1. Create a private key for the service account
-gcloud iam service-accounts keys create $KEY_FILE --iam-account $GCP_ACCOUNT
-
-# 2. Create kubernetes secret, which we will use via a service account and directly mounting
-kubectl create secret generic $GENERIC_SECRET --from-file=./$KEY_FILE
-
-# 3. Add the docker secret to the service account
-kubectl patch serviceaccount $ACCOUNT \
-  -p "{\"secrets\": [{\"name\": \"$GENERIC_SECRET\"}]}"
-```
-
-## Update dogfooding
-
-To update the Dashboard release on the [`dogfooding` cluster](https://dashboard.dogfooding.tekton.dev/):
-
-1. Ensure you have a valid context for the `robocat` cluster in your kubeconfig
-1. Run the following script from `tektoncd/plumbing`:
-   ```
-   ./scripts/deploy-release.sh -p dashboard -v <version>
-   ```
-   where `<version>` is the desired Dashboard release version, e.g. `v0.43.0`
-1. Wait for the new pod to be ready, should only take a few seconds
-1. Ensure the Dashboard has been updated (check the About page) and is working correctly
+1. Open a PR to update the version at https://github.com/tektoncd/plumbing/blob/bbf941e0cddd2dd1393ddfe56d33393860f924be/tekton/cd/dashboard/overlays/oci-ci-cd/kustomization.yaml#L6
+2. Once merged, wait for the deployment to complete
+3. Ensure the Dashboard has been updated (check the About page) and is working correctly
 
 ## NPM Packages
 

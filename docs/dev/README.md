@@ -2,23 +2,23 @@
 
 This guide explains how to build, deploy and test the Tekton Dashboard. It covers the following topics:
 
-- [Pre-requisites](#pre-requisites)
-- [Checkout your fork](#checkout-your-fork)
-- [Build the frontend](#build-the-frontend)
-- [Build the backend](#build-the-backend)
-  - [Command line arguments](#command-line-arguments)
-- [Build and deploy with the installer script](#build-and-deploy-with-the-installer-script)
-- [Development server](#development-server)
-- [Quick setup for local cluster](#quick-setup-for-local-cluster)
-- [Run backend tests](#run-backend-tests)
-  - [Backend unit tests](#backend-unit-tests)
-- [Run frontend tests](#run-frontend-tests)
-  - [Frontend unit tests](#frontend-unit-tests)
-  - [Frontend E2E tests](#frontend-e2e-tests)
-  - [Linter](#linter)
-- [i18n](#i18n)
-- [Storybook](#storybook)
-- [Next steps](#next-steps)
+- [Tekton Dashboard - Dev docs](#tekton-dashboard---dev-docs)
+  - [Pre-requisites](#pre-requisites)
+  - [Checkout your fork](#checkout-your-fork)
+  - [Build the frontend](#build-the-frontend)
+    - [Command line arguments](#command-line-arguments)
+  - [Build and deploy with the installer script](#build-and-deploy-with-the-installer-script)
+  - [Development server](#development-server)
+  - [Quick setup for local cluster](#quick-setup-for-local-cluster)
+  - [Run backend tests](#run-backend-tests)
+    - [Backend unit tests](#backend-unit-tests)
+  - [Run frontend tests](#run-frontend-tests)
+    - [Frontend unit tests](#frontend-unit-tests)
+    - [Frontend E2E tests](#frontend-e2e-tests)
+    - [Linter](#linter)
+  - [i18n](#i18n)
+  - [Storybook](#storybook)
+  - [Next steps](#next-steps)
 
 ## Pre-requisites
 
@@ -110,8 +110,8 @@ Make sure that the backend service running in the cluster is proxied using `kube
 
 **Note:** If you've exposed the backend by some other means than port-forwarding port 9097 as described above, set the `API_DOMAIN` environment variable to provide the correct details.
 
-e.g. to connect your local dev frontend to the Dashboard deployed on the robocat cluster:
-`API_DOMAIN=https://dashboard.robocat.tekton.dev/ npm start`
+e.g. to connect your local dev frontend to the Dashboard deployed on the infra cluster:
+`API_DOMAIN=https://tekton.infra.tekton.dev/ npm start`
 
 ## Quick setup for local cluster
 
