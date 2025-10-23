@@ -75,6 +75,9 @@ describe('CreateTaskRun', () => {
     );
     vi.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({ data: tasks }));
 
+    vi.spyOn(API, 'useProperties').mockImplementation(() => ({
+      isFetching: false
+    }));
     vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [
         { metadata: { name: 'namespace-1' } },

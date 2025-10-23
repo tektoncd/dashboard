@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,7 +16,7 @@ import { useIntl } from 'react-intl';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
-import { useNamespaces, useTenantNamespaces } from '../../api';
+import { useNamespaces, useProperties, useTenantNamespaces } from '../../api';
 
 const NamespacesDropdown = ({
   allNamespacesLabel,
@@ -51,10 +51,15 @@ const NamespacesDropdown = ({
       defaultMessage: 'All Namespaces'
     });
 
+  const { isFetching: isFetchingProperties } = useProperties();
   const tenantNamespaces = useTenantNamespaces();
-  const { data: namespaces = [], isFetching } = useNamespaces({
-    disableWebSocket: true
-  });
+  const { data: namespaces = [], isFetching: isFetchingNamespaces } =
+    useNamespaces({
+      disableWebSocket: true,
+      enabled: !isFetchingProperties && !tenantNamespaces.length
+    });
+
+  const isFetching = isFetchingProperties || isFetchingNamespaces;
 
   const selectedItem = useMemo(() => {
     const newSelectedItem = { ...originalSelectedItem };

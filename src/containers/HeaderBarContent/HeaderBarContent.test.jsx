@@ -1,5 +1,5 @@
 /*
-Copyright 2022-2024 The Tekton Authors
+Copyright 2022-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -38,6 +38,9 @@ describe('HeaderBarContent', () => {
   it('adds namespace to URL when selected', async () => {
     const otherNamespace = 'foo';
     const path = '/fake/path';
+    vi.spyOn(API, 'useProperties').mockImplementation(() => ({
+      isFetching: false
+    }));
     vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [{ metadata: { name: otherNamespace } }]
     }));
@@ -60,6 +63,9 @@ describe('HeaderBarContent', () => {
     const namespace = 'default';
     const otherNamespace = 'foo';
     const path = '/namespaces/:namespace/fake/path';
+    vi.spyOn(API, 'useProperties').mockImplementation(() => ({
+      isFetching: false
+    }));
     vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [
         { metadata: { name: namespace } },
@@ -91,6 +97,9 @@ describe('HeaderBarContent', () => {
     const namespace = 'default';
     const path = '/namespaces/:namespace/fake/path';
     const selectNamespace = vi.fn();
+    vi.spyOn(API, 'useProperties').mockImplementation(() => ({
+      isFetching: false
+    }));
     vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [{ metadata: { name: namespace } }]
     }));
@@ -116,6 +125,9 @@ describe('HeaderBarContent', () => {
     const namespace = 'default';
     const path = '/namespaces/:namespace/fake/path';
     const selectNamespace = vi.fn();
+    vi.spyOn(API, 'useProperties').mockImplementation(() => ({
+      isFetching: false
+    }));
     vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [{ metadata: { name: namespace } }]
     }));
