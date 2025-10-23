@@ -214,7 +214,9 @@ function Step({
                 )
               : step.name}
           </span>
-          <span className="tkn--step-duration">{duration}</span>
+          {!isSidecar ? (
+            <span className="tkn--step-duration">{duration}</span>
+          ) : null}
         </>
       }
     >
