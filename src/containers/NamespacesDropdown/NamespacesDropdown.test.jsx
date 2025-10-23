@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -30,6 +30,9 @@ const namespaceResources = namespaces.map(namespace => ({
 const initialTextRegExp = /select namespace/i;
 
 it('NamespacesDropdown renders items', () => {
+  vi.spyOn(API, 'useProperties').mockImplementation(() => ({
+    isFetching: false
+  }));
   vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
     data: namespaceResources
   }));
@@ -49,6 +52,9 @@ it('NamespacesDropdown renders items', () => {
 it('NamespacesDropdown renders controlled selection', () => {
   const namespace1 = 'namespace-1';
   const namespace2 = 'namespace-2';
+  vi.spyOn(API, 'useProperties').mockImplementation(() => ({
+    isFetching: false
+  }));
   vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
     data: namespaceResources
   }));
@@ -75,6 +81,9 @@ it('NamespacesDropdown renders controlled selection', () => {
 });
 
 it('NamespacesDropdown renders empty', () => {
+  vi.spyOn(API, 'useProperties').mockImplementation(() => ({
+    isFetching: false
+  }));
   vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({ data: [] }));
   const { queryByPlaceholderText } = render(<NamespacesDropdown {...props} />);
   expect(queryByPlaceholderText(/no namespaces found/i)).toBeTruthy();
@@ -89,6 +98,9 @@ it('NamespacesDropdown renders loading skeleton', () => {
 });
 
 it('NamespacesDropdown handles onChange event', () => {
+  vi.spyOn(API, 'useProperties').mockImplementation(() => ({
+    isFetching: false
+  }));
   vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
     data: namespaceResources
   }));
@@ -102,6 +114,9 @@ it('NamespacesDropdown handles onChange event', () => {
 });
 
 it('NamespacesDropdown renders tenant namespace in tenant namespace mode', () => {
+  vi.spyOn(API, 'useProperties').mockImplementation(() => ({
+    isFetching: false
+  }));
   vi.spyOn(API, 'useTenantNamespaces').mockImplementation(() => ['fake']);
   vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({ data: [] }));
   const { getByPlaceholderText, getByText } = render(
