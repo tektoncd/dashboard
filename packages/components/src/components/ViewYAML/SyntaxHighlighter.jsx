@@ -169,7 +169,7 @@ function addLine({ addBullet, key, level, lines, path, rawString, value }) {
       delete valueToUse[firstKey];
     }
 
-    getLines({ level: level + 1, lines, path: newPath, resource: valueToUse });
+    getLines({ level: level + 1, lines, path: newPath, resource: valueToUse }); // eslint-disable-line no-use-before-define
   }
 }
 

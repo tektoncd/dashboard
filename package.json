@@ -43,6 +43,7 @@
     "yaml": "^2.8.1"
   },
   "devDependencies": {
+    "@eslint/compat": "^1.4.0",
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.37.0",
     "@formatjs/cli": "^6.7.4",

@@ -17,12 +17,16 @@ const depend = require('eslint-plugin-depend');
 const formatjs = require('eslint-plugin-formatjs');
 const globals = require('globals');
 const importPlugin = require('eslint-plugin-import');
+const { includeIgnoreFile } = require('@eslint/compat');
 const js = require('@eslint/js');
 const jsxA11y = require('eslint-plugin-jsx-a11y');
 const notice = require('eslint-plugin-notice');
+const path = require('path');
 const prettier = require('eslint-plugin-prettier/recommended');
 const react = require('eslint-plugin-react');
 const storybook = require('eslint-plugin-storybook');
+
+const gitignorePath = path.join(__dirname, '.gitignore');
 
 module.exports = defineConfig([
   // List of recommended rules used as a baseline
@@ -34,9 +38,7 @@ module.exports = defineConfig([
   jsxA11y.flatConfigs.recommended,
   prettier,
   // end-of-list of recommended rules used as a baseline
-  {
-    ignores: ['.gitignore', './cmd/dashboard/kodata', './coverage']
-  },
+  includeIgnoreFile(gitignorePath, 'Ignore patterns from .gitignore file'),
   {
     files: ['**/*.{js,jsx,cjs}'],
     languageOptions: {
@@ -89,6 +91,7 @@ module.exports = defineConfig([
       'formatjs/no-multiple-whitespaces': 'error',
       'formatjs/no-multiple-plurals': 'error',
       'import/named': 'off',
+      'import/no-cycle': 'error',
       'import/no-named-as-default': 'off',
       'import/no-named-as-default-member': 'off',
       'import/no-unresolved': [
@@ -105,6 +108,7 @@ module.exports = defineConfig([
       'jsx-a11y/anchor-is-valid': 'off',
       'jsx-a11y/no-static-element-interactions': 'error',
       'jsx-a11y/no-noninteractive-tabindex': 'error',
+      'no-param-reassign': 'error',
       'no-unused-vars': [
         'error',
         {
@@ -115,6 +119,7 @@ module.exports = defineConfig([
           vars: 'all'
         }
       ],
+      'no-use-before-define': 'error',
       'notice/notice': [
         'error',
         {
@@ -129,6 +134,8 @@ module.exports = defineConfig([
           allow: 'as-needed'
         }
       ],
+      'react/jsx-no-useless-fragment': 'error',
+      'react/no-danger': 'error',
       'react/prop-types': 'off',
       'react/react-in-jsx-scope': 'off',
 

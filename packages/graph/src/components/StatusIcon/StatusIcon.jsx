@@ -27,7 +27,7 @@ import {
 
 // TODO: need 'skipped' status (e.g. when expressions)
 const statusIcons = {
-  dummy: () => <></>,
+  dummy: () => <></>, // eslint-disable-line react/jsx-no-useless-fragment
   failed: FailedIcon,
   git: GitIcon,
   manual: UserIcon,
