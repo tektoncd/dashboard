@@ -175,7 +175,10 @@ export /* istanbul ignore next */ function TriggerTemplateContainer() {
                       <TableRow>
                         <TableExpandHeader />
                         {headers.map(header => (
-                          <TableHeader {...getHeaderProps({ header })}>
+                          <TableHeader
+                            key={header.key}
+                            {...getHeaderProps({ header })}
+                          >
                             {header.header}
                           </TableHeader>
                         ))}

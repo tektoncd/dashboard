@@ -57,19 +57,16 @@ function LogsFilteredNotification({ displayedLogLines, totalLogLines }) {
   const hiddenLines = totalLogLines - displayedLogLines;
   const message =
     hiddenLines === 1
-      ? intl.formatMessage(
-          {
-            id: 'dashboard.logs.hidden.one',
-            defaultMessage:
-              '1 line hidden due to selected log levels or collapsed groups'
-          },
-          { numHiddenLines: totalLogLines - displayedLogLines }
-        )
+      ? intl.formatMessage({
+          id: 'dashboard.logs.hidden.one',
+          defaultMessage:
+            '1 line hidden due to selected log levels or collapsed groups'
+        })
       : intl.formatMessage(
           {
             id: 'dashboard.logs.hidden',
             defaultMessage:
-              '{numHiddenLines, plural, other {# lines}} hidden due to selected log levels or collapsed groups'
+              '{numHiddenLines, plural, other {# lines}} hidden due to selected log levels or collapsed groups' // eslint-disable-line formatjs/enforce-plural-rules
           },
           { numHiddenLines: totalLogLines - displayedLogLines }
         );
