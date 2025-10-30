@@ -193,7 +193,7 @@ export function useWebSocket({
 
   useEffect(() => {
     if (enabled === false) {
-      return;
+      return undefined;
     }
 
     function handleClose() {
