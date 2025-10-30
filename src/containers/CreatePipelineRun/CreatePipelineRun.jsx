@@ -454,7 +454,7 @@ function CreatePipelineRun() {
   if (isYAMLMode()) {
     const externalPipelineRunName = getPipelineRunName();
     if (externalPipelineRunName) {
-      const { data: pipelineRunObject, isLoading } = usePipelineRun(
+      const { data: pipelineRunObject, isPending } = usePipelineRun(
         {
           name: externalPipelineRunName,
           namespace: getNamespace()
@@ -484,7 +484,7 @@ function CreatePipelineRun() {
             handleClose={handleCloseYAMLEditor}
             handleCreate={handleCreate}
             kind="PipelineRun"
-            loading={isLoading}
+            loading={isPending}
             loadingMessage={loadingMessage}
           />
         </Suspense>

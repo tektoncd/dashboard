@@ -74,7 +74,7 @@ function CreateCustomRun() {
 
   const externalCustomRunName = getCustomRunName();
   if (externalCustomRunName) {
-    const { data: customRunObject, isLoading } = useCustomRun(
+    const { data: customRunObject, isPending } = useCustomRun(
       {
         name: externalCustomRunName,
         namespace: getNamespace()
@@ -104,7 +104,7 @@ function CreateCustomRun() {
           handleClose={handleCloseYAMLEditor}
           handleCreate={handleCreate}
           kind="CustomRun"
-          loading={isLoading}
+          loading={isPending}
           loadingMessage={loadingMessage}
         />
       </Suspense>

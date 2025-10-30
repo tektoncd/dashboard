@@ -138,7 +138,7 @@ function CustomRuns() {
   const {
     data: runs = [],
     error,
-    isLoading
+    isPending
   } = useCustomRuns({
     filters,
     namespace
@@ -583,7 +583,7 @@ function CustomRuns() {
               )}
               hasDetails
               headers={initialHeaders}
-              loading={isLoading}
+              loading={isPending}
               rows={runsFormatted}
               selectedNamespace={selectedNamespace}
             />

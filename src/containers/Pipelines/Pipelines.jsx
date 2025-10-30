@@ -151,7 +151,7 @@ export function Pipelines() {
   const {
     data: pipelines = [],
     error,
-    isLoading
+    isPending
   } = usePipelines({
     filters,
     namespace
@@ -273,7 +273,7 @@ export function Pipelines() {
               openDeleteModal,
               resources
             })}
-            loading={isLoading}
+            loading={isPending}
             selectedNamespace={namespace}
             emptyTextAllNamespaces={intl.formatMessage(
               {
