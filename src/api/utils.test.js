@@ -306,11 +306,7 @@ describe('useCollection', () => {
         })
       });
     });
-    // TODO not working
-    expect(queryClient.getQueryData([group, version, kind])).toEqual({
-      items: [updatedResource],
-      metadata: { resourceVersion: updatedResource.resourceVersion }
-    });
+    await waitFor(() => expect(result.current.data).toEqual([updatedResource]));
   });
 });
 
@@ -356,12 +352,7 @@ describe('useResource', () => {
         })
       });
     });
-    // await waitFor(() => expect(result.current.isSuccess).toBe(false));
-    // await waitFor(() => expect(result.current.data).not.toBe(existingResource));
-    // await waitFor(() => expect(result.current.data).toEqual(updatedResource));
-    expect(queryClient.getQueryData([group, version, kind, { name }])).toEqual(
-      updatedResource
-    );
+    await waitFor(() => expect(result.current.data).toEqual(updatedResource));
   });
 });
 
