@@ -418,7 +418,7 @@ function CreateTaskRun() {
   if (isYAMLMode()) {
     const externalTaskRunName = getTaskRunName();
     if (externalTaskRunName) {
-      const { data: taskRunObject, isLoading } = useTaskRun(
+      const { data: taskRunObject, isPending } = useTaskRun(
         {
           name: externalTaskRunName,
           namespace: getNamespace()
@@ -448,7 +448,7 @@ function CreateTaskRun() {
             handleClose={handleCloseYAMLEditor}
             handleCreate={handleCreate}
             kind="TaskRun"
-            loading={isLoading}
+            loading={isPending}
             loadingMessage={loadingMessage}
           />
         </Suspense>

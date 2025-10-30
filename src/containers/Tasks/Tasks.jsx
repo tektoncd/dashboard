@@ -153,7 +153,7 @@ function Tasks() {
   const {
     data: tasks = [],
     error,
-    isLoading
+    isPending
   } = useTasks({
     filters,
     namespace
@@ -274,7 +274,7 @@ function Tasks() {
               openDeleteModal,
               resources
             })}
-            loading={isLoading}
+            loading={isPending}
             selectedNamespace={namespace}
             emptyTextAllNamespaces={intl.formatMessage(
               {

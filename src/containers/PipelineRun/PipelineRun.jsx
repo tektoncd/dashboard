@@ -138,13 +138,13 @@ export /* istanbul ignore next */ function PipelineRunContainer({
   const {
     data: pipelineRun,
     error: pipelineRunError,
-    isLoading: isLoadingPipelineRun
+    isPending: isLoadingPipelineRun
   } = usePipelineRun({ name, namespace });
 
   const {
     data: taskRunsResponse = [],
     error: taskRunsError,
-    isLoading: isLoadingTaskRuns
+    isPending: isLoadingTaskRuns
   } = useTaskRuns({
     filters: [`${labelConstants.PIPELINE_RUN}=${name}`],
     namespace
@@ -154,11 +154,11 @@ export /* istanbul ignore next */ function PipelineRunContainer({
   const {
     data: tasks = [],
     error: tasksError,
-    isLoading: isLoadingTasks
+    isPending: isLoadingTasks
   } = useTasks({ namespace });
 
   const pipelineName = pipelineRun?.spec.pipelineRef?.name;
-  const { data: pipeline, isInitialLoading: isLoadingPipeline } = usePipeline(
+  const { data: pipeline, isLoading: isLoadingPipeline } = usePipeline(
     { name: pipelineName, namespace },
     { enabled: !!pipelineName }
   );
