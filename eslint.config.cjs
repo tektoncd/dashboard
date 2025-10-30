@@ -10,6 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/* eslint-disable depend/ban-dependencies */
 const { defineConfig } = require('eslint/config');
 
 const cypress = require('eslint-plugin-cypress');
@@ -46,10 +47,6 @@ module.exports = defineConfig([
         ...globals.browser,
         ...globals.node,
         ...globals.vitest
-        // TODO are these three necessary?
-        // Atomics: 'readonly',
-        // globalThis: false
-        // SharedArrayBuffer: 'readonly'
       },
 
       ecmaVersion: 2022,
@@ -87,7 +84,7 @@ module.exports = defineConfig([
       'formatjs/enforce-default-message': 'error',
       'formatjs/enforce-id': 'error',
       'formatjs/no-complex-selectors': 'error',
-      'formatjs/no-literal-string-in-jsx': 'off', // TODO: [AG] re-enable this after cleanup
+      'formatjs/no-literal-string-in-jsx': 'off',
       'formatjs/no-multiple-whitespaces': 'error',
       'formatjs/no-multiple-plurals': 'error',
       'import/named': 'off',

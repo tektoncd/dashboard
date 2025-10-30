@@ -10,7 +10,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-/* eslint-disable formatjs/no-literal-string-in-jsx */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Table } from '@tektoncd/dashboard-components';
