@@ -10,7 +10,7 @@
     "e2e:ci": "npm run test:ci --prefix packages/e2e",
     "e2e:install": "npm ci --prefix packages/e2e",
     "eslint:check": "npx eslint-config-prettier src/index.js",
-    "i18n:extract": "formatjs extract './{packages,src}/**/*.{js,jsx}' --ignore './packages/{**/node_modules,e2e}/**' --format simple --out-file src/nls/messages_en.json && node scripts/i18n/extractMessages.cjs",
+    "i18n:extract": "formatjs extract './{packages,src}/**/*.{js,jsx}' --ignore './packages/{**/node_modules,e2e}/**' --format simple --out-file src/nls/messages_en.json && node --env-file=.env scripts/i18n/extractMessages.cjs",
     "i18n:import": "node scripts/i18n/importFromProperties.js",
     "i18n:pseudo": "vite --mode i18n:pseudo",
     "i18n:start": "vite --mode i18n",
