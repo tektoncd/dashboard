@@ -11,11 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// eslint-disable-next-line depend/ban-dependencies
-const difference = require('lodash.difference');
 const fs = require('fs');
-// eslint-disable-next-line depend/ban-dependencies
-const omit = require('lodash.omit');
 const path = require('path');
 
 const basePath = process.cwd();
@@ -53,6 +49,13 @@ function writeLocaleFile(locale, messages) {
   fs.writeFileSync(localePath, JSON.stringify(messages, null, 2));
 }
 
+function omit(obj, staleKeys) {
+  const newObj = { ...obj }; // Create a new object with the same properties
+  staleKeys.forEach(key => {
+    delete newObj[key]; // Remove the specified keys
+  });
+  return newObj;
+}
 // ----------------------------------------------------------------------------
 
 log('Updating translation files\n');
@@ -72,7 +75,11 @@ buildLocales
     }
 
     // remove stale strings
-    const stale = difference(Object.keys(translations), messageKeys);
+    // Below is the equivalent of lodash.difference
+    const stale = Object.keys(translations).filter(
+      value => !messageKeys.includes(value)
+    );
+    // Below is the equivalent of lodash.omit
     translations = omit(translations, stale);
 
     // add new strings
