@@ -104,7 +104,7 @@ export function PipelineRuns() {
   const {
     data: pipelineRuns = [],
     error,
-    isLoading
+    isPending: isLoadingPipelineRuns
   } = usePipelineRuns({
     filters,
     namespace
@@ -408,7 +408,7 @@ export function PipelineRuns() {
             batchActionButtons={batchActionButtons}
             filters={filtersUI}
             getRunActions={pipelineRunActions}
-            loading={isLoading}
+            loading={isLoadingPipelineRuns}
             pipelineRuns={resources}
             selectedNamespace={namespace}
             toolbarButtons={toolbarButtons}

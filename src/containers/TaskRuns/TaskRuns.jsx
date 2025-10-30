@@ -90,7 +90,7 @@ function TaskRuns() {
   const {
     data: taskRuns = [],
     error,
-    isLoading
+    isPending
   } = useTaskRuns({
     filters,
     namespace
@@ -357,7 +357,7 @@ function TaskRuns() {
             batchActionButtons={batchActionButtons}
             filters={statusFilters}
             getRunActions={taskRunActions}
-            loading={isLoading}
+            loading={isPending}
             selectedNamespace={namespace}
             taskRuns={resources}
             toolbarButtons={toolbarButtons}
