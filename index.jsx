@@ -13,7 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import { StrictMode } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { defaultQueryFn } from './src/api/utils';
@@ -23,7 +23,7 @@ import App from './src/containers/App';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      cacheTime: 1000 * 60 * 5, // 5 minutes
+      gcTime: 1000 * 60 * 5, // 5 minutes
       queryFn: defaultQueryFn,
       refetchOnWindowFocus: false,
       retry: false,
@@ -34,11 +34,12 @@ const queryClient = new QueryClient({
 
 setTheme();
 
-ReactDOM.render(
+const domNode = document.getElementById('root');
+const root = createRoot(domNode);
+root.render(
   <QueryClientProvider client={queryClient}>
     <StrictMode>
       <App />
     </StrictMode>
-  </QueryClientProvider>,
-  document.getElementById('root')
+  </QueryClientProvider>
 );

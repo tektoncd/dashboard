@@ -134,13 +134,13 @@ export function TaskRunContainer({
   const {
     data: taskRun,
     error,
-    isLoading: isLoadingTaskRun
+    isPending: isLoadingTaskRun
   } = useTaskRun({
     name,
     namespace
   });
 
-  const { data: task, isInitialLoading: isLoadingTask } = useTask(
+  const { data: task, isLoading: isLoadingTask } = useTask(
     {
       name: taskRun?.spec.taskRef?.name,
       namespace
