@@ -21,7 +21,7 @@ import {
   Theme
 } from '@carbon/react';
 
-import { SideNav } from '..'; // eslint-disable-line import/no-cycle
+import SideNav from '../SideNav';
 
 /* istanbul ignore next */
 function skipToContentClick(event) {

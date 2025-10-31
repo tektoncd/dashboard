@@ -14,7 +14,7 @@ limitations under the License.
 import { Component } from 'react';
 import { injectIntl } from 'react-intl';
 import { Button, Form, Link, Search, Tag } from '@carbon/react';
-import { ActionableNotification } from '..'; // eslint-disable-line import/no-cycle
+import ActionableNotification from '../ActionableNotification';
 
 function arrayUnique(arr) {
   return arr.filter((item, index) => arr.indexOf(item) >= index);

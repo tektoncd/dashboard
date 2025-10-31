@@ -65,9 +65,9 @@ module.exports = defineConfig([
     },
 
     settings: {
-      // react version specified to quash lint warning, keep in sync with react version in package.json
+      // detect react version to quash lint warning
       react: {
-        version: '17.0.2'
+        version: 'detect'
       },
       // import resolver required to quash import/no-unresolved lint errors for imports without file extension
       'import/resolver': {
