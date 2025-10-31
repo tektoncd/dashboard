@@ -39,8 +39,8 @@ The log viewer parses log lines to detect the associated log level and decorate 
 ```
 
 - `timestamp` is provided by the Kubernetes API server
-- `level` is one of `error`, `warning`, `notice`, `info`, `debug`
-   - `debug` logs are hidden by default
+- `level` is one of `error`, `warning`, `notice`, `info`, `debug`, `trace`
+   - `debug` and `trace` logs are hidden by default
    - any log line without an explicit `level` is considered as `info`, but will not display the log level badge to avoid redundancy in the UI where users are not using the supported log format
 - `message` is any other content on the line, and may contain ANSI codes for formatting, etc.
 
