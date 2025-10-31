@@ -13,7 +13,7 @@ limitations under the License.
 import { addons } from 'storybook/manager-api';
 // import { themes } from 'storybook/theming';
 
-import theme from './theme';
+import theme from './theme.js';
 
 addons.setConfig({
   enableShortcuts: true,
