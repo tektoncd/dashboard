@@ -132,6 +132,18 @@ export default /* istanbul ignore next */ function PipelineRun({
         {...(isLogsMaximized ? { container: maximizedLogsContainer } : null)}
       >
         <Log
+          enableLogAutoScroll={enableLogAutoScroll}
+          enableLogScrollButtons={enableLogScrollButtons}
+          fetchLogs={() => fetchLogs({ stepName, stepStatus, taskRun })}
+          forcePolling={forceLogPolling}
+          isLogsMaximized={isLogsMaximized}
+          isSidecar={isSidecar}
+          key={`${selectedTaskId}:${stepName}:${selectedRetry}`}
+          logLevels={logLevels}
+          pollingInterval={pollingInterval}
+          showLevels={showLogLevels}
+          showTimestamps={showLogTimestamps}
+          stepStatus={stepStatus}
           toolbar={
             !disableLogsToolbar &&
             getLogsToolbar &&
@@ -145,18 +157,6 @@ export default /* istanbul ignore next */ function PipelineRun({
               taskRun
             })
           }
-          fetchLogs={() => fetchLogs({ stepName, stepStatus, taskRun })}
-          forcePolling={forceLogPolling}
-          isSidecar={isSidecar}
-          key={`${selectedTaskId}:${stepName}:${selectedRetry}`}
-          logLevels={logLevels}
-          pollingInterval={pollingInterval}
-          stepStatus={stepStatus}
-          isLogsMaximized={isLogsMaximized}
-          enableLogAutoScroll={enableLogAutoScroll}
-          enableLogScrollButtons={enableLogScrollButtons}
-          showLevels={showLogLevels}
-          showTimestamps={showLogTimestamps}
         />
       </LogsRoot>
     );

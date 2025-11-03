@@ -524,6 +524,8 @@ export class LogContainer extends Component {
   };
 
   loadLog = async () => {
+    // In development mode this request is duplicated due to usage of StrictMode component wrapper
+    // It highlights a potential problem but only affects local dev and not production mode
     const { fetchLogs, forcePolling, intl, stepStatus, pollingInterval } =
       this.props;
     if (!fetchLogs) {
