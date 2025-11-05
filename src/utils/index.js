@@ -21,6 +21,19 @@ const supportedLocales = import.meta.env.VITE_LOCALES_SUPPORTED.split(',');
 export const defaultLocale = import.meta.env.VITE_LOCALES_DEFAULT;
 export const I18N_DEV_KEY = 'tkn-locale-dev';
 
+function getByPath(object, key) {
+  const keyParts = key.split('.');
+  const length = keyParts.length;
+  let index = 0;
+
+  let value = object;
+  while (value !== undefined && index < length) {
+    value = value[keyParts[index++]];
+  }
+
+  return index === length ? value : undefined;
+}
+
 /**
  * Convert an array of objects to an object keyed by the field specified by `key`.
  * In case multiple elements have the same value for `key`, the last such element
@@ -36,12 +49,21 @@ export const I18N_DEV_KEY = 'tkn-locale-dev';
  *  xyz: { title: 'xyz', value: '456' }
  * }
  * ```
+ *
+ * Example using nested field:
+ * `keyBy([{ name: { first: 'John', last: 'Smith' } }], 'name.first')`
+ *
+ * Result:
+ * ```
+ * {
+ *   Bob: { name: { first: 'Bob', last: 'Smith' } }
+ * }
  */
 export function keyBy(array, key) {
   return (array || []).reduce(
     (acc, item) => ({
       ...acc,
-      [item[key]]: item
+      [getByPath(item, key)]: item
     }),
     {}
   );
