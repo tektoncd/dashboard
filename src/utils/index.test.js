@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -370,6 +370,15 @@ describe('keyBy', () => {
     ];
     const key = 'name';
     expect(keyBy(array, key)).toEqual({ a: array[0], b: array[1] });
+  });
+
+  it('handles nested field', () => {
+    const array = [
+      { name: { first: 'John', last: 'Smith' } },
+      { name: { first: 'Jane', last: 'Doe' } }
+    ];
+    const key = 'name.first';
+    expect(keyBy(array, key)).toEqual({ John: array[0], Jane: array[1] });
   });
 });
 
