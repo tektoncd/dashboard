@@ -85,6 +85,12 @@ func registerLogsProxy(r endpoints.Resource, mux *http.ServeMux) {
 	}
 }
 
+// registerBadgeEndpoint adds the endpoint for generating pipeline status badges
+func registerBadgeEndpoint(r endpoints.Resource, mux *http.ServeMux) {
+	logging.Log.Info("Adding API for badges")
+	mux.HandleFunc("/v1/badges/", r.GetPipelineBadge)
+}
+
 // Server is a http.Handler which proxies Kubernetes APIs to the API server.
 type Server struct {
 	handler http.Handler
@@ -140,6 +146,7 @@ func Register(r endpoints.Resource, cfg *rest.Config) (*Server, error) {
 	registerHealthProbe(r, mux)
 	registerReadinessProbe(r, mux)
 	registerLogsProxy(r, mux)
+	registerBadgeEndpoint(r, mux)
 
 	return &Server{handler: mux}, nil
 }
