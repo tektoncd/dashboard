@@ -83,7 +83,7 @@ export default function RunHeader({
           runName && (
             <>
               {displayRunHeader && (
-                <h1 className="tkn--run-header--heading">
+                <h1 className="tkn--run-header--heading" tabIndex={-1}>
                   <div className="tkn--run-name" title={runName}>
                     {runName}
                   </div>

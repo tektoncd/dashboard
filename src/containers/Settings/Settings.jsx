@@ -46,7 +46,7 @@ export function Settings() {
 
   return (
     <div className="tkn--settings">
-      <h1 id="main-content-header">
+      <h1 id="main-content-header" tabIndex={-1}>
         {intl.formatMessage({
           id: 'dashboard.settings.title',
           defaultMessage: 'Settings'

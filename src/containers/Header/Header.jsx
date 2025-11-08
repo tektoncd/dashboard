@@ -27,7 +27,7 @@ import SideNav from '../SideNav';
 function skipToContentClick(event) {
   event.preventDefault();
   window.scrollTo(0, 0);
-  document.getElementById('main-content').focus();
+  document.querySelector('#main-content h1').focus();
 }
 
 function Header({

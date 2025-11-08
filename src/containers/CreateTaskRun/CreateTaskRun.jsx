@@ -489,7 +489,7 @@ function CreateTaskRun() {
   return (
     <div className="tkn--create">
       <div className="tkn--create--heading">
-        <h1 id="main-content-header">
+        <h1 id="main-content-header" tabIndex={-1}>
           {intl.formatMessage({
             id: 'dashboard.createTaskRun.title',
             defaultMessage: 'Create TaskRun'

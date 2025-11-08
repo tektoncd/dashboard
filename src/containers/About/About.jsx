@@ -135,7 +135,7 @@ export function About() {
     <div className="tkn--about">
       <div className="tkn--css-grid tkn--about-header">
         <header>
-          <h1 id="main-content-header">
+          <h1 id="main-content-header" tabIndex={-1}>
             {intl.formatMessage({
               id: 'dashboard.about.title',
               defaultMessage: 'About Tekton'
