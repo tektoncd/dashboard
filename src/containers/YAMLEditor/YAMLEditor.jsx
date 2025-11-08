@@ -114,7 +114,7 @@ export default function YAMLEditor({
   return (
     <div className="tkn--create tkn--create-yaml">
       <div className="tkn--create--heading">
-        <h1 id="main-content-header">
+        <h1 id="main-content-header" tabIndex={-1}>
           {intl.formatMessage(
             {
               id: 'dashboard.editor.create.title',

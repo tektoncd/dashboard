@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2025 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -206,7 +206,11 @@ export function ImportResources() {
 
   return (
     <div className="tkn--importresources">
-      <h1 id="main-content-header" className="tkn--importresources-header">
+      <h1
+        id="main-content-header"
+        className="tkn--importresources-header"
+        tabIndex={-1}
+      >
         {intl.formatMessage({
           id: 'dashboard.importResources.heading',
           defaultMessage: 'Import resources from repository'

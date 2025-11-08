@@ -48,7 +48,7 @@ function ErrorPage() {
       </Row>
       <Row>
         <Column sm={smallConfig} md={mediumConfig} lg={largeConfig}>
-          <h1>
+          <h1 tabIndex={-1}>
             {intl.formatMessage({
               id: 'dashboard.errorPage.title',
               defaultMessage: 'Oops… Something went wrong'
