@@ -175,6 +175,22 @@ function Step({
   }
 
   const statusLabel = getStatusLabel();
+  const stepDefinition = getStepDefinition({
+    isSidecar,
+    selectedStepId: step.name,
+    task,
+    taskRun
+  });
+  const stepDisplayName = stepDefinition.displayName || step.name;
+  const displayName = isSidecar
+    ? intl.formatMessage(
+        {
+          id: 'dashboard.taskRun.sidecar',
+          defaultMessage: 'Sidecar: {name}'
+        },
+        { name: stepDisplayName }
+      )
+    : stepDisplayName;
 
   return (
     <AccordionItem
@@ -203,16 +219,8 @@ function Step({
             title={statusLabel}
             type="inverse"
           />
-          <span className="tkn--step-name">
-            {isSidecar
-              ? intl.formatMessage(
-                  {
-                    id: 'dashboard.taskRun.sidecar',
-                    defaultMessage: 'Sidecar: {name}'
-                  },
-                  { name: step.name }
-                )
-              : step.name}
+          <span className="tkn--step-name" title={displayName}>
+            {displayName}
           </span>
           {!isSidecar ? (
             <span className="tkn--step-duration">{duration}</span>
@@ -230,14 +238,7 @@ function Step({
               })}
             </summary>
 
-            <StepDefinition
-              definition={getStepDefinition({
-                isSidecar,
-                selectedStepId: step.name,
-                task,
-                taskRun
-              })}
-            />
+            <StepDefinition definition={stepDefinition} />
           </details>
           {getLogContainer({
             disableLogsToolbar: true,
