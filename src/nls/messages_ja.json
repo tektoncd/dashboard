@@ -196,7 +196,6 @@
   "dashboard.pipelineRun.stepCompleted.exitCode": "",
   "dashboard.pipelineRun.stepFailed": "ステップが失敗しました",
   "dashboard.pipelineRun.stepSkipped": "",
-  "dashboard.pipelineRun.tabLayout.label": "",
   "dashboard.pipelineRuns.error": "PipelineRunのロード中にエラーが発生しました",
   "dashboard.pipelines.errorLoading": "Pipelineのロード中にエラーが発生しました",
   "dashboard.pipelines.v1Resources.label": "",

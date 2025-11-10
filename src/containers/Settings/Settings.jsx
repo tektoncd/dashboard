@@ -23,9 +23,7 @@ import {
 
 import { getTheme, setTheme } from '../../utils';
 import {
-  isPipelineRunTabLayoutEnabled,
   isPipelinesV1ResourcesEnabled,
-  setPipelineRunTabLayoutEnabled,
   setPipelinesV1ResourcesEnabled
 } from '../../api/utils';
 
@@ -102,24 +100,6 @@ export function Settings() {
               defaultMessage: 'On'
             })}
             onToggle={checked => setPipelinesV1ResourcesEnabled(checked)}
-          />
-          <Toggle
-            defaultToggled={isPipelineRunTabLayoutEnabled()}
-            id="tkn--pipelinerun-tab-layout-toggle"
-            labelText={intl.formatMessage({
-              id: 'dashboard.pipelineRun.tabLayout.label',
-              defaultMessage:
-                'Enable new PipelineRun and TaskRun details layout'
-            })}
-            labelA={intl.formatMessage({
-              id: 'dashboard.toggle.off',
-              defaultMessage: 'Off'
-            })}
-            labelB={intl.formatMessage({
-              id: 'dashboard.toggle.on',
-              defaultMessage: 'On'
-            })}
-            onToggle={checked => setPipelineRunTabLayoutEnabled(checked)}
           />
         </Stack>
       </div>

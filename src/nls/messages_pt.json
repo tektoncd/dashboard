@@ -196,7 +196,6 @@
   "dashboard.pipelineRun.stepCompleted.exitCode": "",
   "dashboard.pipelineRun.stepFailed": "Etapa com falha",
   "dashboard.pipelineRun.stepSkipped": "",
-  "dashboard.pipelineRun.tabLayout.label": "",
   "dashboard.pipelineRuns.error": "Erro ao carregar os PipelineRuns",
   "dashboard.pipelines.errorLoading": "",
   "dashboard.pipelines.v1Resources.label": "",
