@@ -196,7 +196,6 @@
   "dashboard.pipelineRun.stepCompleted.exitCode": "",
   "dashboard.pipelineRun.stepFailed": "步驟失敗",
   "dashboard.pipelineRun.stepSkipped": "",
-  "dashboard.pipelineRun.tabLayout.label": "",
   "dashboard.pipelineRuns.error": "載入 PipelineRuns 時發生錯誤",
   "dashboard.pipelines.errorLoading": "",
   "dashboard.pipelines.v1Resources.label": "",

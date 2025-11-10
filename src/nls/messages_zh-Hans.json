@@ -196,7 +196,6 @@
   "dashboard.pipelineRun.stepCompleted.exitCode": "步骤已完成，退出代码为 {exitCode}",
   "dashboard.pipelineRun.stepFailed": "步骤失败",
   "dashboard.pipelineRun.stepSkipped": "",
-  "dashboard.pipelineRun.tabLayout.label": "",
   "dashboard.pipelineRuns.error": "加载 PipelineRun 时出错",
   "dashboard.pipelines.errorLoading": "加载 Pipelines 时出错",
   "dashboard.pipelines.v1Resources.label": "",

@@ -196,7 +196,6 @@
   "dashboard.pipelineRun.stepCompleted.exitCode": "{exitCode} 종료 코드와 함께 단계가 완료됨",
   "dashboard.pipelineRun.stepFailed": "단계 실패",
   "dashboard.pipelineRun.stepSkipped": "",
-  "dashboard.pipelineRun.tabLayout.label": "",
   "dashboard.pipelineRuns.error": "PipelineRun 로드 중 오류 발생",
   "dashboard.pipelines.errorLoading": "Pipelines 로드하는 중 오류가 발생했습니다.",
   "dashboard.pipelines.v1Resources.label": "Tekton Pipelines API 버전 v1 사용",
