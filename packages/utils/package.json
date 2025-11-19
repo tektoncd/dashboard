@@ -22,7 +22,7 @@
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/tektoncd/dashboard.git",
+    "url": "git+https://github.com/tektoncd/dashboard.git",
     "directory": "packages/utils"
   }
 }
