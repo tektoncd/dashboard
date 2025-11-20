@@ -15,6 +15,20 @@ limitations under the License.
 @use '@carbon/react/scss/theme' as *;
 @use '@carbon/react/scss/type' as *;
 
+
+.tkn--scroll-buttons {
+  position: fixed;
+  right: .75rem;
+  bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 10000;
+}
+.tkn--scroll-buttons--maximized{
+   right: 2rem;
+}
+
 pre.tkn--log {
   --tkn-log-inline-padding: 1.6rem;
   position: relative;
@@ -69,23 +83,6 @@ pre.tkn--log {
     inset-block-end: 0;
     inset-inline-end: 0;
     inline-size: var(--tkn-log-inline-padding);
-  }
-
-  #log-scroll-to-start-btn, #log-scroll-to-end-btn {
-    position: fixed;
-    inset-inline-end: var(--tkn-log-element-right);
-
-    &::before { // the tooltip is not shown because it is outside of its parent .button-container (which has clip-path inset) But fin still appears.
-      content: none; // To remove fin of truncated tooltip. To  obtain higher specificity than Carbon css, id selector is needed.
-    }
-  }
-  
-  #log-scroll-to-start-btn {
-    inset-block-start: calc(var(--tkn-scroll-button-top) + 3.125rem); //3.125 rem is the maximum between padding-block-start of pre.tkn--log and between the page header height
-  }
-
-  #log-scroll-to-end-btn {
-    inset-block-end: var(--tkn-scroll-button-bottom);
   }
 
   .#{$prefix}--btn--ghost,
