@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createHashRouter,
@@ -23,7 +23,12 @@ import {
   useNavigate
 } from 'react-router-dom';
 import { IntlProvider, useIntl } from 'react-intl';
-import { Content, HeaderContainer, InlineNotification } from '@carbon/react';
+import {
+  Button,
+  Content,
+  HeaderContainer,
+  InlineNotification
+} from '@carbon/react';
 import { PageErrorBoundary } from '@tektoncd/dashboard-components';
 import {
   ALL_NAMESPACES,
@@ -31,6 +36,7 @@ import {
   urls,
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
+import { DownToBottom, UpToTop } from '@carbon/react/icons';
 
 import {
   ErrorPage,
@@ -75,6 +81,167 @@ const ConfigErrorComponent = ({ loadingConfigError }) => {
 };
 
 const ConfigError = ConfigErrorComponent;
+
+function ScrollButtons() {
+  const intl = useIntl();
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [showScrollBottom, setShowScrollBottom] = useState(false);
+  const [isMaximized, setIsMaximized] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      //Check for maximized container
+      const maximizedContainer = document.querySelector(
+        '.tkn--taskrun--maximized'
+      );
+      setIsMaximized(!!maximizedContainer);
+      let scrollTop, scrollHeight, clientHeight;
+
+      if (maximizedContainer) {
+        scrollTop = maximizedContainer.scrollTop;
+        scrollHeight = maximizedContainer.scrollHeight;
+        clientHeight = maximizedContainer.clientHeight;
+      } else {
+        scrollTop = window.scrollY;
+        scrollHeight = document.documentElement.scrollHeight;
+        clientHeight = window.innerHeight;
+      }
+
+      // Show scroll-to-top when not at top
+      setShowScrollTop(scrollTop > 200);
+
+      // Show scroll-to-bottom when not at bottom
+      const isAtBottom = scrollTop + clientHeight >= scrollHeight - 100;
+      const isScrollable = scrollHeight > clientHeight;
+      setShowScrollBottom(!isAtBottom && isScrollable);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    const maximizedContainer = document.querySelector(
+      '.tkn--taskrun--maximized'
+    );
+    if (maximizedContainer) {
+      maximizedContainer.addEventListener('scroll', handleScroll, {
+        passive: true
+      });
+    }
+
+    //Watch for maximize/minimize changes
+    const observer = new MutationObserver(() => {
+      const newMaximizedContainer = document.querySelector(
+        '.tkn--taskrun--maximized'
+      );
+      if (newMaximizedContainer) {
+        newMaximizedContainer.addEventListener('scroll', handleScroll, {
+          passive: true
+        });
+      }
+      handleScroll();
+    });
+
+    observer.observe(document.body, {
+      attributes: true,
+      subtree: true,
+      attributeFilter: ['class']
+    });
+
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      observer.disconnect();
+      const maxContainer = document.querySelector('.tkn--taskrun--maximized');
+      if (maxContainer) {
+        maxContainer.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, []);
+
+  const scrollToTop = () => {
+    const maximizedContainer = document.querySelector(
+      '.tkn--taskrun--maximized'
+    );
+
+    if (maximizedContainer) {
+      maximizedContainer.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const scrollToBottom = () => {
+    const maximizedContainer = document.querySelector(
+      '.tkn--taskrun--maximized'
+    );
+
+    if (maximizedContainer) {
+      maximizedContainer.scrollTo({
+        top: maximizedContainer.scrollHeight,
+        behavior: 'smooth'
+      });
+    } else {
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const scrollTopMessage = intl.formatMessage({
+    id: 'dashboard.app.scrollToTop',
+    defaultMessage: 'Scroll to top'
+  });
+
+  const scrollBottomMessage = intl.formatMessage({
+    id: 'dashboard.app.scrollToBottom',
+    defaultMessage: 'Scroll to bottom'
+  });
+
+  if (!showScrollTop && !showScrollBottom) {
+    return null;
+  }
+
+  return (
+    <div
+      className={`tkn--scroll-buttons ${isMaximized ? 'tkn--scroll-buttons--maximized' : ''}`}
+    >
+      {showScrollTop && (
+        <Button
+          className="tkn--scroll-button"
+          hasIconOnly
+          iconDescription={scrollTopMessage}
+          id="log-scroll-to-start-btn"
+          kind="secondary"
+          onClick={scrollToTop}
+          renderIcon={() => (
+            <UpToTop>
+              <title>{scrollTopMessage}</title>
+            </UpToTop>
+          )}
+          size="md"
+          tooltipPosition="left"
+        />
+      )}
+      {showScrollBottom && (
+        <Button
+          className="tkn--scroll-button"
+          hasIconOnly
+          iconDescription={scrollBottomMessage}
+          id="log-scroll-to-end-btn"
+          kind="secondary"
+          onClick={scrollToBottom}
+          renderIcon={() => (
+            <DownToBottom>
+              <title>{scrollBottomMessage}</title>
+            </DownToBottom>
+          )}
+          size="md"
+          tooltipPosition="left"
+        />
+      )}
+    </div>
+  );
+}
 
 async function loadMessages(lang) {
   const loadedMessages = (await import(`../../nls/messages_${lang}.json`))
@@ -151,6 +318,7 @@ function Root() {
           <Outlet />
         </PageErrorBoundary>
       </Content>
+      <ScrollButtons />
     </>
   );
 }
