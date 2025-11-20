@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { fireEvent, waitFor } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import Log, { logFormatRegex } from './Log';
 import { render } from '../../utils/test';
 
@@ -254,7 +254,6 @@ describe('Log', () => {
 
   //   await waitFor(() => expect(spiedFn).toHaveBeenCalled());
   // });
- 
   it('renders the provided content when streaming logs', async () => {
     const { getByText } = render(
       <Log
