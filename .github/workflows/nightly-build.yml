@@ -54,7 +54,7 @@ jobs:
           echo "latest_sha=${latest_sha}" >> "$GITHUB_OUTPUT"
 
       - name: Setup Tekton Nightly Infra
-        uses: tektoncd/plumbing/.github/actions/setup-nightly-infra@3ee0551b7231e1902bd227a59476b7f39e2823a2
+        uses: tektoncd/plumbing/.github/actions/setup-nightly-infra@48c53b4e7f1e0bb206575b80eb9fcf07b5854907
         with:
           kubernetes_version: ${{ env.KUBERNETES_VERSION }}
           image_registry_user: ${{ env.IMAGE_REGISTRY_USER }}
