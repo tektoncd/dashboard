@@ -193,4 +193,57 @@ describe('App - ScrollButtons', () => {
       behavior: 'smooth'
     });
   });
+  it('scroll when maximized container', async () => {
+    const { queryByText, container: appContainer } = render(<App />);
+
+    await waitFor(() => queryByText('Tekton resources'));
+
+    // Create a maximized container
+    const maximizedContainer = document.createElement('div');
+    maximizedContainer.className = 'tkn--taskrun--maximized';
+    maximizedContainer.scrollTo = vi.fn();
+    Object.defineProperty(maximizedContainer, 'scrollHeight', {
+      value: 3000,
+      configurable: true
+    });
+    Object.defineProperty(maximizedContainer, 'clientHeight', {
+      value: 800,
+      configurable: true
+    });
+    Object.defineProperty(maximizedContainer, 'scrollTop', {
+      value: 150,
+      writable: true,
+      configurable: true
+    });
+    document.body.appendChild(maximizedContainer);
+
+    // trigger scroll on maximized
+    fireEvent.scroll(maximizedContainer);
+
+    await waitFor(() => {
+      const scrollButtonsDiv = appContainer.querySelector(
+        '.tkn--scroll-buttons'
+      );
+      expect(scrollButtonsDiv).not.toBeNull();
+      expect(
+        scrollButtonsDiv.classList.contains('tkn--scroll-buttons--maximized')
+      ).toBe(true);
+    });
+
+    await waitFor(() => {
+      const button = document.getElementById('log-scroll-to-start-btn');
+      expect(button).not.toBeNull();
+    });
+
+    const button = document.getElementById('log-scroll-to-start-btn');
+    fireEvent.click(button);
+
+    // Check container.scrollTo was called (not window.scrollTo)
+    expect(maximizedContainer.scrollTo).toHaveBeenCalledWith({
+      top: 0,
+      behavior: 'smooth'
+    });
+
+    document.body.removeChild(maximizedContainer);
+  });
 });
