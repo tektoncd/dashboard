@@ -193,67 +193,6 @@ describe('Log', () => {
     );
     await waitFor(() => expect(spiedFn).not.toHaveBeenCalled());
   });
-
-  // it('displays the scroll to top button when the virtualized list scroll is all the way down', async () => {
-  //   const long = Array.from(
-  //     { length: 20000 },
-  //     (_v, i) => `Line ${i + 1}\n`
-  //   ).join('');
-  //   vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({
-  //     bottom: 0,
-  //     top: 0,
-  //     right: 0
-  //   });
-  //   vi.spyOn(Element.prototype, 'scrollTop', 'get').mockReturnValue(1);
-  //   const spiedFn = vi.spyOn(Element.prototype, 'scrollTop', 'set'); // the scrollTop value is changed in scrollToBottomLog
-
-  //   const { container } = render(
-  //     <Log
-  //       stepStatus={{ terminated: { reason: 'Completed' } }}
-  //       fetchLogs={() => long}
-  //     />
-  //   );
-  //   await waitFor(() => {
-  //     expect(
-  //       container.querySelector('#log-scroll-to-start-btn')
-  //     ).not.toBeNull();
-  //   });
-  //   expect(container.querySelector('#log-scroll-to-end-btn')).toBeNull();
-  //   fireEvent.click(container.querySelector('#log-scroll-to-start-btn'));
-
-  //   await waitFor(() => expect(spiedFn).toHaveBeenCalled());
-  // });
-
-  // it('displays both scroll buttons when the virtualized list scrolled is neither all the way up nor down', async () => {
-  //   const long = Array.from(
-  //     { length: 20000 },
-  //     (_v, i) => `Line ${i + 1}\n`
-  //   ).join('');
-  //   vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({
-  //     bottom: 0,
-  //     top: 0,
-  //     right: 0
-  //   });
-  //   vi.spyOn(Element.prototype, 'scrollTop', 'get').mockReturnValue(1);
-  //   vi.spyOn(Element.prototype, 'scrollHeight', 'get').mockReturnValue(2);
-  //   const spiedFn = vi.spyOn(Element.prototype, 'scrollTop', 'set'); // the scrollTop value is changed in scrollToBottomLog
-
-  //   const { container } = render(
-  //     <Log
-  //       stepStatus={{ terminated: { reason: 'Completed' } }}
-  //       fetchLogs={() => long}
-  //     />
-  //   );
-  //   await waitFor(() => {
-  //     expect(
-  //       container.querySelector('#log-scroll-to-start-btn')
-  //     ).not.toBeNull();
-  //   });
-  //   expect(container.querySelector('#log-scroll-to-end-btn')).not.toBeNull();
-  //   fireEvent.click(container.querySelector('#log-scroll-to-end-btn'));
-
-  //   await waitFor(() => expect(spiedFn).toHaveBeenCalled());
-  // });
   it('renders the provided content when streaming logs', async () => {
     const { getByText } = render(
       <Log
