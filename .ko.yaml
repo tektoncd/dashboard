@@ -1,1 +1,1 @@
-defaultBaseImage: ghcr.io/wolfi-dev/static:alpine@sha256:2a0e1651c779fd24cea09a5ec6a0437117ff5d1fbe5fafe78020dfb8cc757018
+defaultBaseImage: ghcr.io/wolfi-dev/static:alpine@sha256:267dbf388acc120c0202c4daad97202bc72039785b2c7ba59b5aaf41c5a1e396
