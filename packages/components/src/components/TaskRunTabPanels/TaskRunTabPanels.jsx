@@ -181,7 +181,7 @@ function Step({
     task,
     taskRun
   });
-  const stepDisplayName = stepDefinition.displayName || step.name;
+  const stepDisplayName = stepDefinition?.displayName || step.name;
   const displayName = isSidecar
     ? intl.formatMessage(
         {
