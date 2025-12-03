@@ -51,11 +51,10 @@ the dashboard repo, a terminal window and a text editor.
       --param=imageRegistryRegions="" \
       --param=imageRegistryUser="tekton-robot" \
       --param=koExtraArgs="" \
-      --param=serviceAccountPath=release.json \
       --param=serviceAccountImagesPath=credentials \
       --param=versionTag="${TEKTON_VERSION}" \
-      --param=releaseBucket=gs://tekton-releases/dashboard \
-      --workspace name=release-secret,secret=release-secret \
+      --param=releaseBucket=tekton-releases \
+      --workspace name=release-secret,secret=oci-release-secret \
       --workspace name=release-images-secret,secret=ghcr-creds \
       --workspace name=workarea,volumeClaimTemplateFile=workspace-template.yaml
     ```
