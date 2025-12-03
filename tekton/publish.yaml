@@ -80,7 +80,7 @@ spec:
     - name: IMAGES
   steps:
     - name: container-registry-auth
-      image: gcr.io/go-containerregistry/crane:debug@sha256:e505815aa3573ae223c2ddcd004c8d4f7a6608df85da429af1e0f6aff728a1f0
+      image: cgr.dev/chainguard/crane:latest-dev@sha256:de0001d29700c2cc3e4bf11d938fbb2481ff7a2f6528fa466dee516b485f2ae6
       script: |
         #!/busybox/sh
         set -ex
@@ -175,7 +175,7 @@ spec:
           ${PRESERVE_IMPORT_PATH} > /workspace/built_images
 
     - name: tag-images
-      image: gcr.io/go-containerregistry/crane:debug@sha256:e505815aa3573ae223c2ddcd004c8d4f7a6608df85da429af1e0f6aff728a1f0
+      image: cgr.dev/chainguard/crane:latest-dev@sha256:de0001d29700c2cc3e4bf11d938fbb2481ff7a2f6528fa466dee516b485f2ae6
       script: |
         #!/busybox/sh
         set -ex

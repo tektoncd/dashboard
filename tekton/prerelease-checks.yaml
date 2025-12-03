@@ -25,7 +25,7 @@ spec:
     description: The X.Y.Z version that the artifacts would be tagged with
   - name: releaseBucket
     description: >-
-      The bucket where to look for the release, in the format gs://<bucket-name>/<project-name>
+      The bucket where to look for the release, in the format <bucket-name>/<project-name>
   workspaces:
     - name: source-to-release
       description: The workspace where the repo has been cloned
@@ -49,12 +49,12 @@ spec:
         echo "Version ${VERSION_TAG} already tagged for ${PACKAGE}"
         exit 1
     - name: check-release-file
-      image: gcr.io/google.com/cloudsdktool/cloud-sdk:548.0.0@sha256:8ba1f213fc9ac9ac581d2a8142ff91d8a462d16cdb889c72dca697ad197695b7
+      image: docker.io/curlimages/curl:8.17.0@sha256:935d9100e9ba842cdb060de42472c7ca90cfe9a7c96e4dacb55e79e560b3ff40
       script: |
         echo "Checking release file"
         # Check if the release file already exists
-        # gsutil returns 1 if the object was not found
-        if gsutil stat ${RELEASE_BUCKET}/previous/${VERSION_TAG}/release.yaml; then
+        URL="https://infra.tekton.dev/${RELEASE_BUCKET}/previous/${VERSION_TAG}/release.yaml"
+        if ! curl --silent --fail --head --location --output /dev/null "$URL"; then
           echo "Release file already exists for ${VERSION_TAG} in the release bucket,"
           echo "but no git tag was found. To continue remove the release file first."
           exit 1
