@@ -38,11 +38,14 @@ spec:
     - name: versionTag
       description: The X.Y.Z version that the artifacts should be tagged with
     - name: releaseBucket
-      description: bucket where the release is stored. The bucket must be project specific.
-      default: gs://tekton-releases-nightly/dashboard
+      description: bucket where the release is stored
+      default: tekton-nightly
     - name: releaseAsLatest
-      description: Whether to tag and publish this release as Pipelines' latest
+      description: Whether to tag and publish this release as latest
       default: "true"
+    - name: repoName
+      description: repository name used as project-specific path within release bucket
+      default: dashboard
     - name: platforms
       description: Platforms to publish for the images (e.g. linux/amd64,linux/arm64)
       default: linux/amd64,linux/arm64,linux/s390x,linux/ppc64le
@@ -107,7 +110,7 @@ spec:
         - name: versionTag
           value: $(params.versionTag)
         - name: releaseBucket
-          value: $(params.releaseBucket)
+          value: $(params.releaseBucket)/$(params.repoName)
       workspaces:
         - name: source-to-release
           workspace: workarea
@@ -178,9 +181,9 @@ spec:
         resolver: bundles
         params:
           - name: bundle
-            value: ghcr.io/tektoncd/catalog/upstream/tasks/gcs-upload:0.3
+            value: ghcr.io/tektoncd/catalog/upstream/tasks/oracle-cloud-storage-upload:0.2
           - name: name
-            value: gcs-upload
+            value: oracle-cloud-storage-upload
           - name: kind
             value: task
       workspaces:
@@ -190,12 +193,16 @@ spec:
           workspace: workarea
           subPath: bucket
       params:
-        - name: location
-          value: $(params.releaseBucket)/previous/$(params.versionTag)
         - name: path
           value: $(params.versionTag)
-        - name: serviceAccountPath
-          value: $(params.serviceAccountPath)
+        - name: bucketName
+          value: $(params.releaseBucket)
+        - name: objectPrefix
+          value: $(params.repoName)/previous/$(params.versionTag)
+        - name: replaceExistingFiles
+          value: "true"
+        - name: recursive
+          value: "true"
     - name: publish-to-bucket-latest
       runAfter: [publish-images]
       when:
@@ -206,9 +213,9 @@ spec:
         resolver: bundles
         params:
           - name: bundle
-            value: ghcr.io/tektoncd/catalog/upstream/tasks/gcs-upload:0.3
+            value: ghcr.io/tektoncd/catalog/upstream/tasks/oracle-cloud-storage-upload:0.2
           - name: name
-            value: gcs-upload
+            value: oracle-cloud-storage-upload
           - name: kind
             value: task
       workspaces:
@@ -218,12 +225,16 @@ spec:
           workspace: workarea
           subPath: bucket
       params:
-        - name: location
-          value: $(params.releaseBucket)/latest
         - name: path
           value: $(params.versionTag)
-        - name: serviceAccountPath
-          value: $(params.serviceAccountPath)
+        - name: bucketName
+          value: $(params.releaseBucket)
+        - name: objectPrefix
+          value: $(params.repoName)/latest
+        - name: replaceExistingFiles
+          value: "true"
+        - name: recursive
+          value: "true"
         - name: deleteExtraFiles
           value: "true" # Uses rsync to copy content into latest
     - name: report-bucket
@@ -231,11 +242,14 @@ spec:
       params:
         - name: releaseBucket
           value: $(params.releaseBucket)
+        - name: repoName
+          value: $(params.repoName)
         - name: versionTag
           value: $(params.versionTag)
       taskSpec:
         params:
           - name: releaseBucket
+          - name: repoName
           - name: versionTag
         results:
           - name: release
@@ -250,11 +264,11 @@ spec:
             env:
               - name: RELEASE_BUCKET
                 value: $(params.releaseBucket)
+              - name: REPO_NAME
+                value: $(params.repoName)
               - name: VERSION_TAG
                 value: $(params.versionTag)
             script: |
-              BASE_URL=$(echo "${RELEASE_BUCKET}/previous/${VERSION_TAG}")
-              # If the bucket is in the gs:// return the corresponding public https URL
-              BASE_URL=$(echo ${BASE_URL} | sed 's,gs://,https://storage.googleapis.com/,g')
+              BASE_URL="https://infra.tekton.dev/${RELEASE_BUCKET}/${REPO_NAME}/previous/${VERSION_TAG}"
               echo "${BASE_URL}/release.yaml" > $(results.release.path)
               echo "${BASE_URL}/release-full.yaml" > $(results.release-full.path)

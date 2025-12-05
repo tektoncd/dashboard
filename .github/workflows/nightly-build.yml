@@ -19,9 +19,10 @@ on:
 env:
   KUBERNETES_VERSION: ${{ inputs.kubernetes_version || 'v1.33.x' }}
   REGISTRY: ghcr.io
-  BUCKET: ${{ inputs.nightly_bucket || 'gs://tekton-releases-nightly/dashboard' }}
+  BUCKET: ${{ inputs.nightly_bucket || 'tekton-nightly' }}
   IMAGE_REGISTRY_PATH: ${{ github.repository }}
   IMAGE_REGISTRY_USER: tekton-robot
+  REPO_NAME: ${{ github.event.repository.name }}
 
 jobs:
   build:
@@ -54,12 +55,16 @@ jobs:
           echo "latest_sha=${latest_sha}" >> "$GITHUB_OUTPUT"
 
       - name: Setup Tekton Nightly Infra
-        uses: tektoncd/plumbing/.github/actions/setup-nightly-infra@48c53b4e7f1e0bb206575b80eb9fcf07b5854907
+        uses: tektoncd/plumbing/.github/actions/setup-nightly-infra@c4d1d3e6b8e8ac398636f75aef0faf50784a5ca7
         with:
           kubernetes_version: ${{ env.KUBERNETES_VERSION }}
           image_registry_user: ${{ env.IMAGE_REGISTRY_USER }}
           ghcr_token: ${{ secrets.GHCR_TOKEN }}
-          gcs_service_account_key: ${{ secrets.GCS_SERVICE_ACCOUNT_KEY }}
+          oci_api_key: ${{ secrets.OCI_API_KEY }}
+          oci_fingerprint: ${{ secrets.OCI_FINGERPRINT }}
+          oci_tenancy_ocid: ${{ secrets.OCI_TENANCY_OCID }}
+          oci_user_ocid: ${{ secrets.OCI_USER_OCID }}
+          oci_region: ${{ secrets.OCI_REGION }}
 
       - name: Apply Build Pipeline Definition
         run: |
@@ -81,7 +86,7 @@ jobs:
             --param imageRegistryUser="${{ env.IMAGE_REGISTRY_USER }}" \
             --param imageRegistryRegions="" \
             --param koExtraArgs="" \
-            --param serviceAccountPath=release.json \
+            --param repoName="${{ env.REPO_NAME }}" \
             --param serviceAccountImagesPath=credentials \
             --param releaseAsLatest="true" \
             --workspace name=workarea,volumeClaimTemplateFile=workspace-template.yaml \
