@@ -54,7 +54,7 @@
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.0",
     "@vitejs/plugin-react-swc": "^4.2.2",
-    "@vitest/coverage-istanbul": "^4.0.14",
+    "@vitest/coverage-istanbul": "^4.0.15",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-cypress": "^5.2.0",
