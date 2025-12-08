@@ -51,6 +51,7 @@ spec:
     - name: check-release-file
       image: docker.io/curlimages/curl:8.17.0@sha256:935d9100e9ba842cdb060de42472c7ca90cfe9a7c96e4dacb55e79e560b3ff40
       script: |
+        set +e
         echo "Checking release file"
         # Check if the release file already exists
         URL="https://infra.tekton.dev/${RELEASE_BUCKET}/previous/${VERSION_TAG}/release.yaml"
