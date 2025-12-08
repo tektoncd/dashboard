@@ -97,6 +97,7 @@ jobs:
             --use-param-defaults \
             --output name) || {
             echo "Failed to start Tekton pipeline!"
+            echo "$PIPELINE_RUN"
             exit 1
           }
 
