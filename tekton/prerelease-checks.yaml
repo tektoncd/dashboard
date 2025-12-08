@@ -54,7 +54,8 @@ spec:
         echo "Checking release file"
         # Check if the release file already exists
         URL="https://infra.tekton.dev/${RELEASE_BUCKET}/previous/${VERSION_TAG}/release.yaml"
-        if ! curl --silent --fail --head --location --output /dev/null "$URL"; then
+        curl --silent --fail --head --location --output /dev/null "$URL"
+        if [[ $? = 0 ]]; then
           echo "Release file already exists for ${VERSION_TAG} in the release bucket,"
           echo "but no git tag was found. To continue remove the release file first."
           exit 1
