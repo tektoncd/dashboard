@@ -82,7 +82,7 @@ spec:
     - name: container-registry-auth
       image: cgr.dev/chainguard/crane:latest-dev@sha256:de0001d29700c2cc3e4bf11d938fbb2481ff7a2f6528fa466dee516b485f2ae6
       script: |
-        #!/busybox/sh
+        #!/bin/sh
         set -ex
 
         # Login to the container registry
@@ -177,7 +177,7 @@ spec:
     - name: tag-images
       image: cgr.dev/chainguard/crane:latest-dev@sha256:de0001d29700c2cc3e4bf11d938fbb2481ff7a2f6528fa466dee516b485f2ae6
       script: |
-        #!/busybox/sh
+        #!/bin/sh
         set -ex
 
         # Setup docker-auth
