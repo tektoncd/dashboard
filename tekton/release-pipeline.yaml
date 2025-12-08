@@ -52,8 +52,6 @@ spec:
     - name: koExtraArgs
       description: Extra args to be passed to ko
       default: "--preserve-import-paths"
-    - name: serviceAccountPath
-      description: The path to the service account file within the release-secret workspace
     - name: serviceAccountImagesPath
       description: The path to the service account file or credentials within the release-images-secret workspace
   workspaces:
