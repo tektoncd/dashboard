@@ -87,7 +87,7 @@ jobs:
             --param imageRegistryRegions="" \
             --param koExtraArgs="" \
             --param repoName="${{ env.REPO_NAME }}" \
-            --param serviceAccountImagesPath=docker-config.json \
+            --param serviceAccountImagesPath=credentials \
             --param releaseAsLatest="true" \
             --workspace name=workarea,volumeClaimTemplateFile=workspace-template.yaml \
             --workspace name=release-secret,secret=release-secret \
