@@ -84,27 +84,38 @@ function node_npm_install() {
   local failed=0
   get_node
   echo "Installing package dependencies"
-  npm ci || failed=1 # similar to `npm install` but ensures all versions from lock file
+  npm ci || failed=1
   return ${failed}
 }
 
 function node_test() {
   local failed=0
+  local failedCommands=()
   echo "Running node tests from $(pwd)"
-  node_npm_install || failed=1
-  echo "Linting"
-  npm run lint || failed=1
-  echo "Checking message bundles"
-  npm run i18n:extract || failed=1
-  git status
-  git diff-index --patch --exit-code --no-color HEAD ./src/nls/ || failed=1
-  echo "Running unit tests"
-  npm test || failed=1
+  node_npm_install || { failed=1; failedCommands+=("node_npm_install"); }
+  if [ $failed = 0 ]; then
+    echo "Linting"
+    npm run lint || { failed=1; failedCommands+=("npm run lint"); }
+    echo "Checking message bundles"
+    npm run i18n:extract || { failed=1; failedCommands+=("npm run i18n:extract"); }
+    git status
+    git diff-index --patch --exit-code --no-color HEAD ./src/nls/ || { failed=1; failedCommands+=("git diff (i18n)"); }
+    echo "Running unit tests"
+    npm test || { failed=1; failedCommands+=("npm test"); }
+  fi
   echo ""
+  if [ $failed = 1 ]; then
+    results_banner "Node" 1
+    echo "Failed commands:"
+    for cmd in "${failedCommands[@]}"; do
+      echo -e "\e[0;31m✗\e[0m ${cmd}"
+    done
+    echo ""
+  fi
   return ${failed}
 }
 
-function pre_unit_tests() {
+function unit_tests() {
   node_test
 }
 
@@ -122,11 +133,6 @@ function pre_integration_tests() {
 
 function extra_initialization() {
   echo "Script is running as $(whoami) on $(hostname)"
-}
-
-function unit_tests() {
-  go test -v -race ./...
-  return $?
 }
 
 main $@
