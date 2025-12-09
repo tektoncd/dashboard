@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
   name: dashboard-release
@@ -21,39 +21,52 @@ spec:
     - name: package
       description: package to release
       default: github.com/tektoncd/dashboard
+      type: string
     - name: gitRevision
       description: the git revision to release
+      type: string
     - name: imageRegistry
       description: The target image registry
       default: gcr.io
+      type: string
     - name: imageRegistryPath
       description: The path (project) in the image registry
       default: tekton-releases
+      type: string
     - name: imageRegistryRegions
       description: The target image registry regions
       default: "us eu asia"
+      type: string
     - name: imageRegistryUser
       description: The user for the image registry credentials
       default: "_json_key"
+      type: string
     - name: versionTag
       description: The X.Y.Z version that the artifacts should be tagged with
+      type: string
     - name: releaseBucket
       description: bucket where the release is stored
       default: tekton-nightly
+      type: string
     - name: releaseAsLatest
       description: Whether to tag and publish this release as latest
       default: "true"
+      type: string
     - name: repoName
       description: repository name used as project-specific path within release bucket
       default: dashboard
+      type: string
     - name: platforms
       description: Platforms to publish for the images (e.g. linux/amd64,linux/arm64)
       default: linux/amd64,linux/arm64,linux/s390x,linux/ppc64le
+      type: string
     - name: koExtraArgs
       description: Extra args to be passed to ko
       default: "--preserve-import-paths"
+      type: string
     - name: serviceAccountImagesPath
       description: The path to the service account file or credentials within the release-images-secret workspace
+      type: string
   workspaces:
     - name: workarea
       description: The workspace where the repo will be cloned.
@@ -247,8 +260,11 @@ spec:
       taskSpec:
         params:
           - name: releaseBucket
+            type: string
           - name: repoName
+            type: string
           - name: versionTag
+            type: string
         results:
           - name: release
             description: The full URL of the release file (read-only) in the bucket
