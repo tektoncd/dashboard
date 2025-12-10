@@ -54,7 +54,7 @@ _Adding the `upstream` remote sets you up nicely for regularly
 First install the required dependencies:
 
 ```bash
-npm install
+npm ci
 ```
 
 See instructions for running the development server in the section below.
