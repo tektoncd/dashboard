@@ -27,8 +27,5 @@
     "type": "git",
     "url": "https://github.com/tektoncd/dashboard.git",
     "directory": "packages/e2e"
-  },
-  "overrides": {
-    "systeminformation": "5.27.14"
   }
 }
