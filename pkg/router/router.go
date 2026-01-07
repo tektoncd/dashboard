@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,6 +14,7 @@ limitations under the License.
 package router
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"net/http"
@@ -176,7 +177,8 @@ func NewProxyHandler(cfg *rest.Config, keepalive time.Duration) (http.Handler, e
 
 // Listen is a simple wrapper around net.Listen.
 func (s *Server) Listen(address string, port int) (net.Listener, error) {
-	return net.Listen("tcp", fmt.Sprintf("%s:%d", address, port))
+	lc := net.ListenConfig{}
+	return lc.Listen(context.TODO(), "tcp", fmt.Sprintf("%s:%d", address, port))
 }
 
 // ServeOnListener starts the server using given listener, loops forever.

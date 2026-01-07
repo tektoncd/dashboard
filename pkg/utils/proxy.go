@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2025 The Tekton Authors
+Copyright 2020-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,6 +14,7 @@ limitations under the License.
 package utils
 
 import (
+	"context"
 	"io"
 	"net/http"
 
@@ -22,7 +23,7 @@ import (
 
 // Proxy forwards requests to an upstream provider and proxies the response content and headers back to the caller
 func Proxy(request *http.Request, response http.ResponseWriter, url string, client *http.Client) (int, error) {
-	req, err := http.NewRequest(request.Method, url, request.Body)
+	req, err := http.NewRequestWithContext(context.TODO(), request.Method, url, request.Body)
 
 	if err != nil {
 		logging.Log.Errorf("Failed to create request: %s", err)
