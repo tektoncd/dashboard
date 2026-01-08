@@ -1,5 +1,5 @@
 /*
-Copyright 2025 The Tekton Authors
+Copyright 2025-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -256,6 +256,7 @@ function Step({
 function Logs({
   expandedSteps,
   getLogContainer,
+  ignoredSidecars,
   onStepSelected,
   selectedRetry,
   selectedTaskId,
@@ -268,6 +269,8 @@ function Logs({
   const taskRunStatus = getStatus(taskRun);
   const { reason } = taskRunStatus;
   const { sidecars, steps } = taskRun.status || {};
+  const sidecarsToRender =
+    sidecars?.filter(sidecar => !ignoredSidecars[sidecar.name]) || [];
 
   if (!steps) {
     return (
@@ -312,7 +315,7 @@ function Logs({
           taskRun={taskRun}
         />
       ))}
-      {(sidecars || []).map(sidecar => (
+      {sidecarsToRender.map(sidecar => (
         <Step
           expandedSteps={expandedSteps}
           getLogContainer={getLogContainer}
@@ -336,6 +339,7 @@ const TaskRunTabPanels = ({
   expandedSteps,
   getLogContainer,
   getLogsToolbar,
+  ignoredSidecars,
   isMaximized,
   onRetryChange,
   onStepSelected,
@@ -359,6 +363,7 @@ const TaskRunTabPanels = ({
     <Logs
       expandedSteps={expandedSteps}
       getLogContainer={getLogContainer}
+      ignoredSidecars={ignoredSidecars}
       onStepSelected={onStepSelected}
       pod={pod}
       selectedRetry={selectedRetry}
