@@ -24,7 +24,10 @@ import {
 } from 'react-router-dom';
 import { IntlProvider, useIntl } from 'react-intl';
 import { Content, HeaderContainer, InlineNotification } from '@carbon/react';
-import { PageErrorBoundary } from '@tektoncd/dashboard-components';
+import {
+  PageErrorBoundary,
+  ScrollButtons
+} from '@tektoncd/dashboard-components';
 import {
   ALL_NAMESPACES,
   getErrorMessage,
@@ -151,6 +154,7 @@ function Root() {
           <Outlet />
         </PageErrorBoundary>
       </Content>
+      <ScrollButtons />
     </>
   );
 }
