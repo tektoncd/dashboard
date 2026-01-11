@@ -43,7 +43,7 @@
     "yaml": "^2.8.2"
   },
   "devDependencies": {
-    "@eslint/compat": "^2.0.0",
+    "@eslint/compat": "^2.0.1",
     "@eslint/js": "^9.39.2",
     "@formatjs/cli": "^6.10.0",
     "@rollup/plugin-yaml": "^4.1.2",
