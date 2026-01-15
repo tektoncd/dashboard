@@ -18,15 +18,15 @@ limitations under the License.
 
 .tkn--scroll-buttons {
   position: fixed;
-  right: .75rem;
-  bottom: 1rem;
+  inset-inline-end: .75rem;
+  inset-block-end: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   z-index: 10000;
 }
 .tkn--scroll-buttons--maximized{
-   right: 2rem;
+   inset-inline-end: 2rem;
 }
 
 pre.tkn--log {

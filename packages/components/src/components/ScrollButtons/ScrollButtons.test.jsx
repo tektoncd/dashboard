@@ -51,16 +51,16 @@ describe('ScrollButtons', () => {
   });
 
   it('shows scroll-to-bottom button when at the top of scrollable page', async () => {
-    const { queryByTitle } = render(<ScrollButtons />);
+    const { queryByLabelText } = render(<ScrollButtons />);
 
     await waitFor(() => {
-      expect(queryByTitle('Scroll to bottom')).toBeTruthy();
+      expect(queryByLabelText('Scroll to bottom')).toBeTruthy();
     });
-    expect(queryByTitle('Scroll to top')).toBeFalsy();
+    expect(queryByLabelText('Scroll to top')).toBeFalsy();
   });
 
   it('shows scroll-to-top button when at the bottom of scrollable page', async () => {
-    const { queryByTitle } = render(<ScrollButtons />);
+    const { queryByLabelText } = render(<ScrollButtons />);
 
     // Simulate scrolling down
     Object.defineProperty(window, 'scrollY', {
@@ -71,12 +71,12 @@ describe('ScrollButtons', () => {
     fireEvent.scroll(window);
 
     await waitFor(() => {
-      expect(queryByTitle('Scroll to top')).toBeTruthy();
+      expect(queryByLabelText('Scroll to top')).toBeTruthy();
     });
   });
 
   it('shows both buttons when in middle of page', async () => {
-    const { queryByTitle } = render(<ScrollButtons />);
+    const { queryByLabelText } = render(<ScrollButtons />);
 
     // Simulate scrolling to middle
     Object.defineProperty(window, 'scrollY', {
@@ -87,13 +87,13 @@ describe('ScrollButtons', () => {
     fireEvent.scroll(window);
 
     await waitFor(() => {
-      expect(queryByTitle('Scroll to top')).toBeTruthy();
-      expect(queryByTitle('Scroll to bottom')).toBeTruthy();
+      expect(queryByLabelText('Scroll to top')).toBeTruthy();
+      expect(queryByLabelText('Scroll to bottom')).toBeTruthy();
     });
   });
 
   it('hides scroll-to-bottom button when at bottom', async () => {
-    const { queryByTitle } = render(<ScrollButtons />);
+    const { queryByLabelText } = render(<ScrollButtons />);
 
     Object.defineProperty(window, 'scrollY', {
       writable: true,
@@ -103,8 +103,8 @@ describe('ScrollButtons', () => {
     fireEvent.scroll(window);
 
     await waitFor(() => {
-      expect(queryByTitle('Scroll to top')).toBeTruthy();
-      expect(queryByTitle('Scroll to bottom')).toBeFalsy();
+      expect(queryByLabelText('Scroll to top')).toBeTruthy();
+      expect(queryByLabelText('Scroll to bottom')).toBeFalsy();
     });
   });
 
@@ -112,7 +112,7 @@ describe('ScrollButtons', () => {
     const scrollToSpy = vi.fn();
     window.scrollTo = scrollToSpy;
 
-    const { queryByTitle } = render(<ScrollButtons />);
+    const { queryByLabelText } = render(<ScrollButtons />);
 
     // scroll down first
     Object.defineProperty(window, 'scrollY', {
@@ -123,10 +123,10 @@ describe('ScrollButtons', () => {
     fireEvent.scroll(window);
 
     await waitFor(() => {
-      expect(queryByTitle('Scroll to top')).toBeTruthy();
+      expect(queryByLabelText('Scroll to top')).toBeTruthy();
     });
 
-    const scrollTopButton = queryByTitle('Scroll to top');
+    const scrollTopButton = queryByLabelText('Scroll to top');
     fireEvent.click(scrollTopButton);
 
     expect(scrollToSpy).toHaveBeenCalledWith({
@@ -139,13 +139,13 @@ describe('ScrollButtons', () => {
     const scrollToSpy = vi.fn();
     window.scrollTo = scrollToSpy;
 
-    const { queryByTitle } = render(<ScrollButtons />);
+    const { queryByLabelText } = render(<ScrollButtons />);
 
     await waitFor(() => {
-      expect(queryByTitle('Scroll to bottom')).toBeTruthy();
+      expect(queryByLabelText('Scroll to bottom')).toBeTruthy();
     });
 
-    const scrollBottomButton = queryByTitle('Scroll to bottom');
+    const scrollBottomButton = queryByLabelText('Scroll to bottom');
     fireEvent.click(scrollBottomButton);
 
     expect(scrollToSpy).toHaveBeenCalledWith({
@@ -155,7 +155,7 @@ describe('ScrollButtons', () => {
   });
 
   it('handles maximized container scroll events', async () => {
-    const { queryByTitle, container } = render(<ScrollButtons />);
+    const { queryByLabelText, container } = render(<ScrollButtons />);
 
     // Create container first, then add the maximized class to trigger MutationObserver later
     const maximizedContainer = document.createElement('div');
@@ -184,7 +184,7 @@ describe('ScrollButtons', () => {
 
     // Wait for MutationObserver to detect the class change and apply maximized class
     await waitFor(() => {
-      expect(queryByTitle('Scroll to bottom')).toBeTruthy();
+      expect(queryByLabelText('Scroll to bottom')).toBeTruthy();
       const scrollButtonsContainer = container.querySelector(
         '.tkn--scroll-buttons'
       );
@@ -205,12 +205,12 @@ describe('ScrollButtons', () => {
 
     // Both buttons should be visible
     await waitFor(() => {
-      expect(queryByTitle('Scroll to top')).toBeTruthy();
-      expect(queryByTitle('Scroll to bottom')).toBeTruthy();
+      expect(queryByLabelText('Scroll to top')).toBeTruthy();
+      expect(queryByLabelText('Scroll to bottom')).toBeTruthy();
     });
 
     // test scroll-to-top button in maximized mode
-    const scrollTopButton = queryByTitle('Scroll to top');
+    const scrollTopButton = queryByLabelText('Scroll to top');
     fireEvent.click(scrollTopButton);
 
     expect(containerScrollToSpy).toHaveBeenCalledWith({
@@ -219,7 +219,7 @@ describe('ScrollButtons', () => {
     });
 
     // test scroll-to-bottom button in maximized mode
-    const scrollBottomButton = queryByTitle('Scroll to bottom');
+    const scrollBottomButton = queryByLabelText('Scroll to bottom');
     fireEvent.click(scrollBottomButton);
 
     expect(containerScrollToSpy).toHaveBeenCalledWith({
@@ -236,8 +236,8 @@ describe('ScrollButtons', () => {
     fireEvent.scroll(maximizedContainer);
 
     await waitFor(() => {
-      expect(queryByTitle('Scroll to top')).toBeTruthy();
-      expect(queryByTitle('Scroll to bottom')).toBeFalsy();
+      expect(queryByLabelText('Scroll to top')).toBeTruthy();
+      expect(queryByLabelText('Scroll to bottom')).toBeFalsy();
     });
   });
 
