@@ -14,7 +14,7 @@ limitations under the License.
 
 import { Component, createRef } from 'react';
 import { Button, PrefixContext, SkeletonText } from '@carbon/react';
-import { FixedSizeList as List } from 'react-window';
+import { List } from 'react-window';
 import { injectIntl, useIntl } from 'react-intl';
 import { getStepStatusReason, isRunning } from '@tektoncd/dashboard-utils';
 import { DownToBottom, Information, UpToTop } from '@carbon/react/icons';
@@ -319,10 +319,8 @@ export class LogContainer extends Component {
         };
       },
       showLevels,
-      showTimestamps,
-      stepStatus
+      showTimestamps
     } = this.props;
-    const { reason } = (stepStatus && stepStatus.terminated) || {};
     const {
       groupsExpanded,
       logs = [
@@ -412,9 +410,26 @@ export class LogContainer extends Component {
       );
     }
 
-    const height = reason
-      ? Math.min(defaultHeight, itemSize * logs.length)
-      : defaultHeight;
+    function LogRow({
+      index,
+      parsedLogs,
+      showLevels,
+      showTimestamps,
+      onToggleGroup,
+      style
+    }) {
+      const log = parsedLogs[index];
+
+      return (
+        <div style={style}>
+          <LogFormat
+            fields={{ level: showLevels, timestamp: showTimestamps }}
+            logs={[log]}
+            onToggleGroup={onToggleGroup}
+          />
+        </div>
+      );
+    }
 
     return (
       <>
@@ -423,22 +438,18 @@ export class LogContainer extends Component {
           totalLogLines={logs.length}
         />
         <List
-          height={height}
-          itemCount={parsedLogs.length}
-          itemData={parsedLogs}
-          itemSize={itemSize}
+          rowComponent={LogRow}
+          rowCount={parsedLogs.length}
+          rowHeight={itemSize}
+          defaultHeight={100}
           width="100%"
-        >
-          {({ data, index, style }) => (
-            <div style={style}>
-              <LogFormat
-                fields={{ level: showLevels, timestamp: showTimestamps }}
-                logs={[data[index]]}
-                onToggleGroup={this.onToggleGroup}
-              />
-            </div>
-          )}
-        </List>
+          rowProps={{
+            parsedLogs,
+            showLevels,
+            showTimestamps,
+            onToggleGroup: this.onToggleGroup
+          }}
+        ></List>
       </>
     );
   };
@@ -597,8 +608,12 @@ export class LogContainer extends Component {
   };
 
   render() {
-    const { toolbar } = this.props;
-    const { loading } = this.state;
+    const { toolbar, stepStatus } = this.props;
+    const { loading, logs } = this.state;
+    const { reason } = (stepStatus && stepStatus.terminated) || {};
+    const height = reason
+      ? Math.min(defaultHeight, itemSize * (logs?.length || 0))
+      : defaultHeight;
     return (
       <pre className="tkn--log tkn--theme-dark" ref={this.logRef}>
         {loading ? (
@@ -606,7 +621,11 @@ export class LogContainer extends Component {
         ) : (
           <>
             {toolbar}
-            <div className="tkn--log-container" ref={this.textRef}>
+            <div
+              className="tkn--log-container"
+              ref={this.textRef}
+              style={{ height: height }}
+            >
               {this.getLogList()}
             </div>
             {this.logTrailer()}
