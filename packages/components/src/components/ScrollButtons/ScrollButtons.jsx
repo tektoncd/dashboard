@@ -108,11 +108,21 @@ export function ScrollButtons() {
     };
   }, []);
 
+  const getScrollBehavior = () => {
+    const prefersReducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
+    return prefersReducedMotion ? 'auto' : 'smooth';
+  };
+
   const scrollToTop = () => {
     if (maximizedContainerRef.current) {
-      maximizedContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+      maximizedContainerRef.current.scrollTo({
+        top: 0,
+        behavior: getScrollBehavior()
+      });
     } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: getScrollBehavior() });
     }
   };
 
@@ -120,12 +130,12 @@ export function ScrollButtons() {
     if (maximizedContainerRef.current) {
       maximizedContainerRef.current.scrollTo({
         top: maximizedContainerRef.current.scrollHeight,
-        behavior: 'smooth'
+        behavior: getScrollBehavior()
       });
     } else {
       window.scrollTo({
         top: document.documentElement.scrollHeight,
-        behavior: 'smooth'
+        behavior: getScrollBehavior()
       });
     }
   };
@@ -156,11 +166,7 @@ export function ScrollButtons() {
           id="log-scroll-to-start-btn"
           kind="secondary"
           onClick={scrollToTop}
-          renderIcon={() => (
-            <UpToTop>
-              <title>{scrollTopMessage}</title>
-            </UpToTop>
-          )}
+          renderIcon={UpToTop}
           size="md"
           tooltipPosition="left"
         />
@@ -173,11 +179,7 @@ export function ScrollButtons() {
           id="log-scroll-to-end-btn"
           kind="secondary"
           onClick={scrollToBottom}
-          renderIcon={() => (
-            <DownToBottom>
-              <title>{scrollBottomMessage}</title>
-            </DownToBottom>
-          )}
+          renderIcon={DownToBottom}
           size="md"
           tooltipPosition="left"
         />
