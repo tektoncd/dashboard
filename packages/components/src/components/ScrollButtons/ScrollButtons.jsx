@@ -16,7 +16,10 @@ import { useIntl } from 'react-intl';
 import { Button } from '@carbon/react';
 import { DownToBottom, UpToTop } from '@carbon/react/icons';
 
-export function ScrollButtons() {
+export function ScrollButtons({
+  topThreshold = 100,
+  bottomThreshold = 100
+} = {}) {
   const intl = useIntl();
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [showScrollBottom, setShowScrollBottom] = useState(false);
@@ -41,10 +44,11 @@ export function ScrollButtons() {
       }
 
       // Show scroll-to-top when not at top
-      setShowScrollTop(scrollTop > 100);
+      setShowScrollTop(scrollTop > topThreshold);
 
       // Show scroll-to-bottom when not at bottom
-      const isAtBottom = scrollTop + clientHeight >= scrollHeight - 100;
+      const isAtBottom =
+        scrollTop + clientHeight >= scrollHeight - bottomThreshold;
       const isScrollable = scrollHeight > clientHeight;
       setShowScrollBottom(!isAtBottom && isScrollable);
     };
