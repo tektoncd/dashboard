@@ -239,6 +239,20 @@ describe('ScrollButtons', () => {
       expect(queryByLabelText('Scroll to top')).toBeTruthy();
       expect(queryByLabelText('Scroll to bottom')).toBeFalsy();
     });
+
+    // test removal of maximized container
+    maximizedContainer.className = '';
+
+    await waitFor(() => {
+      const scrollButtonsContainer = container.querySelector(
+        '.tkn--scroll-buttons'
+      );
+      expect(
+        scrollButtonsContainer?.classList.contains(
+          'tkn--scroll-buttons--maximized'
+        )
+      ).toBe(false);
+    });
   });
 
   it('renders correct button IDs', async () => {
@@ -268,5 +282,55 @@ describe('ScrollButtons', () => {
       'scroll',
       expect.any(Function)
     );
+  });
+
+  it('uses custom threshold values', async () => {
+    const { queryByLabelText } = render(
+      <ScrollButtons topThreshold={50} bottomThreshold={50} />
+    );
+
+    Object.defineProperty(window, 'scrollY', {
+      writable: true,
+      configurable: true,
+      value: 60
+    });
+    fireEvent.scroll(window);
+
+    await waitFor(() => {
+      expect(queryByLabelText('Scroll to top')).toBeTruthy();
+    });
+  });
+
+  it('uses auto scroll behavior when prefers-reduced-motion is enabled', async () => {
+    // mock matchMedia - return true for prefers-reduced-motion
+    vi.spyOn(window, 'matchMedia').mockImplementation(query => ({
+      matches: query === '(prefers-reduced-motion: reduce)'
+    }));
+
+    const scrollToSpy = vi.fn();
+    window.scrollTo = scrollToSpy;
+
+    const { queryByLabelText } = render(<ScrollButtons />);
+
+    // Scroll down - show scroll-to-top button
+    Object.defineProperty(window, 'scrollY', {
+      writable: true,
+      configurable: true,
+      value: 500
+    });
+    fireEvent.scroll(window);
+
+    await waitFor(() => {
+      expect(queryByLabelText('Scroll to top')).toBeTruthy();
+    });
+
+    const scrollTopButton = queryByLabelText('Scroll to top');
+    fireEvent.click(scrollTopButton);
+
+    // Should use 'auto' behavior instead of 'smooth'
+    expect(scrollToSpy).toHaveBeenCalledWith({
+      top: 0,
+      behavior: 'auto'
+    });
   });
 });
