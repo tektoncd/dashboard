@@ -1,5 +1,5 @@
 /*
-Copyright 2022-2025 The Tekton Authors
+Copyright 2022-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,12 +17,13 @@ const { unlinkSync } = require('node:fs');
 const isCI = process.env.CI === 'true';
 
 module.exports = defineConfig({
+  allowCypressEnv: false,
   e2e: {
     baseUrl: 'http://localhost:8000',
     experimentalRunAllSpecs: true,
     experimentalStudio: true,
     setupNodeEvents(on, config) {
-      config.env.carbonPrefix = 'cds';
+      config.expose.carbonPrefix = 'cds';
 
       on('after:spec', (spec, results) => {
         if (isCI && results?.video && results.stats.failures === 0) {
