@@ -32,7 +32,7 @@ else
   END=50
 fi
 
-install_buildx
+# install_buildx
 if [ "${USE_NIGHTLY_RELEASE}" != "true" ]; then
   install_kustomize
 fi
