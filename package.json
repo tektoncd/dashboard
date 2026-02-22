@@ -45,7 +45,7 @@
   "devDependencies": {
     "@eslint/compat": "^2.0.2",
     "@eslint/js": "^9.39.2",
-    "@formatjs/cli": "^6.12.2",
+    "@formatjs/cli": "^6.13.0",
     "@rollup/plugin-yaml": "^4.1.2",
     "@storybook/addon-docs": "^10.2.10",
     "@storybook/addon-links": "^10.2.10",
