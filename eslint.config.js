@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2025 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -10,26 +10,26 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-/* eslint-disable depend/ban-dependencies */
-const { defineConfig } = require('eslint/config');
+import { defineConfig } from 'eslint/config';
 
-const cypress = require('eslint-plugin-cypress');
-const depend = require('eslint-plugin-depend');
-const formatjs = require('eslint-plugin-formatjs');
-const globals = require('globals');
-const importPlugin = require('eslint-plugin-import');
-const { includeIgnoreFile } = require('@eslint/compat');
-const js = require('@eslint/js');
-const jsxA11y = require('eslint-plugin-jsx-a11y');
-const notice = require('eslint-plugin-notice');
-const path = require('path');
-const prettier = require('eslint-plugin-prettier/recommended');
-const react = require('eslint-plugin-react');
-const storybook = require('eslint-plugin-storybook');
+import cypress from 'eslint-plugin-cypress';
+import depend from 'eslint-plugin-depend';
+import formatjs from 'eslint-plugin-formatjs';
+import globals from 'globals';
+import importPlugin from 'eslint-plugin-import-x';
+import { includeIgnoreFile } from '@eslint/compat';
+import js from '@eslint/js';
+import jsxA11y from 'eslint-plugin-jsx-a11y';
+import notice from 'eslint-plugin-notice';
+import path from 'path';
+import prettier from 'eslint-plugin-prettier/recommended';
+/* eslint-disable-next-line depend/ban-dependencies */
+import react from 'eslint-plugin-react';
+import storybook from 'eslint-plugin-storybook';
 
-const gitignorePath = path.join(__dirname, '.gitignore');
+const gitignorePath = path.join(import.meta.dirname, '.gitignore');
 
-module.exports = defineConfig([
+export default defineConfig([
   // List of recommended rules used as a baseline
   js.configs.recommended, // Applies 'eslint:recommended'
   react.configs.flat.recommended,
@@ -69,8 +69,8 @@ module.exports = defineConfig([
       react: {
         version: 'detect'
       },
-      // import resolver required to quash import/no-unresolved lint errors for imports without file extension
-      'import/resolver': {
+      // import resolver required to quash import-x/no-unresolved lint errors for imports without file extension
+      'import-x/resolver': {
         node: {
           extensions: ['.js', '.jsx'],
           moduleDirectory: ['node_modules', 'src/']
@@ -87,11 +87,11 @@ module.exports = defineConfig([
       'formatjs/no-literal-string-in-jsx': 'off',
       'formatjs/no-multiple-whitespaces': 'error',
       'formatjs/no-multiple-plurals': 'error',
-      'import/named': 'off',
-      'import/no-cycle': 'error',
-      'import/no-named-as-default': 'off',
-      'import/no-named-as-default-member': 'off',
-      'import/no-unresolved': [
+      'import-x/named': 'off',
+      'import-x/no-cycle': 'error',
+      'import-x/no-named-as-default': 'off',
+      'import-x/no-named-as-default-member': 'off',
+      'import-x/no-unresolved': [
         'error',
         {
           ignore: [
