@@ -6,10 +6,11 @@ permissions:
 on:
   pull_request:
     branches: ["main"]
+  merge_group: {}
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.merge_group.head_ref || github.run_id }}
   cancel-in-progress: true
 
 defaults:
@@ -176,3 +177,28 @@ jobs:
       #   with:
       #     artifact-name: ${{ matrix.k8s-version }}-${{ matrix.dashboard-mode }}-logs
       #     namespace-resources: pods,taskruns,pipelineruns
+
+  ci-summary:
+    # Fan-in job for branch protection: depends on all CI jobs.
+    # This allows a single "CI summary" check to gate merges,
+    # instead of listing every individual job in branch protection.
+    name: CI summary
+    if: always()
+    runs-on: ubuntu-24.04
+    needs:
+      - build
+      - unit-tests
+      - e2e-tests
+    steps:
+      - name: Check results
+        run: |
+          results=( "${{ needs.build.result }}"
+                    "${{ needs.unit-tests.result }}"
+                    "${{ needs.e2e-tests.result }}" )
+          for r in "${results[@]}"; do
+            if [[ "$r" != "success" && "$r" != "skipped" ]]; then
+              echo "One or more jobs failed or were cancelled ($r)"
+              exit 1
+            fi
+          done
+          echo "All jobs passed or were skipped"
