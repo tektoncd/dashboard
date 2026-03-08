@@ -1,4 +1,4 @@
-# Copyright 2024-2025 The Tekton Authors
+# Copyright 2024-2026 The Tekton Authors
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -14,7 +14,7 @@
 # https://nodejs.org/en/about/previous-releases
 
 ARG CHROME_VERSION='140.0.7339.185-1'
-ARG NODE_VERSION='24.10.0'
+ARG NODE_VERSION='24.14.0'
 
 FROM cypress/factory@sha256:d2afc4e4cf254ef2502920bdd5491bc9297125b6ab47978bf1a631bd03667f91
 
