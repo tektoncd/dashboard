@@ -57,6 +57,7 @@
     "@vitest/coverage-istanbul": "^4.0.18",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-node": "^0.3.9",
     "eslint-plugin-cypress": "^6.1.0",
     "eslint-plugin-depend": "^1.5.0",
     "eslint-plugin-formatjs": "^5.4.2",
@@ -78,9 +79,21 @@
     "vite-plugin-svgr": "^4.5.0",
     "vitest": "^4.0.10"
   },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "onFail": "error",
+      "version": "^24.14.0"
+    },
+    "packageManager": {
+      "name": "npm",
+      "onFail": "error",
+      "version": "^11.9.0"
+    }
+  },
   "engines": {
-    "node": "^24.10.0",
-    "npm": "^11.6.1"
+    "node": "^24.14.0",
+    "npm": "^11.9.0"
   },
   "//": "Workspaces must be listed explicitly to ensure they're processed in the correct order until npm natively supports detecting the topological order. Exclude e2e as it needs to function as a standalone project and its dependencies should not be hoisted.",
   "workspaces": [

@@ -20,8 +20,8 @@
     "cypress": "^15.11.0"
   },
   "engines": {
-    "node": "^24.10.0",
-    "npm": "^11.6.1"
+    "node": "^24.14.0",
+    "npm": "^11.9.0"
   },
   "repository": {
     "type": "git",
