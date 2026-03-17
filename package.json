@@ -79,7 +79,7 @@
     "vite-plugin-svgr": "^4.5.0",
     "vitest": "^4.0.10"
   },
-  "devEngines": {
+  "_devEngines": {
     "runtime": {
       "name": "node",
       "onFail": "error",
