@@ -179,11 +179,11 @@ export function isValidLabel(type, value) {
 }
 
 export function getViewChangeHandler({ location, navigate }) {
-  return function handleViewChange(view) {
+  return function handleViewChange(view, { replace } = {}) {
     const queryParams = new URLSearchParams(location.search);
     queryParams.set('view', view);
     const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
-    navigate(browserURL);
+    navigate(browserURL, { replace });
   };
 }
 

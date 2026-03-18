@@ -114,9 +114,8 @@ const TaskRunDetails = ({
   useEffect(() => {
     setPodContent('resource');
 
-    /* istanbul ignore if */
     if (!view && logs) {
-      onViewChange('logs');
+      onViewChange('logs', { replace: true });
     }
   }, [displayName, view]);
 

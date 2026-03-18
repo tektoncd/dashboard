@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { InlineNotification, SkeletonText, TabsVertical } from '@carbon/react';
 import { useIntl } from 'react-intl';
 import {
@@ -84,6 +84,19 @@ export default /* istanbul ignore next */ function PipelineRun({
   const [expandedSteps, setExpandedSteps] = useState(() =>
     selectedStepId ? { [selectedStepId]: true } : {}
   );
+  useEffect(() => {
+    if (enableTabLayout && !selectedTaskId && taskRuns?.length) {
+      const firstTaskRun = taskRuns[0];
+      const { labels = {} } = firstTaskRun?.metadata || {};
+      const { [labelConstants.PIPELINE_TASK]: pipelineTaskName } = labels;
+
+      handleTaskSelected({
+        selectedTaskId: pipelineTaskName,
+        taskRunName: firstTaskRun?.metadata?.name
+      });
+    }
+  }, [enableTabLayout, selectedTaskId, taskRuns]);
+
   const namespace = pipelineRun?.metadata?.namespace;
   const pipelineRefName =
     pipelineRun?.spec?.pipelineRef && pipelineRun?.spec?.pipelineRef?.name;
@@ -363,17 +376,6 @@ export default /* istanbul ignore next */ function PipelineRun({
   const skippedTask = skippedTasks.find(
     skipped => skipped.name === selectedTaskId
   );
-
-  if (enableTabLayout && !selectedTaskId) {
-    const selectedTaskRun = taskRunsToUse[0];
-    const { labels = {} } = selectedTaskRun?.metadata || {};
-    const { [labelConstants.PIPELINE_TASK]: pipelineTaskName } = labels;
-
-    onTaskSelected({
-      selectedTaskId: pipelineTaskName,
-      taskRunName: selectedTaskRun?.metadata?.name
-    });
-  }
 
   return (
     <>
