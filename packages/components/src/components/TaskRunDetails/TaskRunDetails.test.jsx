@@ -252,6 +252,23 @@ describe('TaskRunDetails', () => {
     expect(queryByText(waitingMessage)).toBeTruthy();
   });
 
+  it('auto-selects logs view with replace to avoid breaking back button', () => {
+    const onViewChangeSpy = vi.fn();
+    const taskRun = {
+      metadata: { name: 'task-run-name' },
+      spec: {},
+      status: {}
+    };
+    render(
+      <TaskRunDetails
+        logs={<div>fake logs</div>}
+        onViewChange={onViewChangeSpy}
+        taskRun={taskRun}
+      />
+    );
+    expect(onViewChangeSpy).toHaveBeenCalledWith('logs', { replace: true });
+  });
+
   it('renders skipped task', () => {
     const reason = 'When Expressions evaluated to false';
     const podName = 'fake_pod';
