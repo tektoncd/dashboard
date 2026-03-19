@@ -291,7 +291,8 @@ it('getViewChangeHandler', () => {
   const view = 'someView';
   handleViewChange(view);
   expect(navigate).toHaveBeenCalledWith(
-    `${url}?nonViewQueryParam=someValue&view=${view}`
+    `${url}?nonViewQueryParam=someValue&view=${view}`,
+    { replace: undefined }
   );
 });
 
