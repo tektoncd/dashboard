@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2025 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,16 +16,35 @@ import * as comms from '../api/comms';
 import {
   fetchLogs,
   fetchLogsFallback,
+  getByPath,
   getLocale,
   getLogsRetriever,
   getTheme,
   getViewChangeHandler,
   I18N_DEV_KEY,
+  isValidLabel,
   keyBy,
   setTheme,
   sortRunsByCreationTime,
   sortRunsByStartTime
 } from '.';
+
+describe('getKeyByPath', () => {
+  it('should handle simple key lookup', () => {
+    const foo = '123';
+    expect(getByPath({ foo }, 'foo')).toEqual(foo);
+  });
+
+  it('should handle dot notation', () => {
+    const bar = '123';
+    expect(getByPath({ foo: { bar } }, 'foo.bar')).toEqual(bar);
+  });
+
+  it('should handle case where key not found', () => {
+    expect(getByPath({ foo: 123 }, 'bar')).toBeUndefined();
+    expect(getByPath({ foo: 123 }, 'foo.bar')).toBeUndefined();
+  });
+});
 
 describe('sortRunsByStartTime', () => {
   it('should handle missing start time or status', () => {
@@ -399,5 +418,94 @@ describe('setTheme', () => {
     localStorage.removeItem('tkn-theme');
     setTheme('light');
     expect(localStorage.getItem('tkn-theme')).toEqual('light');
+  });
+});
+
+describe('isValidLabel', () => {
+  describe('label keys', () => {
+    it('should accept valid alphanumeric keys', () => {
+      expect(isValidLabel('key', 'app')).toBe(true);
+      expect(isValidLabel('key', 'env123')).toBe(true);
+    });
+
+    it('should accept keys with hyphens, dots, and underscores', () => {
+      expect(isValidLabel('key', 'app-name')).toBe(true);
+      expect(isValidLabel('key', 'app.name')).toBe(true);
+      expect(isValidLabel('key', 'my-app.v1_test')).toBe(true);
+    });
+
+    it('should accept keys with domain prefix', () => {
+      expect(isValidLabel('key', 'example.com/app')).toBe(true);
+      expect(isValidLabel('key', 'k8s.io/cluster-name')).toBe(true);
+    });
+
+    it('should reject keys starting or ending with special characters', () => {
+      expect(isValidLabel('key', '-app')).toBe(false);
+      expect(isValidLabel('key', 'app-')).toBe(false);
+      expect(isValidLabel('key', '.app')).toBe(false);
+    });
+
+    it('should reject empty keys', () => {
+      expect(isValidLabel('key', '')).toBe(false);
+    });
+
+    it('should reject keys with invalid characters', () => {
+      expect(isValidLabel('key', 'app@name')).toBe(false);
+      expect(isValidLabel('key', 'app name')).toBe(false);
+    });
+
+    it('should reject keys with invalid characters in domain prefix', () => {
+      expect(isValidLabel('key', 'app@name/app')).toBe(false);
+    });
+
+    it('should reject keys with name segment longer than 63 characters', () => {
+      expect(isValidLabel('key', 'a'.repeat(63))).toBe(true);
+      expect(isValidLabel('key', 'a'.repeat(64))).toBe(false);
+    });
+
+    it('should reject keys with domain prefix longer than 253 characters', () => {
+      expect(isValidLabel('key', `${'a'.repeat(249)}.com/foo`)).toBe(true);
+      expect(isValidLabel('key', `${'a'.repeat(250)}.com/foo`)).toBe(false);
+    });
+  });
+
+  describe('label values', () => {
+    it('should accept valid alphanumeric values', () => {
+      expect(isValidLabel('value', 'prod')).toBe(true);
+      expect(isValidLabel('value', 'v1.2.3-beta_1')).toBe(true);
+    });
+
+    it('should accept values with hyphens, dots, and underscores', () => {
+      expect(isValidLabel('value', 'app-name')).toBe(true);
+      expect(isValidLabel('value', 'app.name')).toBe(true);
+      expect(isValidLabel('value', 'my-app.v1_test')).toBe(true);
+    });
+
+    it('should accept empty values', () => {
+      expect(isValidLabel('value', '')).toBe(true);
+    });
+
+    it('should reject values starting or ending with special characters', () => {
+      expect(isValidLabel('value', '-prod')).toBe(false);
+      expect(isValidLabel('value', 'prod-')).toBe(false);
+    });
+
+    it('should reject values with invalid characters', () => {
+      expect(isValidLabel('value', 'prod@env')).toBe(false);
+      expect(isValidLabel('value', 'prod env')).toBe(false);
+    });
+
+    it('should reject values with slashes', () => {
+      expect(isValidLabel('value', 'prod/v1')).toBe(false);
+    });
+
+    it('should reject values exceeding 63 characters', () => {
+      expect(isValidLabel('value', 'a'.repeat(63))).toBe(true);
+      expect(isValidLabel('value', 'a'.repeat(64))).toBe(false);
+    });
+  });
+
+  it('should reject invalid field type', () => {
+    expect(isValidLabel('other', 'foo')).toBe(false);
   });
 });
