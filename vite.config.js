@@ -1,5 +1,5 @@
 /*
-Copyright 2023-2025 The Tekton Authors
+Copyright 2023-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react-swc';
+import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
 import yaml from '@rollup/plugin-yaml';
 
@@ -40,9 +40,6 @@ export default defineConfig(({ mode }) => ({
         quietDeps: true
       }
     }
-  },
-  esbuild: {
-    target: 'es2022'
   },
   plugins: [react({ devTarget: 'es2022' }), svgr(), yaml()],
   resolve: {
