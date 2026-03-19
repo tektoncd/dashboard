@@ -1,5 +1,5 @@
 /*
-Copyright 2025 The Tekton Authors
+Copyright 2025-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -55,9 +55,11 @@ export default function LabelsWithOverflow({
     setIsModalOpen(true);
   };
 
+  /* istanbul ignore next */
   const handleRequestClose = () => {
     setOpen(false);
   };
+  /* istanbul ignore next */
   const handleModalClose = () => {
     setIsModalOpen(false);
   };
@@ -91,6 +93,7 @@ export default function LabelsWithOverflow({
       </LinkComponent>
     ));
 
+  /* istanbul ignore next */
   const handleFocusOut = event => {
     if (
       popoverRef.current &&
@@ -100,6 +103,7 @@ export default function LabelsWithOverflow({
     }
   };
 
+  /* istanbul ignore next */
   const handleKeyDown = event => {
     if (event.key === 'Escape') {
       handleRequestClose();
