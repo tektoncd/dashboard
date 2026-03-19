@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,32 +13,18 @@ limitations under the License.
 
 import { waitFor } from '@testing-library/react';
 import { renderWithRouter } from '../../utils/test';
+import * as API from '../../api';
 import Logout from './LogoutButton';
 
 it('Header renders logout button when logout url is set', async () => {
-  const mockedResponse = Promise.resolve('/blabla');
-
-  const getLogoutURLMock = vi.fn().mockImplementation(() => mockedResponse);
-  const logoutButton = <Logout getLogoutURL={getLogoutURLMock} />;
+  vi.spyOn(API, 'useLogoutURL').mockImplementation(() => '/logout');
+  const logoutButton = <Logout />;
   const { queryByTitle } = renderWithRouter(logoutButton);
   await waitFor(() => queryByTitle(/log out/i));
 });
 
-it('Header renders logout button when logout url is not set', async () => {
-  const mockedResponse = Promise.resolve(null);
-
-  const getLogoutURLMock = vi.fn().mockImplementation(() => mockedResponse);
-  const { queryByText } = renderWithRouter(
-    <Logout getLogoutURL={getLogoutURLMock} />
-  );
-  expect(queryByText(/log out/i)).toBeFalsy();
-});
-
-it('Header does not render logout button when promise for getting properties is rejected', async () => {
-  vi.spyOn(console, 'log').mockImplementation(() => {}); // suppress log from test output
-  const getLogoutURLMock = vi.fn().mockImplementation(() => Promise.reject());
-  const { queryByText } = renderWithRouter(
-    <Logout getLogoutURL={getLogoutURLMock} />
-  );
+it('Header does not render logout button when logout url is not set', async () => {
+  vi.spyOn(API, 'useLogoutURL').mockImplementation(() => undefined);
+  const { queryByText } = renderWithRouter(<Logout />);
   expect(queryByText(/log out/i)).toBeFalsy();
 });
