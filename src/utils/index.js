@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2025 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -21,7 +21,7 @@ const supportedLocales = import.meta.env.VITE_LOCALES_SUPPORTED.split(',');
 export const defaultLocale = import.meta.env.VITE_LOCALES_DEFAULT;
 export const I18N_DEV_KEY = 'tkn-locale-dev';
 
-function getByPath(object, key) {
+export function getByPath(object, key) {
   const keyParts = key.split('.');
   const length = keyParts.length;
   let index = 0;
@@ -170,12 +170,57 @@ export function getLogsRetriever({
 
 // K8s label documentation comes from here:
 // https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set
-const labelKeyRegex =
-  /^(([a-z0-9A-Z]([a-z0-9A-Z-.]*[a-z0-9A-Z])?){0,253}\/)?([a-z0-9A-Z]([a-z0-9A-Z-_.]*[a-z0-9A-Z])?){1,63}$/;
-const labelValueRegex = /^([a-z0-9A-Z]([a-z0-9A-Z-_.]*[a-z0-9A-Z])?){0,63}$/;
+const labelNameSegmentPattern = /^[a-z0-9A-Z]([a-z0-9A-Z\-_.]*[a-z0-9A-Z])?$/;
+const dnsLabelPattern = /^[a-z0-9A-Z]([a-z0-9A-Z-]{0,61}[a-z0-9A-Z])?$/;
+
+function isValidLabelKey(key) {
+  if (typeof key !== 'string' || key.length === 0) {
+    return false;
+  }
+
+  const parts = key.split('/');
+  if (parts.length > 2) {
+    return false;
+  }
+
+  if (parts.length === 2) {
+    const prefix = parts[0];
+    if (prefix.length === 0 || prefix.length > 253) {
+      return false;
+    }
+
+    for (const segment of prefix.split('.')) {
+      if (!segment || !dnsLabelPattern.test(segment)) {
+        return false;
+      }
+    }
+  }
+
+  const name = parts.at(-1);
+  if (name.length === 0 || name.length > 63) {
+    return false;
+  }
+
+  return labelNameSegmentPattern.test(name);
+}
+
+function isValidLabelValue(value) {
+  if (typeof value !== 'string' || value.length > 63) {
+    return false;
+  }
+  if (value.length === 0) {
+    return true;
+  }
+  return labelNameSegmentPattern.test(value);
+}
+
 export function isValidLabel(type, value) {
-  const regex = type === 'key' ? labelKeyRegex : labelValueRegex;
-  return regex.test(value);
+  if (type === 'key') {
+    return isValidLabelKey(value);
+  } else if (type === 'value') {
+    return isValidLabelValue(value);
+  }
+  return false;
 }
 
 export function getViewChangeHandler({ location, navigate }) {
