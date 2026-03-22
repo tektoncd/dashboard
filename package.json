@@ -61,7 +61,7 @@
     "eslint-plugin-cypress": "^6.2.0",
     "eslint-plugin-depend": "^1.5.0",
     "eslint-plugin-formatjs": "^5.4.2",
-    "eslint-plugin-import-x": "^4.16.1",
+    "eslint-plugin-import-x": "^4.16.2",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-notice": "^1.0.0",
     "eslint-plugin-prettier": "^5.5.5",
