@@ -339,7 +339,7 @@ const TaskRunTabPanels = ({
   expandedSteps,
   getLogContainer,
   getLogsToolbar,
-  ignoredSidecars,
+  ignoredSidecars = {},
   isMaximized,
   onRetryChange,
   onStepSelected,
