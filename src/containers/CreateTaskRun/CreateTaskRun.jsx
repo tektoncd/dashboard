@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2025 The Tekton Authors
+Copyright 2020-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -21,7 +21,8 @@ import {
   FormGroup,
   InlineNotification,
   TextArea,
-  TextInput
+  TextInput,
+  Toggle
 } from '@carbon/react';
 import {
   ALL_NAMESPACES,
@@ -62,6 +63,7 @@ const initialState = {
   submitError: '',
   taskRef: '',
   taskRunName: '',
+  taskRunPendingStatus: '',
   timeout: '',
   validationError: false,
   validTaskRunName: true
@@ -122,6 +124,7 @@ function CreateTaskRun() {
       submitError,
       taskRef,
       taskRunName,
+      taskRunPendingStatus,
       timeout,
       validationError,
       validTaskRunName
@@ -147,6 +150,13 @@ function CreateTaskRun() {
       defaultMessage: 'Create TaskRun'
     })
   });
+
+  const checked = isPending => {
+    setState(state => ({
+      ...state,
+      taskRunPendingStatus: isPending ? 'TaskRunPending' : ''
+    }));
+  };
 
   function switchToYamlMode() {
     const queryParams = new URLSearchParams(location.search);
@@ -394,6 +404,7 @@ function CreateTaskRun() {
       serviceAccount,
       taskName: taskRef,
       taskRunName: taskRunName || undefined,
+      taskRunPendingStatus,
       timeout
     })
       .then(() => {
@@ -471,6 +482,7 @@ function CreateTaskRun() {
       serviceAccount,
       taskName: taskRef,
       taskRunName: taskRunName || undefined,
+      taskRunPendingStatus,
       timeout
     });
 
@@ -722,6 +734,26 @@ function CreateTaskRun() {
             onChange={({ target: { value } }) =>
               setState(state => ({ ...state, taskRunName: value.trim() }))
             }
+          />
+          <Toggle
+            defaultToggled={false}
+            id="pending-taskRun-toggle"
+            labelText={intl.formatMessage(
+              {
+                id: 'dashboard.createRun.status.pending',
+                defaultMessage: 'Create {kind} in pending state'
+              },
+              { kind: 'TaskRun' }
+            )}
+            onToggle={checked}
+            labelA={intl.formatMessage({
+              id: 'dashboard.createPipelineRun.disabled',
+              defaultMessage: 'Disabled'
+            })}
+            labelB={intl.formatMessage({
+              id: 'dashboard.createPipelineRun.enabled',
+              defaultMessage: 'Enabled'
+            })}
           />
         </FormGroup>
 

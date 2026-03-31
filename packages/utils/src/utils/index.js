@@ -201,7 +201,9 @@ export function isPending(reason, status) {
   return (
     !status ||
     (status === 'Unknown' &&
-      (reason === 'Pending' || reason === 'PipelineRunPending'))
+      (reason === 'Pending' ||
+        reason === 'PipelineRunPending' ||
+        reason === 'TaskRunPending'))
   );
 }
 

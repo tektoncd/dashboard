@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2025 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -75,6 +75,7 @@ export function getTaskRunPayload({
   serviceAccount,
   taskName,
   taskRunName = `${taskName ? `${taskName}-run` : 'run'}-${Date.now()}`,
+  taskRunPendingStatus,
   timeout
 }) {
   const payload = {
@@ -85,6 +86,7 @@ export function getTaskRunPayload({
       namespace
     },
     spec: {
+      status: taskRunPendingStatus,
       taskRef: {
         name: taskName,
         kind: 'Task'
@@ -121,6 +123,7 @@ export function createTaskRun({
   serviceAccount,
   taskName,
   taskRunName = `${taskName}-run-${Date.now()}`,
+  taskRunPendingStatus,
   timeout
 }) {
   const payload = getTaskRunPayload({
@@ -131,6 +134,7 @@ export function createTaskRun({
     serviceAccount,
     taskName,
     taskRunName,
+    taskRunPendingStatus,
     timeout
   });
   const uri = getKubeAPI({
@@ -205,4 +209,18 @@ export function rerunTaskRun(taskRun) {
     version: getTektonPipelinesAPIVersion()
   });
   return post(uri, payload).then(({ body }) => body);
+}
+
+export function startTaskRun(taskRun) {
+  const { name, namespace } = taskRun.metadata;
+
+  const payload = [{ op: 'remove', path: '/spec/status' }];
+
+  const uri = getKubeAPI({
+    group: tektonAPIGroup,
+    kind: 'taskruns',
+    params: { name, namespace },
+    version: getTektonPipelinesAPIVersion()
+  });
+  return patch(uri, payload);
 }
