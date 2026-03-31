@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2025 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -435,5 +435,18 @@ spec:
 `;
     expect(namespace).toEqual('test-namespace');
     expect(yaml.stringify(payload)).toEqual(expected);
+  });
+});
+
+it('startTaskRun', () => {
+  const name = 'foo';
+  const namespace = 'foospace';
+  const payload = [{ op: 'remove', path: '/spec/status' }];
+  vi.spyOn(comms, 'patch').mockImplementation((uri, body) =>
+    Promise.resolve(body)
+  );
+  return API.startTaskRun({ metadata: { name, namespace } }).then(() => {
+    expect(comms.patch).toHaveBeenCalled();
+    expect(comms.patch.mock.lastCall[1]).toEqual(payload);
   });
 });
