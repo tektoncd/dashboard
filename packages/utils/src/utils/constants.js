@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2025 The Tekton Authors
+Copyright 2020-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -24,10 +24,6 @@ export const labels = {
   PIPELINE_TASK: 'tekton.dev/pipelineTask',
   TASK: 'tekton.dev/task',
   TRIGGER: 'triggers.tekton.dev/trigger'
-};
-
-export const pipelineRunStatuses = {
-  PENDING: 'PipelineRunPending'
 };
 
 export const preferences = {

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2025 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,6 +14,7 @@ limitations under the License.
 import { useIntl } from 'react-intl';
 import {
   Calendar as CalendarIcon,
+  Pending as DefaultIcon,
   Time as TimeIcon,
   Lightning as TriggersIcon
 } from '@carbon/react/icons';
@@ -47,6 +48,7 @@ const TaskRuns = ({
     const { reason, status } = getStatus(taskRun);
     return (
       <StatusIcon
+        DefaultIcon={props => <DefaultIcon size={24} {...props} />}
         hasWarning={taskRunHasWarning(taskRun)}
         reason={reason}
         status={status}

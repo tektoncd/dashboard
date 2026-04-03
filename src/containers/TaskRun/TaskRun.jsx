@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2025 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -31,6 +31,7 @@ import {
   getStatus,
   getStepDefinition,
   getStepStatus,
+  isPending,
   isRunning,
   labels as labelConstants,
   queryParams as queryParamConstants,
@@ -44,6 +45,7 @@ import {
   cancelTaskRun,
   deleteTaskRun,
   rerunTaskRun,
+  startTaskRun,
   useEvents,
   useExternalLogsURL,
   useIsLogStreamingEnabled,
@@ -354,7 +356,13 @@ export function TaskRunContainer({
           id: 'dashboard.rerun.actionText',
           defaultMessage: 'Rerun'
         }),
-        disable: resource => !!resource.metadata.labels?.['tekton.dev/pipeline']
+        disable: resource => {
+          if (resource.metadata.labels?.['tekton.dev/pipeline']) {
+            return true;
+          }
+          const { reason, status } = getStatus(resource);
+          return isPending(reason, status);
+        }
       },
       {
         action: editAndRun,
@@ -366,13 +374,24 @@ export function TaskRunContainer({
       },
       {
         actionText: intl.formatMessage({
+          id: 'dashboard.startRun.actionText',
+          defaultMessage: 'Start'
+        }),
+        action: startTaskRun,
+        disable: resource => {
+          const { reason, status } = getStatus(resource);
+          return !isPending(reason, status);
+        }
+      },
+      {
+        actionText: intl.formatMessage({
           id: 'dashboard.cancelTaskRun.actionText',
           defaultMessage: 'Stop'
         }),
         action: cancel,
         disable: resource => {
           const { reason, status } = getStatus(resource);
-          return !isRunning(reason, status);
+          return !isRunning(reason, status) && !isPending(reason, status);
         },
         modalProperties: {
           heading: intl.formatMessage({

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2025 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -100,7 +100,7 @@ describe('CreateTaskRun', () => {
       path: '/taskruns/create',
       route: '/taskruns/create?kind=Task'
     });
-    expect(queryByText(/create taskrun/i)).toBeTruthy();
+    expect(queryByText('Create TaskRun')).toBeTruthy();
     expect(queryByPlaceholderText(/select namespace/i)).toBeTruthy();
     expect(queryByPlaceholderText(/select task/i).disabled).toBeTruthy();
     expect(
