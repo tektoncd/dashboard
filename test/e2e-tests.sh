@@ -32,7 +32,12 @@ else
   END=50
 fi
 
-# install_buildx
+if [ "${GITHUB_ACTIONS}" != "true"]; then
+  # needed for ppc64le and s390x nightly tests which are still run in Tekton
+  # on infra.tekton.dev
+  install_buildx
+fi
+
 if [ "${USE_NIGHTLY_RELEASE}" != "true" ]; then
   install_kustomize
 fi
