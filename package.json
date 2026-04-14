@@ -70,7 +70,7 @@
     "globals": "^17.4.0",
     "jsdom": "^29.0.2",
     "msw": "^2.13.3",
-    "prettier": "^3.8.1",
+    "prettier": "^3.8.2",
     "rollup-plugin-visualizer": "^7.0.1",
     "sass-embedded": "^1.99.0",
     "storybook": "^10.3.5",
