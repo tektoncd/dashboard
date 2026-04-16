@@ -18,15 +18,15 @@ ARG NODE_VERSION='24.14.0'
 
 FROM cypress/factory@sha256:d0cd27b6e4f82c187739f18dbbe227f69de4636fd126878477e28a9c3bca0151
 
-LABEL maintainer "Tekton Authors <tekton-dev@googlegroups.com>"
+LABEL maintainer="Tekton Authors <tekton-dev@googlegroups.com>"
 LABEL org.opencontainers.image.source=https://github.com/tektoncd/dashboard
 LABEL org.opencontainers.image.description="Base image for Tekton Dashboard E2E tests"
 LABEL org.opencontainers.image.licenses=Apache-2.0
 
-RUN apt-get update && apt-get install -y apt-transport-https ca-certificates curl gpg &&\
+RUN apt-get update && apt-get install -y apt-transport-https ca-certificates curl gnupg &&\
     mkdir -p /etc/apt/keyrings &&\
-    curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg &&\
-    echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list &&\
+    curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.35/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg &&\
+    echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.35/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list &&\
     apt-get update && apt-get install -y kubectl &&\
     rm -rf /var/lib/apt/lists/*
 USER node

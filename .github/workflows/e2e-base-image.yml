@@ -1,0 +1,65 @@
+name: E2E base image
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag containing the Node.js and browser versions, e.g. node24.14.0-chrome140'
+        required: false
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  REGISTRY: ghcr.io
+  TAG: ${{ inputs.tag || 'node24.14.0-chrome140' }}
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@f808768d1510423e83855289c910610ca9b43176 # v2.17.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121  # v4.1.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf  # v6.0.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}/dashboard-e2e-base
+          tags: |
+            type=raw,value=latest,priority=300
+            type=raw,value=${{ env.TAG }},priority=200
+            type=raw,value=v{{date 'YYYYMMDD'}}-{{sha}},priority=100
+        env:
+          DOCKER_METADATA_SHORT_SHA_LENGTH: 10
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f  # v7.1.0
+        with:
+          platforms: linux/amd64
+          context: packages/e2e/base-image
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
