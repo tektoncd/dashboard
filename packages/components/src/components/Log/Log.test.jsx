@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2025 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -29,6 +29,19 @@ describe('Log', () => {
       />
     );
     await waitFor(() => getByText(/testing/i));
+  });
+
+  it('renders truncated lines', async () => {
+    const { getByText, queryByText } = render(
+      <Log
+        stepStatus={{ terminated: { reason: 'Completed' } }}
+        fetchLogs={() => 'testing'}
+        maxLineLength={4}
+      />
+    );
+    await waitFor(() => getByText(/This log line has been truncated./i));
+    expect(queryByText(/testing/)).toBeFalsy();
+    expect(getByText(/test/)).toBeTruthy();
   });
 
   it('renders trailer', async () => {

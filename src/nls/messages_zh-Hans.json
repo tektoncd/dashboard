@@ -149,6 +149,7 @@
   "dashboard.logs.hidden.all": "",
   "dashboard.logs.hidden.one": "",
   "dashboard.logs.launchButtonTooltip": "在新窗口中打开日志",
+  "dashboard.logs.lineTruncated": "",
   "dashboard.logs.logLevels.debug": "",
   "dashboard.logs.logLevels.error": "",
   "dashboard.logs.logLevels.info": "",

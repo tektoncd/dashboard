@@ -149,6 +149,7 @@
   "dashboard.logs.hidden.all": "",
   "dashboard.logs.hidden.one": "",
   "dashboard.logs.launchButtonTooltip": "新しいウィンドウでログを開く",
+  "dashboard.logs.lineTruncated": "",
   "dashboard.logs.logLevels.debug": "",
   "dashboard.logs.logLevels.error": "",
   "dashboard.logs.logLevels.info": "",

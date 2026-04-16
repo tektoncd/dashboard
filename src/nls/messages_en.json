@@ -149,6 +149,7 @@
   "dashboard.logs.hidden.all": "All lines hidden due to selected log levels or collapsed groups",
   "dashboard.logs.hidden.one": "1 line hidden due to selected log levels or collapsed groups",
   "dashboard.logs.launchButtonTooltip": "Open logs in a new window",
+  "dashboard.logs.lineTruncated": "This log line has been truncated. To view the full content, download the raw logs.",
   "dashboard.logs.logLevels.debug": "Debug",
   "dashboard.logs.logLevels.error": "Error",
   "dashboard.logs.logLevels.info": "Info (default)",
