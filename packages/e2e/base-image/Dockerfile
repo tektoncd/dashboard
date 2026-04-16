@@ -13,7 +13,7 @@
 # https://www.ubuntuupdates.org/package/google_chrome/stable/main/base/google-chrome-stable
 # https://nodejs.org/en/about/previous-releases
 
-ARG CHROME_VERSION='140.0.7339.185-1'
+ARG CHROME_VERSION='147.0.7727.101-1'
 ARG NODE_VERSION='24.14.0'
 
 FROM cypress/factory@sha256:d0cd27b6e4f82c187739f18dbbe227f69de4636fd126878477e28a9c3bca0151

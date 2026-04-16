@@ -20,7 +20,7 @@ defaults:
 
 env:
   REGISTRY: ghcr.io
-  TAG: ${{ inputs.tag || 'node24.14.0-chrome140' }}
+  TAG: ${{ inputs.tag || 'node24.14.0-chrome147' }}
 
 jobs:
   build:
