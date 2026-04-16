@@ -176,17 +176,33 @@ export class LogContainer extends Component {
   };
 
   getLogList = () => {
+    const { intl } = this.props;
+    const truncatedLineWarning = intl.formatMessage({
+      id: 'dashboard.logs.lineTruncated',
+      defaultMessage:
+        'This log line has been truncated. To view the full content, download the raw logs.'
+    });
+
     const {
-      intl,
       logLevels,
+      maxLineLength,
       parseLogLine = line => {
         if (!line?.length) {
           return { message: line };
         }
 
+        let truncatedLine = line;
+        if (line.length > maxLineLength) {
+          // Truncate extraordinarily long log lines to prevent performance
+          // issues in the browser. We have encountered some users outputting
+          // >2MB on a single log line which crashes even VS Code.
+          truncatedLine =
+            line.substring(0, maxLineLength) + ' … ' + truncatedLineWarning;
+        }
+
         const {
           groups: { command, message, timestamp }
-        } = logFormatRegex.exec(line);
+        } = logFormatRegex.exec(truncatedLine);
         let level;
         if (!['group', 'endgroup'].includes(command)) {
           level = command;
@@ -498,6 +514,7 @@ export class LogContainer extends Component {
 }
 LogContainer.contextType = PrefixContext;
 LogContainer.defaultProps = {
+  maxLineLength: 64 * 1024,
   pollingInterval: 4000
 };
 
