@@ -7,8 +7,10 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag containing the Node.js and browser versions, e.g. node24.14.0-chrome140'
-        required: false
+        description: 'Image tag, typically containing the Node.js and browser versions'
+        required: true
+        default: 'node24.14.0-chrome147'
+        type: string
 
 concurrency:
   group: ${{ github.workflow }}
@@ -20,7 +22,7 @@ defaults:
 
 env:
   REGISTRY: ghcr.io
-  TAG: ${{ inputs.tag || 'node24.14.0-chrome147' }}
+  TAG: ${{ inputs.tag }}
 
 jobs:
   build:
