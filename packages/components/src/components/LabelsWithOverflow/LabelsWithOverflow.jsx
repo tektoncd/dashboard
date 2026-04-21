@@ -25,6 +25,7 @@ import { urls } from '@tektoncd/dashboard-utils';
 import Link from '../Link';
 
 export default function LabelsWithOverflow({
+  kind,
   namespace,
   resource,
   LinkComponent = Link
@@ -46,7 +47,10 @@ export default function LabelsWithOverflow({
     maxVisibleLabels + maxOverflowLabels
   );
   const totalHiddenLabels = labelEntries.length - maxVisibleLabels;
-  const resourceType = resource.kind;
+  // Kubernetes typed API responses typically do not populate `kind` on the
+  // resource body, so we rely on an explicit prop from the caller rather than
+  // reading `resource.kind` — see tektoncd/dashboard#4905.
+  const resourceType = kind;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [open, setOpen] = useState(false);

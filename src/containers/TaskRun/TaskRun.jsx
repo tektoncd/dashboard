@@ -555,6 +555,7 @@ export function TaskRunContainer({
       )}
       <RunHeader
         duration={duration}
+        kind="TaskRun"
         namespace={namespace}
         resource={taskRun}
         lastTransitionTime={taskRun.status?.startTime}

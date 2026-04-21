@@ -34,8 +34,7 @@ const resource = {
       label14: 'value14',
       label15: 'value15'
     }
-  },
-  kind: 'PipelineRun'
+  }
 };
 
 const namespace = 'default';
@@ -43,7 +42,11 @@ const namespace = 'default';
 describe('LabelsWithOverflow with overflow', () => {
   it('renders visible labels', () => {
     const { getByText } = renderWithRouter(
-      <LabelsWithOverflow resource={resource} namespace={namespace} />
+      <LabelsWithOverflow
+        kind="PipelineRun"
+        resource={resource}
+        namespace={namespace}
+      />
     );
     expect(getByText('label1: value1')).toBeTruthy();
     expect(getByText('label2: value2')).toBeTruthy();
@@ -53,7 +56,11 @@ describe('LabelsWithOverflow with overflow', () => {
 
   it('renders overflow labels with popover', () => {
     const { getByText } = renderWithRouter(
-      <LabelsWithOverflow resource={resource} namespace={namespace} />
+      <LabelsWithOverflow
+        kind="PipelineRun"
+        resource={resource}
+        namespace={namespace}
+      />
     );
     fireEvent.click(getByText('+11'));
     expect(getByText('label5: value5')).toBeTruthy();
@@ -65,7 +72,11 @@ describe('LabelsWithOverflow with overflow', () => {
 
   it('open modal with remaining labels', () => {
     const { getByText, getByPlaceholderText, queryByRole } = renderWithRouter(
-      <LabelsWithOverflow resource={resource} namespace={namespace} />
+      <LabelsWithOverflow
+        kind="PipelineRun"
+        resource={resource}
+        namespace={namespace}
+      />
     );
     fireEvent.click(getByText('+11'));
     fireEvent.click(getByText('+6'));
@@ -78,7 +89,11 @@ describe('LabelsWithOverflow with overflow', () => {
 
   it('filter labels in modal', () => {
     const { getByText, getByPlaceholderText, queryByRole } = renderWithRouter(
-      <LabelsWithOverflow resource={resource} namespace={namespace} />
+      <LabelsWithOverflow
+        kind="PipelineRun"
+        resource={resource}
+        namespace={namespace}
+      />
     );
     fireEvent.click(getByText('+11'));
     fireEvent.click(getByText('+6'));
@@ -91,5 +106,29 @@ describe('LabelsWithOverflow with overflow', () => {
     expect(filteredTags.length).toBe(1);
     expect(filteredTags[0]).toBeTruthy();
     expect(within(dialog).queryByText('label10: value10')).not.toBeTruthy();
+  });
+
+  it('builds label links pointing to the list page for the given kind', () => {
+    const { getByTitle, rerender } = renderWithRouter(
+      <LabelsWithOverflow
+        kind="PipelineRun"
+        resource={resource}
+        namespace={namespace}
+      />
+    );
+    expect(getByTitle('label1: value1').getAttribute('href')).toBe(
+      '/namespaces/default/pipelineruns?labelSelector=label1%3Dvalue1'
+    );
+
+    rerender(
+      <LabelsWithOverflow
+        kind="TaskRun"
+        resource={resource}
+        namespace={namespace}
+      />
+    );
+    expect(getByTitle('label1: value1').getAttribute('href')).toBe(
+      '/namespaces/default/taskruns?labelSelector=label1%3Dvalue1'
+    );
   });
 });

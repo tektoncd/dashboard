@@ -384,6 +384,7 @@ export default /* istanbul ignore next */ function PipelineRun({
         showFailureMessage={showFailureMessage}
         displayRunHeader={displayRunHeader}
         duration={duration}
+        kind="PipelineRun"
         lastTransitionTime={lastTransitionTime}
         triggerInfo={triggerInfo}
         resource={pipelineRun}

@@ -22,6 +22,7 @@ export default {
 
 export const Default = args => <LabelsWithOverflow {...args} />;
 Default.args = {
+  kind: 'PipelineRun',
   resource: {
     metadata: {
       labels: {
@@ -43,8 +44,7 @@ Default.args = {
         'triggers.tekton.dev/triggers-eventid3':
           'e9742d5b-00e4-4124-9aa1-da2fd670f2da5'
       }
-    },
-    kind: 'PipelineRun'
+    }
   },
   namespace: 'default'
 };

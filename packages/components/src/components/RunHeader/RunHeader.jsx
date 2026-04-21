@@ -23,6 +23,7 @@ export default function RunHeader({
   description,
   displayRunHeader = true,
   duration = null,
+  kind,
   lastTransitionTime,
   loading,
   message,
@@ -114,6 +115,7 @@ export default function RunHeader({
                       })}
                       columnContent={
                         <LabelsWithOverflow
+                          kind={kind}
                           resource={resource}
                           namespace={namespace}
                         />
