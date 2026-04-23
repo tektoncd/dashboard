@@ -52,6 +52,12 @@ Each Tekton Dashboard release is tested against specific Tekton Pipelines and Te
 
 To install Tekton Dashboard on a Kubernetes cluster:
 
+1. Create the `tekton-pipelines` namespace if it doesn't already exist:
+
+   ```bash
+   kubectl create namespace tekton-pipelines
+   ```
+
 1. Run the following command to install Tekton Dashboard:
 
    ```bash
