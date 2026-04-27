@@ -266,6 +266,19 @@ describe('getLogsRetriever', () => {
     });
   });
 
+  it('should handle default logs retriever with streaming enabled', () => {
+    vi.spyOn(API, 'getPodLog').mockImplementation(() => {});
+    const logsRetriever = getLogsRetriever({ isLogStreamingEnabled: true });
+    expect(logsRetriever).toBeDefined();
+    logsRetriever({ stepName, stepStatus, taskRun });
+    expect(API.getPodLog).toHaveBeenCalledWith({
+      container: stepName,
+      name: podName,
+      namespace,
+      stream: true
+    });
+  });
+
   it('should handle default logs retriever with external fallback enabled', async () => {
     const externalLogsURL = 'fake_externalLogsURL';
     vi.spyOn(API, 'getPodLog').mockImplementation(() => {});
