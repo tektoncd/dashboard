@@ -155,8 +155,8 @@ export function getLogsRetriever({
     return ({ stepName, stepStatus, taskRun }) =>
       fetchLogs({
         stepName,
-        stream: isLogStreamingEnabled,
         stepStatus,
+        stream: isLogStreamingEnabled,
         taskRun
       }).catch(() => {
         onFallback(true);
@@ -165,7 +165,8 @@ export function getLogsRetriever({
       });
   }
 
-  return fetchLogs;
+  return ({ stepName, stepStatus, taskRun }) =>
+    fetchLogs({ stepName, stepStatus, stream: isLogStreamingEnabled, taskRun });
 }
 
 // K8s label documentation comes from here:
