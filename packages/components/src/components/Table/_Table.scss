@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -95,14 +95,8 @@ limitations under the License.
       }
 
       .#{$prefix}--link.#{$prefix}--btn--icon-only {
+        display: inline-flex;
         vertical-align: top;
-        // from Carbon v11 button styles
-        padding-block-start: min(
-          calc(
-            (layout.size('height') - convert.to-rem(16px)) / 2 - convert.to-rem(1px)
-          ),
-          var(--temp-padding-block-max)
-        );
       }
     }
   }
