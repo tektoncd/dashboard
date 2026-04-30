@@ -89,7 +89,7 @@ jobs:
       matrix:
         k8s-name:
           - k8s-oldest
-          - k8s-plus-one
+          - k8s-latest
 
         dashboard-mode:
           - read-only
@@ -100,8 +100,8 @@ jobs:
         include:
           - k8s-name: k8s-oldest
             k8s-version: v1.31.x
-          - k8s-name: k8s-plus-one
-            k8s-version: v1.32.x
+          - k8s-name: k8s-latest
+            k8s-version: v1.35.x
 
     env:
       ARTIFACTS: ${{ github.workspace }}/artifacts
@@ -146,7 +146,7 @@ jobs:
           echo '::endgroup::'
 
           echo '::group::install kind'
-          go install sigs.k8s.io/kind@v0.27.0
+          go install sigs.k8s.io/kind@v0.31.0
           echo '::endgroup::'
 
           echo '::group::create required folders'

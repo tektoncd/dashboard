@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2020-2024 The Tekton Authors
+# Copyright 2020-2026 The Tekton Authors
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -16,7 +16,7 @@ set -e
 CLUSTERNAME=tekton-dashboard
 DEFAULT_OPTIONS="--log-format console --read-write"
 ENABLE_INGRESS="false"
-KUBERNETES_NODE_IMAGE="docker.io/kindest/node:v1.30.0@sha256:047357ac0cfea04663786a612ba1eaba9702bef25227a794b52890dd8bcd692e"
+KUBERNETES_NODE_IMAGE="docker.io/kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f"
 
 create_cluster() {
 if [ "$ENABLE_INGRESS" == "false" ]; then
