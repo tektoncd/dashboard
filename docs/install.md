@@ -34,7 +34,7 @@ Choose the version of Tekton Dashboard you want to install. You have the followi
 ## Pre-requisites
 
 In order to install the Tekton Dashboard, please make sure the following requirements are met:
-- You must have a Kubernetes cluster running version 1.28.0 or later. Tekton Pipelines or other projects may require a newer version. The Dashboard may work on older Kubernetes versions but this is untested and not officially supported.
+- You must have a Kubernetes cluster running version 1.31.0 or later. Tekton Pipelines or other projects may require a newer version. The Dashboard may work on older Kubernetes versions but this is untested and not officially supported.
 
   If you don't already have a cluster, you can create one for testing with `kind`.
   [Install `kind`](https://kind.sigs.k8s.io/docs/user/quick-start/#installation) and create a cluster by running [`kind create cluster`](https://kind.sigs.k8s.io/docs/user/quick-start/#creating-a-cluster). This
