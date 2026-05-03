@@ -40,7 +40,7 @@
     "react-is": "^18.3.1",
     "react-router-dom": "^6.30.3",
     "reconnecting-websocket": "^4.4.0",
-    "yaml": "^2.8.3"
+    "yaml": "^2.8.4"
   },
   "devDependencies": {
     "@eslint/compat": "^2.0.5",
