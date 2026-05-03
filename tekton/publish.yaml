@@ -80,7 +80,7 @@ spec:
     - name: IMAGES
   steps:
     - name: container-registry-auth
-      image: cgr.dev/chainguard/crane:latest-dev@sha256:79130339fd2d1206696c86fa973664dce50a95222046cb8d8906e70e020dc729
+      image: cgr.dev/chainguard/crane:latest-dev@sha256:c8a57c0f7c56f4caad955b80e6c130157d3673adce1f8898ee598c99f6096bdc
       script: |
         #!/bin/sh
         set -ex
@@ -179,7 +179,7 @@ spec:
           ${PRESERVE_IMPORT_PATH} > /workspace/built_images
 
     - name: tag-images
-      image: cgr.dev/chainguard/crane:latest-dev@sha256:79130339fd2d1206696c86fa973664dce50a95222046cb8d8906e70e020dc729
+      image: cgr.dev/chainguard/crane:latest-dev@sha256:c8a57c0f7c56f4caad955b80e6c130157d3673adce1f8898ee598c99f6096bdc
       script: |
         #!/bin/sh
         set -ex
