@@ -120,8 +120,7 @@ Creating the release announcement is currently a manual process but will be auto
      of patch releases as well.
    - In case of a minor or major release, add a new entry for the
      release, including links to docs
-   - Check if any release is EOL, if so move it to the "End of Life Releases"
-     section
+   - Check whether any release is EOL. If so, remove it.
 
 1. Push & make PR for updated `releases.md` and `install.md`
 
@@ -163,3 +162,7 @@ Congratulations, you're done!
 ```bash
 kubectl config use-context my-dev-cluster
 ```
+
+## Additional setup
+
+If using `rekor-cli` for the first time and it is not installed, install it using the instructions at https://docs.sigstore.dev/logging/installation/
