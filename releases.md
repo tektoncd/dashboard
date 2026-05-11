@@ -10,23 +10,27 @@ as follows:
 - Four releases a year are chosen for [long term support (LTS)](https://github.com/tektoncd/community/blob/main/releases.md#support-policy).
   All remaining releases are supported for approximately 1 month (until the next
   release is produced)
-    - LTS releases take place in January, April, July and October every year
-    - The first Tekton Dashboard LTS release will be **v0.30.0** in October 2022
-    - Releases happen towards the middle of the month, between the 13th and the
-      20th, depending on week-ends and readiness
+  - LTS releases take place in January, April, July and October every year
+  - The first Tekton Dashboard LTS release will be **v0.30.0** in October 2022
+  - Releases happen towards the middle of the month, between the 13th and the
+    20th, depending on week-ends and readiness
+
+### Nightly Builds
 
 Tekton Dashboard produces nightly builds, publicly available at:
 - [read-only](https://infra.tekton.dev/tekton-nightly/dashboard/latest/release.yaml)
 - [read/write](https://infra.tekton.dev/tekton-nightly/dashboard/latest/release-full.yaml)
 
-The images for Dashboard releases are published to `ghcr.io/tektoncd/dashboard`.
+### Images
+
+The images for Dashboard releases and nightly builds are published to `ghcr.io/tektoncd/dashboard`.
 
 Prior to 26th September 2024, nightly images were published to `gcr.io/tekton-nightly`.
 For release v0.50.x and earlier, release images were published to `gcr.io/tekton-releases`.
 
 ## Release Process
 
-Tekton Pipeline releases are made of YAML manifests and container images.
+Tekton Dashboard releases are made of YAML manifests and container images.
 Manifests are published to cloud object-storage as well as
 [GitHub][tekton-dashboard-releases]. Container images are signed by
 [Sigstore][sigstore] via [Tekton Chains][tekton-chains]; signatures can be
@@ -62,7 +66,7 @@ Further documentation available:
 ### v0.63 (LTS)
 
 - **Latest Release**: [v0.63.1][v0-63-1] (2025-11-07) ([docs][v0-63-1-docs])
-- **Initial Release**: [v0.63.0][v0-63-0] (2025-10-31)
+- **Initial Release**: [v0.63.0][v0-63-0] (2025-10-31) ([docs][v0-63-0-docs])
 - **End of Life**: 2026-10-30
 - **Patch Releases**: [v0.63.0][v0-63-0], [v0.63.1][v0-63-1]
 - **Supported Pipelines Releases**: v1.6.x LTS
@@ -77,11 +81,9 @@ Further documentation available:
 - **Supported Pipelines Releases**: v1.3.x LTS
 - **Supported Triggers Releases**: v0.32.x LTS
 
-
 ## End of Life Releases
 
 Older releases are EOL and available on [GitHub][tekton-dashboard-releases].
-
 
 [release-policy]: https://github.com/tektoncd/community/blob/main/releases.md
 [sigstore]: https://sigstore.dev
