@@ -132,6 +132,7 @@ To release a new version of the npm packages, e.g. `@tektoncd/dashboard-componen
 
      e.g. `Publish v0.24.1-alpha.0 of the @tektoncd/dashboard-* packages`
    - Use the commit message as the PR title
+   - Add the label `release-note-none` to omit it from the generated release notes
 1. The packages are automatically published once the PR is merged
    - Verify there were no issues with the [publish workflow](https://github.com/tektoncd/dashboard/actions/workflows/publish.yml?query=event%3Apush+branch%3Amain)
 1. Once the packages are published, build and publish the Storybook:
