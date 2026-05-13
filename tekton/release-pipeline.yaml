@@ -284,5 +284,8 @@ spec:
                 value: $(params.versionTag)
             script: |
               BASE_URL="https://infra.tekton.dev/${RELEASE_BUCKET}/${REPO_NAME}/previous/${VERSION_TAG}"
-              echo "${BASE_URL}/release.yaml" > $(results.release.path)
-              echo "${BASE_URL}/release-full.yaml" > $(results.release-full.path)
+              echo -n "Read-only: "
+              echo -n "${BASE_URL}/release.yaml" | tee $(results.release.path)
+              echo
+              echo -n "Read/write: "
+              echo -n "${BASE_URL}/release-full.yaml" | tee $(results.release-full.path)
