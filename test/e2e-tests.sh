@@ -50,7 +50,7 @@ test_dashboard() {
   header "Setting up environment ($@)"
   if [ "${USE_NIGHTLY_RELEASE}" == "true" ]; then
     echo "Installing nightly release"
-    $tekton_repo_dir/scripts/release-installer install --nightly latest $@ || fail_test "Failed installing nightly release"
+    $tekton_repo_dir/scripts/release-installer install --nightly latest --debug $@ || fail_test "Failed installing nightly release"
   else
     echo "Installing from HEAD"
     $tekton_repo_dir/scripts/installer install $@ || fail_test "Failed installing from HEAD"
