@@ -97,8 +97,7 @@ export class LogContainer extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (
       this.props.enableLogAutoScroll &&
-      (prevState.logs?.length !== this.state.logs?.length ||
-        prevProps.isLogsMaximized !== this.props.isLogsMaximized)
+      prevState.logs?.length !== this.state.logs?.length
     ) {
       if (this.shouldAutoScroll()) {
         this.scrollToBottomLog();

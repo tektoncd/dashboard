@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2025 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -43,17 +43,14 @@ export { default as ScrollButtons } from './ScrollButtons';
 export { default as Spinner } from './Spinner';
 export { default as StatusFilterDropdown } from './StatusFilterDropdown';
 export { default as StatusIcon } from './StatusIcon';
-export { default as Step } from './Step';
 export { default as StepDefinition } from './StepDefinition';
-export { default as StepDetails } from './StepDetails';
+export { default as StepLogToolbar } from './StepLogToolbar';
 export { default as StopModal } from './StopModal';
 export { default as Table } from './Table';
-export { default as Task } from './Task';
 export { default as TaskRuns } from './TaskRuns';
 export { default as TaskRunDetails } from './TaskRunDetails';
 export { default as TaskRunTabPanels } from './TaskRunTabPanels';
 export { default as TaskRunTabs } from './TaskRunTabs';
-export { default as TaskTree } from './TaskTree';
 export { default as TooltipDropdown } from './TooltipDropdown';
 export { default as Trigger } from './Trigger';
 export { default as ViewYAML } from './ViewYAML';

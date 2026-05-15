@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2025 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -72,37 +72,7 @@ pre.tkn--log {
   .#{$prefix}--btn-set {
     position: absolute;
     inset-block-start: 0;
-    inset-inline-end: var(--tkn-log-inline-padding);
-    align-items: center;
-  }
-
-  .button-container {
-    position: absolute;
-    clip-path: inset(0); // ensure the children with position:fixed are not shown outside this element.
-    inset-block-start: 3.125rem; //equals the maximum between padding-block-start of pre.tkn--log and between the page header height
-    inset-block-end: 0;
-    inset-inline-end: 0;
-    inline-size: var(--tkn-log-inline-padding);
-  }
-
-  .#{$prefix}--btn--ghost,
-  .#{$prefix}--copy-btn {
-    inline-size: 2rem;
-    block-size: 2rem;
-    min-block-size: 2rem;
-    background-color: $background;
-
-    &:hover {
-      background-color: $layer-hover;
-    }
-
-    &:focus {
-      outline-color: white;
-    }
-
-    svg {
-      fill: $icon-primary;
-    }
+    inset-inline-end: 0.5rem; // var(--tkn-log-inline-padding);
   }
 
   .tkn--log-trailer {

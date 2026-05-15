@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,18 +11,23 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-@use '@carbon/react/scss/config' as *;
-@use '@carbon/react/scss/theme' as *;
+import StepLogToolbar from './StepLogToolbar';
 
-.tkn--step-details {
-  background-color: $layer;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  align-items: stretch;
-  overflow: hidden;
+export default {
+  component: StepLogToolbar,
+  decorators: [
+    Story => (
+      <pre className="tkn--log" style={{ width: '300px' }}>
+        <Story />
+      </pre>
+    )
+  ],
+  title: 'StepLogToolbar'
+};
 
-  .#{$prefix}--tab-content {
-    padding-inline-start: 0;
+export const Default = {
+  args: {
+    name: 'some_filename.txt',
+    url: '/some/logs/url'
   }
-}
+};

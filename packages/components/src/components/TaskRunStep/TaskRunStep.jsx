@@ -225,7 +225,6 @@ function TaskRunStep({
             <StepDefinition definition={stepDefinition} />
           </details>
           {getLogContainer({
-            disableLogsToolbar: true,
             isSidecar,
             stepName: step.name,
             stepStatus: step,

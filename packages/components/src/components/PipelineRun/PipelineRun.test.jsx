@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -30,11 +30,15 @@ it('PipelineRunContainer handles init step failures', async () => {
   const initStepName = 'my-failed-init-step';
   const pipelineRunName = 'fake_pipelineRunName';
   const taskRunName = 'fake_taskRunName';
+  const pipelineTaskName = 'fake_pipelineTaskName';
+  const handleTaskSelected = vi.fn();
 
   const taskRun = {
     metadata: {
       name: taskRunName,
-      labels: {},
+      labels: {
+        'tekton.dev/pipelineTask': pipelineTaskName
+      },
       uid: '41deea80-53bc-4500-a20e-3b18549e23ab'
     },
     spec: {
@@ -60,15 +64,22 @@ it('PipelineRunContainer handles init step failures', async () => {
     }
   };
 
-  const { getByText } = render(
+  render(
     <PipelineRun
-      handleTaskSelected={() => {}}
+      handleTaskSelected={handleTaskSelected}
       pipelineRun={pipelineRun}
       taskRuns={[taskRun]}
       tasks={[]}
     />
   );
-  await waitFor(() => getByText(initStepName));
+  await waitFor(() =>
+    expect(handleTaskSelected).toHaveBeenCalledWith({
+      selectedRetry: undefined,
+      selectedStepId: undefined,
+      selectedTaskId: pipelineTaskName,
+      taskRunName: undefined
+    })
+  );
 });
 
 it('PipelineRunContainer handles init step failures for retry', async () => {
@@ -78,7 +89,9 @@ it('PipelineRunContainer handles init step failures for retry', async () => {
 
   const taskRun = {
     metadata: {
-      labels: {},
+      labels: {
+        'tekton.dev/pipelineTask': 'task-1'
+      },
       name: taskRunName,
       uid: 'b4402feb-69fe-4a5a-a0c2-5e390aa58894'
     },
@@ -115,7 +128,6 @@ it('PipelineRunContainer handles init step failures for retry', async () => {
       ]
     }
   };
-
   const pipelineRun = {
     metadata: {
       name: pipelineRunName
@@ -123,7 +135,8 @@ it('PipelineRunContainer handles init step failures for retry', async () => {
     status: {
       childReferences: [
         {
-          name: taskRunName
+          name: taskRunName,
+          pipelineTaskName: 'task-1'
         }
       ]
     }
@@ -132,21 +145,21 @@ it('PipelineRunContainer handles init step failures for retry', async () => {
   class TestWrapper extends ReactComponent {
     state = {
       selectedStepId: null,
-      selectedTaskId: null
+      selectedTaskId: 'task-1'
     };
 
-    handleTaskSelected = ({ selectedStepId, selectedTaskId }) => {
-      this.setState({ selectedStepId, selectedTaskId });
+    handleTaskSelected = ({ selectedTaskId }) => {
+      this.setState({
+        selectedTaskId: selectedTaskId ?? this.state.selectedTaskId
+      });
     };
 
     render() {
       const { children: Component } = this.props;
-      const { selectedStepId, selectedTaskId } = this.state;
       return (
         <Component
           handleTaskSelected={this.handleTaskSelected}
-          selectedStepId={selectedStepId}
-          selectedTaskId={selectedTaskId}
+          selectedTaskId={this.state.selectedTaskId}
         />
       );
     }
@@ -154,12 +167,11 @@ it('PipelineRunContainer handles init step failures for retry', async () => {
 
   const { getByText } = render(
     <TestWrapper>
-      {({ handleTaskSelected, selectedStepId, selectedTaskId }) => (
+      {({ handleTaskSelected, selectedTaskId }) => (
         <PipelineRun
-          fetchLogs={() => {}}
           handleTaskSelected={handleTaskSelected}
           pipelineRun={pipelineRun}
-          selectedStepId={selectedStepId}
+          selectedRetry="0"
           selectedTaskId={selectedTaskId}
           taskRuns={[taskRun]}
           tasks={[]}
@@ -167,6 +179,5 @@ it('PipelineRunContainer handles init step failures for retry', async () => {
       )}
     </TestWrapper>
   );
-  await waitFor(() => getByText(/(retry 1)/));
-  await waitFor(() => getByText(initStepName, { selector: '.tkn--step-name' }));
+  await waitFor(() => getByText('task-1'));
 });

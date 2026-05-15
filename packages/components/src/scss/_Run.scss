@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2025 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -25,10 +25,6 @@ limitations under the License.
     flex-wrap: nowrap;
     min-block-size: calc(100vb - 16rem);
     align-items: stretch;
-  }
-
-  .tkn--task-tree {
-    flex-shrink: 0;
   }
 
   .tkn--step-details {
@@ -119,4 +115,12 @@ limitations under the License.
 
 .tkn--task-skipped {
   @include type-style('body-compact-01');
+}
+
+.tkn--toolbar {
+  font-family: 'IBM Plex Sans', sans-serif;
+
+  .#{$prefix}--btn--icon-only {
+    inline-size: var(--cds-layout-size-height-local);
+  }
 }

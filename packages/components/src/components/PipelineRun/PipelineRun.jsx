@@ -11,25 +11,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { InlineNotification, SkeletonText, TabsVertical } from '@carbon/react';
 import { useIntl } from 'react-intl';
 import {
   getErrorMessage,
   getStatus,
-  getStepDefinition,
-  getStepStatus,
   labels as labelConstants
 } from '@tektoncd/dashboard-utils';
 
 import Log from '../Log';
-import Portal from '../Portal';
 import RunHeader from '../RunHeader';
-import StepDetails from '../StepDetails';
-import TaskRunDetails from '../TaskRunDetails';
 import TaskRunTabPanels from '../TaskRunTabPanels';
 import TaskRunTabs from '../TaskRunTabs';
-import TaskTree from '../TaskTree';
 
 function getPipelineTask({ pipeline, pipelineRun, selectedTaskId, taskRun }) {
   const memberOf = taskRun?.metadata?.labels?.[labelConstants.MEMBER_OF];
@@ -48,17 +42,16 @@ export default /* istanbul ignore next */ function PipelineRun({
   duration,
   enableLogAutoScroll,
   enableLogScrollButtons,
-  enableTabLayout,
   error,
   fetchLogs,
   forceLogPolling,
   getLogsToolbar,
+  getStepLogToolbar,
   handlePipelineRunInfo = () => {},
   handleTaskSelected = /* istanbul ignore next */ () => {},
   ignoredSidecars = {},
   loading,
   logLevels,
-  maximizedLogsContainer,
   onRetryChange,
   onViewChange = /* istanbul ignore next */ () => {},
   pipeline,
@@ -79,7 +72,6 @@ export default /* istanbul ignore next */ function PipelineRun({
   view = null
 }) {
   const intl = useIntl();
-  const [isLogsMaximized, setIsLogsMaximized] = useState(false);
   const [isTaskRunMaximized, setIsTaskRunMaximized] = useState(false);
   const [expandedSteps, setExpandedSteps] = useState(() =>
     selectedStepId ? { [selectedStepId]: true } : {}
@@ -106,60 +98,34 @@ export default /* istanbul ignore next */ function PipelineRun({
     return status === 'False' && reason !== 'Cancelled';
   }
 
-  function onToggleLogsMaximized() {
-    setIsLogsMaximized(prevIsLogsMaximized => !prevIsLogsMaximized);
-  }
-
   function onToggleTaskRunMaximized() {
     setIsTaskRunMaximized(prevIsTaskRunMaximized => !prevIsTaskRunMaximized);
   }
 
-  function getLogContainer({
-    disableLogsToolbar,
-    isSidecar,
-    stepName,
-    stepStatus,
-    taskRun
-  }) {
+  function getLogContainer({ isSidecar, stepName, stepStatus, taskRun }) {
     if ((!selectedStepId && !stepName) || !stepStatus) {
       return null;
     }
 
-    const LogsRoot =
-      isLogsMaximized && maximizedLogsContainer ? Portal : Fragment;
-
     return (
-      <LogsRoot
-        {...(isLogsMaximized ? { container: maximizedLogsContainer } : null)}
-      >
-        <Log
-          enableLogAutoScroll={enableLogAutoScroll}
-          enableLogScrollButtons={enableLogScrollButtons}
-          fetchLogs={() => fetchLogs({ stepName, stepStatus, taskRun })}
-          forcePolling={forceLogPolling}
-          isLogsMaximized={isLogsMaximized}
-          isSidecar={isSidecar}
-          key={`${selectedTaskId}:${stepName}:${selectedRetry}`}
-          logLevels={logLevels}
-          pollingInterval={pollingInterval}
-          showLevels={showLogLevels}
-          showTimestamps={showLogTimestamps}
-          stepStatus={stepStatus}
-          toolbar={
-            !disableLogsToolbar &&
-            getLogsToolbar &&
-            stepStatus &&
-            getLogsToolbar({
-              id: `${selectedTaskId}-${stepName}-${selectedRetry}-logs-toolbar`,
-              isMaximized: isLogsMaximized,
-              onToggleMaximized:
-                !!maximizedLogsContainer && onToggleLogsMaximized,
-              stepStatus,
-              taskRun
-            })
-          }
-        />
-      </LogsRoot>
+      <Log
+        enableLogAutoScroll={enableLogAutoScroll}
+        enableLogScrollButtons={enableLogScrollButtons}
+        fetchLogs={() => fetchLogs({ stepName, stepStatus, taskRun })}
+        forcePolling={forceLogPolling}
+        isSidecar={isSidecar}
+        key={`${selectedTaskId}:${stepName}:${selectedRetry}`}
+        logLevels={logLevels}
+        pollingInterval={pollingInterval}
+        showLevels={showLogLevels}
+        showTimestamps={showLogTimestamps}
+        stepStatus={stepStatus}
+        toolbar={
+          getStepLogToolbar &&
+          stepStatus &&
+          getStepLogToolbar({ stepStatus, taskRun })
+        }
+      />
     );
   }
 
@@ -338,33 +304,12 @@ export default /* istanbul ignore next */ function PipelineRun({
       tasks?.find(t => t.metadata.name === taskRun.spec.taskRef.name)) ||
     {};
 
-  const stepStatus = getStepStatus({
-    selectedStepId,
-    taskRun
-  });
-
-  let definition;
-  let logContainer;
-  if (!enableTabLayout) {
-    definition = getStepDefinition({
-      selectedStepId,
-      task,
-      taskRun
-    });
-
-    logContainer = getLogContainer({
-      stepName: selectedStepId,
-      stepStatus,
-      taskRun
-    });
-  }
-
   const skippedTasks = pipelineRun.status?.skippedTasks || [];
   const skippedTask = skippedTasks.find(
     skipped => skipped.name === selectedTaskId
   );
 
-  if (enableTabLayout && !selectedTaskId) {
+  if (!selectedTaskId) {
     const selectedTaskRun = taskRunsToUse[0];
     const { labels = {} } = selectedTaskRun?.metadata || {};
     const { [labelConstants.PIPELINE_TASK]: pipelineTaskName } = labels;
@@ -399,93 +344,55 @@ export default /* istanbul ignore next */ function PipelineRun({
       </RunHeader>
       {(taskRunsToUse.length > 0 || preTaskRun) && (
         <div className="tkn--tasks">
-          {enableTabLayout ? (
-            <TabsVertical
+          <TabsVertical
+            selectedIndex={selectedIndex}
+            onChange={({ selectedIndex: newSelectedIndex }) => {
+              if (preTaskRun && newSelectedIndex === 0) {
+                onTaskSelected({});
+                return;
+              }
+
+              const selectedTaskRun =
+                taskRunsToUse[newSelectedIndex - preTaskRunOffset];
+              const { labels } = selectedTaskRun.metadata;
+              const { [labelConstants.PIPELINE_TASK]: pipelineTaskName } =
+                labels;
+
+              setExpandedSteps({});
+              onTaskSelected({
+                selectedTaskId: pipelineTaskName,
+                taskRunName: selectedTaskRun.metadata?.name
+              });
+            }}
+          >
+            <TaskRunTabs
+              preTaskRun={preTaskRun}
+              skippedTasks={skippedTasks}
+              taskRuns={taskRunsToUse}
+            />
+            <TaskRunTabPanels
+              expandedSteps={expandedSteps}
+              getLogContainer={getLogContainer}
+              getLogsToolbar={getLogsToolbar}
+              ignoredSidecars={ignoredSidecars}
+              isMaximized={isTaskRunMaximized}
+              onRetryChange={onRetryChange}
+              onStepSelected={onStepSelected}
+              onToggleMaximized={onToggleTaskRunMaximized}
+              onViewChange={onViewChange}
+              pod={pod}
+              preTaskRun={preTaskRun}
               selectedIndex={selectedIndex}
-              onChange={({ selectedIndex: newSelectedIndex }) => {
-                if (preTaskRun && newSelectedIndex === 0) {
-                  onTaskSelected({});
-                  return;
-                }
-
-                const selectedTaskRun =
-                  taskRunsToUse[newSelectedIndex - preTaskRunOffset];
-                const { labels } = selectedTaskRun.metadata;
-                const { [labelConstants.PIPELINE_TASK]: pipelineTaskName } =
-                  labels;
-
-                setExpandedSteps({});
-                onTaskSelected({
-                  selectedTaskId: pipelineTaskName,
-                  taskRunName: selectedTaskRun.metadata?.name
-                });
-              }}
-            >
-              <TaskRunTabs
-                preTaskRun={preTaskRun}
-                skippedTasks={skippedTasks}
-                taskRuns={taskRunsToUse}
-              />
-              <TaskRunTabPanels
-                expandedSteps={expandedSteps}
-                getLogContainer={getLogContainer}
-                getLogsToolbar={getLogsToolbar}
-                ignoredSidecars={ignoredSidecars}
-                isMaximized={isTaskRunMaximized}
-                onRetryChange={onRetryChange}
-                onStepSelected={onStepSelected}
-                onToggleMaximized={onToggleTaskRunMaximized}
-                onViewChange={onViewChange}
-                pod={pod}
-                preTaskRun={preTaskRun}
-                selectedIndex={selectedIndex}
-                selectedRetry={selectedRetry}
-                selectedTaskId={selectedTaskId}
-                selectedStepId={selectedStepId}
-                skippedTask={skippedTask}
-                task={task}
-                taskRun={taskRun}
-                taskRuns={taskRunsToUse}
-                view={view}
-              />
-            </TabsVertical>
-          ) : (
-            <>
-              <TaskTree
-                isSelectedTaskMatrix={!!pipelineTask?.matrix}
-                onRetryChange={onRetryChange}
-                onSelect={onTaskSelected}
-                selectedRetry={selectedRetry}
-                selectedStepId={selectedStepId}
-                selectedTaskId={selectedTaskId}
-                selectedTaskRunName={selectedTaskRunName}
-                skippedTasks={skippedTasks}
-                taskRuns={taskRunsToUse}
-              />
-              {(selectedStepId && (
-                <StepDetails
-                  definition={definition}
-                  logContainer={logContainer}
-                  onViewChange={onViewChange}
-                  skippedTask={skippedTask}
-                  stepName={selectedStepId}
-                  stepStatus={stepStatus}
-                  taskRun={taskRun}
-                  view={view}
-                />
-              )) ||
-                (selectedTaskId && (
-                  <TaskRunDetails
-                    onViewChange={onViewChange}
-                    pod={pod}
-                    skippedTask={skippedTask}
-                    task={task}
-                    taskRun={taskRun}
-                    view={view}
-                  />
-                ))}
-            </>
-          )}
+              selectedRetry={selectedRetry}
+              selectedTaskId={selectedTaskId}
+              selectedStepId={selectedStepId}
+              skippedTask={skippedTask}
+              task={task}
+              taskRun={taskRun}
+              taskRuns={taskRunsToUse}
+              view={view}
+            />
+          </TabsVertical>
         </div>
       )}
     </>

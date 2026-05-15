@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { InlineNotification } from '@carbon/react';
 import {
   ActionableNotification,
@@ -35,6 +35,7 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 
 import LogsToolbar from '../LogsToolbar';
+import StepLogToolbar from '../StepLogToolbar';
 import {
   cancelPipelineRun,
   deletePipelineRun,
@@ -55,7 +56,6 @@ import NotFound from '../NotFound';
 import {
   getLogLevels,
   isLogTimestampsEnabled,
-  isPipelineRunTabLayoutEnabled,
   setLogLevels,
   setLogTimestampsEnabled
 } from '../../api/utils';
@@ -89,8 +89,6 @@ export /* istanbul ignore next */ function PipelineRunContainer({
     setLogTimestampsEnabled(show);
   }
 
-  const [enableTabLayout] = useState(isPipelineRunTabLayoutEnabled());
-
   const { name, namespace } = params;
 
   const queryParams = new URLSearchParams(location.search);
@@ -107,7 +105,6 @@ export /* istanbul ignore next */ function PipelineRunContainer({
   const currentSelectedStepId = queryParams.get(STEP);
   const view = queryParams.get(VIEW);
 
-  const maximizedLogsContainer = useRef();
   const [showRunActionNotification, setShowRunActionNotification] =
     useState(null);
 
@@ -495,7 +492,6 @@ export /* istanbul ignore next */ function PipelineRunContainer({
 
   return (
     <>
-      <div id="tkn--maximized-logs-container" ref={maximizedLogsContainer} />
       {showRunActionNotification?.logsURL && (
         <ActionableNotification
           inline
@@ -520,8 +516,6 @@ export /* istanbul ignore next */ function PipelineRunContainer({
       )}
       <PipelineRun
         duration={duration}
-        enableLogAutoScroll={!enableTabLayout}
-        enableTabLayout={enableTabLayout}
         error={error}
         fetchLogs={getLogsRetriever({
           externalLogsURL,
@@ -542,7 +536,7 @@ export /* istanbul ignore next */ function PipelineRunContainer({
             showTimestamps={showTimestamps}
           />
         )}
-        maximizedLogsContainer={maximizedLogsContainer.current}
+        getStepLogToolbar={toolbarProps => <StepLogToolbar {...toolbarProps} />}
         onRetryChange={retry => {
           if (Number.isInteger(retry)) {
             queryParams.set(RETRY, retry);
