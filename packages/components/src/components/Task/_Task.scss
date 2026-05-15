@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2025 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,112 +13,6 @@ limitations under the License.
 
 @use '@carbon/react/scss/config' as *;
 @use '@carbon/react/scss/theme' as *;
-@use '@carbon/react/scss/type' as *;
-
-.tkn--task {
-  list-style-type: none;
-
-  > .tkn--task-link {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    position: relative;
-    padding-block: 0;
-    padding-inline-start: 0.75rem;
-    padding-inline-end: 1rem;
-    font-size: 0.76rem;
-    letter-spacing: 0.06rem;
-    font-weight: bold;
-    line-height: 2.2rem;
-    text-decoration: none;
-    color: inherit;
-    margin-block-start: 1rem;
-    margin-inline-end: 1rem;
-    margin-block-end: 0;
-    margin-inline-start: 0;
-    white-space: nowrap;
-    background-color: $layer;
-    border-inline-start: 3px solid transparent;
-
-    > .tkn--status-icon {
-      margin-inline-end: 0.75rem;
-
-      &.tkn--status-icon--warning {
-        inline-size: 24px;
-        block-size: 24px;
-        margin-block-start: 2px;
-        margin-inline-end: 0.5rem;
-      }
-    }
-
-    &:focus, &:hover {
-      background-color: $layer-hover;
-      text-decoration: none;
-      border-inline-start-color: $layer-hover;
-    }
-
-    .tkn--task-link--name {
-      flex-grow: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    > .tkn--status-icon,
-    > .tkn--task--expand-icon {
-      flex-shrink: 0;
-    }
-
-    > .#{$prefix}--overflow-menu {
-      flex-shrink: 0;
-      margin-inline-end: 10px;
-    }
-  }
-
-  &[data-selected] > .tkn--task-link {
-    border-inline-start: 3px solid $border-interactive;
-    margin-inline-end: 0;
-  }
-
-  &[data-active] > .tkn--task-link {
-    margin-inline-end: 0;
-
-    .tkn--task--expand-icon {
-      /* needed when we support expanding multiple tasks */
-      margin-inline-end: 1rem;
-    }
-  }
-
-  .#{$prefix}--dropdown__wrapper.#{$prefix}--dropdown__wrapper--inline {
-    position: relative;
-    inset-inline-start: -1.5rem;
-    grid-gap: 0;
-    margin-inline-start: 0.5rem;
-  }
-
-  &:not([data-succeeded]) > .tkn--task-link {
-    &:hover {
-      color: inherit;
-      background-color: $layer-hover;
-    }
-  }
-
-  &:first-child > .tkn--task-link {
-    margin-block-start: 0;
-  }
-
-  .tkn--step-list {
-    background-color: $layer;
-  }
-}
-
-.tkn--task--retries-menu-options {
-  max-block-size: 350px;
-  overflow: auto;
-
-  .#{$prefix}--overflow-menu-options__option {
-    flex-shrink: 0;
-  }
-}
 
 .#{$prefix}--tabs__nav-item.tkn--task {
   .#{$prefix}--tabs__nav-item-label-wrapper {

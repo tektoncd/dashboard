@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2025 The Tekton Authors
+Copyright 2020-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,98 +12,51 @@ limitations under the License.
 */
 /* istanbul ignore file */
 import { useIntl } from 'react-intl';
+import { Maximize, Minimize, Settings } from '@carbon/react/icons';
 import {
-  Download,
-  Launch,
-  Maximize,
-  Minimize,
-  Settings
-} from '@carbon/react/icons';
-import {
+  Button,
+  ButtonSet,
   Checkbox,
   CheckboxGroup,
   Popover,
-  PopoverContent,
-  usePrefix
+  PopoverContent
 } from '@carbon/react';
 import { useState } from 'react';
 
 const LogsToolbar = ({
   id,
   isMaximized,
-  name,
   logLevels,
   onToggleShowTimestamps,
   onToggleLogLevel,
   onToggleMaximized,
-  showTimestamps,
-  url
+  showTimestamps
 }) => {
-  const carbonPrefix = usePrefix();
   const intl = useIntl();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   return (
-    <div className={`${carbonPrefix}--btn-set`}>
+    <ButtonSet className="tkn--toolbar">
       {onToggleMaximized ? (
-        <button
-          className={`${carbonPrefix}--btn ${carbonPrefix}--btn--sm ${carbonPrefix}--layout--size-sm ${carbonPrefix}--btn--icon-only ${carbonPrefix}--copy-btn`}
-          onClick={onToggleMaximized}
-          type="button"
-        >
-          {isMaximized ? (
-            <Minimize>
-              <title>
-                {intl.formatMessage({
+        <Button
+          autoAlign
+          hasIconOnly
+          iconDescription={
+            isMaximized
+              ? intl.formatMessage({
                   id: 'dashboard.logs.restore',
                   defaultMessage: 'Return to default'
-                })}
-              </title>
-            </Minimize>
-          ) : (
-            <Maximize>
-              <title>
-                {intl.formatMessage({
+                })
+              : intl.formatMessage({
                   id: 'dashboard.logs.maximize',
                   defaultMessage: 'Maximize'
-                })}
-              </title>
-            </Maximize>
-          )}
-        </button>
-      ) : null}
-      {url ? (
-        <>
-          <a
-            className={`${carbonPrefix}--btn ${carbonPrefix}--btn--sm ${carbonPrefix}--layout--size-sm ${carbonPrefix}--btn--icon-only ${carbonPrefix}--copy-btn`}
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Launch>
-              <title>
-                {intl.formatMessage({
-                  id: 'dashboard.logs.launchButtonTooltip',
-                  defaultMessage: 'Open logs in a new window'
-                })}
-              </title>
-            </Launch>
-          </a>
-          <a
-            className={`${carbonPrefix}--btn ${carbonPrefix}--btn--sm ${carbonPrefix}--layout--size-sm ${carbonPrefix}--btn--icon-only ${carbonPrefix}--copy-btn`}
-            download={name}
-            href={url}
-          >
-            <Download>
-              <title>
-                {intl.formatMessage({
-                  id: 'dashboard.logs.downloadButtonTooltip',
-                  defaultMessage: 'Download logs'
-                })}
-              </title>
-            </Download>
-          </a>
-        </>
+                })
+          }
+          kind="ghost"
+          onClick={onToggleMaximized}
+          renderIcon={isMaximized ? Minimize : Maximize}
+          size="sm"
+        />
       ) : null}
       <Popover
         align="bottom-end"
@@ -121,21 +74,18 @@ const LogsToolbar = ({
         }}
         open={isSettingsOpen}
       >
-        <button
+        <Button
           aria-expanded={isSettingsOpen}
-          aria-label={intl.formatMessage({
+          hasIconOnly
+          iconDescription={intl.formatMessage({
             id: 'dashboard.settings.title',
             defaultMessage: 'Settings'
           })}
+          kind="ghost"
           onClick={() => setIsSettingsOpen(open => !open)}
-          title={intl.formatMessage({
-            id: 'dashboard.settings.title',
-            defaultMessage: 'Settings'
-          })}
-          type="button"
-        >
-          <Settings />
-        </button>
+          renderIcon={Settings}
+          size="sm"
+        />
         <PopoverContent className="tkn--log-settings-menu-content">
           <Checkbox
             id={`${id}-timestamps-toggle`}
@@ -228,7 +178,7 @@ const LogsToolbar = ({
           ) : null}
         </PopoverContent>
       </Popover>
-    </div>
+    </ButtonSet>
   );
 };
 

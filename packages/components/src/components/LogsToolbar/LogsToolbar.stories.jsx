@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2025 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -79,30 +79,6 @@ export const WithMaximize = {
   args: {
     ...WithLogLevels.args,
     isMaximized: false
-  },
-  render: args => {
-    const [, updateArgs] = useArgs();
-
-    return (
-      <LogsToolbar
-        {...args}
-        onToggleLogLevel={logLevel =>
-          updateArgs({ logLevels: { ...args.logLevels, ...logLevel } })
-        }
-        onToggleMaximized={() => updateArgs({ isMaximized: !args.isMaximized })}
-        onToggleShowTimestamps={showTimestamps =>
-          updateArgs({ showTimestamps })
-        }
-      />
-    );
-  }
-};
-
-export const WithURL = {
-  args: {
-    ...WithMaximize.args,
-    name: 'some_filename.txt',
-    url: '/some/logs/url'
   },
   render: args => {
     const [, updateArgs] = useArgs();

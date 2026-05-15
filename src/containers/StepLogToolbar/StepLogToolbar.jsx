@@ -11,30 +11,32 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { LogsToolbar } from '@tektoncd/dashboard-components';
+import { StepLogToolbar } from '@tektoncd/dashboard-components';
 
-export default function LogsToolbarContainer({
-  isMaximized,
-  logLevels,
-  onToggleLogLevel,
-  onToggleMaximized,
-  onToggleShowTimestamps,
-  showTimestamps,
+import { getExternalLogURL, getPodLogURL } from '../../api';
+
+export default function StepLogToolbarContainer({
+  externalLogsURL,
+  isUsingExternalLogs,
   stepStatus,
   taskRun
 }) {
   const { container } = stepStatus || {};
+  const { namespace } = taskRun.metadata;
   const { podName } = taskRun.status || {};
 
+  let logURL;
+  if (container && podName) {
+    logURL = isUsingExternalLogs
+      ? getExternalLogURL({ container, externalLogsURL, namespace, podName })
+      : getPodLogURL({
+          container,
+          name: podName,
+          namespace
+        });
+  }
+
   return (
-    <LogsToolbar
-      id={`${podName}-${container}-logs-toolbar`}
-      isMaximized={isMaximized}
-      logLevels={logLevels}
-      showTimestamps={showTimestamps}
-      onToggleLogLevel={onToggleLogLevel}
-      onToggleMaximized={onToggleMaximized}
-      onToggleShowTimestamps={onToggleShowTimestamps}
-    />
+    <StepLogToolbar name={`${podName}__${container}__log.txt`} url={logURL} />
   );
 }

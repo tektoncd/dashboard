@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -45,11 +45,9 @@ limitations under the License.
 @use '@tektoncd/dashboard-components/src/components/Spinner/Spinner';
 @use '@tektoncd/dashboard-components/src/components/StatusIcon/StatusIcon';
 @use '@tektoncd/dashboard-components/src/components/Step/Step';
-@use '@tektoncd/dashboard-components/src/components/StepDetails/StepDetails';
 @use '@tektoncd/dashboard-components/src/components/Table/Table';
 @use '@tektoncd/dashboard-components/src/components/Task/Task';
 @use '@tektoncd/dashboard-components/src/components/TaskRunDetails/TaskRunDetails';
-@use '@tektoncd/dashboard-components/src/components/TaskTree/TaskTree';
 @use '@tektoncd/dashboard-components/src/components/Trigger/Trigger';
 @use '@tektoncd/dashboard-components/src/components/ViewYAML/ViewYAML';
 
@@ -119,24 +117,6 @@ body:has(.tkn--taskrun--maximized) {
 
 .#{$prefix}--list--unordered {
   margin-block-start: 1rem;
-}
-
-#tkn--maximized-logs-container {
-  position: absolute;
-  inset-block-start: 0;
-  inset-inline-start: 0;
-  inline-size: 100%;
-  block-size: 100vb;
-  z-index: -1;
-
-  .tkn--log {
-    min-block-size: 100%;
-  }
-
-  &:not(:empty) {
-    background-color: $layer;
-    z-index: 9999;
-  }
 }
 
 .#{$prefix}--overflow-menu-options:after {

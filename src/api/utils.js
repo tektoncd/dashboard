@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2025 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -103,11 +103,6 @@ export function setPipelinesV1ResourcesEnabled(enabled) {
 
 export function getTektonPipelinesAPIVersion() {
   return isPipelinesV1ResourcesEnabled() ? 'v1' : 'v1beta1';
-}
-
-export function isPipelineRunTabLayoutEnabled() {
-  localStorage.removeItem('tkn-pipelinerun-tab-layout');
-  return true;
 }
 
 export const NamespaceContext = createContext();
