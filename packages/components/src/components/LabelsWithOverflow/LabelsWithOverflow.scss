@@ -1,5 +1,5 @@
 /*
-Copyright 2025 The Tekton Authors
+Copyright 2025-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,30 +11,33 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 @use '@carbon/react/scss/config' as *;
+@use '@carbon/react/scss/spacing' as *;
 @use '@carbon/react/scss/theme' as *;
+@use '@carbon/react/scss/type' as *;
 
 // styling links as tags
 // needed as some of the carbon link styles interfere with the tag styles
 .tkn--overflow-menu-container a,
 .tkn--overflow-menu-container .#{$prefix}--link.#{$prefix}--tag {
-  font-size: 12px;
+  @include type-style('label-01');
   color: $text-primary;
   display: inline-block;
   max-inline-size: 300px;
-  padding: 4px 0 2px 0;
-  padding-inline: 0.5rem;
+  padding: $spacing-02 0 $spacing-01 0;
+  padding-inline: $spacing-03;
   cursor: pointer;
 
   &:hover {
-  color: $text-primary;
+    color: $text-primary;
   }
 }
-.tkn--overflow-menu-container button{
+
+.tkn--overflow-menu-container button {
    cursor: pointer;
 }
 
 .tkn--overflow-menu-container .#{$prefix}--link {
-  margin: 0 4px 4px 0;
+  margin: 0 $spacing-02 $spacing-02 0;
 }
 
 .tkn--overflow-menu-container .#{$prefix}--tag:not(.#{$prefix}--link) {
