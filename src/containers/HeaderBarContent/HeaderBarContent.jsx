@@ -10,7 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
   generatePath,
   useLocation,
@@ -36,13 +36,23 @@ export default function HeaderBarContent() {
   const { selectedNamespace: namespace, selectNamespace } =
     useSelectedNamespace();
 
+  const tenantNamespacesString = useMemo(
+    () => JSON.stringify(tenantNamespaces),
+    [tenantNamespaces]
+  );
+
   useEffect(() => {
     if (params.namespace) {
       selectNamespace(params.namespace);
     } else if (tenantNamespaces.length) {
       selectNamespace(tenantNamespaces[0]);
     }
-  }, [params.namespace, JSON.stringify(tenantNamespaces)]);
+  }, [
+    params.namespace,
+    selectNamespace,
+    tenantNamespaces,
+    tenantNamespacesString
+  ]);
 
   function setPath(path, { dropQueryParams } = {}) {
     navigate(`${path}${dropQueryParams ? '' : location.search}`);

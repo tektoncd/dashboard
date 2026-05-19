@@ -25,6 +25,7 @@ import path from 'path';
 import prettier from 'eslint-plugin-prettier/recommended';
 /* eslint-disable-next-line depend/ban-dependencies */
 import react from 'eslint-plugin-react';
+import reactHooks from 'eslint-plugin-react-hooks';
 import storybook from 'eslint-plugin-storybook';
 
 const gitignorePath = path.join(import.meta.dirname, '.gitignore');
@@ -61,7 +62,8 @@ export default defineConfig([
 
     plugins: {
       // eslint-plugin-notice only works using this approach
-      notice
+      notice,
+      'react-hooks': reactHooks
     },
 
     settings: {
@@ -79,6 +81,10 @@ export default defineConfig([
     },
 
     rules: {
+      // React Hooks rules
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+
       curly: ['error', 'all'],
       'formatjs/enforce-description': 'off',
       'formatjs/enforce-default-message': 'error',

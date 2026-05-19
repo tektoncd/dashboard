@@ -42,12 +42,7 @@ import TektonIcon from '../../images/tekton-logo-20x20.svg?react';
 
 function SideNav({ expanded, showKubernetesResources = false }) {
   const intl = useIntl();
-  if (!expanded) {
-    return null;
-  }
-
   const location = useLocation();
-
   const { selectedNamespace } = useSelectedNamespace();
   const tenantNamespaces = useTenantNamespaces();
   const { data: extensions = [] } = useExtensions(
@@ -56,6 +51,12 @@ function SideNav({ expanded, showKubernetesResources = false }) {
     },
     { disableWebSocket: true }
   );
+  const isReadOnly = useIsReadOnly();
+  const isTriggersInstalled = useIsTriggersInstalled();
+
+  if (!expanded) {
+    return null;
+  }
 
   function getMenuItemProps(to) {
     return {
@@ -84,9 +85,6 @@ function SideNav({ expanded, showKubernetesResources = false }) {
 
     return path;
   }
-
-  const isReadOnly = useIsReadOnly();
-  const isTriggersInstalled = useIsTriggersInstalled();
 
   return (
     <Theme

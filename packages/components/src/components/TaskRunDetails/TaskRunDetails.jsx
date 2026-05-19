@@ -117,7 +117,7 @@ const TaskRunDetails = ({
     if (!view && logs) {
       onViewChange('logs', { replace: true });
     }
-  }, [displayName, view]);
+  }, [displayName, view, logs, onViewChange]);
 
   if (!taskRun.metadata) {
     return null;

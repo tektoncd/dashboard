@@ -426,16 +426,17 @@ function CreateTaskRun() {
       });
   }
 
+  const externalTaskRunName = isYAMLMode() ? getTaskRunName() : null;
+  const { data: taskRunObject, isPending } = useTaskRun(
+    {
+      name: externalTaskRunName,
+      namespace: getNamespace()
+    },
+    { enabled: !!externalTaskRunName, disableWebSocket: true }
+  );
+
   if (isYAMLMode()) {
-    const externalTaskRunName = getTaskRunName();
     if (externalTaskRunName) {
-      const { data: taskRunObject, isPending } = useTaskRun(
-        {
-          name: externalTaskRunName,
-          namespace: getNamespace()
-        },
-        { disableWebSocket: true }
-      );
       let payloadYaml = null;
       if (taskRunObject) {
         const { payload } = generateNewTaskRunPayload({
