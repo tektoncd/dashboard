@@ -68,7 +68,12 @@ const NamespacesDropdown = ({
     }
 
     return newSelectedItem;
-  }, [originalSelectedItem?.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    allNamespacesString,
+    originalSelectedItem?.id,
+    originalSelectedItem?.text
+  ]);
 
   const items = tenantNamespaces.length
     ? tenantNamespaces

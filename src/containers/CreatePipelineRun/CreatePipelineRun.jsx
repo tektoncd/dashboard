@@ -451,16 +451,17 @@ function CreatePipelineRun() {
       });
   }
 
+  const externalPipelineRunName = isYAMLMode() ? getPipelineRunName() : null;
+  const { data: pipelineRunObject, isPending } = usePipelineRun(
+    {
+      name: externalPipelineRunName,
+      namespace: getNamespace()
+    },
+    { enabled: !!externalPipelineRunName, disableWebSocket: true }
+  );
+
   if (isYAMLMode()) {
-    const externalPipelineRunName = getPipelineRunName();
     if (externalPipelineRunName) {
-      const { data: pipelineRunObject, isPending } = usePipelineRun(
-        {
-          name: externalPipelineRunName,
-          namespace: getNamespace()
-        },
-        { disableWebSocket: true }
-      );
       let payloadYaml = null;
       if (pipelineRunObject) {
         const { payload } = generateNewPipelineRunPayload({

@@ -110,7 +110,7 @@ export function ScrollButtons({
         );
       }
     };
-  }, []);
+  }, [bottomThreshold, topThreshold]);
 
   const getScrollBehavior = () => {
     const prefersReducedMotion = window.matchMedia(

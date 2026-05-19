@@ -15,10 +15,12 @@ limitations under the License.
 import { usePrefix } from '@carbon/react';
 
 const RunMetadataColumn = ({ columnHeader, columnContent }) => {
+  const carbonPrefix = usePrefix();
+
   if (!columnContent) {
     return null;
   }
-  const carbonPrefix = usePrefix();
+
   return (
     <div className="tkn--metadata-column">
       <h3 className={`${carbonPrefix}--label tkn--metadata-column-header`}>

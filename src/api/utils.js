@@ -11,7 +11,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
@@ -188,6 +195,8 @@ export function useWebSocket({
   const [isWebSocketConnected, setWebSocketConnected] = useState(null);
   const webSocketRef = useRef(null);
 
+  const paramsString = useMemo(() => JSON.stringify(params), [params]);
+
   useEffect(() => {
     if (enabled === false) {
       return undefined;
@@ -244,7 +253,16 @@ export function useWebSocket({
         socket.close();
       }
     };
-  }, [enabled, group, kind, JSON.stringify(params), version]);
+  }, [
+    enabled,
+    group,
+    kind,
+    params,
+    paramsString,
+    queryClient,
+    resourceVersion,
+    version
+  ]);
 
   return { isWebSocketConnected };
 }

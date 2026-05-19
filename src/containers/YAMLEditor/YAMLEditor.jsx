@@ -38,7 +38,7 @@ export default function YAMLEditor({
     if (!loading) {
       setCode(initialCode);
     }
-  }, [loading]);
+  }, [loading, initialCode]);
 
   function validateNamespace(obj) {
     if (!obj?.metadata?.namespace) {
