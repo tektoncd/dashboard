@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 import {
@@ -81,13 +81,15 @@ function TaskRuns() {
 
   useTitleSync({ page: 'TaskRuns' });
 
+  const filtersString = useMemo(() => JSON.stringify(filters), [filters]);
+
   useEffect(() => {
     setDeleteError(null);
     setShowDeleteModal(false);
     setShowStopModal(false);
     setToBeDeleted([]);
     setToBeStopped([]);
-  }, [JSON.stringify(filters), namespace]);
+  }, [filtersString, namespace]);
 
   const {
     data: taskRuns = [],

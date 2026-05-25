@@ -28,7 +28,7 @@ export function useTitleSync({ page, resourceName }) {
   useEffect(() => {
     const pageTitle = page + (resourceName ? ` - ${resourceName}` : '');
     document.title = `Tekton Dashboard | ${pageTitle}`;
-  }, [resourceName]);
+  }, [page, resourceName]);
 }
 
 export function useWebSocketReconnected(callback, webSocketConnected) {
@@ -38,5 +38,5 @@ export function useWebSocketReconnected(callback, webSocketConnected) {
     if (prevWebSocketConnected === false && webSocketConnected) {
       callback();
     }
-  }, [prevWebSocketConnected, webSocketConnected]);
+  }, [callback, prevWebSocketConnected, webSocketConnected]);
 }

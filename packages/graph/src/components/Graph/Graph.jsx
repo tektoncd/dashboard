@@ -12,7 +12,7 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import ELK from 'elkjs/lib/elk.bundled';
 
 import { ArrowRightMarker } from '@carbon/charts-react';
@@ -51,45 +51,52 @@ export default function Graph({
   edges,
   type = 'detailed'
 }) {
-  const elk = new ELK({
-    defaultLayoutOptions: {
-      'elk.algorithm': 'layered',
-      'elk.direction': direction,
-      'elk.edgeRouting': 'ORTHOGONAL',
-      'elk.layered.mergeEdges': true, // avoid multiple input / output ports per node
-      // TODO: test
-      // 'elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED', // LEFTDOWN
-      // 'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
-      // 'elk.layered.nodePlacement.strategy': 'NETWORK_SIMPLEX',
-      // 'crossingMinimization.semiInteractive': true,
-      // 'elk.layered.spacing.edgeNodeBetweenLayers': '50',
-      // 'elk.layered.unnecessaryBendpoints': true,
-      // 'org.eclipse.elk.layered.layering.strategy': 'INTERACTIVE',
-      // 'elk.padding': '[left=50, top=50, right=50, bottom=50]',
-      // portConstraints: 'FIXED_ORDER', // this gives correct node order but ignores mergeEdges and has other issues
-      // 'elk.layered.considerModelOrder.strategy': 'NODES_AND_EDGES',
-      // 'elk.layered.considerModelOrder.crossingCounterNodeInfluence': 0.001,
-      // 'elk.layered.considerModelOrder.crossingCounterPortInfluence': 0.001,
-      separateConnectedComponents: false,
-      'spacing.nodeNode': type === 'detailed' ? 20 : 5,
-      'spacing.nodeNodeBetweenLayers': type === 'detailed' ? 50 : 20
-    }
-  });
+  const elk = useMemo(
+    () =>
+      new ELK({
+        defaultLayoutOptions: {
+          'elk.algorithm': 'layered',
+          'elk.direction': direction,
+          'elk.edgeRouting': 'ORTHOGONAL',
+          'elk.layered.mergeEdges': true, // avoid multiple input / output ports per node
+          // TODO: test
+          // 'elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED', // LEFTDOWN
+          // 'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
+          // 'elk.layered.nodePlacement.strategy': 'NETWORK_SIMPLEX',
+          // 'crossingMinimization.semiInteractive': true,
+          // 'elk.layered.spacing.edgeNodeBetweenLayers': '50',
+          // 'elk.layered.unnecessaryBendpoints': true,
+          // 'org.eclipse.elk.layered.layering.strategy': 'INTERACTIVE',
+          // 'elk.padding': '[left=50, top=50, right=50, bottom=50]',
+          // portConstraints: 'FIXED_ORDER', // this gives correct node order but ignores mergeEdges and has other issues
+          // 'elk.layered.considerModelOrder.strategy': 'NODES_AND_EDGES',
+          // 'elk.layered.considerModelOrder.crossingCounterNodeInfluence': 0.001,
+          // 'elk.layered.considerModelOrder.crossingCounterPortInfluence': 0.001,
+          separateConnectedComponents: false,
+          'spacing.nodeNode': type === 'detailed' ? 20 : 5,
+          'spacing.nodeNodeBetweenLayers': type === 'detailed' ? 50 : 20
+        }
+      }),
+    [direction, type]
+  );
 
   const [positions, setPositions] = useState(null);
 
-  const graph = {
-    id,
-    children: nodes,
-    edges
-  };
+  const graph = useMemo(
+    () => ({
+      id,
+      children: nodes,
+      edges
+    }),
+    [id, nodes, edges]
+  );
 
   useEffect(() => {
     elk
       .layout(graph)
       .then(g => setPositions(g))
       .catch(console.error);
-  }, [direction]);
+  }, [elk, graph]);
 
   if (!positions) {
     return null;

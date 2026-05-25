@@ -73,14 +73,15 @@ function CreateCustomRun() {
   }
 
   const externalCustomRunName = getCustomRunName();
+  const { data: customRunObject, isPending } = useCustomRun(
+    {
+      name: externalCustomRunName,
+      namespace: getNamespace()
+    },
+    { enabled: !!externalCustomRunName, disableWebSocket: true }
+  );
+
   if (externalCustomRunName) {
-    const { data: customRunObject, isPending } = useCustomRun(
-      {
-        name: externalCustomRunName,
-        namespace: getNamespace()
-      },
-      { disableWebSocket: true }
-    );
     let payloadYaml = null;
     if (customRunObject) {
       const { payload } = generateNewCustomRunPayload({
