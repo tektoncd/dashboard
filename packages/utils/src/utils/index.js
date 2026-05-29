@@ -214,7 +214,8 @@ export function isRunning(reason, status) {
       (reason === 'Running' ||
         reason === 'PipelineRunStopping' ||
         reason === 'CancelledRunningFinally' ||
-        reason === 'StoppedRunningFinally'))
+        reason === 'StoppedRunningFinally' ||
+        reason === 'PipelineRunTimeoutRunningFinally'))
   );
 }
 
