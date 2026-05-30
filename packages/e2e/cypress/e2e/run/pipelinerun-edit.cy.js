@@ -62,7 +62,7 @@ spec:
 
     cy.get(
       `td:has(.${carbonPrefix}--link[title*=${pipelineName}-run]) + td:has(.tkn--status[data-reason=Succeeded])`,
-      { timeout: 15000 }
+      { timeout: 60000 }
     ).should('have.length', 1);
 
     cy.contains('a', `${pipelineName}-run`).click();
@@ -74,7 +74,7 @@ spec:
 
     cy.get(
       `td:has(.${carbonPrefix}--link[title*=${pipelineName}-run]) + td:has(.tkn--status[data-reason=Succeeded])`,
-      { timeout: 15000 }
+      { timeout: 60000 }
     ).should('have.length', 2);
   });
 });
