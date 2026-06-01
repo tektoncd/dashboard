@@ -356,6 +356,8 @@ install() {
   echo "Installing …"
   kubectl create ns $INSTALL_NAMESPACE > /dev/null 2>&1 || true
   if [ "$DEBUG" == "true" ]; then
+    echo "k8s version:"
+    kubectl version
     echo "Output $TMP_FILE"
     echo "====="
     cat $TMP_FILE
