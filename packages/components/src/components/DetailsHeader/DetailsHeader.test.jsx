@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -165,10 +165,10 @@ describe('DetailsHeader', () => {
       }
     };
 
-    const { queryByText } = render(
+    const { getAllByText, queryByText } = render(
       <DetailsHeader {...props} stepStatus={stepStatus} />
     );
-    expect(queryByText(/duration/i)).toBeTruthy();
+    expect(getAllByText(/duration/i).length).toBeGreaterThan(0);
     expect(queryByText(/0s/i)).toBeTruthy();
   });
 
@@ -199,9 +199,9 @@ describe('DetailsHeader', () => {
       }
     };
 
-    const { queryByText } = render(
+    const { getAllByText } = render(
       <DetailsHeader {...props} taskRun={taskRun} type="taskRun" />
     );
-    expect(queryByText(/duration/i)).toBeTruthy();
+    expect(getAllByText(/duration/i).length).toBeGreaterThan(0);
   });
 });
