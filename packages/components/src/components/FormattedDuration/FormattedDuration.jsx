@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -43,13 +43,14 @@ class FormattedDurationWrapper extends Component {
 
   componentDidMount() {
     const { intl } = this.props;
+    const fullDuration = this.fullDurationNode?.textContent || '';
     const tooltip = intl.formatMessage(
       {
         id: 'dashboard.run.duration',
         defaultMessage: 'Duration: {duration}'
       },
       {
-        duration: this.durationNode?.textContent
+        duration: fullDuration
       }
     );
     this.setState({
@@ -59,14 +60,14 @@ class FormattedDurationWrapper extends Component {
 
   componentDidUpdate() {
     const { intl } = this.props;
-    const duration = this.durationNode.textContent;
+    const fullDuration = this.fullDurationNode?.textContent || '';
     const tooltip = intl.formatMessage(
       {
         id: 'dashboard.run.duration',
         defaultMessage: 'Duration: {duration}'
       },
       {
-        duration
+        duration: fullDuration
       }
     );
     if (this.state.tooltip !== tooltip) {
@@ -80,16 +81,34 @@ class FormattedDurationWrapper extends Component {
     const { milliseconds } = this.props;
     return (
       <span
-        ref={ref => {
-          this.durationNode = ref;
-        }}
+        // eslint-disable-next-line jsx-a11y/aria-role
+        role="text"
+        aria-label={this.state.tooltip}
         title={this.state.tooltip}
       >
-        <FormattedDuration
-          format="{days} {hours} {minutes} {seconds}"
-          seconds={milliseconds / 1000}
-          unitDisplay="narrow"
-        />
+        <span
+          ref={ref => {
+            this.durationNode = ref;
+          }}
+        >
+          <FormattedDuration
+            format="{days} {hours} {minutes} {seconds}"
+            seconds={milliseconds / 1000}
+            unitDisplay="narrow"
+          />
+        </span>
+        <span
+          ref={ref => {
+            this.fullDurationNode = ref;
+          }}
+          hidden
+        >
+          <FormattedDuration
+            format="{days} {hours} {minutes} {seconds}"
+            seconds={milliseconds / 1000}
+            unitDisplay="long"
+          />
+        </span>
       </span>
     );
   }
