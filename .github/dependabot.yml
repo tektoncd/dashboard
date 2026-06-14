@@ -55,6 +55,9 @@ updates:
           - "eslint-plugin-storybook"
           - "storybook"
           - "@storybook/*"
+      visx:
+        patterns:
+          - "@visx/*"
       vitest:
         patterns:
           - "vitest"
