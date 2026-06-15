@@ -12,17 +12,13 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
-import { Component, createRef } from 'react';
+import { Component } from 'react';
 import { PrefixContext, SkeletonText } from '@carbon/react';
 import { FixedSizeList as List } from 'react-window';
 import { injectIntl, useIntl } from 'react-intl';
 import { getStepStatusReason, isRunning } from '@tektoncd/dashboard-utils';
 import { Information } from '@carbon/react/icons';
 
-import {
-  hasElementPositiveVerticalScrollBottom,
-  isElementEndBelowViewBottom
-} from './domUtils';
 import DotSpinner from '../DotSpinner';
 import LogFormat from '../LogFormat';
 
@@ -81,34 +77,13 @@ export class LogContainer extends Component {
   constructor(props) {
     super(props);
     this.state = { groupsExpanded: {}, loading: true, logs: [] };
-    this.logRef = createRef();
-    this.textRef = createRef();
   }
 
   componentDidMount() {
     this.loadLog();
-    if (this.props.enableLogAutoScroll) {
-      this.wasRunningAfterMounting();
-      window.addEventListener('scroll', this.handleLogScroll, true);
-      this.handleLogScroll();
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (
-      this.props.enableLogAutoScroll &&
-      prevState.logs?.length !== this.state.logs?.length
-    ) {
-      if (this.shouldAutoScroll()) {
-        this.scrollToBottomLog();
-        return;
-      }
-      this.handleLogScroll();
-    }
   }
 
   componentWillUnmount() {
-    window.removeEventListener('scroll', this.handleLogScroll, true);
     clearTimeout(this.timer);
     this.cancelled = true;
   }
@@ -120,45 +95,6 @@ export class LogContainer extends Component {
         [groupIndex]: expanded
       }
     }));
-  };
-
-  handleLogScroll = () => {
-    if (!this.state.loading) {
-      const isLogBottomUnseen = this.isLogBottomUnseen();
-      if (isLogBottomUnseen !== this.state.isLogBottomUnseen) {
-        this.setState({
-          isLogBottomUnseen
-        });
-      }
-    }
-  };
-
-  shouldAutoScroll = () => {
-    return (
-      this.props.enableLogAutoScroll &&
-      this.state.isLogBottomUnseen === false &&
-      this.wasRunningAfterMounting() &&
-      this.isLogBottomUnseen()
-    );
-  };
-
-  isLogBottomUnseen = () => {
-    return (
-      isElementEndBelowViewBottom(this.logRef?.current) ||
-      hasElementPositiveVerticalScrollBottom(
-        this.textRef?.current?.firstElementChild
-      )
-    );
-  };
-
-  scrollToBottomLog = () => {
-    const longTextElement = this.textRef?.current?.firstElementChild;
-    if (longTextElement) {
-      longTextElement.scrollTop =
-        longTextElement.scrollHeight - longTextElement.clientHeight;
-    }
-    const rootElement = document.documentElement;
-    rootElement.scrollTop = rootElement.scrollHeight - rootElement.clientHeight;
   };
 
   wasRunningAfterMounting = () => {
@@ -497,15 +433,13 @@ export class LogContainer extends Component {
     const { toolbar } = this.props;
     const { loading } = this.state;
     return (
-      <pre className="tkn--log tkn--theme-dark" ref={this.logRef}>
+      <pre className="tkn--log tkn--theme-dark">
         {loading ? (
           <SkeletonText paragraph width="60%" />
         ) : (
           <>
             {toolbar}
-            <div className="tkn--log-container" ref={this.textRef}>
-              {this.getLogList()}
-            </div>
+            <div className="tkn--log-container">{this.getLogList()}</div>
             {this.logTrailer()}
           </>
         )}
