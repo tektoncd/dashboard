@@ -55,6 +55,16 @@ describe('TaskRunLogs', () => {
     ).toBeTruthy();
   });
 
+  it('should display message when TaskRun status not available', () => {
+    const taskRun = {};
+    const { queryByText } = render(
+      <TaskRunLogs {...defaultProps} taskRun={taskRun} />
+    );
+    expect(
+      queryByText('No logs are available. See status for more details.')
+    ).toBeTruthy();
+  });
+
   it('should display message when task is skipped', () => {
     const { queryByText } = render(
       <TaskRunLogs {...defaultProps} skippedTask />
