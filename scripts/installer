@@ -125,7 +125,7 @@ download() {
   debug "Downloading $url -> $TMP_FILE …"
 
   if type "curl" > /dev/null 2>&1; then
-    curl -s "$url" -o "$TMP_FILE"
+    curl -s -L "$url" -o "$TMP_FILE"
   elif type "wget" > /dev/null 2>&1; then
     wget -q -O "$TMP_FILE" "$url"
   fi
