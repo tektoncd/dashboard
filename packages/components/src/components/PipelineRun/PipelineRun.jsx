@@ -40,8 +40,6 @@ export default /* istanbul ignore next */ function PipelineRun({
   description,
   displayRunHeader,
   duration,
-  enableLogAutoScroll,
-  enableLogScrollButtons,
   error,
   fetchLogs,
   forceLogPolling,
@@ -109,8 +107,6 @@ export default /* istanbul ignore next */ function PipelineRun({
 
     return (
       <Log
-        enableLogAutoScroll={enableLogAutoScroll}
-        enableLogScrollButtons={enableLogScrollButtons}
         fetchLogs={() => fetchLogs({ stepName, stepStatus, taskRun })}
         forcePolling={forceLogPolling}
         isSidecar={isSidecar}
