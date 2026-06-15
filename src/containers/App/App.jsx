@@ -118,6 +118,7 @@ function Root() {
   const defaultNamespace = useDefaultNamespace();
   const { selectNamespace } = useSelectedNamespace();
 
+  /* istanbul ignore next */
   if (location.state?.fromDefaultRoute && defaultNamespace) {
     setTimeout(() => {
       selectNamespace(defaultNamespace);

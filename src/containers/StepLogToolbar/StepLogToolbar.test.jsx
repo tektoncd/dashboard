@@ -77,4 +77,16 @@ describe('getLogsToolbar', () => {
     expect(API.getExternalLogURL).not.toHaveBeenCalled();
     expect(API.getPodLogURL).not.toHaveBeenCalled();
   });
+
+  it('should handle missing step status', () => {
+    const namespace = 'fake_namespace';
+    const taskRun = { metadata: { namespace } };
+    vi.spyOn(API, 'getPodLogURL');
+    vi.spyOn(API, 'getExternalLogURL');
+
+    render(<LogsToolbarContainer taskRun={taskRun} />);
+
+    expect(API.getExternalLogURL).not.toHaveBeenCalled();
+    expect(API.getPodLogURL).not.toHaveBeenCalled();
+  });
 });

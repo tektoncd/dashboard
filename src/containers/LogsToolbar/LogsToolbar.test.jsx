@@ -33,3 +33,29 @@ describe('getLogsToolbar', () => {
     expect(queryByText('Maximize')).toBeTruthy();
   });
 });
+
+it('should handle missing TaskRun status', () => {
+  const container = 'fake_container';
+  const namespace = 'fake_namespace';
+  const stepStatus = { container };
+  const taskRun = { metadata: { namespace } };
+
+  const { queryByText } = render(
+    <LogsToolbarContainer
+      onToggleMaximized={() => {}}
+      stepStatus={stepStatus}
+      taskRun={taskRun}
+    />
+  );
+  expect(queryByText('Maximize')).toBeTruthy();
+});
+
+it('should handle missing step status', () => {
+  const namespace = 'fake_namespace';
+  const taskRun = { metadata: { namespace } };
+
+  const { queryByText } = render(
+    <LogsToolbarContainer onToggleMaximized={() => {}} taskRun={taskRun} />
+  );
+  expect(queryByText('Maximize')).toBeTruthy();
+});
