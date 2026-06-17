@@ -29,7 +29,7 @@ limitations under the License.
     li:not(:empty), p:not(:empty) {
       @include type-style('body-compact-02');
       margin-block-start: $spacing-03;
-      span:first-child {
+      > span:first-child {
         font-weight: bold;
         margin-inline-end: $spacing-02;
       }
