@@ -21,7 +21,6 @@ module.exports = defineConfig({
   e2e: {
     baseUrl: 'http://localhost:8000',
     experimentalRunAllSpecs: true,
-    experimentalStudio: true,
     setupNodeEvents(on, config) {
       config.expose.carbonPrefix = 'cds';
 
