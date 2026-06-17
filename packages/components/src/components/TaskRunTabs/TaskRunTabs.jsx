@@ -1,5 +1,5 @@
 /*
-Copyright 2025 The Tekton Authors
+Copyright 2025-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -37,7 +37,7 @@ export default function TaskRunTabs({
   const prefix = usePrefix();
 
   return (
-    <TabListVertical activation="manual" className="tkn--task-list">
+    <TabListVertical activation="manual" className="tkn--task-list" size="xl">
       {preTaskRun ? (
         <Tab id={preTaskRun.id}>
           <div className="tkn--task-title" title={preTaskRun.title}>
