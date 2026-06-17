@@ -341,7 +341,6 @@ export default /* istanbul ignore next */ function PipelineRun({
       {(taskRunsToUse.length > 0 || preTaskRun) && (
         <div className="tkn--tasks">
           <TabsVertical
-            selectedIndex={selectedIndex}
             onChange={({ selectedIndex: newSelectedIndex }) => {
               if (preTaskRun && newSelectedIndex === 0) {
                 onTaskSelected({});
@@ -360,6 +359,7 @@ export default /* istanbul ignore next */ function PipelineRun({
                 taskRunName: selectedTaskRun.metadata?.name
               });
             }}
+            selectedIndex={selectedIndex}
           >
             <TaskRunTabs
               preTaskRun={preTaskRun}
