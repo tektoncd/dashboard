@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2024 The Tekton Authors
+Copyright 2020-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -29,9 +29,9 @@ import {
   Information as AboutIcon,
   Settings as SettingsIcon
 } from '@carbon/react/icons';
-import { Loading } from '@tektoncd/dashboard-components';
+import { Icons, Loading } from '@tektoncd/dashboard-components';
 
-import TektonIcon from '../../images/tekton-logo-20x20.svg?react';
+const { TektonLogo20X20: TektonIcon } = Icons;
 
 const SkeletonText = ({ heading, paragraph }) => (
   <CarbonSkeletonText heading={heading} paragraph={paragraph} width="80%" />

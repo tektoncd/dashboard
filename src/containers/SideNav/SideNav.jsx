@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2025 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -28,6 +28,7 @@ import {
   Settings as SettingsIcon
 } from '@carbon/react/icons';
 import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
+import { Icons } from '@tektoncd/dashboard-components';
 
 import {
   useExtensions,
@@ -37,8 +38,7 @@ import {
   useTenantNamespaces
 } from '../../api';
 
-import KubernetesIcon from '../../images/kubernetes.svg?react';
-import TektonIcon from '../../images/tekton-logo-20x20.svg?react';
+const { Kubernetes: KubernetesIcon, TektonLogo20X20: TektonIcon } = Icons;
 
 function SideNav({ expanded, showKubernetesResources = false }) {
   const intl = useIntl();

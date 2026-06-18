@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2024 The Tekton Authors
+Copyright 2020-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -90,7 +90,7 @@ $tkn--breakpoint-max: 1584px;
       }
     }
 
-    img {
+    .tkn--logo {
       block-size: 30rem;
       margin-block-start: -2rem;
       margin-inline-end: -2rem;
@@ -232,17 +232,6 @@ $tkn--breakpoint-max: 1584px;
 
     .tkn--about--tables {
       flex-grow: 1;
-    }
-
-    .tkn--about--image-wrapper {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      img {
-        inline-size: 200px;
-        margin: $spacing-07;
-      }
     }
   }
 }

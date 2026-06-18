@@ -13,7 +13,6 @@ limitations under the License.
 
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
-import svgr from 'vite-plugin-svgr';
 import yaml from '@rollup/plugin-yaml';
 
 const customAPIDomain = process.env.API_DOMAIN;
@@ -41,7 +40,7 @@ export default defineConfig(({ mode }) => ({
       }
     }
   },
-  plugins: [react({ devTarget: 'es2022' }), svgr(), yaml()],
+  plugins: [react({ devTarget: 'es2022' }), yaml()],
   resolve: {
     extensions: ['.js', '.jsx']
   },
