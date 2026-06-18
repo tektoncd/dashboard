@@ -83,7 +83,7 @@
     "runtime": {
       "name": "node",
       "onFail": "error",
-      "version": "^24.14.0"
+      "version": "^24.16.0"
     },
     "packageManager": {
       "name": "npm",
@@ -92,7 +92,7 @@
     }
   },
   "engines": {
-    "node": "^24.14.0",
+    "node": "^24.16.0",
     "npm": "^11.9.0"
   },
   "//": "Workspaces must be listed explicitly to ensure they're processed in the correct order until npm natively supports detecting the topological order. Exclude e2e as it needs to function as a standalone project and its dependencies should not be hoisted.",

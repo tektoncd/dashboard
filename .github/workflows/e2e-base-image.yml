@@ -9,7 +9,7 @@ on:
       tag:
         description: 'Image tag, typically containing the Node.js and browser versions'
         required: true
-        default: 'node24.14.0-chrome147'
+        default: 'node24.16.0-chrome149'
         type: string
 
 concurrency:
