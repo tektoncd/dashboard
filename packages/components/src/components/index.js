@@ -22,6 +22,7 @@ export { default as DotSpinner } from './DotSpinner';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as FormattedDate } from './FormattedDate';
 export { default as FormattedDuration } from './FormattedDuration';
+export { default as Icons } from './Icons';
 export { default as KeyValueList } from './KeyValueList';
 export { default as LabelFilter } from './LabelFilter';
 export { default as Link } from './Link';

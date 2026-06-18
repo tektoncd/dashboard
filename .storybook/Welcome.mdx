@@ -1,5 +1,5 @@
 {/*
-Copyright 2023-2025 The Tekton Authors
+Copyright 2023-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -20,7 +20,7 @@ import * as GraphStories from '../packages/graph/src/components/Graph/Graph.stor
 import * as NodeStories from '../packages/graph/src/components/Node/Node.stories';
 import * as RunHeaderStories from '../packages/components/src/components/RunHeader/RunHeader.stories';
 
-import tektonDashboardLogo from '../src/images/tekton-dashboard-color.svg';
+import TektonDashboardLogo from '../packages/components/src/components/Icons/TektonDashboardColor';
 
 <Meta
   name="Welcome"
@@ -41,7 +41,9 @@ import tektonDashboardLogo from '../src/images/tekton-dashboard-color.svg';
           - [@tektoncd/dashboard-utils](https://github.com/tektoncd/dashboard/tree/main/packages/utils/)
           - [@tektoncd/dashboard-graph (experimental)](https://github.com/tektoncd/dashboard/tree/main/packages/graph/)
         </div>
-        <img src={tektonDashboardLogo} alt="Tekton Dashboard logo" />
+        <TektonDashboardLogo className="tkn--logo">
+          <title>Tekton Dashboard logo</title>
+        </TektonDashboardLogo>
       </div>
 
       ### Overview

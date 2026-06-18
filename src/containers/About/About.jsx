@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2025 The Tekton Authors
+Copyright 2020-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -23,12 +23,15 @@ import {
 } from '@carbon/react';
 import { ArrowRight as ArrowIcon } from '@carbon/react/icons';
 import { getErrorMessage, useTitleSync } from '@tektoncd/dashboard-utils';
+import { Icons } from '@tektoncd/dashboard-components';
 
 import { useProperties } from '../../api';
 
-import tektonLogo from '../../images/tekton-dashboard-color.svg';
-import DocsPictogram from '../../images/assets.svg?react';
-import HubPictogram from '../../images/user--interface.svg?react';
+const {
+  Assets: DocsPictogram,
+  TektonDashboardColor: TektonDashboardLogo,
+  UserInterface: HubPictogram
+} = Icons;
 
 function ClickableTile(props) {
   return (
@@ -149,18 +152,14 @@ export function About() {
             })}
           </p>
         </header>
-        <img
-          alt={intl.formatMessage({
-            id: 'dashboard.logo.alt',
-            defaultMessage: 'Tekton logo'
-          })}
-          role="presentation"
-          src={tektonLogo}
-          title={intl.formatMessage({
-            id: 'dashboard.logo.tooltip',
-            defaultMessage: 'Meow'
-          })}
-        />
+        <TektonDashboardLogo className="tkn--logo">
+          <title>
+            {intl.formatMessage({
+              id: 'dashboard.logo.tooltip',
+              defaultMessage: 'Meow'
+            })}
+          </title>
+        </TektonDashboardLogo>
       </div>
 
       {error && (
