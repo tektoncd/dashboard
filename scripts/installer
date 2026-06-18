@@ -31,7 +31,8 @@ EXTERNAL_LOGS=""
 BASE_RELEASE_URL="https://infra.tekton.dev/tekton-releases/dashboard"
 
 # additional options passed to ko resolve
-KO_RESOLVE_OPTIONS="--image-label=org.opencontainers.image.source=https://github.com/tektoncd/dashboard"
+KO_RESOLVE_OPTIONS=""
+
 PLATFORM=""
 
 # Display a box banner.
@@ -110,7 +111,13 @@ bootstrapFromInstallerManifest() {
 
 compile() {
   debug "Building config …"
-  kustomize build --load-restrictor LoadRestrictionsNone config | ko resolve $KO_RESOLVE_OPTIONS $PLATFORM -f - > "$TMP_FILE"
+  kustomize build --load-restrictor LoadRestrictionsNone config | ko resolve \
+    --image-label=org.opencontainers.image.source=https://github.com/tektoncd/dashboard \
+    --image-label=org.opencontainers.image.url=https://github.com/tektoncd/dashboard \
+    --image-label=org.opencontainers.image.title=dashboard \
+    --image-label=org.opencontainers.image.description="Tekton Dashboard" \
+    $KO_RESOLVE_OPTIONS \
+    $PLATFORM -f - > "$TMP_FILE"
 }
 
 download() {

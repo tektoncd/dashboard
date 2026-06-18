@@ -19,7 +19,9 @@ ARG NODE_VERSION='24.14.0'
 FROM cypress/factory@sha256:6fc007867f2b7bcf17dd3a74989da2ffdaa772f4f9c447e1184a1656452308c3
 
 LABEL maintainer="Tekton Authors <tekton-dev@googlegroups.com>"
-LABEL org.opencontainers.image.source=https://github.com/tektoncd/dashboard
+LABEL org.opencontainers.image.source=https://github.com/tektoncd/dashboard/tree/main/packages/e2e/base-image
+LABEL org.opencontainers.image.url=https://github.com/tektoncd/dashboard/tree/main/packages/e2e/base-image \
+LABEL org.opencontainers.image.title=dashboard-e2e-base \
 LABEL org.opencontainers.image.description="Base image for Tekton Dashboard E2E tests"
 LABEL org.opencontainers.image.licenses=Apache-2.0
 
