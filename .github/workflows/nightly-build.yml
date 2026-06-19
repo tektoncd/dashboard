@@ -71,6 +71,9 @@ jobs:
           kustomize build tekton | kubectl apply -f -
 
       - name: Start Tekton Build Pipeline
+        env:
+          LATEST_SHA: ${{ steps.version.outputs.latest_sha }}
+          VERSION_TAG: ${{ steps.version.outputs.version_tag }}
         run: |
           set -euo pipefail  # Exit on any error, undefined variables, or pipe failures
 
@@ -78,15 +81,15 @@ jobs:
 
           PIPELINE_RUN=$(tkn pipeline start dashboard-release \
             --serviceaccount=release-right-meow \
-            --param gitRevision="${{ steps.version.outputs.latest_sha }}" \
-            --param versionTag="${{ steps.version.outputs.version_tag }}" \
-            --param releaseBucket="${{ env.BUCKET }}" \
-            --param imageRegistry=${{ env.REGISTRY }} \
-            --param imageRegistryPath="${{ env.IMAGE_REGISTRY_PATH }}" \
-            --param imageRegistryUser="${{ env.IMAGE_REGISTRY_USER }}" \
+            --param gitRevision="${LATEST_SHA}" \
+            --param versionTag="${VERSION_TAG}" \
+            --param releaseBucket="${BUCKET}" \
+            --param imageRegistry="${REGISTRY}" \
+            --param imageRegistryPath="${IMAGE_REGISTRY_PATH}" \
+            --param imageRegistryUser="${IMAGE_REGISTRY_USER}" \
             --param imageRegistryRegions="" \
             --param koExtraArgs="" \
-            --param repoName="${{ env.REPO_NAME }}" \
+            --param repoName="${REPO_NAME}" \
             --param serviceAccountImagesPath=credentials \
             --param releaseAsLatest="true" \
             --workspace name=workarea,volumeClaimTemplateFile=workspace-template.yaml \
