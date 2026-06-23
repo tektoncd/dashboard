@@ -1,17 +1,15 @@
 name: Slash Command Routing
-
 permissions:
   contents: read
-
 on:
   issue_comment:
     types: [created]
-
 jobs:
   check_comments:
     if: ${{ github.event.issue.pull_request }}
     permissions:
-      issues: write # for peter-evans/slash-command-dispatch to create issue reaction
-      pull-requests: write # for peter-evans/slash-command-dispatch to create PR reaction
+      issues: write
+      pull-requests: write
     uses: tektoncd/plumbing/.github/workflows/_slash.yml@5fcd73e7a60655e2cc717015e91be844523ab8f1 # main
-    secrets: inherit
+    secrets:
+      CHATOPS_TOKEN: ${{ secrets.CHATOPS_TOKEN }}
