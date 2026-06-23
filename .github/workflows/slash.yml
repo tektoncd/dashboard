@@ -13,5 +13,6 @@ jobs:
     permissions:
       issues: write # for peter-evans/slash-command-dispatch to create issue reaction
       pull-requests: write # for peter-evans/slash-command-dispatch to create PR reaction
-    uses: tektoncd/plumbing/.github/workflows/_slash.yml@5fcd73e7a60655e2cc717015e91be844523ab8f1 # main
-    secrets: inherit
+    uses: tektoncd/plumbing/.github/workflows/_slash.yml@cd41dc479fff3411a5ae8fb3cdca66f9c8ec7ab1 # main
+    secrets:
+      CHATOPS_TOKEN: ${{ secrets.CHATOPS_TOKEN }}
