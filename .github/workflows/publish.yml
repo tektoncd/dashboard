@@ -1,137 +1,136 @@
 name: Publish NPM packages
 
-  permissions:
-    contents: read
+permissions:
+  contents: read
 
-  on:
-    pull_request:
-      branches: ["main"]
-      paths-ignore:
-        - "**"
-        - "!**/package.json"
-        - "!**/package-lock.json"
-      types:
-        - opened
-        - reopened
-        - synchronize
-    push:
-      branches: ["main"]
-      paths-ignore:
-        - "**"
-        - "!**/package.json"
-        - "!**/package-lock.json"
+on:
+  pull_request:
+    branches: ["main"]
+    paths-ignore:
+      - "**"
+      - "!**/package.json"
+      - "!**/package-lock.json"
+    types:
+      - opened
+      - reopened
+      - synchronize
+  push:
+    branches: ["main"]
+    paths-ignore:
+      - "**"
+      - "!**/package.json"
+      - "!**/package-lock.json"
 
-  defaults:
-    run:
-      shell: bash
+defaults:
+  run:
+    shell: bash
 
-  jobs:
-    publish:
-      runs-on: ubuntu-24.04
-      permissions:
-        contents: read
-        # required for OIDC
-        id-token: write
-      steps:
-        - name: Check for publish commit
-          id: checkPublishCommit
-          if: >-
-            ${{
-              (
-                github.event_name == 'pull_request' &&
-                startsWith(github.event.pull_request.title, 'Publish v') &&
-                endsWith(github.event.pull_request.title, 'of the @tektoncd/dashboard-* packages')
-              ) ||
-              (
-                github.event_name == 'push' &&
-                startsWith(github.event.head_commit.message, 'Publish v') &&
-                endsWith(github.event.head_commit.message, 'of the @tektoncd/dashboard-* packages')
-              )
-            }}
-          run: |
-            echo "Confirmed it's a publish commit"
-        - name: Harden Runner
-          if: ${{ steps.checkPublishCommit.outcome == 'success' }}
-          uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
-          with:
-            egress-policy: audit
-        - name: Checkout
-          if: ${{ steps.checkPublishCommit.outcome == 'success' }}
-          uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-          with:
-            # for PRs checkout the head rather than the merge commit so we can get the original commit message
-            ref: ${{ github.event.pull_request.head.sha || github.sha }}
-        - name: Validate PR title and commit message match
-          if: ${{ steps.checkPublishCommit.outcome == 'success' && github.event_name == 'pull_request' }}
-          env:
-            PR_TITLE: ${{ github.event.pull_request.title }}
-          run: |
-            COMMIT_MESSAGE="$(git log --pretty=%s -n 1)"
-            if [ "$PR_TITLE" != "$COMMIT_MESSAGE" ]; then
-              echo "::error::PR title and commit message mismatch"
-              echo "Expected format: Publish <version> of the @tektoncd/dashboard-* packages"
-              echo "PR_TITLE:        $PR_TITLE"
-              echo "COMMIT_MESSAGE:  $COMMIT_MESSAGE"
-              exit 1
-            else
-              echo "PR title and commit message match, continuing…"
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      # required for OIDC
+      id-token: write
+    steps:
+      - name: Check for publish commit
+        id: checkPublishCommit
+        if: >-
+          ${{
+            (
+              github.event_name == 'pull_request' &&
+              startsWith(github.event.pull_request.title, 'Publish v') &&
+              endsWith(github.event.pull_request.title, 'of the @tektoncd/dashboard-* packages')
+            ) ||
+            (
+              github.event_name == 'push' &&
+              startsWith(github.event.head_commit.message, 'Publish v') &&
+              endsWith(github.event.head_commit.message, 'of the @tektoncd/dashboard-* packages')
+            )
+          }}
+        run: |
+          echo "Confirmed it's a publish commit"
+      - name: Harden Runner
+        if: ${{ steps.checkPublishCommit.outcome == 'success' }}
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        with:
+          egress-policy: audit
+      - name: Checkout
+        if: ${{ steps.checkPublishCommit.outcome == 'success' }}
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          # for PRs checkout the head rather than the merge commit so we can get the original commit message
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Validate PR title and commit message match
+        if: ${{ steps.checkPublishCommit.outcome == 'success' && github.event_name == 'pull_request' }}
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          COMMIT_MESSAGE="$(git log --pretty=%s -n 1)"
+          if [ "$PR_TITLE" != "$COMMIT_MESSAGE" ]; then
+            echo "::error::PR title and commit message mismatch"
+            echo "Expected format: Publish <version> of the @tektoncd/dashboard-* packages"
+            echo "PR_TITLE:        $PR_TITLE"
+            echo "COMMIT_MESSAGE:  $COMMIT_MESSAGE"
+            exit 1
+          else
+            echo "PR title and commit message match, continuing…"
+          fi
+      - name: Get version
+        id: get-version
+        if: ${{ steps.checkPublishCommit.outcome == 'success' }}
+        env:
+          MESSAGE_WITH_VERSION: ${{ github.event.pull_request.title || github.event.head_commit.message }}
+        run: |
+          echo "Extracting version from commit message"
+          VERSION=$(echo "$MESSAGE_WITH_VERSION" | grep -Po '(v\d+\.\d+\.\d+(\S)*)')
+          echo "VERSION: $VERSION"
+          echo "newPackageVersion=${VERSION}" >> $GITHUB_OUTPUT
+      - name: Check version matches package.json
+        if: ${{ steps.checkPublishCommit.outcome == 'success' }}
+        run: |
+          EXPECTED_VERSION="${{ steps.get-version.outputs.newPackageVersion }}"
+          mismatch=false
+          for packageJson in ./packages/*/package.json; do
+            VERSION="v$(jq -r .version $packageJson)"
+            PRIVATE="$(jq -r .private $packageJson)"
+            if [ "$PRIVATE" == "false" ] && [ "$VERSION" != "$EXPECTED_VERSION" ]; then
+              echo "::error::Version mismatch found in $packageJson: ${VERSION}"
+              mismatch=true
             fi
-        - name: Get version
-          id: get-version
-          if: ${{ steps.checkPublishCommit.outcome == 'success' }}
-          env:
-            MESSAGE_WITH_VERSION: ${{ github.event.pull_request.title || github.event.head_commit.message }}
-          run: |
-            echo "Extracting version from commit message"
-            VERSION=$(echo "$MESSAGE_WITH_VERSION" | grep -Po '(v\d+\.\d+\.\d+(\S)*)')
-            echo "VERSION: $VERSION"
-            echo "newPackageVersion=${VERSION}" >> $GITHUB_OUTPUT
-        - name: Check version matches package.json
-          if: ${{ steps.checkPublishCommit.outcome == 'success' }}
-          env:
-            NEW_PACKAGE_VERSION: ${{ steps.get-version.outputs.newPackageVersion }}
-          run: |
-            EXPECTED_VERSION="${NEW_PACKAGE_VERSION}"
-            mismatch=false
-            for packageJson in ./packages/*/package.json; do
-              VERSION="v$(jq -r .version $packageJson)"
-              PRIVATE="$(jq -r .private $packageJson)"
-              if [ "$PRIVATE" == "false" ] && [ "$VERSION" != "$EXPECTED_VERSION" ]; then
-                echo "::error::Version mismatch found in $packageJson: ${VERSION}"
-                mismatch=true
-              fi
-            done
-            if [ "$mismatch" == "true" ]; then
-              exit 1
-            fi
-        - name: Check PR is up-to-date
-          if: ${{ steps.checkPublishCommit.outcome == 'success' && github.event_name == 'pull_request' }}
-          env:
-            HEAD_REPO_OWNER: ${{ github.event.pull_request.head.repo.owner.login }}
-            GH_TOKEN: ${{ github.token }}
-          run: |
-            BASE_REF="${GITHUB_REPOSITORY_OWNER}:${GITHUB_BASE_REF}"
-            HEAD_REF="${HEAD_REPO_OWNER}:${GITHUB_HEAD_REF}"
-            STATUS=$(gh api \
-                -H "Accept: application/vnd.github+json" \
-                -H "X-GitHub-Api-Version: 2022-11-28" \
-                /repos/${GITHUB_REPOSITORY}/compare/${BASE_REF}...${HEAD_REF} | jq -r .status)
-            if [ "$STATUS" != "ahead" ]; then
-              echo "::error::Pull request not up-to-date with base branch, please rebase"
-              exit 1
-            else
-              echo "Pull request is up-to-date with base branch, continuing…"
-            fi
-        - name: Setup Node.js
-          if: ${{ steps.checkPublishCommit.outcome == 'success' }}
-          uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
-          with:
-            node-version-file: .nvmrc
-            registry-url: 'https://registry.npmjs.org/'
-        - name: Publish dry run
-          if: ${{ steps.checkPublishCommit.outcome == 'success' && github.event_name == 'pull_request' }}
-          # npm@11: You must specify a tag using --tag when publishing a prerelease version.
-          run: npm publish --workspaces --access public --tag latest --dry-run
-        - name: Publish
-          if: ${{ steps.checkPublishCommit.outcome == 'success' && github.event_name == 'push' }}
-          run: npm publish --workspaces --access public --tag latest
+          done
+          if [ "$mismatch" == "true" ]; then
+            exit 1
+          fi
+      - name: Check PR is up-to-date
+        if: ${{ steps.checkPublishCommit.outcome == 'success' && github.event_name == 'pull_request' }}
+        env:
+          # user controls the head ref, use env var to avoid script injection similar to PR title / commit message handling above
+          PR_HEAD_REF: ${{github.event.pull_request.head.ref}}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BASE_REF="${{github.event.pull_request.base.repo.owner.login}}:${{github.event.pull_request.base.ref}}"
+          HEAD_REF="${{github.event.pull_request.head.repo.owner.login}}:${PR_HEAD_REF}"
+          STATUS=$(gh api \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              /repos/${{ github.repository }}/compare/${BASE_REF}...${HEAD_REF} | jq -r .status)
+          if [ "$STATUS" != "ahead" ]; then
+            echo "::error::Pull request not up-to-date with base branch, please rebase"
+            exit 1
+          else
+            echo "Pull request is up-to-date with base branch, continuing…"
+          fi
+      - name: Setup Node.js
+        if: ${{ steps.checkPublishCommit.outcome == 'success' }}
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: .nvmrc
+          registry-url: 'https://registry.npmjs.org/'
+      - name: Publish dry run
+        if: ${{ steps.checkPublishCommit.outcome == 'success' && github.event_name == 'pull_request' }}
+        # npm@11: You must specify a tag using --tag when publishing a prerelease version.
+        run: npm publish --workspaces --access public --tag latest --dry-run
+      - name: Publish
+        if: ${{ steps.checkPublishCommit.outcome == 'success' && github.event_name == 'push' }}
+        run: npm publish --workspaces --access public --tag latest
