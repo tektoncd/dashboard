@@ -21,7 +21,7 @@
     "postpublish": "npm pkg set \"dependencies.@tektoncd/dashboard-utils=file:../utils\""
   },
   "dependencies": {
-    "@carbon/charts-react": "^1.27.12",
+    "@carbon/charts-react": "^1.27.16",
     "@tektoncd/dashboard-utils": "file:../utils",
     "@visx/event": "^4.0.0",
     "@visx/network": "^4.0.0",
