@@ -20,8 +20,8 @@ FROM cypress/factory@sha256:4d7cea25c059c3f153dcf03ace3aa737be59d0be42b769c7dd4c
 
 LABEL maintainer="Tekton Authors <tekton-dev@googlegroups.com>"
 LABEL org.opencontainers.image.source=https://github.com/tektoncd/dashboard/tree/main/packages/e2e/base-image
-LABEL org.opencontainers.image.url=https://github.com/tektoncd/dashboard/tree/main/packages/e2e/base-image \
-LABEL org.opencontainers.image.title=dashboard-e2e-base \
+LABEL org.opencontainers.image.url=https://github.com/tektoncd/dashboard/tree/main/packages/e2e/base-image
+LABEL org.opencontainers.image.title=dashboard-e2e-base
 LABEL org.opencontainers.image.description="Base image for Tekton Dashboard E2E tests"
 LABEL org.opencontainers.image.licenses=Apache-2.0
 
