@@ -9,7 +9,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM ghcr.io/tektoncd/dashboard/dashboard-e2e-base:node24.14.0-chrome147@sha256:f063e7d891b4da43fcec37e9ff84c2b95c0dc04a79efde736163e64e2915ff98
+FROM ghcr.io/tektoncd/dashboard/dashboard-e2e-base:node24.16.0-chrome149@sha256:7b14188ca8495e867834b3e5bee5fa7ac6d313230886293bf252ebe5ce64db9d
 
 ENTRYPOINT ["npm", "run", "test:ci"]
 CMD ["--", "--browser", "chrome"]
