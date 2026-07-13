@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2025 The Tekton Authors
+Copyright 2020-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,13 +13,13 @@ limitations under the License.
 /* istanbul ignore file */
 
 import tlds from 'tlds';
-import LinkifyIt from 'linkify-it';
+import { LinkifyIt } from 'linkify-it';
 import { classNames } from '@tektoncd/dashboard-utils';
 
 import { colors } from './defaults';
 import FormattedDate from '../FormattedDate';
 
-const linkifyIt = LinkifyIt().tlds(tlds);
+const linkifyIt = new LinkifyIt().tlds(tlds);
 
 // eslint-disable-next-line no-control-regex
 const ansiRegex = /^\u001b([@-_])(.*?)([@-~])/;
