@@ -21,6 +21,10 @@ updates:
     schedule:
       interval: "weekly"
       day: "sunday"
+    groups:
+      codeql:
+        patterns:
+          - "github/codeql-action/*"
     labels:
     - "area/automation"
     - "dependencies"
