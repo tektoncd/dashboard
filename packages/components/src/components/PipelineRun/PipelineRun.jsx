@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import { Fragment, useState } from 'react';
-import { InlineNotification, SkeletonText, TabsVertical } from '@carbon/react';
+import { Button,InlineNotification, SkeletonText, TabsVertical } from '@carbon/react';
 import { useIntl } from 'react-intl';
 import {
   getErrorMessage,
@@ -30,6 +30,9 @@ import TaskRunDetails from '../TaskRunDetails';
 import TaskRunTabPanels from '../TaskRunTabPanels';
 import TaskRunTabs from '../TaskRunTabs';
 import TaskTree from '../TaskTree';
+import PipelineSummary from '../PipelineSummary';
+import HorizontalPipeline from '../HorizontalPipeline';
+
 
 function getPipelineTask({ pipeline, pipelineRun, selectedTaskId, taskRun }) {
   const memberOf = taskRun?.metadata?.labels?.[labelConstants.MEMBER_OF];
@@ -78,6 +81,7 @@ export default /* istanbul ignore next */ function PipelineRun({
   view = null
 }) {
   const intl = useIntl();
+  const [viewMode, setViewMode] = useState('flow');
   const [isLogsMaximized, setIsLogsMaximized] = useState(false);
   const [isTaskRunMaximized, setIsTaskRunMaximized] = useState(false);
   const [expandedSteps, setExpandedSteps] = useState(() =>
@@ -396,7 +400,46 @@ export default /* istanbul ignore next */ function PipelineRun({
       >
         {runActions}
       </RunHeader>
-      {(taskRunsToUse.length > 0 || preTaskRun) && (
+<PipelineSummary
+  pipelineRun={pipelineRun}
+  taskRuns={taskRunsToUse}
+  duration={duration}
+/>
+<div
+  style={{
+    display: 'flex',
+    gap: '10px',
+    marginBottom: '20px',
+    marginTop: '10px'
+  }}
+>
+  <Button
+    kind={viewMode === 'flow' ? 'primary' : 'secondary'}
+    size="sm"
+    onClick={() => setViewMode('flow')}
+  >
+    Flow
+  </Button>
+
+  <Button
+    kind={viewMode === 'tree' ? 'primary' : 'secondary'}
+    size="sm"
+    onClick={() => setViewMode('tree')}
+  >
+    Tree
+  </Button>
+</div>
+
+{viewMode === 'flow' && (
+  <HorizontalPipeline
+    taskRuns={taskRunsToUse}
+    selectedTaskId={selectedTaskId}
+    onSelect={onTaskSelected}
+  />
+)}
+
+      {viewMode === 'tree' &&
+       (taskRunsToUse.length > 0 || preTaskRun) && (
         <div className="tkn--tasks">
           {enableTabLayout ? (
             <TabsVertical
@@ -460,6 +503,7 @@ export default /* istanbul ignore next */ function PipelineRun({
                 skippedTasks={skippedTasks}
                 taskRuns={taskRunsToUse}
               />
+
               {(selectedStepId && (
                 <StepDetails
                   definition={definition}
@@ -486,6 +530,6 @@ export default /* istanbul ignore next */ function PipelineRun({
           )}
         </div>
       )}
-    </>
+      </>
   );
 }
