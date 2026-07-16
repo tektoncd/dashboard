@@ -210,3 +210,66 @@ limitations under the License.
   inset-block-start: var(--tkn-global-header-offset);
   max-block-size: calc(100vb - var(--tkn-global-header-offset));
 }
+/* ==========================================================
+   TCXDeploy Demo - GitLab Style Horizontal Pipeline
+   ========================================================== */
+
+.tkn--task-tree {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  gap: 24px;
+  overflow-x: auto;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tkn--task {
+  flex: 0 0 auto;
+  width: 220px;
+  list-style: none;
+  position: relative;
+}
+
+.tkn--task > .tkn--task-link {
+  display: flex !important;
+  align-items: center;
+  justify-content: flex-start;
+
+  min-height: 72px;
+
+  padding: 14px;
+
+  margin: 0 !important;
+
+  background: #ffffff;
+
+  border: 1px solid #dcdcdc;
+
+  border-radius: 10px;
+
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+
+  transition: all .2s ease;
+}
+
+.tkn--task > .tkn--task-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+}
+
+.tkn--task:not(:last-child)::after {
+  content: "➜";
+  position: absolute;
+  top: 34px;
+  right: -22px;
+  font-size: 22px;
+  color: #8d8d8d;
+  font-weight: bold;
+}
+
+.tkn--task-link--name {
+  font-size: 14px;
+  font-weight: 600;
+}
