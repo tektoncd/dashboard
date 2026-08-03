@@ -68,7 +68,7 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-storybook": "^10.5.5",
     "globals": "^17.8.0",
-    "jsdom": "^29.1.1",
+    "jsdom": "^30.0.1",
     "msw": "^2.15.0",
     "prettier": "^3.9.6",
     "rollup-plugin-visualizer": "^7.0.1",
