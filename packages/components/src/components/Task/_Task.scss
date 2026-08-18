@@ -15,6 +15,15 @@ limitations under the License.
 @use '@carbon/react/scss/theme' as *;
 
 .#{$prefix}--tabs__nav-item.tkn--task {
+  &.#{$prefix}--tabs__nav-item--selected {
+    background-color: var(--cds-layer-selected);
+    border-inline-end-color: var(--cds-layer-selected);
+    box-shadow:
+      inset 3px 0 0 0 var(--cds-border-interactive),
+      inset -1px 0 0 0 var(--cds-layer-selected),
+      inset 0 0 0 1px var(--cds-border-subtle);
+  }
+
   .#{$prefix}--tabs__nav-item-label-wrapper {
     display: block;
   }
@@ -59,6 +68,7 @@ limitations under the License.
 .tkn--tasks:has(> .#{$prefix}--tabs, .#{$prefix}--tabs.tkn--task-list, > .tkn--step-details:first-child) {
   > .#{$prefix}--css-grid {
     max-inline-size: 100%;
+    column-gap: 0;
 
     > .#{$prefix}--tab-content {
       // we don't want 2 scrollbars, prefer the one on body
@@ -80,7 +90,7 @@ limitations under the License.
     inset-block-start: var(--tkn-global-header-offset);
     z-index: 4997;
   }
-
+  
   .tkn--step-details {
     > .#{$prefix}--tabs {
       position: sticky;
@@ -103,4 +113,44 @@ limitations under the License.
   position: sticky;
   inset-block-start: var(--tkn-global-header-offset);
   max-block-size: calc(100vb - var(--tkn-global-header-offset));
+}
+
+.#{$prefix}--tabs__nav-item.tkn--task.#{$prefix}--tabs__nav-item--selected {
+  background-color: var(--cds-layer-selected);
+  border-inline-end-color: var(--cds-layer-selected);
+  box-shadow:
+    inset 3px 0 0 0 var(--cds-border-interactive),
+    inset -1px 0 0 0 var(--cds-layer-selected),
+    inset 0 0 0 1px var(--cds-border-subtle);
+}
+
+.tkn--tasks
+  > .#{$prefix}--css-grid
+  > .#{$prefix}--tab-content:not([hidden]) {
+  background-color: var(--cds-layer-selected);
+  margin-inline-start: 0;
+  padding-inline-start: 0;
+}
+
+.tkn--tasks
+  > .#{$prefix}--css-grid
+  > .#{$prefix}--tab-content:not([hidden])
+  .tkn--step-details {
+  background-color: var(--cds-layer-selected);
+
+  > header.tkn--step-details-header,
+  > .#{$prefix}--tabs,
+  > .#{$prefix}--tab-content {
+    background-color: var(--cds-layer-selected);
+  }
+
+  .tkn--step {
+    background-color: var(--cds-layer-selected);
+
+    .#{$prefix}--accordion__heading,
+    .#{$prefix}--accordion__wrapper,
+    .#{$prefix}--accordion__content {
+      background-color: var(--cds-layer-selected);
+    }
+  }
 }
