@@ -21,6 +21,10 @@ yarn add @tektoncd/dashboard-components
 You will also need to install the Carbon packages which provide the base styling and components:
 - [Carbon Components React](https://carbondesignsystem.com/developing/frameworks/react)
 
+`react-router-dom` v5 or v6 is required as a peer dependency. See the
+[`@tektoncd/dashboard-utils` README](../utils/README.md) for notes on react-router v7
+future flag compatibility.
+
 This package requires [Dart Sass](http://npmjs.com/package/sass) in order to
 compile styles.
 

@@ -160,37 +160,53 @@ function Root() {
   );
 }
 
-const router = createHashRouter([
+const router = createHashRouter(
+  [
+    {
+      path: '/',
+      element: <Root />,
+      errorElement: <ErrorPage />,
+      children: [
+        {
+          errorElement: <ErrorPage />,
+          children: [
+            {
+              index: true,
+              element: (
+                <Navigate
+                  to={urls.about()}
+                  replace
+                  state={{ fromDefaultRoute: true }}
+                />
+              )
+            },
+            ...routes.dashboard,
+            ...routes.pipelines,
+            ...routes.triggers,
+            {
+              path: '*',
+              element: <NotFound />
+            }
+          ]
+        }
+      ]
+    }
+  ],
   {
-    path: '/',
-    element: <Root />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        errorElement: <ErrorPage />,
-        children: [
-          {
-            index: true,
-            element: (
-              <Navigate
-                to={urls.about()}
-                replace
-                state={{ fromDefaultRoute: true }}
-              />
-            )
-          },
-          ...routes.dashboard,
-          ...routes.pipelines,
-          ...routes.triggers,
-          {
-            path: '*',
-            element: <NotFound />
-          }
-        ]
-      }
-    ]
+    future: {
+      v7_fetcherPersist: true,
+      v7_normalizeFormMethod: true,
+      v7_partialHydration: true,
+      v7_relativeSplatPath: true,
+      v7_skipActionErrorRevalidation: true
+      // v7_startTransition intentionally omitted: wrapping navigate() calls in
+      // React.startTransition causes the namespace dropdown to desync from the
+      // URL on the first interaction because selectNamespace() (external context)
+      // fires synchronously while the navigation is deferred. The v7 router
+      // provides an opt-out for exactly this scenario.
+    }
   }
-]);
+);
 
 /* istanbul ignore next */
 export function App() {
