@@ -160,37 +160,48 @@ function Root() {
   );
 }
 
-const router = createHashRouter([
+const router = createHashRouter(
+  [
+    {
+      path: '/',
+      element: <Root />,
+      errorElement: <ErrorPage />,
+      children: [
+        {
+          errorElement: <ErrorPage />,
+          children: [
+            {
+              index: true,
+              element: (
+                <Navigate
+                  to={urls.about()}
+                  replace
+                  state={{ fromDefaultRoute: true }}
+                />
+              )
+            },
+            ...routes.dashboard,
+            ...routes.pipelines,
+            ...routes.triggers,
+            {
+              path: '*',
+              element: <NotFound />
+            }
+          ]
+        }
+      ]
+    }
+  ],
   {
-    path: '/',
-    element: <Root />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        errorElement: <ErrorPage />,
-        children: [
-          {
-            index: true,
-            element: (
-              <Navigate
-                to={urls.about()}
-                replace
-                state={{ fromDefaultRoute: true }}
-              />
-            )
-          },
-          ...routes.dashboard,
-          ...routes.pipelines,
-          ...routes.triggers,
-          {
-            path: '*',
-            element: <NotFound />
-          }
-        ]
-      }
-    ]
+    future: {
+      v7_fetcherPersist: true,
+      v7_normalizeFormMethod: true,
+      v7_partialHydration: true,
+      v7_relativeSplatPath: true,
+      v7_skipActionErrorRevalidation: true
+    }
   }
-]);
+);
 
 /* istanbul ignore next */
 export function App() {
@@ -249,7 +260,12 @@ export function App() {
         messages={messages}
       >
         {showLoadingState && <LoadingShell />}
-        {!showLoadingState && <RouterProvider router={router} />}
+        {!showLoadingState && (
+          <RouterProvider
+            router={router}
+            future={{ v7_startTransition: true }}
+          />
+        )}
       </IntlProvider>
     </NamespaceContext.Provider>
   );
