@@ -1,4 +1,5 @@
 # compiled output
+/.vitest
 /coverage
 /cmd/dashboard/kodata/
 /storybook-static
