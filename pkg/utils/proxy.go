@@ -15,14 +15,44 @@ package utils
 
 import (
 	"context"
+	"fmt"
 	"io"
+	"net"
 	"net/http"
+	"net/url"
 
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 )
 
+// isAllowedProxyTarget rejects URLs that are not plain http(s) URLs or that resolve
+// to loopback/link-local addresses (e.g. cloud metadata endpoints such as 169.254.169.254),
+// mitigating server-side request forgery via a manipulated proxy target.
+func isAllowedProxyTarget(rawURL string) bool {
+	parsed, err := url.Parse(rawURL)
+	if err != nil || (parsed.Scheme != "http" && parsed.Scheme != "https") || parsed.Hostname() == "" {
+		return false
+	}
+
+	ips, err := net.LookupIP(parsed.Hostname())
+	if err != nil {
+		return false
+	}
+	for _, ip := range ips {
+		if ip.IsLoopback() || ip.IsLinkLocalUnicast() || ip.IsLinkLocalMulticast() || ip.IsUnspecified() {
+			return false
+		}
+	}
+	return true
+}
+
 // Proxy forwards requests to an upstream provider and proxies the response content and headers back to the caller
 func Proxy(request *http.Request, response http.ResponseWriter, url string, client *http.Client) (int, error) {
+	if !isAllowedProxyTarget(url) {
+		err := fmt.Errorf("refusing to proxy request to disallowed URL")
+		logging.Log.Errorf("%s: %s", err, url)
+		return http.StatusBadRequest, err
+	}
+
 	req, err := http.NewRequestWithContext(context.TODO(), request.Method, url, request.Body)
 
 	if err != nil {
