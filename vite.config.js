@@ -66,7 +66,6 @@ export default defineConfig(({ mode }) => ({
     }
   },
   test: {
-    clearMocks: true,
     coverage: {
       all: false,
       clean: true,
