@@ -13,11 +13,11 @@ limitations under the License.
 
 const { defineConfig } = require('cypress');
 const { unlinkSync } = require('node:fs');
+const { execFileSync, spawnSync } = require('node:child_process');
 
 const isCI = process.env.CI === 'true';
 
 module.exports = defineConfig({
-  allowCypressEnv: false,
   e2e: {
     baseUrl: 'http://localhost:8000',
     experimentalRunAllSpecs: true,
@@ -28,6 +28,44 @@ module.exports = defineConfig({
         if (isCI && results?.video && results.stats.failures === 0) {
           console.log('Deleting video for passing test');
           unlinkSync(results.video);
+        }
+      });
+
+      on('task', {
+        applyResource(resource) {
+          return execFileSync('kubectl', ['apply', '-f', '-'], {
+            input: resource,
+            encoding: 'utf-8'
+          });
+        },
+        createNamespace(namespace) {
+          const result = spawnSync(
+            'kubectl',
+            ['create', 'namespace', namespace],
+            {
+              encoding: 'utf-8'
+            }
+          );
+          return {
+            code: result.status,
+            stdout: result.stdout,
+            stderr: result.stderr
+          };
+        },
+
+        deleteNamespace(namespace) {
+          const result = spawnSync(
+            'kubectl',
+            ['delete', 'namespace', namespace, '--interactive=false'],
+            {
+              encoding: 'utf-8'
+            }
+          );
+          return {
+            code: result.status,
+            stdout: result.stdout,
+            stderr: result.stderr
+          };
         }
       });
 
