@@ -1,5 +1,5 @@
 /*
-Copyright 2022-2023 The Tekton Authors
+Copyright 2022-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -38,19 +38,15 @@ limitations under the License.
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 Cypress.Commands.add('applyResource', resource => {
-  cy.exec(`echo "${resource}" | kubectl apply -f -`);
+  cy.task('applyResource', resource);
 });
 
 Cypress.Commands.add('createNamespace', namespace => {
-  cy.exec(`kubectl create namespace ${namespace}`, {
-    failOnNonZeroExit: false
-  });
+  cy.task('createNamespace', namespace);
 });
 
 Cypress.Commands.add('deleteNamespace', namespace => {
-  cy.exec(`kubectl delete namespace ${namespace}`, {
-    failOnNonZeroExit: false
-  });
+  cy.task('deleteNamespace', namespace);
 });
 
 Cypress.Commands.overwrite('type', (originalFn, element, text, options) => {
