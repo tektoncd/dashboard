@@ -199,6 +199,11 @@ const router = createHashRouter(
       v7_partialHydration: true,
       v7_relativeSplatPath: true,
       v7_skipActionErrorRevalidation: true
+      // v7_startTransition intentionally omitted: wrapping navigate() calls in
+      // React.startTransition causes the namespace dropdown to desync from the
+      // URL on the first interaction because selectNamespace() (external context)
+      // fires synchronously while the navigation is deferred. The v7 router
+      // provides an opt-out for exactly this scenario.
     }
   }
 );
@@ -260,12 +265,7 @@ export function App() {
         messages={messages}
       >
         {showLoadingState && <LoadingShell />}
-        {!showLoadingState && (
-          <RouterProvider
-            router={router}
-            future={{ v7_startTransition: true }}
-          />
-        )}
+        {!showLoadingState && <RouterProvider router={router} />}
       </IntlProvider>
     </NamespaceContext.Provider>
   );
