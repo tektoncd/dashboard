@@ -16,20 +16,31 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { render as baseRender } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 
+const routerFutureFlags = {
+  v7_fetcherPersist: true,
+  v7_normalizeFormMethod: true,
+  v7_partialHydration: true,
+  v7_relativeSplatPath: true,
+  v7_skipActionErrorRevalidation: true
+};
+
 function RouterWrapper({ children, handle, path }) {
   return (
     <RouterProvider
-      router={createBrowserRouter([
-        {
-          path,
-          element: (
-            <IntlProvider locale="en" defaultLocale="en" messages={{}}>
-              {children}
-            </IntlProvider>
-          ),
-          handle
-        }
-      ])}
+      router={createBrowserRouter(
+        [
+          {
+            path,
+            element: (
+              <IntlProvider locale="en" defaultLocale="en" messages={{}}>
+                {children}
+              </IntlProvider>
+            ),
+            handle
+          }
+        ],
+        { future: routerFutureFlags }
+      )}
     />
   );
 }
