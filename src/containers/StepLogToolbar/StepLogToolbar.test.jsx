@@ -39,6 +39,8 @@ describe('getLogsToolbar', () => {
   it('should handle external logs', () => {
     const container = 'fake_container';
     const externalLogsURL = 'fake_externalLogsURL';
+    const logLevels = { error: true };
+    const showTimestamps = false;
     const namespace = 'fake_namespace';
     const podName = 'fake_podname';
     const stepStatus = { container };
@@ -50,6 +52,8 @@ describe('getLogsToolbar', () => {
       <LogsToolbarContainer
         externalLogsURL={externalLogsURL}
         isUsingExternalLogs
+        logLevels={logLevels}
+        showTimestamps={showTimestamps}
         stepStatus={stepStatus}
         taskRun={taskRun}
       />
@@ -59,8 +63,10 @@ describe('getLogsToolbar', () => {
     expect(API.getExternalLogURL).toHaveBeenCalledWith({
       container,
       externalLogsURL,
+      logLevels,
       namespace,
-      podName
+      podName,
+      timestamps: showTimestamps
     });
   });
 

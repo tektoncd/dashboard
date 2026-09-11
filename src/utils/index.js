@@ -119,7 +119,10 @@ export async function fetchLogs({ _stepName, stream, stepStatus, taskRun }) {
   return logs;
 }
 
-export function fetchLogsFallback(externalLogsURL) {
+export function fetchLogsFallback(
+  externalLogsURL,
+  { logLevels, timestamps } = {}
+) {
   if (!externalLogsURL) {
     return undefined;
   }
@@ -132,9 +135,11 @@ export function fetchLogsFallback(externalLogsURL) {
       getExternalLogURL({
         container,
         externalLogsURL,
+        logLevels,
         namespace,
         podName,
         startTime,
+        timestamps,
         completionTime
       }),
       {
@@ -147,9 +152,14 @@ export function fetchLogsFallback(externalLogsURL) {
 export function getLogsRetriever({
   externalLogsURL,
   isLogStreamingEnabled,
-  onFallback
+  logLevels,
+  onFallback,
+  timestamps
 }) {
-  const fallback = fetchLogsFallback(externalLogsURL);
+  const fallback = fetchLogsFallback(externalLogsURL, {
+    logLevels,
+    timestamps
+  });
 
   if (fallback) {
     return ({ stepName, stepStatus, taskRun }) =>
