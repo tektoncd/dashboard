@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2025 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -124,8 +124,10 @@ export function getExternalLogURL({
   completionTime,
   container,
   externalLogsURL,
+  logLevels,
   namespace,
   podName,
+  showTimestamps,
   startTime
 }) {
   const queryParams = new URLSearchParams();
@@ -135,6 +137,14 @@ export function getExternalLogURL({
   if (completionTime) {
     queryParams.set('completionTime', completionTime);
   }
+  if (showTimestamps !== undefined) {
+    queryParams.set('timestamps', showTimestamps);
+  }
+  Object.entries(logLevels || {}).forEach(([logLevel, enabled]) => {
+    if (enabled) {
+      queryParams.append('logLevel', logLevel);
+    }
+  });
   let queryString = queryParams.toString(); // returns the properly encoded string, or '' if no params
   if (queryString) {
     queryString = `?${queryString}`;

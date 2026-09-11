@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2025 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -136,6 +136,30 @@ it('getExternalLogURL', () => {
       ':',
       '%3A'
     )}&completionTime=${completionTime.replaceAll(':', '%3A')}`
+  );
+});
+it('getExternalLogURL includes log preferences', () => {
+  const container = 'fake_container';
+  const externalLogsURL = '/fake_externalLogsURL';
+  const logLevels = {
+    error: true,
+    info: true,
+    warning: false
+  };
+  const namespace = 'fake_namespace';
+  const podName = 'fake_podName';
+  const showTimestamps = false;
+  expect(
+    API.getExternalLogURL({
+      container,
+      externalLogsURL,
+      logLevels,
+      namespace,
+      podName,
+      showTimestamps
+    })
+  ).toEqual(
+    `http://localhost:3000${externalLogsURL}/${namespace}/${podName}/${container}?timestamps=false&logLevel=error&logLevel=info`
   );
 });
 
