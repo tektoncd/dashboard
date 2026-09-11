@@ -18,6 +18,8 @@ import { getExternalLogURL, getPodLogURL } from '../../api';
 export default function StepLogToolbarContainer({
   externalLogsURL,
   isUsingExternalLogs,
+  logLevels,
+  showTimestamps,
   stepStatus,
   taskRun
 }) {
@@ -28,7 +30,14 @@ export default function StepLogToolbarContainer({
   let logURL;
   if (container && podName) {
     logURL = isUsingExternalLogs
-      ? getExternalLogURL({ container, externalLogsURL, namespace, podName })
+      ? getExternalLogURL({
+          container,
+          externalLogsURL,
+          logLevels,
+          namespace,
+          podName,
+          timestamps: showTimestamps
+        })
       : getPodLogURL({
           container,
           name: podName,

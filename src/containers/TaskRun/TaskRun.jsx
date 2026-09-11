@@ -169,7 +169,9 @@ export function TaskRunContainer({
     const logsRetriever = getLogsRetriever({
       externalLogsURL,
       isLogStreamingEnabled,
-      onFallback: setIsUsingExternalLogs
+      logLevels,
+      onFallback: setIsUsingExternalLogs,
+      timestamps: showTimestamps
     });
 
     return (
@@ -184,6 +186,8 @@ export function TaskRunContainer({
           <StepLogToolbar
             externalLogsURL={externalLogsURL}
             isUsingExternalLogs={isUsingExternalLogs}
+            logLevels={logLevels}
+            showTimestamps={showTimestamps}
             stepStatus={stepStatus}
             taskRun={run}
           />
