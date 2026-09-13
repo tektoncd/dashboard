@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2025 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -234,27 +234,25 @@ export function ImportResources() {
       )}
       <Form>
         <TextInput
+          decorator={
+            <HelpIcon
+              title={intl.formatMessage({
+                id: 'dashboard.importResources.repo.helperText',
+                defaultMessage:
+                  'The location of the YAML definitions to be applied (Git URLs supported)'
+              })}
+            />
+          }
           id="import-repository-url"
           invalid={invalidInput}
           invalidText={intl.formatMessage({
             id: 'dashboard.importResources.repo.invalidText',
             defaultMessage: 'Please enter a valid Git URL'
           })}
-          labelText={
-            <>
-              {intl.formatMessage({
-                id: 'dashboard.importResources.repo.labelText',
-                defaultMessage: 'Repository URL'
-              })}
-              <HelpIcon
-                title={intl.formatMessage({
-                  id: 'dashboard.importResources.repo.helperText',
-                  defaultMessage:
-                    'The location of the YAML definitions to be applied (Git URLs supported)'
-                })}
-              />
-            </>
-          }
+          labelText={intl.formatMessage({
+            id: 'dashboard.importResources.repo.labelText',
+            defaultMessage: 'Repository URL'
+          })}
           name="repositoryURL"
           onChange={event => handleTextInput(event, setRepositoryURL)}
           placeholder="https://github.com/my-repository"
@@ -263,22 +261,20 @@ export function ImportResources() {
           value={repositoryURL}
         />
         <TextInput
-          id="import-path"
-          labelText={
-            <>
-              {intl.formatMessage({
-                id: 'dashboard.importResources.path.labelText',
-                defaultMessage: 'Repository path (optional)'
+          decorator={
+            <HelpIcon
+              title={intl.formatMessage({
+                id: 'dashboard.importResources.path.helperText',
+                defaultMessage:
+                  'The path of the Tekton resources to import from the repository. Leave blank if the resources are at the top-level directory.'
               })}
-              <HelpIcon
-                title={intl.formatMessage({
-                  id: 'dashboard.importResources.path.helperText',
-                  defaultMessage:
-                    'The path of the Tekton resources to import from the repository. Leave blank if the resources are at the top-level directory.'
-                })}
-              />
-            </>
+            />
           }
+          id="import-path"
+          labelText={intl.formatMessage({
+            id: 'dashboard.importResources.path.labelText',
+            defaultMessage: 'Repository path (optional)'
+          })}
           name="path"
           onChange={event => handleTextInput(event, setPath)}
           placeholder={intl.formatMessage({
@@ -288,22 +284,20 @@ export function ImportResources() {
           value={path}
         />
         <TextInput
-          id="import-revision"
-          labelText={
-            <>
-              {intl.formatMessage({
-                id: 'dashboard.importResources.revision.labelText',
-                defaultMessage: 'Revision (optional)'
+          decorator={
+            <HelpIcon
+              title={intl.formatMessage({
+                id: 'dashboard.importResources.revision.helperText',
+                defaultMessage:
+                  'The git revision (branch, tag, commit SHA or ref) of the repository to clone. Leave blank to use the default branch.'
               })}
-              <HelpIcon
-                title={intl.formatMessage({
-                  id: 'dashboard.importResources.revision.helperText',
-                  defaultMessage:
-                    'The git revision (branch, tag, commit SHA or ref) of the repository to clone. Leave blank to use the default branch.'
-                })}
-              />
-            </>
+            />
           }
+          id="import-revision"
+          labelText={intl.formatMessage({
+            id: 'dashboard.importResources.revision.labelText',
+            defaultMessage: 'Revision (optional)'
+          })}
           name="revision"
           onChange={event => handleTextInput(event, setRevision)}
           placeholder={intl.formatMessage({
@@ -313,22 +307,20 @@ export function ImportResources() {
           value={revision}
         />
         <NamespacesDropdown
-          id="import-namespaces-dropdown"
-          titleText={
-            <>
-              {intl.formatMessage({
-                id: 'dashboard.importResources.targetNamespace.titleText',
-                defaultMessage: 'Target namespace'
+          decorator={
+            <HelpIcon
+              title={intl.formatMessage({
+                id: 'dashboard.importResources.targetNamespace.helperText',
+                defaultMessage:
+                  'The namespace in which the resources will be created'
               })}
-              <HelpIcon
-                title={intl.formatMessage({
-                  id: 'dashboard.importResources.targetNamespace.helperText',
-                  defaultMessage:
-                    'The namespace in which the resources will be created'
-                })}
-              />
-            </>
+            />
           }
+          id="import-namespaces-dropdown"
+          titleText={intl.formatMessage({
+            id: 'dashboard.importResources.targetNamespace.titleText',
+            defaultMessage: 'Target namespace'
+          })}
           invalid={invalidNamespace}
           invalidText={intl.formatMessage({
             id: 'dashboard.namespacesDropdown.invalidText',
@@ -347,19 +339,17 @@ export function ImportResources() {
             })}
           >
             <NamespacesDropdown
-              id="import-install-namespaces-dropdown"
-              titleText={
-                <>
-                  Namespace
-                  <HelpIcon
-                    title={intl.formatMessage({
-                      id: 'dashboard.importResources.importerNamespace.helperText',
-                      defaultMessage:
-                        'The namespace in which the PipelineRun fetching the repository and creating the resources will run'
-                    })}
-                  />
-                </>
+              decorator={
+                <HelpIcon
+                  title={intl.formatMessage({
+                    id: 'dashboard.importResources.importerNamespace.helperText',
+                    defaultMessage:
+                      'The namespace in which the PipelineRun fetching the repository and creating the resources will run'
+                  })}
+                />
               }
+              id="import-install-namespaces-dropdown"
+              titleText="Namespace"
               invalid={invalidImporterNamespace}
               invalidText={intl.formatMessage({
                 id: 'dashboard.namespacesDropdown.invalidText',
@@ -370,23 +360,30 @@ export function ImportResources() {
               selectedItem={selectedImporterNamespace}
             />
             <ServiceAccountsDropdown
+              decorator={
+                <HelpIcon
+                  title={intl.formatMessage({
+                    id: 'dashboard.importResources.serviceAccount.helperText',
+                    defaultMessage:
+                      'The ServiceAccount that the PipelineRun applying resources will run under (from the namespace above). Ensure the selected ServiceAccount (or the default if none selected) has permissions for creating PipelineRuns and for anything else your PipelineRun interacts with, including any Tekton resources in the Git repository.'
+                  })}
+                />
+              }
               id="import-service-accounts-dropdown"
               namespace={importerNamespace}
               onChange={handleServiceAccount}
-              titleText={
-                <>
-                  ServiceAccount
-                  <HelpIcon
-                    title={intl.formatMessage({
-                      id: 'dashboard.importResources.serviceAccount.helperText',
-                      defaultMessage:
-                        'The ServiceAccount that the PipelineRun applying resources will run under (from the namespace above). Ensure the selected ServiceAccount (or the default if none selected) has permissions for creating PipelineRuns and for anything else your PipelineRun interacts with, including any Tekton resources in the Git repository.'
-                    })}
-                  />
-                </>
-              }
+              titleText="ServiceAccount"
             />
             <Dropdown
+              decorator={
+                <HelpIcon
+                  title={intl.formatMessage({
+                    id: 'dashboard.importResources.method.helperText',
+                    defaultMessage:
+                      "If any of the resources being imported use 'generateName' rather than 'name' in their metadata, select 'create' so they can be imported correctly."
+                  })}
+                />
+              }
               id="import-method"
               initialSelectedItem={{ id: initialMethod, text: initialMethod }}
               items={[
@@ -396,21 +393,10 @@ export function ImportResources() {
               itemToString={itemToString}
               label=""
               onChange={handleMethod}
-              titleText={
-                <>
-                  {intl.formatMessage({
-                    id: 'dashboard.importResources.method.label',
-                    defaultMessage: 'Method'
-                  })}
-                  <HelpIcon
-                    title={intl.formatMessage({
-                      id: 'dashboard.importResources.method.helperText',
-                      defaultMessage:
-                        "If any of the resources being imported use 'generateName' rather than 'name' in their metadata, select 'create' so they can be imported correctly."
-                    })}
-                  />
-                </>
-              }
+              titleText={intl.formatMessage({
+                id: 'dashboard.importResources.method.label',
+                defaultMessage: 'Method'
+              })}
               translateWithId={getTranslateWithId(intl)}
             />
           </AccordionItem>
