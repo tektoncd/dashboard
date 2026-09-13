@@ -39,7 +39,7 @@ spec:
         value: $(params.releaseBucket)
   steps:
     - name: check-git-tag
-      image: ghcr.io/wolfi-dev/git:alpine@sha256:4692045f7f00e56b0be266c18b54db2094618e285f47b0962075e3406555f14a
+      image: ghcr.io/wolfi-dev/git:alpine@sha256:5c0ecfd51d2a90978814ff38d798b4661fac5d9b0b8824dedfba01d53ed3e117
       script: |
         echo "Checking git tag"
         # Look for the tag in the list of tags
@@ -49,7 +49,7 @@ spec:
         echo "Version ${VERSION_TAG} already tagged for ${PACKAGE}"
         exit 1
     - name: check-release-file
-      image: docker.io/curlimages/curl:8.17.0@sha256:935d9100e9ba842cdb060de42472c7ca90cfe9a7c96e4dacb55e79e560b3ff40
+      image: docker.io/curlimages/curl:8.22.0@sha256:58adaa4e8dca9c988bae2aba4ab3434a0bb2da16bbe3f92dec39ec7785166777
       script: |
         set +e
         echo "Checking release file"
@@ -62,7 +62,7 @@ spec:
           exit 1
         fi
     - name: check-github-release
-      image: docker.io/library/python:3.6-alpine3.9@sha256:f0b2142d5280c4e14162dce011b173c161cd7ccd1f562b6d97f6d14036954e2f
+      image: docker.io/library/python:3.7-alpine3.9@sha256:d3953acf09227baf26919dbb4dc3637e8015ce46debbed4cf5444702728cfc16
       script: |
         echo "Checking GitHub release"
         PACKAGE=$(echo ${PACKAGE} | cut -d/ -f2,3)
@@ -74,7 +74,7 @@ spec:
         echo "Release ${VERSION_TAG} already exists for ${PACKAGE}"
         exit 1
     - name: success-confirmation
-      image: docker.io/library/alpine:3.20.3@sha256:beefdbd8a1da6d2915566fde36db9db0b524eb737fc57cd1367effd16dc0d06d
+      image: docker.io/library/alpine:3.24.1@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b
       script: |
         echo "All pre-release checks for ${PACKAGE} @ ${VERSION_TAG} were successful"
         echo "Happy releasing 😺"
