@@ -124,9 +124,11 @@ export function getExternalLogURL({
   completionTime,
   container,
   externalLogsURL,
+  logLevels,
   namespace,
   podName,
-  startTime
+  startTime,
+  timestamps
 }) {
   const queryParams = new URLSearchParams();
   if (startTime) {
@@ -135,6 +137,14 @@ export function getExternalLogURL({
   if (completionTime) {
     queryParams.set('completionTime', completionTime);
   }
+  if (timestamps !== undefined) {
+    queryParams.set('timestamps', timestamps);
+  }
+  Object.entries(logLevels || {}).forEach(([logLevel, enabled]) => {
+    if (enabled) {
+      queryParams.append('logLevel', logLevel);
+    }
+  });
   let queryString = queryParams.toString(); // returns the properly encoded string, or '' if no params
   if (queryString) {
     queryString = `?${queryString}`;
