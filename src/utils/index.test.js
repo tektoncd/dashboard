@@ -202,6 +202,32 @@ describe('fetchLogsFallback', () => {
     expect(fetchLogsFallback()).toBeUndefined();
   });
 
+  it('should pass preferences to the external log provider', () => {
+    const container = 'fake_container';
+    const externalLogsURL = '/fake_url';
+    const logLevels = {
+      error: true,
+      info: false
+    };
+    const namespace = 'fake_namespace';
+    const podName = 'fake_podName';
+    const stepName = 'fake_stepName';
+    const timestamps = true;
+    const stepStatus = { container };
+    const taskRun = { metadata: { namespace }, status: { podName } };
+    vi.spyOn(comms, 'get').mockImplementation(() => {});
+
+    const fallback = fetchLogsFallback(externalLogsURL, {
+      logLevels,
+      timestamps
+    });
+    fallback({ stepName, stepStatus, taskRun });
+    expect(comms.get).toHaveBeenCalledWith(
+      `http://localhost:3000${externalLogsURL}/${namespace}/${podName}/${container}?timestamps=true&logLevel=error`,
+      { Accept: 'text/plain' }
+    );
+  });
+
   it('should return a function to retrieve logs from the external provider', () => {
     const container = 'fake_container';
     const externalLogsURL = '/fake_url';
@@ -296,13 +322,20 @@ describe('getLogsRetriever', () => {
 
   it('should handle external logs fallback', async () => {
     const externalLogsURL = 'fake_externalLogsURL';
+    const logLevels = { error: true };
+    const timestamps = false;
     vi.spyOn(API, 'getExternalLogURL');
     vi.spyOn(API, 'getPodLog').mockImplementation(() => {
       throw new Error();
     });
     vi.spyOn(comms, 'get').mockImplementation(() => {});
     const onFallback = vi.fn();
-    const logsRetriever = getLogsRetriever({ externalLogsURL, onFallback });
+    const logsRetriever = getLogsRetriever({
+      externalLogsURL,
+      logLevels,
+      onFallback,
+      timestamps
+    });
     expect(logsRetriever).toBeDefined();
     await logsRetriever({ stepName, stepStatus, taskRun });
     expect(API.getPodLog).toHaveBeenCalledWith({
@@ -310,7 +343,9 @@ describe('getLogsRetriever', () => {
       name: podName,
       namespace
     });
-    expect(API.getExternalLogURL).toHaveBeenCalled();
+    expect(API.getExternalLogURL).toHaveBeenCalledWith(
+      expect.objectContaining({ logLevels, timestamps })
+    );
     expect(onFallback).toHaveBeenCalledWith(true);
   });
 });

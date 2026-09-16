@@ -138,6 +138,30 @@ it('getExternalLogURL', () => {
     )}&completionTime=${completionTime.replaceAll(':', '%3A')}`
   );
 });
+it('getExternalLogURL includes log preferences', () => {
+  const container = 'fake_container';
+  const externalLogsURL = '/fake_externalLogsURL';
+  const logLevels = {
+    error: true,
+    info: true,
+    warning: false
+  };
+  const namespace = 'fake_namespace';
+  const podName = 'fake_podName';
+  const timestamps = false;
+  expect(
+    API.getExternalLogURL({
+      container,
+      externalLogsURL,
+      logLevels,
+      namespace,
+      podName,
+      timestamps
+    })
+  ).toEqual(
+    `http://localhost:3000${externalLogsURL}/${namespace}/${podName}/${container}?timestamps=false&logLevel=error&logLevel=info`
+  );
+});
 
 it('getExternalLogURL with empty completionTime', () => {
   const container = 'fake_container';

@@ -90,7 +90,7 @@ It can be enabled by providing the `--external-logs` flag to the installer scrip
 When configured, the Dashboard will first attempt to load pod logs normally, and if they're unavailable will fallback to the provided external logs service by making a `GET` request to the provided endpoint with the following format:
 
 ```
-GET <external-logs>/<namespace>/<podName>/<container>?startTime=<stepStartTime>&completionTime=<stepCompletionTime>
+GET <external-logs>/<namespace>/<podName>/<container>?startTime=<stepStartTime>&completionTime=<stepCompletionTime>&timestamps=<true|false>&logLevel=<selectedLogLevel>&logLevel=<selectedLogLevel>
 ```
 
 - `namespace`: the namespace containing the run
@@ -98,8 +98,10 @@ GET <external-logs>/<namespace>/<podName>/<container>?startTime=<stepStartTime>&
 - `container`: the name of the container associated with the selected `step`
 - `stepStartTime`: the start time of the step container
 - `stepCompletionTime`: the completion time of the step container
+- `timestamps`: the user's timestamp preference
+- `logLevel`: repeated for each user-selected log level
 
-If the start / completion times are unavailable their respective query parameters will be omitted from the request.
+If the start / completion times are unavailable their respective query parameters will be omitted from the request. External log providers may ignore the `timestamps` and `logLevel` parameters.
 
 ---
 
