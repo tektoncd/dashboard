@@ -201,6 +201,7 @@
   "dashboard.pod.events": "事件",
   "dashboard.pod.resource": "资源",
   "dashboard.pod.resource.empty": "等待pod资源",
+  "dashboard.pod.resource.resultsUnavailable": "",
   "dashboard.rerun.actionText": "重新运行",
   "dashboard.rerun.error": "重新运行 {runName} 时发生错误：检查 Dashboard 日志以了解详情。状态代码：{statusCode}",
   "dashboard.rerun.triggered": "已触发的重新运行",

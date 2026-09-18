@@ -11,9 +11,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { useQuery } from '@tanstack/react-query';
 import { getGenerateNamePrefixForRerun } from '@tektoncd/dashboard-utils';
 
 import { deleteRequest, patch, post } from './comms';
+import {
+  findRecordByName,
+  getRecord,
+  listChildTaskRunRecords
+} from './results';
+import { useTaskRuns } from './taskRuns';
 import {
   getKubeAPI,
   getTektonPipelinesAPIVersion,
@@ -32,14 +39,111 @@ export function usePipelineRuns(params) {
   });
 }
 
-export function usePipelineRun(params, queryConfig) {
-  return useResource({
+// Falls back to Tekton Results when the PipelineRun has been deleted from
+// the cluster (k8s GET 404s). Keeps the same return shape as a plain
+// useResource call (data/error/isPending/...) so existing consumers need no
+// changes -- see PipelineRun.jsx's NotFound gate, which "just works" once
+// isPending correctly stays true until the fallback has also resolved.
+//
+// resultUID is optional: when a link already knows which of several
+// same-named Results it means (see History.jsx), it's passed as a
+// ?resultUID= query param and threaded in here to fetch that exact record
+// directly instead of guessing "newest" via findRecordByName.
+export function usePipelineRun(
+  { name, namespace, resultsAPIEnabled, resultUID },
+  queryConfig
+) {
+  const k8sQuery = useResource({
     group: tektonAPIGroup,
     kind: 'pipelineruns',
-    params,
+    params: { name, namespace },
     queryConfig,
     version: getTektonPipelinesAPIVersion()
   });
+
+  const isNotFoundInCluster = k8sQuery.error?.response?.status === 404;
+
+  const resultsQuery = useQuery({
+    enabled:
+      !!resultsAPIEnabled && isNotFoundInCluster && !!name && !!namespace,
+    queryFn: () =>
+      resultUID
+        ? getRecord({
+            recordName: `${namespace}/results/${resultUID}/records/${resultUID}`
+          }).then(decoded => ({
+            decoded,
+            resultName: `${namespace}/results/${resultUID}`
+          }))
+        : findRecordByName({
+            dataType: 'tekton.dev/v1.PipelineRun',
+            name,
+            namespace
+          }),
+    queryKey: ['results', 'pipelineRun', namespace, name, resultUID]
+  });
+
+  if (!isNotFoundInCluster) {
+    return k8sQuery;
+  }
+
+  if (resultsQuery.data) {
+    return {
+      ...k8sQuery,
+      data: resultsQuery.data.decoded,
+      error: null,
+      isFromResults: true,
+      isPending: false,
+      resultName: resultsQuery.data.resultName
+    };
+  }
+
+  // still checking Results, or confirmed not found there either -- leave
+  // data/error as the original k8s 404 result so NotFound renders once
+  // resultsQuery also settles. A disabled query (resultsAPIEnabled false)
+  // never settles and would report isPending: true forever, so only defer
+  // to it when it's actually allowed to run.
+  return {
+    ...k8sQuery,
+    isPending: !!resultsAPIEnabled && resultsQuery.isPending
+  };
+}
+
+// Child TaskRuns of a PipelineRun sourced from Results are looked up by
+// parent result UID, not by the tekton.dev/pipelineRun label (Results
+// doesn't support k8s label selectors, and names get reused over time
+// anyway). Falls back to the normal live label-selector query otherwise.
+export function useChildTaskRuns({
+  isFromResults,
+  name,
+  namespace,
+  resultName
+}) {
+  const k8sQuery = useTaskRuns({
+    filters: [`tekton.dev/pipelineRun=${name}`],
+    namespace
+  });
+
+  const resultsQuery = useQuery({
+    // isFromResults is undefined (not false) before usePipelineRun's own
+    // fallback settles -- coerce explicitly, since react-query treats any
+    // non-false `enabled` (including undefined) as enabled.
+    enabled: !!isFromResults && !!resultName,
+    queryFn: async () => {
+      const { records } = await listChildTaskRunRecords({ resultName });
+      return (records || []).map(record => JSON.parse(atob(record.data.value)));
+    },
+    queryKey: ['results', 'childTaskRuns', resultName]
+  });
+
+  if (!isFromResults) {
+    return k8sQuery;
+  }
+
+  return {
+    data: resultsQuery.data || [],
+    error: resultsQuery.error,
+    isPending: resultsQuery.isPending
+  };
 }
 
 export function cancelPipelineRun({ name, namespace, status = 'Cancelled' }) {

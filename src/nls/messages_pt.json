@@ -201,6 +201,7 @@
   "dashboard.pod.events": "",
   "dashboard.pod.resource": "",
   "dashboard.pod.resource.empty": "",
+  "dashboard.pod.resource.resultsUnavailable": "",
   "dashboard.rerun.actionText": "",
   "dashboard.rerun.error": "",
   "dashboard.rerun.triggered": "",

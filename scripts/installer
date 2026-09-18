@@ -28,6 +28,7 @@ DEFAULT_NAMESPACE=""
 TENANT_NAMESPACES=""
 STREAM_LOGS="true"
 EXTERNAL_LOGS=""
+RESULTS_API=""
 BASE_RELEASE_URL="https://infra.tekton.dev/tekton-releases/dashboard"
 
 # additional options passed to ko resolve
@@ -176,6 +177,7 @@ patch() {
   replace "--namespaces=--tenant-namespaces" "--namespaces=$TENANT_NAMESPACES"
   replace "--stream-logs=--stream-logs" "--stream-logs=$STREAM_LOGS"
   replace "--external-logs=--external-logs" "--external-logs=$EXTERNAL_LOGS"
+  replace "--results-api=--results-api" "--results-api=$RESULTS_API"
   replace "namespace: tekton-dashboard" "namespace: $INSTALL_NAMESPACE"
 }
 
@@ -433,6 +435,7 @@ help () {
   echo -e "\t[--debug]\t\t\t\tPrints additional messages in the console"
   echo -e "\t[--extensions-rbac]\t\t\tEnable ClusterRole aggregation for easier management of extensions RBAC"
   echo -e "\t[--external-logs <logs-provider-url>]\tExternal URL from which to fetch logs when logs are not available in the cluster"
+  echo -e "\t[--results-api <results-api-url>]\tTekton Results API base URL, enables the /history view for deleted PipelineRuns/TaskRuns"
   echo -e "\t[--ingress-secret <secret>]\t\tWill add SSL support to the ingress"
   echo -e "\t[--ingress-url <url>]\t\t\tWill create an additional ingress with the specified URL"
   echo -e "\t[--log-format <log-format>]\t\tSpecifies the log format (json or console), default is json"
@@ -507,6 +510,10 @@ while [[ $# -gt 0 ]]; do
     '--external-logs')
       shift
       EXTERNAL_LOGS="${1}"
+      ;;
+    '--results-api')
+      shift
+      RESULTS_API="${1}"
       ;;
     '--ingress-default-class')
       INGRESS_DEFAULT_CLASS="true"

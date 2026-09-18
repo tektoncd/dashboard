@@ -42,6 +42,7 @@ import {
   deletePipelineRun,
   rerunPipelineRun,
   startPipelineRun,
+  useChildTaskRuns,
   useEvents,
   useExternalLogsURL,
   useIsLogStreamingEnabled,
@@ -49,7 +50,7 @@ import {
   usePipeline,
   usePipelineRun,
   usePod,
-  useTaskRuns,
+  useResultsAPIEnabled,
   useTasks
 } from '../../api';
 import { getLogsRetriever, getViewChangeHandler } from '../../utils';
@@ -95,6 +96,10 @@ export /* istanbul ignore next */ function PipelineRunContainer({
   const queryParams = new URLSearchParams(location.search);
   const currentPipelineTaskName = queryParams.get(PIPELINE_TASK);
   const currentTaskRunName = queryParams.get(TASK_RUN_NAME);
+  // Only set when a link already knows which of several same-named Results
+  // it means (see History.jsx) -- lets the Results fallback fetch that
+  // exact record instead of guessing "newest" by name.
+  const resultUID = queryParams.get('resultUID');
 
   let currentRetry = queryParams.get(RETRY);
   if (!currentRetry || !/^[0-9]+$/.test(currentRetry)) {
@@ -112,6 +117,7 @@ export /* istanbul ignore next */ function PipelineRunContainer({
   const externalLogsURL = useExternalLogsURL();
   const isLogStreamingEnabled = useIsLogStreamingEnabled();
   const isReadOnly = useIsReadOnly();
+  const resultsAPIEnabled = useResultsAPIEnabled();
   const [isUsingExternalLogs, setIsUsingExternalLogs] = useState(false);
   const [cancelStatus, setCancelStatus] = useState('Cancelled');
 
@@ -136,17 +142,16 @@ export /* istanbul ignore next */ function PipelineRunContainer({
   const {
     data: pipelineRun,
     error: pipelineRunError,
-    isPending: isLoadingPipelineRun
-  } = usePipelineRun({ name, namespace });
+    isFromResults,
+    isPending: isLoadingPipelineRun,
+    resultName
+  } = usePipelineRun({ name, namespace, resultsAPIEnabled, resultUID });
 
   const {
     data: taskRunsResponse = [],
     error: taskRunsError,
     isPending: isLoadingTaskRuns
-  } = useTaskRuns({
-    filters: [`${labelConstants.PIPELINE_RUN}=${name}`],
-    namespace
-  });
+  } = useChildTaskRuns({ isFromResults, name, namespace, resultName });
 
   // TODO: only request the Tasks we actually need
   const {
@@ -439,19 +444,25 @@ export /* istanbul ignore next */ function PipelineRunContainer({
     }) || {};
   let { data: pod } = usePod(
     { name: podName, namespace },
-    { enabled: !!podName && view === 'pod' }
+    { enabled: !!podName && view === 'pod' && !isFromResults }
   );
 
   if (!pod) {
-    pod = intl.formatMessage({
-      id: 'dashboard.pod.resource.empty',
-      defaultMessage: 'Waiting for Pod resource'
-    });
+    pod = isFromResults
+      ? intl.formatMessage({
+          id: 'dashboard.pod.resource.resultsUnavailable',
+          defaultMessage:
+            'Pod details are not available for historical runs sourced from Results'
+        })
+      : intl.formatMessage({
+          id: 'dashboard.pod.resource.empty',
+          defaultMessage: 'Waiting for Pod resource'
+        });
   }
 
   const { data: events = [] } = useEvents(
     { involvedObjectKind: 'Pod', involvedObjectName: podName, namespace },
-    { enabled: !!podName && view === 'pod' }
+    { enabled: !!podName && view === 'pod' && !isFromResults }
   );
 
   const isLoading =
@@ -521,7 +532,8 @@ export /* istanbul ignore next */ function PipelineRunContainer({
         fetchLogs={getLogsRetriever({
           externalLogsURL,
           isLogStreamingEnabled,
-          onFallback: setIsUsingExternalLogs
+          onFallback: setIsUsingExternalLogs,
+          skipPodLogs: isFromResults
         })}
         handleTaskSelected={handleTaskSelected}
         loading={isLoading}

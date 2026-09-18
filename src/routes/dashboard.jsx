@@ -16,9 +16,11 @@ import { paths } from '@tektoncd/dashboard-utils';
 import {
   About,
   CustomResourceDefinition,
+  History,
   ImportResources,
   ReadWriteRoute,
   ResourceList,
+  ResultsAPIRoute,
   Settings
 } from '../containers';
 
@@ -26,6 +28,30 @@ export default [
   {
     path: paths.about(),
     element: <About />
+  },
+  {
+    path: paths.history.all(),
+    element: (
+      <ResultsAPIRoute>
+        <History />
+      </ResultsAPIRoute>
+    ),
+    handle: {
+      isNamespaced: true,
+      path: paths.history.all()
+    }
+  },
+  {
+    path: paths.history.byNamespace(),
+    element: (
+      <ResultsAPIRoute>
+        <History />
+      </ResultsAPIRoute>
+    ),
+    handle: {
+      isNamespaced: true,
+      path: paths.history.byNamespace()
+    }
   },
   {
     path: paths.settings(),

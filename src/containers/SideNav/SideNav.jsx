@@ -34,6 +34,7 @@ import {
   useExtensions,
   useIsReadOnly,
   useIsTriggersInstalled,
+  useResultsAPIEnabled,
   useSelectedNamespace,
   useTenantNamespaces
 } from '../../api';
@@ -87,6 +88,7 @@ function SideNav({ expanded, showKubernetesResources = false }) {
 
   const isReadOnly = useIsReadOnly();
   const isTriggersInstalled = useIsTriggersInstalled();
+  const resultsAPIEnabled = useResultsAPIEnabled();
 
   return (
     <Theme
@@ -113,6 +115,11 @@ function SideNav({ expanded, showKubernetesResources = false }) {
           >
             PipelineRuns
           </SideNavMenuItem>
+          {resultsAPIEnabled && (
+            <SideNavMenuItem {...getMenuItemProps(getPath(urls.history.all()))}>
+              History
+            </SideNavMenuItem>
+          )}
           <SideNavMenuItem
             {...getMenuItemProps(getPath(urls.stepActions.all()))}
           >

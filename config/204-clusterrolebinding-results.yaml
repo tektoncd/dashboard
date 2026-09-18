@@ -1,0 +1,36 @@
+# Copyright 2019-2026 The Tekton Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Grants the Dashboard's ServiceAccount read access to Tekton Results, using
+# the "tekton-results-readonly" ClusterRole that Tekton Results itself ships
+# for external API consumers. Only takes effect (i.e. only matters) when
+# Results is installed and --results-api is set; otherwise it's an inert
+# binding to a ClusterRole that doesn't exist yet.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: tekton-dashboard-results-view
+  labels:
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: tekton-dashboard
+    rbac.dashboard.tekton.dev/subject: tekton-dashboard
+subjects:
+  - kind: ServiceAccount
+    name: tekton-dashboard
+    namespace: tekton-pipelines
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-results-readonly

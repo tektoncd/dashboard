@@ -115,6 +115,15 @@ For example:
 
   See [Tekton Dashboard walk-through - Logs persistence](./walkthrough/walkthrough-logs.md) for details
 
+- to install with support for browsing PipelineRuns/TaskRuns that have been deleted from the cluster, backed by [Tekton Results](https://github.com/tektoncd/results):
+
+  ```bash
+  curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/main/scripts/release-installer | \
+    bash -s -- install latest --read-write --results-api <results-api-url>
+  ```
+
+  See [Tekton Dashboard - History](./history.md) for details. This is disabled by default.
+
 ## Accessing the Dashboard
 
 By default, the Dashboard is not exposed outside the cluster.

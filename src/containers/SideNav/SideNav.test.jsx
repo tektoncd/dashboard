@@ -77,6 +77,18 @@ it('SideNav does not render import in read-only mode', async () => {
   expect(queryByText(/import/i)).toBeFalsy();
 });
 
+it('SideNav does not render History when the Results API is not configured', async () => {
+  const { queryByText } = renderWithRouter(<SideNav expanded />);
+  await waitFor(() => queryByText(/about/i));
+  expect(queryByText('History')).toBeFalsy();
+});
+
+it('SideNav renders History when the Results API is configured', async () => {
+  vi.spyOn(API, 'useResultsAPIEnabled').mockImplementation(() => true);
+  const { queryByText } = renderWithRouter(<SideNav expanded />);
+  await waitFor(() => queryByText('History'));
+});
+
 it('SideNav renders kubernetes resources placeholder', async () => {
   const { queryByText } = renderWithRouter(
     <SideNav expanded showKubernetesResources />

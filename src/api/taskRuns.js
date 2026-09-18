@@ -11,9 +11,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { useQuery } from '@tanstack/react-query';
 import { getGenerateNamePrefixForRerun } from '@tektoncd/dashboard-utils';
 
 import { deleteRequest, patch, post } from './comms';
+import { findRecordByName } from './results';
 import {
   getKubeAPI,
   getTektonPipelinesAPIVersion,
@@ -43,14 +45,52 @@ export function useTaskRuns(params) {
   });
 }
 
-export function useTaskRun(params, queryConfig) {
-  return useResource({
+// Falls back to Tekton Results when the TaskRun has been deleted from the
+// cluster (k8s GET 404s). See usePipelineRun in pipelineRuns.js for the
+// equivalent PipelineRun logic and why the return shape is kept compatible
+// with a plain useResource call.
+export function useTaskRun(
+  { name, namespace, resultsAPIEnabled },
+  queryConfig
+) {
+  const k8sQuery = useResource({
     group: tektonAPIGroup,
     kind: 'taskruns',
-    params,
+    params: { name, namespace },
     queryConfig,
     version: getTektonPipelinesAPIVersion()
   });
+
+  const isNotFoundInCluster = k8sQuery.error?.response?.status === 404;
+
+  const resultsQuery = useQuery({
+    enabled:
+      !!resultsAPIEnabled && isNotFoundInCluster && !!name && !!namespace,
+    queryFn: () =>
+      findRecordByName({ dataType: 'tekton.dev/v1.TaskRun', name, namespace }),
+    queryKey: ['results', 'taskRun', namespace, name]
+  });
+
+  if (!isNotFoundInCluster) {
+    return k8sQuery;
+  }
+
+  if (resultsQuery.data) {
+    return {
+      ...k8sQuery,
+      data: resultsQuery.data.decoded,
+      error: null,
+      isFromResults: true,
+      isPending: false
+    };
+  }
+
+  // A disabled query (resultsAPIEnabled false) never settles and would
+  // report isPending: true forever, so only defer to it when it can run.
+  return {
+    ...k8sQuery,
+    isPending: !!resultsAPIEnabled && resultsQuery.isPending
+  };
 }
 
 export function cancelTaskRun({ name, namespace }) {

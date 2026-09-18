@@ -1,0 +1,114 @@
+# Demo Tasks/Pipelines/PipelineRuns for the Results-API history hackathon demo.
+# Applied by hack/setup-kind.sh into the "default" namespace.
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: demo-echo
+spec:
+  params:
+    - name: message
+      type: string
+      default: "hello"
+  steps:
+    - name: echo
+      image: busybox
+      script: |
+        #!/bin/sh
+        echo "$(params.message)"
+        sleep 2
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: demo-fail
+spec:
+  steps:
+    - name: fail
+      image: busybox
+      script: |
+        #!/bin/sh
+        echo "About to fail on purpose for the demo"
+        exit 1
+---
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: demo-pipeline
+spec:
+  tasks:
+    - name: step-one
+      taskRef:
+        name: demo-echo
+      params:
+        - name: message
+          value: "step one"
+    - name: step-two
+      runAfter: ["step-one"]
+      taskRef:
+        name: demo-echo
+      params:
+        - name: message
+          value: "step two"
+    - name: step-three
+      runAfter: ["step-two"]
+      taskRef:
+        name: demo-echo
+      params:
+        - name: message
+          value: "step three"
+---
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: demo-pipeline-with-failure
+spec:
+  tasks:
+    - name: step-one
+      taskRef:
+        name: demo-echo
+      params:
+        - name: message
+          value: "setting up"
+    - name: step-two-fails
+      runAfter: ["step-one"]
+      taskRef:
+        name: demo-fail
+    - name: step-three-skipped
+      runAfter: ["step-two-fails"]
+      taskRef:
+        name: demo-echo
+      params:
+        - name: message
+          value: "never runs"
+---
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: demo-run-1
+spec:
+  pipelineRef:
+    name: demo-pipeline
+---
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: demo-run-2
+spec:
+  pipelineRef:
+    name: demo-pipeline
+---
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: demo-run-3
+spec:
+  pipelineRef:
+    name: demo-pipeline
+---
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: demo-run-4
+spec:
+  pipelineRef:
+    name: demo-pipeline-with-failure

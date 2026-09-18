@@ -29,6 +29,7 @@ type Options struct {
 	LogoutURL          string
 	StreamLogs         bool
 	ExternalLogsURL    string
+	ResultsAPIURL      string
 	XFrameOptions      string
 }
 

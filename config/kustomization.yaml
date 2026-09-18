@@ -20,6 +20,7 @@ resources:
 - ./200-clusterrole-tenant-view.yaml
 - ./201-clusterrolebinding-backend.yaml
 - ./202-extension-crd.yaml
+- ./204-clusterrolebinding-results.yaml
 - ./203-serviceaccount.yaml
 - ./300-deployment.yaml
 - ./300-service.yaml

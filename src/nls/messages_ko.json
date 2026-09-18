@@ -201,6 +201,7 @@
   "dashboard.pod.events": "이벤트",
   "dashboard.pod.resource": "리소스",
   "dashboard.pod.resource.empty": "Pod 리소스를 기다리는 중",
+  "dashboard.pod.resource.resultsUnavailable": "",
   "dashboard.rerun.actionText": "재실행",
   "dashboard.rerun.error": "{runName}을(를) 다시 실행할 때 오류가 발생했습니다. 자세한 내용은 대시보드 로그를 확인하세요. 상태 코드: {statusCode}",
   "dashboard.rerun.triggered": "트리거된 재실행",
