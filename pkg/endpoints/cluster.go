@@ -30,6 +30,7 @@ type Properties struct {
 	PipelineNamespace  string   `json:"pipelinesNamespace"`
 	PipelineVersion    string   `json:"pipelinesVersion"`
 	ReadOnly           bool     `json:"isReadOnly"`
+	ResultsAPIEnabled  bool     `json:"resultsAPIEnabled"`
 	StreamLogs         bool     `json:"streamLogs"`
 	TenantNamespaces   []string `json:"tenantNamespaces,omitempty"`
 	TriggersNamespace  string   `json:"triggersNamespace,omitempty"`
@@ -60,6 +61,8 @@ func (r Resource) GetProperties(response http.ResponseWriter, _ *http.Request) {
 	if r.Options.ExternalLogsURL != "" {
 		properties.ExternalLogsURL = "/v1/logs-proxy"
 	}
+
+	properties.ResultsAPIEnabled = r.Options.ResultsAPIURL != ""
 
 	isTriggersInstalled := IsTriggersInstalled(r, triggersNamespace)
 

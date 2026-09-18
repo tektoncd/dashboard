@@ -37,6 +37,7 @@ var (
 	logFormat          = flag.String("log-format", "json", "Format for log output (json or console)")
 	streamLogs         = flag.Bool("stream-logs", true, "Enable log streaming instead of polling")
 	externalLogs       = flag.String("external-logs", "", "External logs provider URL")
+	resultsAPI         = flag.String("results-api", "", "Tekton Results API base URL (scheme+host), enables the /history view backed by deleted-run records")
 	xFrameOptions      = flag.String("x-frame-options", "DENY", "Value for the X-Frame-Options response header, set '' to omit it")
 )
 
@@ -73,6 +74,7 @@ func main() {
 		LogoutURL:          *logoutURL,
 		StreamLogs:         *streamLogs,
 		ExternalLogsURL:    *externalLogs,
+		ResultsAPIURL:      *resultsAPI,
 		XFrameOptions:      *xFrameOptions,
 	}
 

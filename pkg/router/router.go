@@ -86,6 +86,18 @@ func registerLogsProxy(r endpoints.Resource, mux *http.ServeMux) {
 	}
 }
 
+// registerResultsProxy registers a proxy for the Tekton Results API under
+// its own real REST path prefix. http.ServeMux dispatches on the longest
+// matching pattern, so this takes precedence over the generic "/apis/"
+// Kubernetes proxy registered in Register() for this one sub-path, without
+// disturbing routing for any other "/apis/..." (Tekton CRDs, etc).
+func registerResultsProxy(r endpoints.Resource, mux *http.ServeMux) {
+	if r.Options.ResultsAPIURL != "" {
+		logging.Log.Info("Adding API for Results proxy")
+		mux.HandleFunc("/apis/results.tekton.dev/", r.ResultsProxy)
+	}
+}
+
 // Server is a http.Handler which proxies Kubernetes APIs to the API server.
 type Server struct {
 	handler http.Handler
@@ -141,6 +153,7 @@ func Register(r endpoints.Resource, cfg *rest.Config) (*Server, error) {
 	registerHealthProbe(r, mux)
 	registerReadinessProbe(r, mux)
 	registerLogsProxy(r, mux)
+	registerResultsProxy(r, mux)
 
 	return &Server{handler: mux}, nil
 }

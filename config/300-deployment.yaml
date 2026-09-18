@@ -85,6 +85,7 @@ spec:
           args:
             - --default-namespace=--default-namespace
             - --external-logs=--external-logs
+            - --results-api=--results-api
             - --log-format=--log-format
             - --log-level=--log-level
             - --logout-url=--logout-url
