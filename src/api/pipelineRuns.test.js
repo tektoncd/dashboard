@@ -13,12 +13,18 @@ limitations under the License.
 
 import yaml from 'yaml';
 import { http, HttpResponse } from 'msw';
+import * as ReactQuery from '@tanstack/react-query';
 
 import * as API from './pipelineRuns';
 import * as utils from './utils';
 import * as comms from './comms';
 import { server } from '../../config_frontend/msw';
 import { generateNewPipelineRunPayload } from './pipelineRuns';
+
+vi.mock('@tanstack/react-query', async importOriginal => ({
+  ...(await importOriginal()),
+  useQuery: vi.fn()
+}));
 
 describe('cancelPipelineRun', () => {
   it('default', () => {
@@ -215,14 +221,19 @@ it('usePipelineRuns', () => {
 
 it('usePipelineRun', () => {
   const query = { fake: 'query' };
-  const params = { fake: 'params' };
+  const params = { name: 'fake_name', namespace: 'fake_namespace' };
   vi.spyOn(utils, 'useResource').mockImplementation(() => query);
+  // query.error is undefined here, so the Results fallback stays disabled
+  // and this only needs to not throw when called.
+  ReactQuery.useQuery.mockReturnValue({ isPending: false });
   expect(API.usePipelineRun(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
     expect.objectContaining({
       group: utils.tektonAPIGroup,
       kind: 'pipelineruns',
-      params,
+      // resultUID (only ever set for the Results fallback) is deliberately
+      // kept out of the k8s query's params
+      params: { name: params.name, namespace: params.namespace },
       version: 'v1'
     })
   );
@@ -233,7 +244,7 @@ it('usePipelineRun', () => {
     expect.objectContaining({
       group: utils.tektonAPIGroup,
       kind: 'pipelineruns',
-      params,
+      params: { name: params.name, namespace: params.namespace },
       queryConfig,
       version: 'v1'
     })

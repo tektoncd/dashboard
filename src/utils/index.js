@@ -147,9 +147,19 @@ export function fetchLogsFallback(externalLogsURL) {
 export function getLogsRetriever({
   externalLogsURL,
   isLogStreamingEnabled,
-  onFallback
+  onFallback,
+  skipPodLogs
 }) {
   const fallback = fetchLogsFallback(externalLogsURL);
+
+  if (fallback && skipPodLogs) {
+    // Results-sourced run -- the pod is guaranteed gone, so don't waste a
+    // request finding that out; go straight to the external logs endpoint.
+    return ({ stepName, stepStatus, taskRun }) => {
+      onFallback(true);
+      return fallback({ stepName, stepStatus, taskRun });
+    };
+  }
 
   if (fallback) {
     return ({ stepName, stepStatus, taskRun }) =>

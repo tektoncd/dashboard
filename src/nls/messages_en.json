@@ -201,6 +201,7 @@
   "dashboard.pod.events": "Events",
   "dashboard.pod.resource": "Resource",
   "dashboard.pod.resource.empty": "Waiting for Pod resource",
+  "dashboard.pod.resource.resultsUnavailable": "Pod details are not available for historical runs sourced from Results",
   "dashboard.rerun.actionText": "Rerun",
   "dashboard.rerun.error": "An error occurred when rerunning {runName}: check the dashboard logs for details. Status code: {statusCode}",
   "dashboard.rerun.triggered": "Triggered rerun",

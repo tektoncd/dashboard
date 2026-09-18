@@ -44,6 +44,7 @@ import {
   useIsLogStreamingEnabled,
   useIsReadOnly,
   usePod,
+  useResultsAPIEnabled,
   useSelectedNamespace,
   useTask,
   useTaskRun
@@ -117,6 +118,7 @@ export function TaskRunContainer({
   const externalLogsURL = useExternalLogsURL();
   const isLogStreamingEnabled = useIsLogStreamingEnabled();
   const isReadOnly = useIsReadOnly();
+  const resultsAPIEnabled = useResultsAPIEnabled();
 
   useTitleSync({
     page: 'TaskRun',
@@ -126,10 +128,12 @@ export function TaskRunContainer({
   const {
     data: taskRun,
     error,
+    isFromResults,
     isPending: isLoadingTaskRun
   } = useTaskRun({
     name,
-    namespace
+    namespace,
+    resultsAPIEnabled
   });
 
   const { data: task, isLoading: isLoadingTask } = useTask(
@@ -146,19 +150,25 @@ export function TaskRunContainer({
   }
   let { data: pod } = usePod(
     { name: podName, namespace },
-    { enabled: !!podName && view === 'pod' }
+    { enabled: !!podName && view === 'pod' && !isFromResults }
   );
 
   if (!pod) {
-    pod = intl.formatMessage({
-      id: 'dashboard.pod.resource.empty',
-      defaultMessage: 'Waiting for Pod resource'
-    });
+    pod = isFromResults
+      ? intl.formatMessage({
+          id: 'dashboard.pod.resource.resultsUnavailable',
+          defaultMessage:
+            'Pod details are not available for historical runs sourced from Results'
+        })
+      : intl.formatMessage({
+          id: 'dashboard.pod.resource.empty',
+          defaultMessage: 'Waiting for Pod resource'
+        });
   }
 
   const { data: events = [] } = useEvents(
     { involvedObjectKind: 'Pod', involvedObjectName: podName, namespace },
-    { enabled: !!podName && view === 'pod' }
+    { enabled: !!podName && view === 'pod' && !isFromResults }
   );
 
   function getLogContainer({ stepName, stepStatus, taskRun: run }) {
@@ -169,7 +179,8 @@ export function TaskRunContainer({
     const logsRetriever = getLogsRetriever({
       externalLogsURL,
       isLogStreamingEnabled,
-      onFallback: setIsUsingExternalLogs
+      onFallback: setIsUsingExternalLogs,
+      skipPodLogs: isFromResults
     });
 
     return (

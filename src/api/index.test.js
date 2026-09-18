@@ -411,6 +411,7 @@ it('other hooks that depend on useProperties', async () => {
   const externalLogsURL = 'fake_externalLogsURL';
   const isReadOnly = 'fake_isReadOnly';
   const logoutURL = 'fake_logoutURL';
+  const resultsAPIEnabled = true;
   const streamLogs = 'fake_streamLogs';
   const tenantNamespace = 'fake_tenantNamespace';
   const triggersNamespace = 'fake_triggersNamespace';
@@ -421,6 +422,7 @@ it('other hooks that depend on useProperties', async () => {
     externalLogsURL,
     isReadOnly,
     logoutURL,
+    resultsAPIEnabled,
     streamLogs,
     tenantNamespaces: [tenantNamespace],
     triggersNamespace,
@@ -483,6 +485,14 @@ it('other hooks that depend on useProperties', async () => {
     }
   );
   expect(isTriggersInstalledResult.current).toEqual(true);
+
+  const { result: resultsAPIEnabledResult } = renderHook(
+    () => API.useResultsAPIEnabled(),
+    {
+      wrapper: getAPIWrapper({ queryClient })
+    }
+  );
+  expect(resultsAPIEnabledResult.current).toEqual(resultsAPIEnabled);
 });
 
 it('useTenantNamespaces', async () => {

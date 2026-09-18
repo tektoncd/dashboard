@@ -65,6 +65,14 @@ export const paths = {
       return byNamespace({ path: '/eventlisteners' });
     }
   },
+  history: {
+    all() {
+      return '/history';
+    },
+    byNamespace() {
+      return byNamespace({ path: '/history' });
+    }
+  },
   importResources() {
     return '/importresources';
   },

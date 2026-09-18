@@ -33,6 +33,7 @@ export * from './eventListeners';
 export * from './extensions';
 export * from './pipelineRuns';
 export * from './pipelines';
+export * from './results';
 export * from './serviceAccounts';
 export * from './taskRuns';
 export * from './tasks';
@@ -271,6 +272,11 @@ export function useIsLogStreamingEnabled() {
 export function useIsReadOnly() {
   const { data } = useProperties();
   return data.isReadOnly;
+}
+
+export function useResultsAPIEnabled() {
+  const { data } = useProperties();
+  return !!data.resultsAPIEnabled;
 }
 
 export function useIsTriggersInstalled() {

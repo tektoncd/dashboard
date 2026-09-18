@@ -201,6 +201,7 @@
   "dashboard.pod.events": "",
   "dashboard.pod.resource": "",
   "dashboard.pod.resource.empty": "",
+  "dashboard.pod.resource.resultsUnavailable": "",
   "dashboard.rerun.actionText": "再実行",
   "dashboard.rerun.error": "{runName}の再実行中にエラーが発生しました：詳細については、ダッシュボードログを確認してください。ステータスコード：{statusCode}",
   "dashboard.rerun.triggered": "トリガーされた再実行",
