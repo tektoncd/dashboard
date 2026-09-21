@@ -60,7 +60,7 @@
     "eslint-import-resolver-node": "^0.4.0",
     "eslint-plugin-cypress": "^6.4.4",
     "eslint-plugin-depend": "^1.5.0",
-    "eslint-plugin-formatjs": "^5.4.2",
+    "eslint-plugin-formatjs": "^8.0.3",
     "eslint-plugin-import-x": "^4.17.1",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-notice": "^1.0.0",
