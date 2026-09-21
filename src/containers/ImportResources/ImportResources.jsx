@@ -13,7 +13,7 @@ limitations under the License.
 
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import {
   Accordion,
   AccordionItem,
