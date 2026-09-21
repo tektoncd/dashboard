@@ -611,27 +611,24 @@ function CreatePipelineRun() {
               id: 'dashboard.createRun.labels.legendText',
               defaultMessage: 'Labels'
             })}
-            invalidText={
-              <span
-                dangerouslySetInnerHTML /* eslint-disable-line react/no-danger */={{
-                  __html: intl.formatMessage(
-                    {
-                      id: 'dashboard.createRun.label.invalidText',
-                      defaultMessage:
-                        'Labels must follow the {0}kubernetes labels syntax{1}.'
-                    },
-                    [
-                      `<a
-                          href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >`,
-                      '</a>'
-                    ]
-                  )
-                }}
-              />
-            }
+            invalidText={intl.formatMessage(
+              {
+                id: 'dashboard.createRun.label.invalidText',
+                defaultMessage:
+                  'Labels must follow the <a>kubernetes labels syntax</a>.'
+              },
+              {
+                a: chunks => (
+                  <a
+                    href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {chunks}
+                  </a>
+                )
+              }
+            )}
             keyValues={labels}
             minKeyValues={0}
             invalidFields={invalidLabels}
@@ -650,27 +647,24 @@ function CreatePipelineRun() {
               id: 'dashboard.createRun.nodeSelector.legendText',
               defaultMessage: 'Node selector'
             })}
-            invalidText={
-              <span
-                dangerouslySetInnerHTML /* eslint-disable-line react/no-danger */={{
-                  __html: intl.formatMessage(
-                    {
-                      id: 'dashboard.createRun.label.invalidText',
-                      defaultMessage:
-                        'Labels must follow the {0}kubernetes labels syntax{1}.'
-                    },
-                    [
-                      `<a
-                          href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >`,
-                      '</a>'
-                    ]
-                  )
-                }}
-              />
-            }
+            invalidText={intl.formatMessage(
+              {
+                id: 'dashboard.createRun.label.invalidText',
+                defaultMessage:
+                  'Labels must follow the <a>kubernetes labels syntax</a>.'
+              },
+              {
+                a: chunks => (
+                  <a
+                    href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {chunks}
+                  </a>
+                )
+              }
+            )}
             keyValues={nodeSelector}
             minKeyValues={0}
             invalidFields={invalidNodeSelector}
