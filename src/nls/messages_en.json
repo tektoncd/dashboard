@@ -59,7 +59,7 @@
   "dashboard.createResource.nameError": "Must consist of lower case alphanumeric characters, '-' or '.', start and end with an alphanumeric character, and be at most 63 characters",
   "dashboard.createRun.invalidNamespace": "Namespace cannot be empty",
   "dashboard.createRun.invalidParams": "Params cannot be empty",
-  "dashboard.createRun.label.invalidText": "Labels must follow the {0}kubernetes labels syntax{1}.",
+  "dashboard.createRun.label.invalidText": "Labels must follow the <a>kubernetes labels syntax</a>.",
   "dashboard.createRun.labels.legendText": "Labels",
   "dashboard.createRun.nodeSelector.legendText": "Node selector",
   "dashboard.createRun.optional.legendText": "Optional values",

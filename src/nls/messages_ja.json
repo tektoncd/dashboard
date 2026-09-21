@@ -59,7 +59,7 @@
   "dashboard.createResource.nameError": "小文字英数字およびハイフン（64文字未満）",
   "dashboard.createRun.invalidNamespace": "Namespaceは必須です",
   "dashboard.createRun.invalidParams": "パラメータは必須です",
-  "dashboard.createRun.label.invalidText": "ラベルは{0}kubernetesラベル構文{1}に従う必要があります",
+  "dashboard.createRun.label.invalidText": "ラベルは<a>kubernetesラベル構文</a>に従う必要があります",
   "dashboard.createRun.labels.legendText": "ラベル",
   "dashboard.createRun.nodeSelector.legendText": "",
   "dashboard.createRun.optional.legendText": "オプション",

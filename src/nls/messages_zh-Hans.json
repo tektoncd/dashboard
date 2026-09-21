@@ -59,7 +59,7 @@
   "dashboard.createResource.nameError": "必须少于 64 个字符，且只包含小写字母、数字或 -",
   "dashboard.createRun.invalidNamespace": "Namespace 不能为空",
   "dashboard.createRun.invalidParams": "Params 不能为空",
-  "dashboard.createRun.label.invalidText": "Label 必须遵循 {0} Kubernetes 标签语法 {1}",
+  "dashboard.createRun.label.invalidText": "Label 必须遵循 <a>Kubernetes 标签语法</a>",
   "dashboard.createRun.labels.legendText": "标签",
   "dashboard.createRun.nodeSelector.legendText": "节点选择器",
   "dashboard.createRun.optional.legendText": "可选值",
