@@ -13,7 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import { useIntl } from 'react-intl';
-import { useRouteError } from 'react-router-dom';
+import { useRouteError } from 'react-router';
 import { Column, FlexGrid, Row } from '@carbon/react';
 
 import robocat from '../../images/robocat_404.svg';

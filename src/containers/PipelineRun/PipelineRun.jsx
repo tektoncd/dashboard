@@ -32,7 +32,7 @@ import {
   useTitleSync
 } from '@tektoncd/dashboard-utils';
 
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router';
 import { useIntl } from 'react-intl';
 
 import LogsToolbar from '../LogsToolbar';
