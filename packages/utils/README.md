@@ -18,14 +18,14 @@ instead:
 yarn add @tektoncd/dashboard-utils
 ```
 
-`react-router-dom` v5 or v6 is required as a peer dependency.
+`react-router` v7 is required as a peer dependency.
 
-> **Note:** The react-router v7 future flag `v7_startTransition` is not
-> enabled. If you are adopting v7 future flags in your own router, omit
-> `v7_startTransition` if your app makes synchronous external state
-> updates (e.g. context writes) in the same event handler as `navigate()`
-> calls — the deferred navigation can cause a temporary desync between
-> router state and component state.
+> **Note:** `RouterProvider` is configured with `useTransitions={false}`
+> to disable `React.startTransition` for router state updates. Combining
+> transition-enabled navigations with synchronous external state updates
+> (e.g. context writes) in the same event handler as `navigate()` calls
+> can cause a temporary desync between router state and component state.
+> This may be revisited if view transitions are adopted in future.
 
 ## Usage
 

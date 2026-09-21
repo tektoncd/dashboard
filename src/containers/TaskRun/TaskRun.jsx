@@ -14,7 +14,7 @@ limitations under the License.
 
 import { Fragment, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router';
 import { InlineNotification, SkeletonText } from '@carbon/react';
 import {
   ActionableNotification,

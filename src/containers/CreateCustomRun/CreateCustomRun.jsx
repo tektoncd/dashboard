@@ -1,5 +1,5 @@
 /*
-Copyright 2023-2025 The Tekton Authors
+Copyright 2023-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,7 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import { lazy, Suspense } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router';
 import yaml from 'yaml';
 import { ALL_NAMESPACES, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import { Loading } from '@tektoncd/dashboard-components';

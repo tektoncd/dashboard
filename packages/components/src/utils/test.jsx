@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2024 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,35 +12,25 @@ limitations under the License.
 */
 /* istanbul ignore file */
 import { Fragment } from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router';
 import { render as baseRender } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
-
-const routerFutureFlags = {
-  v7_fetcherPersist: true,
-  v7_normalizeFormMethod: true,
-  v7_partialHydration: true,
-  v7_relativeSplatPath: true,
-  v7_skipActionErrorRevalidation: true
-};
 
 function RouterWrapper({ children, handle, path }) {
   return (
     <RouterProvider
-      router={createBrowserRouter(
-        [
-          {
-            path,
-            element: (
-              <IntlProvider locale="en" defaultLocale="en" messages={{}}>
-                {children}
-              </IntlProvider>
-            ),
-            handle
-          }
-        ],
-        { future: routerFutureFlags }
-      )}
+      useTransitions={false}
+      router={createBrowserRouter([
+        {
+          path,
+          element: (
+            <IntlProvider locale="en" defaultLocale="en" messages={{}}>
+              {children}
+            </IntlProvider>
+          ),
+          handle
+        }
+      ])}
     />
   );
 }
