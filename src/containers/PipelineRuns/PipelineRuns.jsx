@@ -13,7 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import { useIntl } from 'react-intl';
 import {
   CancelStatusOptions,

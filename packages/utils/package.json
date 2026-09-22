@@ -10,7 +10,7 @@
   "type": "module",
   "scripts": {},
   "peerDependencies": {
-    "react-router-dom": "^5.0.0 || ^6.0.0"
+    "react-router": "^7.0.0"
   },
   "engines": {
     "node": "^24.21.0",

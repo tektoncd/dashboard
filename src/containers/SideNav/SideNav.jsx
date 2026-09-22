@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { matchPath, NavLink, useLocation } from 'react-router-dom';
+import { matchPath, NavLink, useLocation } from 'react-router';
 import { useIntl } from 'react-intl';
 import {
   SideNav as CarbonSideNav,

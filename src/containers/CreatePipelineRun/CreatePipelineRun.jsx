@@ -13,7 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import { lazy, Suspense, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router';
 import yaml from 'yaml';
 import {
   Button,

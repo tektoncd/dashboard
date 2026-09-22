@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2025 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,17 +11,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createHashRouter,
   Link,
-  Navigate,
   Outlet,
-  RouterProvider,
   useLocation,
   useNavigate
-} from 'react-router-dom';
+} from 'react-router';
+import { RouterProvider } from 'react-router/dom';
 import { IntlProvider, useIntl } from 'react-intl';
 import { Content, HeaderContainer, InlineNotification } from '@carbon/react';
 import {
@@ -105,6 +104,15 @@ function HeaderNameLink(props) {
   return <Link {...props} to={urls.about()} />;
 }
 
+/* istanbul ignore next */
+function DefaultRedirect() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    navigate(urls.about(), { replace: true, state: { fromDefaultRoute: true } });
+  }, []);
+  return null;
+}
+
 function Root() {
   const lang = getLocale(navigator.language);
   const location = useLocation();
@@ -172,13 +180,7 @@ const router = createHashRouter(
           children: [
             {
               index: true,
-              element: (
-                <Navigate
-                  to={urls.about()}
-                  replace
-                  state={{ fromDefaultRoute: true }}
-                />
-              )
+              element: <DefaultRedirect />
             },
             ...routes.dashboard,
             ...routes.pipelines,
@@ -191,22 +193,7 @@ const router = createHashRouter(
         }
       ]
     }
-  ],
-  {
-    future: {
-      v7_fetcherPersist: true,
-      v7_normalizeFormMethod: true,
-      v7_partialHydration: true,
-      v7_relativeSplatPath: true,
-      v7_skipActionErrorRevalidation: true
-      // v7_startTransition intentionally omitted: wrapping navigate() calls in
-      // React.startTransition causes the namespace dropdown to desync from the
-      // URL on the first interaction because selectNamespace() (external context)
-      // fires synchronously while the navigation is deferred. The v7 router
-      // provides an opt-out for exactly this scenario.
-    }
-  }
-);
+]);
 
 /* istanbul ignore next */
 export function App() {
@@ -265,7 +252,15 @@ export function App() {
         messages={messages}
       >
         {showLoadingState && <LoadingShell />}
-        {!showLoadingState && <RouterProvider router={router} />}
+        {!showLoadingState && (
+          // useTransitions={false} disables React.startTransition for router
+          // state updates. Without this, navigate() calls are deferred, causing
+          // a temporary desync between the URL and components that make
+          // synchronous external state updates (e.g. selectNamespace()) in the
+          // same event handler. This can be revisited if view transitions are
+          // adopted in future.
+          <RouterProvider router={router} useTransitions={false} />
+        )}
       </IntlProvider>
     </NamespaceContext.Provider>
   );
