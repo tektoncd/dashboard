@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-DkW27tQK.js";import{t}from"./jsx-runtime-ATHzeHXA.js";import{c as n,t as r}from"./utils-jtJj5xm0.js";function i({className:e}){return(0,a.jsx)(`span`,{className:r(`tkn--dot-spinner`,e)})}var a;function o(){return(o=e((()=>{n(),a=t(),i.__docgenInfo={description:``,methods:[],displayName:`Spinner`}})))()}export{o as n,i as t};

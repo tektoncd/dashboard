@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-DkW27tQK.js";import{ct as t,f as n,lt as r,u as i}from"./IconButton-DUBKBcJe.js";var a;function o(){return(o=e((()=>{t(),i(),a=(e,t)=>{let i=r(`enable-v12-release`),a=`${t}. Render interactive content as a sibling of the label or use the \`decorator\` prop when available`;n(e,a,{shouldThrow:i})}})))()}export{a as n,o as t};

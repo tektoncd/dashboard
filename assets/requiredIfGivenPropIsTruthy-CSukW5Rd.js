@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-DkW27tQK.js";var t;function n(){return(n=e((()=>{t=(e,t)=>(n,r,i,...a)=>n[e]===!0&&n[r]===null?Error(`You must provide a value for \`${r}\` in \`${i}\` if \`${e}\` exists.`):t(n,r,i,...a)})))()}export{t as n,n as t};

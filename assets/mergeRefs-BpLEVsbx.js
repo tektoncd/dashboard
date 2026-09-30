@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-DkW27tQK.js";var t;function n(){return(n=e((()=>{t=(...e)=>t=>{e.forEach(e=>{e&&(typeof e==`function`?e(t):typeof e==`object`&&`current`in e&&(e.current=t))})}})))()}export{t as n,n as t};

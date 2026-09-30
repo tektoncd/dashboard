@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-DkW27tQK.js";var t;function n(){return(n=e((()=>{t=e=>(t,...n)=>{for(let r of e){if(t.defaultPrevented)break;typeof r==`function`&&r(t,...n)}}})))()}export{n,t};
