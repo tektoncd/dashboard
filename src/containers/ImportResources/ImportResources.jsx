@@ -411,7 +411,12 @@ export function ImportResources() {
             })}
             onCloseButtonClick={resetSuccess}
           >
-            <Link to={logsURL}>View status of this run</Link>
+            <Link to={logsURL}>
+              {intl.formatMessage({
+                id: 'dashboard.importResources.viewStatus',
+                defaultMessage: 'View status of this run'
+              })}
+            </Link>
           </ActionableNotification>
         )}
         <Button kind="primary" onClick={handleSubmit}>

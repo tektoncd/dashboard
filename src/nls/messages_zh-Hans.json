@@ -128,6 +128,7 @@
   "dashboard.importResources.targetNamespace.titleText": "目标 Namespace",
   "dashboard.importResources.title": "导入资源",
   "dashboard.importResources.triggeredNotification": "导入 Tekton 资源的已触发的 PipelineRun",
+  "dashboard.importResources.viewStatus": "",
   "dashboard.keyValueList.add": "添加",
   "dashboard.keyValueList.remove": "移除",
   "dashboard.labelFilter.addFilterButton": "添加过滤器",

@@ -128,6 +128,7 @@
   "dashboard.importResources.targetNamespace.titleText": "대상 네임스페이스",
   "dashboard.importResources.title": "리소스 가져오기",
   "dashboard.importResources.triggeredNotification": "Tekton 리소스를 가져오기 위해 트리거된 PipelineRun",
+  "dashboard.importResources.viewStatus": "",
   "dashboard.keyValueList.add": "추가",
   "dashboard.keyValueList.remove": "제거",
   "dashboard.labelFilter.addFilterButton": "필터 추가",

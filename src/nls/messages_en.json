@@ -128,6 +128,7 @@
   "dashboard.importResources.targetNamespace.titleText": "Target namespace",
   "dashboard.importResources.title": "Import resources",
   "dashboard.importResources.triggeredNotification": "Triggered PipelineRun to import Tekton resources",
+  "dashboard.importResources.viewStatus": "View status of this run",
   "dashboard.keyValueList.add": "Add",
   "dashboard.keyValueList.remove": "Remove",
   "dashboard.labelFilter.addFilterButton": "Add filter",
