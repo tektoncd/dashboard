@@ -102,9 +102,9 @@ jobs:
         # protection config. Map name to corresponding version for use in steps
         include:
           - k8s-name: k8s-oldest
-            k8s-version: v1.31.x
+            k8s-version: v1.34.x
           - k8s-name: k8s-latest
-            k8s-version: v1.35.x
+            k8s-version: v1.37.x
 
     env:
       ARTIFACTS: ${{ github.workspace }}/artifacts
@@ -151,7 +151,7 @@ jobs:
           echo '::endgroup::'
 
           echo '::group::install kind'
-          go install sigs.k8s.io/kind@v0.31.0
+          go install sigs.k8s.io/kind@v0.33.0
           kind version
           echo '::endgroup::'
 
