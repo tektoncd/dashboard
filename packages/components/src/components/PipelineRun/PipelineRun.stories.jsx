@@ -19,6 +19,8 @@ import PipelineRun from '.';
 import LogsToolbar from '../LogsToolbar';
 
 const task = {
+  apiVersion: 'tekton.dev/v1',
+  kind: 'Task',
   metadata: {
     name: 'task1',
     namespace: 'default',
@@ -40,7 +42,10 @@ const task = {
 
 function getTaskRun({ exitCode = 0, name, pipelineTaskName }) {
   return {
+    apiVersion: 'tekton.dev/v1',
+    kind: 'TaskRun',
     metadata: {
+      creationTimestamp: '2019-08-21T17:12:21Z',
       labels: {
         [labelConstants.PIPELINE_TASK]: pipelineTaskName
       },
@@ -143,6 +148,8 @@ taskRunWithRetries.status.retriesStatus = [
 ];
 
 const pipelineRun = {
+  apiVersion: 'tekton.dev/v1',
+  kind: 'PipelineRun',
   metadata: {
     labels: {
       'tekton.dev/pipeline': 'pipeline'
@@ -192,6 +199,8 @@ const pipelineRun = {
 };
 
 const pipelineRunWithMinimalStatus = {
+  apiVersion: 'tekton.dev/v1',
+  kind: 'PipelineRun',
   metadata: {
     labels: {
       'tekton.dev/pipeline': 'pipeline'
