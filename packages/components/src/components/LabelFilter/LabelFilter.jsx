@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2025 The Tekton Authors
+Copyright 2019-2026 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,7 +13,7 @@ limitations under the License.
 
 import { Component } from 'react';
 import { injectIntl } from 'react-intl';
-import { Button, Form, Link, Search, Tag } from '@carbon/react';
+import { Button, DismissibleTag, Form, Link, Search } from '@carbon/react';
 import ActionableNotification from '../ActionableNotification';
 
 function arrayUnique(arr) {
@@ -151,17 +151,27 @@ class LabelFilter extends Component {
           </Button>
         </Form>
         <div className="tkn--filters">
-          {filters.map(filter => (
-            <Tag
-              filter
-              key={filter}
-              onClick={() => this.props.handleDeleteFilter(filter)}
-              onClose={() => this.props.handleDeleteFilter(filter)}
-              type="high-contrast"
-            >
-              {filter.replace(/=/g, ':')}
-            </Tag>
-          ))}
+          {filters.map(filter => {
+            const labelDisplayText = filter.replace(/=/g, ':');
+            const dismissTooltipLabel = intl.formatMessage(
+              {
+                id: 'dashboard.labelFilter.dismiss',
+                defaultMessage: 'Remove {label} label filter'
+              },
+              { label: labelDisplayText }
+            );
+
+            return (
+              <DismissibleTag
+                dismissTooltipLabel={dismissTooltipLabel}
+                key={filter}
+                onClose={() => this.props.handleDeleteFilter(filter)}
+                text={labelDisplayText}
+                title={dismissTooltipLabel}
+                type="high-contrast"
+              />
+            );
+          })}
           {filters.length > 0 && (
             <Button
               kind="ghost"

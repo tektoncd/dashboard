@@ -133,6 +133,7 @@
   "dashboard.keyValueList.remove": "移除",
   "dashboard.labelFilter.addFilterButton": "添加过滤器",
   "dashboard.labelFilter.clearAll": "清除全部",
+  "dashboard.labelFilter.dismiss": "",
   "dashboard.labelFilter.duplicate": "不允许重复的过滤器",
   "dashboard.labelFilter.invalid": "过滤器的格式必须是 labelKey:labelValue，并包含可接受的标签字符。",
   "dashboard.labelFilter.invalidLength": "过滤器的格式必须是 labelKey:labelValue，并包含少于 64 个字符。",

@@ -133,6 +133,7 @@
   "dashboard.keyValueList.remove": "削除",
   "dashboard.labelFilter.addFilterButton": "フィルタを追加",
   "dashboard.labelFilter.clearAll": "すべてをクリア",
+  "dashboard.labelFilter.dismiss": "",
   "dashboard.labelFilter.duplicate": "重複フィルタは許可されていません",
   "dashboard.labelFilter.invalid": "フィルタはlabelKey:labelValueの形式で、使用可能なラベル文字を含む必要があります",
   "dashboard.labelFilter.invalidLength": "フィルタはlabelKey:labelValueの形式で、64文字未満である必要があります",

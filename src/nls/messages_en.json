@@ -133,6 +133,7 @@
   "dashboard.keyValueList.remove": "Remove",
   "dashboard.labelFilter.addFilterButton": "Add filter",
   "dashboard.labelFilter.clearAll": "Clear all",
+  "dashboard.labelFilter.dismiss": "Remove {label} label filter",
   "dashboard.labelFilter.duplicate": "No duplicate filters allowed",
   "dashboard.labelFilter.invalid": "Filters must be of the format labelKey:labelValue and contain accepted label characters",
   "dashboard.labelFilter.invalidLength": "Filters must be of the format labelKey:labelValue and contain less than 64 characters",
