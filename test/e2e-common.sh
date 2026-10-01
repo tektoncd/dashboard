@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2018-2024 The Tekton Authors
+# Copyright 2018-2026 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -67,6 +67,7 @@ function install_triggers() {
 
   echo ">> Deploying Tekton Triggers ($version)"
   kubectl apply --filename "https://github.com/tektoncd/triggers/releases/download/$version/release.yaml" || fail_test "Tekton Triggers installation failed"
+  kubectl apply --filename "https://github.com/tektoncd/triggers/releases/download/$version/interceptors.yaml" || fail_test "Tekton Triggers interceptors installation failed"
 
   # Wait for pods to be running in the namespaces we are deploying to
   wait_until_pods_running tekton-pipelines || fail_test "Tekton Triggers did not come up"
