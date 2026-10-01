@@ -133,6 +133,7 @@
   "dashboard.keyValueList.remove": "제거",
   "dashboard.labelFilter.addFilterButton": "필터 추가",
   "dashboard.labelFilter.clearAll": "모두 지우기",
+  "dashboard.labelFilter.dismiss": "",
   "dashboard.labelFilter.duplicate": "중복 필터는 허용되지 않습니다.",
   "dashboard.labelFilter.invalid": "필터는 labelKey:labelValue 형식이어야 하며 허용되는 라벨 문자를 포함해야 합니다.",
   "dashboard.labelFilter.invalidLength": "필터는 labelKey:labelValue 형식이어야 하며 64자 미만이어야 합니다.",

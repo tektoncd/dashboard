@@ -133,6 +133,7 @@
   "dashboard.keyValueList.remove": "",
   "dashboard.labelFilter.addFilterButton": "",
   "dashboard.labelFilter.clearAll": "",
+  "dashboard.labelFilter.dismiss": "",
   "dashboard.labelFilter.duplicate": "",
   "dashboard.labelFilter.invalid": "",
   "dashboard.labelFilter.invalidLength": "",
