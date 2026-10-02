@@ -521,7 +521,9 @@ export /* istanbul ignore next */ function PipelineRunContainer({
         fetchLogs={getLogsRetriever({
           externalLogsURL,
           isLogStreamingEnabled,
-          onFallback: setIsUsingExternalLogs
+          logLevels,
+          onFallback: setIsUsingExternalLogs,
+          showTimestamps
         })}
         handleTaskSelected={handleTaskSelected}
         loading={isLoading}
@@ -529,15 +531,21 @@ export /* istanbul ignore next */ function PipelineRunContainer({
         getLogsToolbar={toolbarProps => (
           <LogsToolbar
             {...toolbarProps}
-            externalLogsURL={externalLogsURL}
-            isUsingExternalLogs={isUsingExternalLogs}
             logLevels={showLogLevels && logLevels}
             onToggleLogLevel={onToggleLogLevel}
             onToggleShowTimestamps={onToggleShowTimestamps}
             showTimestamps={showTimestamps}
           />
         )}
-        getStepLogToolbar={toolbarProps => <StepLogToolbar {...toolbarProps} />}
+        getStepLogToolbar={toolbarProps => (
+          <StepLogToolbar
+            {...toolbarProps}
+            externalLogsURL={externalLogsURL}
+            isUsingExternalLogs={isUsingExternalLogs}
+            logLevels={logLevels}
+            showTimestamps={showTimestamps}
+          />
+        )}
         onRetryChange={retry => {
           if (Number.isInteger(retry)) {
             queryParams.set(RETRY, retry);
