@@ -69,7 +69,7 @@
     "eslint-plugin-storybook": "^10.6.1",
     "globals": "^17.12.0",
     "jsdom": "^30.1.1",
-    "msw": "^2.15.0",
+    "msw": "^3.0.1",
     "prettier": "^3.9.9",
     "rollup-plugin-visualizer": "^7.1.1",
     "sass-embedded": "^1.105.0",
