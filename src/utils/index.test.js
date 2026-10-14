@@ -199,7 +199,34 @@ describe('fetchLogs', () => {
 
 describe('fetchLogsFallback', () => {
   it('should return undefined when no external log provider configured', () => {
-    expect(fetchLogsFallback()).toBeUndefined();
+    expect(fetchLogsFallback({})).toBeUndefined();
+  });
+
+  it('should pass preferences to the external log provider', () => {
+    const container = 'fake_container';
+    const externalLogsURL = '/fake_url';
+    const logLevels = {
+      error: true,
+      info: false
+    };
+    const namespace = 'fake_namespace';
+    const podName = 'fake_podName';
+    const stepName = 'fake_stepName';
+    const showTimestamps = true;
+    const stepStatus = { container };
+    const taskRun = { metadata: { namespace }, status: { podName } };
+    vi.spyOn(comms, 'get').mockImplementation(() => {});
+
+    const fallback = fetchLogsFallback({
+      externalLogsURL,
+      logLevels,
+      showTimestamps
+    });
+    fallback({ stepName, stepStatus, taskRun });
+    expect(comms.get).toHaveBeenCalledWith(
+      `http://localhost:3000${externalLogsURL}/${namespace}/${podName}/${container}?timestamps=true&logLevel=error`,
+      { Accept: 'text/plain' }
+    );
   });
 
   it('should return a function to retrieve logs from the external provider', () => {
@@ -217,7 +244,7 @@ describe('fetchLogsFallback', () => {
     };
     vi.spyOn(comms, 'get').mockImplementation(() => {});
 
-    const fallback = fetchLogsFallback(externalLogsURL);
+    const fallback = fetchLogsFallback({ externalLogsURL });
     fallback({ stepName, stepStatus, taskRun });
     expect(comms.get).toHaveBeenCalledWith(
       `http://localhost:3000${externalLogsURL}/${namespace}/${podName}/${container}?startTime=${startTime.replaceAll(
@@ -238,7 +265,7 @@ describe('fetchLogsFallback', () => {
     const taskRun = { metadata: { namespace }, status: { podName } };
     vi.spyOn(comms, 'get').mockImplementation(() => {});
 
-    const fallback = fetchLogsFallback(externalLogsURL);
+    const fallback = fetchLogsFallback({ externalLogsURL });
     fallback({ stepName, stepStatus, taskRun });
     expect(comms.get).toHaveBeenCalledWith(
       `http://localhost:3000${externalLogsURL}/${namespace}/${podName}/${container}`,
@@ -296,13 +323,20 @@ describe('getLogsRetriever', () => {
 
   it('should handle external logs fallback', async () => {
     const externalLogsURL = 'fake_externalLogsURL';
+    const logLevels = { error: true };
+    const showTimestamps = false;
     vi.spyOn(API, 'getExternalLogURL');
     vi.spyOn(API, 'getPodLog').mockImplementation(() => {
       throw new Error();
     });
     vi.spyOn(comms, 'get').mockImplementation(() => {});
     const onFallback = vi.fn();
-    const logsRetriever = getLogsRetriever({ externalLogsURL, onFallback });
+    const logsRetriever = getLogsRetriever({
+      externalLogsURL,
+      logLevels,
+      onFallback,
+      showTimestamps
+    });
     expect(logsRetriever).toBeDefined();
     await logsRetriever({ stepName, stepStatus, taskRun });
     expect(API.getPodLog).toHaveBeenCalledWith({
@@ -310,7 +344,9 @@ describe('getLogsRetriever', () => {
       name: podName,
       namespace
     });
-    expect(API.getExternalLogURL).toHaveBeenCalled();
+    expect(API.getExternalLogURL).toHaveBeenCalledWith(
+      expect.objectContaining({ logLevels, showTimestamps })
+    );
     expect(onFallback).toHaveBeenCalledWith(true);
   });
 });
