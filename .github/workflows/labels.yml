@@ -26,7 +26,7 @@ jobs:
         with:
           egress-policy: audit
 
-      - uses: agilepathway/label-checker@738188efa755446f5f29aa0bfe48794e95bfef0d # v2.0.8
+      - uses: agilepathway/label-checker@67c30427bea749fe257d7fb68e233e9112ee3a0e # v2.0.40
         with:
           prefix_mode: true
           one_of: "kind/"
