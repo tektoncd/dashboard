@@ -35,8 +35,8 @@
     "react-router": "^7.0.0"
   },
   "engines": {
-    "node": "^24.21.0",
-    "npm": "^11.19.0"
+    "node": "^26.13.0",
+    "npm": "^11.20.0"
   },
   "publishConfig": {
     "access": "public"
