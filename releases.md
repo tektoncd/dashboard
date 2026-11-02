@@ -45,13 +45,13 @@ Further documentation available:
 
 ## Releases
 
-### v0.73
+### v0.74 (LTS)
 
-- **Latest Release**: [v0.73.0][v0-73-0] (2026-10-05) ([docs][v0-73-0-docs])
-- **Initial Release**: [v0.73.0][v0-73-0] (2026-10-05)
-- **End of Life**: 2026-11-04
-- **Patch Releases**: [v0.73.0][v0-73-0]
-- **Supported Pipelines Releases**: v1.15.x LTS, v1.17.x
+- **Latest Release**: [v0.74.0][v0-74-0] (2026-11-02) ([docs][v0-74-0-docs])
+- **Initial Release**: [v0.74.0][v0-74-0] (2026-11-02)
+- **End of Life**: 2027-11-01
+- **Patch Releases**: [v0.74.0][v0-74-0]
+- **Supported Pipelines Releases**: v1.18.x LTS
 - **Supported Triggers Releases**: v0.37.x LTS
 
 ### v0.71 (LTS)
@@ -81,15 +81,6 @@ Further documentation available:
 - **Supported Pipelines Releases**: v1.9.x LTS
 - **Supported Triggers Releases**: v0.34.x LTS
 
-### v0.63 (LTS)
-
-- **Latest Release**: [v0.63.1][v0-63-1] (2025-11-07) ([docs][v0-63-1-docs])
-- **Initial Release**: [v0.63.0][v0-63-0] (2025-10-31) ([docs][v0-63-0-docs])
-- **End of Life**: 2026-10-30
-- **Patch Releases**: [v0.63.0][v0-63-0], [v0.63.1][v0-63-1]
-- **Supported Pipelines Releases**: v1.6.x LTS
-- **Supported Triggers Releases**: v0.33.x LTS
-
 ## End of Life Releases
 
 Older releases are EOL and available on [GitHub][tekton-dashboard-releases].
@@ -104,16 +95,12 @@ Older releases are EOL and available on [GitHub][tekton-dashboard-releases].
 [release-notes-standards]:
     https://github.com/tektoncd/community/blob/main/standards.md#release-notes
 
-[v0-73-0]: https://github.com/tektoncd/dashboard/releases/tag/v0.73.0
+[v0-74-0]: https://github.com/tektoncd/dashboard/releases/tag/v0.74.0
 [v0-71-0]: https://github.com/tektoncd/dashboard/releases/tag/v0.71.0
 [v0-68-0]: https://github.com/tektoncd/dashboard/releases/tag/v0.68.0
 [v0-65-0]: https://github.com/tektoncd/dashboard/releases/tag/v0.65.0
-[v0-63-1]: https://github.com/tektoncd/dashboard/releases/tag/v0.63.1
-[v0-63-0]: https://github.com/tektoncd/dashboard/releases/tag/v0.63.0
 
-[v0-73-0-docs]: https://github.com/tektoncd/dashboard/tree/v0.73.0/docs#tekton-dashboard
+[v0-74-0-docs]: https://github.com/tektoncd/dashboard/tree/v0.74.0/docs#tekton-dashboard
 [v0-71-0-docs]: https://github.com/tektoncd/dashboard/tree/v0.71.0/docs#tekton-dashboard
 [v0-68-0-docs]: https://github.com/tektoncd/dashboard/tree/v0.68.0/docs#tekton-dashboard
 [v0-65-0-docs]: https://github.com/tektoncd/dashboard/tree/v0.65.0/docs#tekton-dashboard
-[v0-63-1-docs]: https://github.com/tektoncd/dashboard/tree/v0.63.1/docs#tekton-dashboard
-[v0-63-0-docs]: https://github.com/tektoncd/dashboard/tree/v0.63.0/docs#tekton-dashboard
