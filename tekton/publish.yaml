@@ -138,6 +138,10 @@ spec:
         # add installer script in the release
         cp ${PROJECT_ROOT}/scripts/installer $OUTPUT_RELEASE_DIR/installer
 
+        # install bash (used by installer scripts)
+        # TODO: simplify scripts and remove bashisms for better portability
+        apk update && apk add bash
+
         # build manifest for installer
         INSTALLER_MANIFEST=$OUTPUT_RELEASE_DIR/installer-release.yaml
         ./scripts/installer build --debug --installer-only --platform $(params.platforms) --tag $(params.versionTag) --output $INSTALLER_MANIFEST ${KO_EXTRA_ARGS}
