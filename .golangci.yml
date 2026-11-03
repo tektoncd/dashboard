@@ -30,7 +30,7 @@ linters:
     - goconst
     - gocritic
     - goheader
-    - gomodguard
+    - gomodguard_v2
     - goprintffuncname
     - gosec
     - gosmopolitan
@@ -121,12 +121,11 @@ linters:
               desc: 'replaced by io and os packages since Go 1.16: https://tip.golang.org/doc/go1.16#ioutil'
             - pkg: github.com/ghodss/yaml
               desc: use sigs.k8s.io/yaml instead, to be consistent
-    gomodguard:
+    gomodguard_v2:
       blocked:
-        modules:
-          - github.com/ghodss/yaml:
-              recommendations:
-                - sigs.k8s.io/yaml
+        - module: github.com/ghodss/yaml
+          recommendations:
+            - sigs.k8s.io/yaml
   exclusions:
     generated: lax
     presets:
