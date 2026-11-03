@@ -50,7 +50,7 @@ jobs:
           GO111MODULE="on" go install github.com/google/go-licenses@v1.0.0
 
           # Install GolangCI linter: https://github.com/golangci/golangci-lint/
-          GOLANGCI_VERSION=2.9.0
+          GOLANGCI_VERSION=2.15.0
           curl -sL https://github.com/golangci/golangci-lint/releases/download/v${GOLANGCI_VERSION}/golangci-lint-${GOLANGCI_VERSION}-linux-amd64.tar.gz | tar -C /usr/local/bin -xvzf - --strip-components=1 --wildcards "*/golangci-lint"
 
       - name: Run tests
@@ -144,7 +144,7 @@ jobs:
           GO111MODULE: "on"
         run: |
           echo '::group::install ko'
-          curl -L https://github.com/ko-build/ko/releases/download/v0.15.4/ko_0.15.4_Linux_x86_64.tar.gz | tar xzf - ko
+          curl -L https://github.com/ko-build/ko/releases/download/v0.19.1/ko_0.19.1_Linux_x86_64.tar.gz | tar xzf - ko
           chmod +x ./ko
           sudo mv ko /usr/local/bin
           ko version

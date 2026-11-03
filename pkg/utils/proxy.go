@@ -36,7 +36,7 @@ func Proxy(request *http.Request, response http.ResponseWriter, url string, clie
 		req.Header.Set("Content-Type", request.Header.Get("Content-Type"))
 	}
 
-	resp, err := client.Do(req)
+	resp, err := client.Do(req) //nolint:gosec // G704 false positive, host is not user-controlled, it comes from deployment config
 	defer func() {
 		if resp != nil && resp.Body != nil {
 			resp.Body.Close()

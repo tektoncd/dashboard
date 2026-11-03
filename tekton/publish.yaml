@@ -1,4 +1,4 @@
-# Copyright 2019-2025 The Tekton Authors
+# Copyright 2019-2026 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -103,7 +103,7 @@ spec:
         cp ${DOCKER_CONFIG} /workspace/docker-config.json
 
     - name: run-ko
-      image: ghcr.io/tektoncd/plumbing/ko-gcloud:v20250930-bc9f43235b@sha256:37118ef72b901e5ed3559657bd73c8438d5b94b4833598ee683c7c3e1dfafc58
+      image: ghcr.io/tektoncd/plumbing/ko:sha-2d1ad9b@sha256:6462e09784d6c56ceb068dff9e283ea7ae95cd4a34595cd78590ff17037709ee
       env:
         - name: KO_DOCKER_REPO
           value: $(params.imageRegistry)/$(params.imageRegistryPath)
