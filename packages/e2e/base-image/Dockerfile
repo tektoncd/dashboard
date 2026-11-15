@@ -16,7 +16,7 @@
 ARG CHROME_VERSION='156.0.8078.79-1'
 ARG NODE_VERSION='26.13.0'
 
-FROM cypress/factory@sha256:b9258d1e78a4d45b82eb3b256b6c31ad5c8ad2469954ec8d069c52c7a97afe56
+FROM cypress/factory@sha256:63c400e9cca1f6cb84d7e34cf3a43348f09f55b339b93a7ff908efb1955cd767
 
 LABEL maintainer="Tekton Authors <tekton-dev@googlegroups.com>"
 LABEL org.opencontainers.image.source=https://github.com/tektoncd/dashboard/tree/main/packages/e2e/base-image
